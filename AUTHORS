@@ -1,0 +1,53 @@
+# Authors and Copyright
+
+## Copyright holder
+
+**شرکت کشت و صنعت دشت امید نارون**
+*Dasht-e Omid Narvon Kesht va Sanat Co.*
+
+All work in this repository is copyright the Company named above and is
+licensed under the MIT licence. See [`LICENSE`](./LICENSE).
+
+- Company registration number: **to be supplied by the Company**
+- Jurisdiction of registration: **to be supplied by the Company**
+- Registered Latin name: **to be confirmed against the registration
+  documents**; the transliteration in `LICENSE` is a working form
+
+## Attribution
+
+| Identity | Commits | Role |
+|---|---:|---|
+| `Mahak (Eco Nojin) <mahak@eco-nojin.local>` | 303 | Author and maintainer |
+| `mahak1988 <princemahak00@gmail.com>` | 5 | Author |
+| `dependabot[bot] <users.noreply.github.com>` | 2 | Automated dependency updates |
+
+The two human identities are attributed to the Company's work. The Company
+confirms whether they are one person or two, and this table is updated
+accordingly.
+
+> **Housekeeping.** `eco-nojin.local` is a reserved `.local` mDNS domain and
+> cannot receive mail. Replace it with a deliverable address before using it as
+> a contact point on the licence or in package metadata.
+
+## Contributors
+
+Individual contributions are accepted under the Contributor Licence Agreement in
+[`CONTRIBUTING.md`](./CONTRIBUTING.md). Contributors retain copyright in their
+own work. Add yourself here when you open your first pull request.
+
+| Name | GitHub | Contribution |
+|---|---|---|
+| | | |
+
+## Third-party code vendored in this repository
+
+| Path | Upstream | Licence |
+|---|---|---|
+| `lib/openzeppelin-contracts` | OpenZeppelin | MIT |
+| `lib/forge-std` | Foundry | MIT / Apache-2.0 |
+
+Both are tracked as git submodules. The OpenZeppelin copy is **stale and
+version-mismatched**: `contracts/package.json` declares `^4.9.6` while the
+vendored tree is 5.7.0, and several `security/*` import paths do not exist in
+version 5. This is one of the five reasons `contracts/` does not compile. See
+`reports/ECOCOIN_STRATEGY_FA_2026-09-26.md` §1.2.

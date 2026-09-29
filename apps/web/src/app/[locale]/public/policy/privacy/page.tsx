@@ -4,6 +4,7 @@ import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
@@ -11,12 +12,6 @@ import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
 const SLUGS_PATH = '/api/v1/legal-texts/slugs';
 const LOCALES_PATH = '/api/v1/legal-texts/locales';
 const SLUG = 'privacy';
-
-const TITLES: Record<string, string> = { fa: 'حریم خصوصی', en: 'Privacy Policy' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'متن سیاست حریم خصوصی از سند منتشرشده در سرویس متن‌های حقوقی خوانده می‌شود.',
-  en: 'The privacy policy text is read from the published legal-texts record.',
-};
 
 type LegalText = {
   id: string;
@@ -39,21 +34,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-policy-privacy');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/policy/privacy`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/policy/privacy`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/policy/privacy`,
-        en: `${BASE_URL}/en/public/policy/privacy`,
-      },
+      canonical: canonicalFor(locale, '/public/policy/privacy'),
+      languages: languageAlternates('/public/policy/privacy'),
     },
   };
 }
@@ -61,6 +54,8 @@ export async function generateMetadata({
 export default async function PrivacyPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  const meta = await getTranslations('pageMeta.public-policy-privacy');
   const status = await getTranslations('statusLine');
   const common = await getTranslations('common');
   const template = await getTranslations('market.template');
@@ -73,7 +68,7 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
   ]);
   const legalText = record.ok ? record.data : null;
   const published = legalText?.status === 'published';
-  const heading = legalText?.title ?? TITLES[locale] ?? TITLES.en;
+  const heading = legalText?.title ?? meta('title');
   const slugRows = slugs.ok ? slugs.data : [];
   const localeRows = locales.ok ? locales.data : [];
   const slugsState = toDataState(SLUGS_PATH, slugs, slugRows.length);
@@ -83,16 +78,17 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <div className="mx-auto max-w-4xl px-6 pb-12 pt-8">
-        <ProvenanceStamp
-          source={path}
-          label={heading}
-          verified={published}
-          method={path}
-          timestamp={legalText?.updated_at ?? undefined}
-        >
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="display text-4xl font-bold text-ink">{heading}</h1>
-        </ProvenanceStamp>
-        <p className="mt-3 max-w-2xl text-ink-soft">{DESCRIPTIONS[locale] ?? DESCRIPTIONS.en}</p>
+          <ProvenanceStamp
+            source={path}
+            label={heading}
+            verified={published}
+            method={path}
+            timestamp={legalText?.updated_at ?? undefined}
+          />
+        </div>
+        <p className="mt-3 max-w-2xl text-ink-soft">{meta('description')}</p>
 
         {legalText ? (
           <>

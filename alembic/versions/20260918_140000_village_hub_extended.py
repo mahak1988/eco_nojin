@@ -18,6 +18,22 @@ branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
 
+def _create_foreign_key(
+    name: str,
+    source_table: str,
+    referent_table: str,
+    local_cols: list[str],
+    remote_cols: list[str],
+) -> None:
+    with op.batch_alter_table(source_table) as batch_op:
+        batch_op.create_foreign_key(
+            name,
+            referent_table,
+            local_cols,
+            remote_cols,
+        )
+
+
 def upgrade() -> None:
     # -------------------------------------------------------------------------
     # village_experiences
@@ -104,14 +120,14 @@ def upgrade() -> None:
     op.create_index("idx_eng_opportunity", "village_engagements", ["opportunity_id"])
     op.create_index("idx_eng_project", "village_engagements", ["project_id"])
     op.create_index("idx_eng_role", "village_engagements", ["role"])
-    op.create_foreign_key(
+    _create_foreign_key(
         "fk_eng_opportunity",
         "village_engagements",
         "village_opportunities",
         ["opportunity_id"],
         ["id"],
     )
-    op.create_foreign_key(
+    _create_foreign_key(
         "fk_eng_project",
         "village_engagements",
         "village_projects",
@@ -137,7 +153,7 @@ def upgrade() -> None:
     )
     op.create_index("idx_gap_village", "village_development_gaps", ["village_id"])
     op.create_index("idx_gap_type", "village_development_gaps", ["gap_type"])
-    op.create_foreign_key(
+    _create_foreign_key(
         "fk_gap_opportunity",
         "village_development_gaps",
         "village_opportunities",

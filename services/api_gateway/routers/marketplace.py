@@ -981,6 +981,7 @@ async def list_marketplaces(
     village_id: str | None = Query(None),
     status: str | None = Query(None),
     limit: int = Query(50, ge=1, le=100),
+    db: Session = Depends(get_db),
 ):
     """List all marketplaces."""
     service = get_marketplace_service(db)
@@ -1017,7 +1018,10 @@ async def list_marketplaces(
 
 
 @router.get("/marketplaces/{marketplace_id}")
-async def get_marketplace(marketplace_id: str):
+async def get_marketplace(
+    marketplace_id: str,
+    db: Session = Depends(get_db),
+):
     """Get marketplace details."""
     service = get_marketplace_service(db)
     marketplace = await service.get_marketplace(marketplace_id)

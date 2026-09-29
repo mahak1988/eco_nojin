@@ -18,6 +18,22 @@ branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
 
+def _create_foreign_key(
+    name: str,
+    source_table: str,
+    referent_table: str,
+    local_cols: list[str],
+    remote_cols: list[str],
+) -> None:
+    with op.batch_alter_table(source_table) as batch_op:
+        batch_op.create_foreign_key(
+            name,
+            referent_table,
+            local_cols,
+            remote_cols,
+        )
+
+
 def upgrade() -> None:
     # -------------------------------------------------------------------------
     # village_capabilities
@@ -70,7 +86,7 @@ def upgrade() -> None:
     op.create_index("idx_opp_category", "village_opportunities", ["category"])
     op.create_index("idx_opp_status", "village_opportunities", ["status"])
     op.create_index("idx_opp_capability", "village_opportunities", ["capability_id"])
-    op.create_foreign_key(
+    _create_foreign_key(
         "fk_opp_capability",
         "village_opportunities",
         "village_capabilities",
@@ -108,7 +124,7 @@ def upgrade() -> None:
     op.create_index("idx_proj_village", "village_projects", ["village_id"])
     op.create_index("idx_proj_status", "village_projects", ["status"])
     op.create_index("idx_proj_opportunity", "village_projects", ["opportunity_id"])
-    op.create_foreign_key(
+    _create_foreign_key(
         "fk_proj_opportunity",
         "village_projects",
         "village_opportunities",
@@ -153,7 +169,7 @@ def upgrade() -> None:
     )
     op.create_index("idx_inv_project", "village_investments", ["project_id"])
     op.create_index("idx_inv_investor", "village_investments", ["investor_user_id"])
-    op.create_foreign_key(
+    _create_foreign_key(
         "fk_inv_project",
         "village_investments",
         "village_projects",
@@ -239,7 +255,7 @@ def upgrade() -> None:
     op.create_index("idx_event_reg_event", "village_event_registrations", ["event_id"])
     op.create_index("idx_event_reg_user", "village_event_registrations", ["user_id"])
     op.create_index("idx_event_reg_status", "village_event_registrations", ["status"])
-    op.create_foreign_key(
+    _create_foreign_key(
         "fk_event_reg",
         "village_event_registrations",
         "village_events",
@@ -305,14 +321,14 @@ def upgrade() -> None:
         "idx_interest_entrepreneur", "village_opportunity_interests", ["entrepreneur_id"]
     )
     op.create_index("idx_interest_status", "village_opportunity_interests", ["status"])
-    op.create_foreign_key(
+    _create_foreign_key(
         "fk_interest_opportunity",
         "village_opportunity_interests",
         "village_opportunities",
         ["opportunity_id"],
         ["id"],
     )
-    op.create_foreign_key(
+    _create_foreign_key(
         "fk_interest_entrepreneur",
         "village_opportunity_interests",
         "entrepreneur_profiles",

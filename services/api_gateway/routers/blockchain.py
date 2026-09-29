@@ -2,7 +2,7 @@
 
 from decimal import Decimal
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from database.hub import hub
@@ -15,6 +15,45 @@ def get_db():
 
 
 router = APIRouter(prefix="/api/v1/blockchain", tags=["Blockchain Ledger"])
+
+
+#: Honest capability report, defined once so /health and /ecocoin/health cannot
+#: drift apart. 2026-09-26: every entry below was previously reported as
+#: available while none of it was implemented.
+#:
+#: /health is the endpoint the admin panel and the public health page read
+#: (apps/web/src/lib/api/health.ts, lib/workspaces/registry.ts,
+#: components/admin/admin-sections.ts), which is precisely why it must not
+#: overstate. Each reason is long enough to be checked against the source.
+_ECOCOIN_NOT_IMPLEMENTED: dict[str, str] = {
+    "ecocoin": (
+        "not_implemented — contracts/src/EcoCoin.sol has never compiled; mint() "
+        "reverts unconditionally because _burn runs before _mint on a zero "
+        "balance, and HARD_CAP is dead code because totalSupply() is always 0."
+    ),
+    "impact_certificate": (
+        "not_implemented — ImpactOracle._mintRewards is unreachable and "
+        "ImpactOracle has no duplicate-activity guard."
+    ),
+    "phase_gate": (
+        "not_implemented — PhaseGate is never instantiated; its VVB gate returns "
+        "a hardcoded true and every phase cap initialises to 0."
+    ),
+    "oracle": (
+        "not_implemented — attestation signatures are stored and never verified; "
+        "stake is not escrowed; slashing is a no-op."
+    ),
+    "treasury": (
+        "not_implemented — never funded. 30% of every mint goes to a contract "
+        "with no withdrawal function."
+    ),
+    "ecosystem_fund": (
+        "not_implemented — never funded; totalAllocated is fabricated."
+    ),
+    "mint_controller": (
+        "not_implemented — never invoked by any contract in the repository."
+    ),
+}
 
 
 # ============================================================================
@@ -170,16 +209,32 @@ async def distribute_ecocoin(total: float):
 
 @router.get("/ecocoin/health")
 async def ecocoin_health():
+    """Honest capability report for the EcoCoin module.
+
+    Shares its source of truth with /health so the two cannot diverge.
+    """
     return {
-        "status": "operational",
+        "status": "degraded",
         "module": "ecocoin",
         "version": "1.0.0",
+        "production_ready": False,
         "features": {
             "external_exchange": False,
             "staking": False,
-            "referral_program": True,
-            "phase_gated_transfers": True,
+            "referral_program": False,
+            "phase_gated_transfers": False,
         },
+        "implementation_status": dict(_ECOCOIN_NOT_IMPLEMENTED),
+        "referral_program_note": (
+            "Removed. No referral code, referrer_id field, DB column, or feature "
+            "flag existed anywhere in the codebase; the flag was a literal in a "
+            "return statement."
+        ),
+        "note": (
+            "In-memory simulation only. No contract is deployed on any network. "
+            "See reports/ECOCOIN_STRATEGY_FA_2026-09-26.md for the remediation "
+            "plan and the legal framework for the replacement design."
+        ),
     }
 
 
@@ -220,25 +275,70 @@ async def get_impact_certificate(certificate_id: str):
 # ============================================================================
 
 
+
+
 @router.get("/phasegate/status")
 async def phase_gate_status():
+    """Phase-gate status, in the shape the frontend actually reads.
+
+    2026-09-26 correction. Three separate defects were resolved here:
+
+    1. This route was registered twice with two same-named handlers. The second
+       shadowed the first in the module namespace while FastAPI served the
+       first, so the duplicate was unreachable in every sense.
+    2. Neither version matched `PhaseGateStatus` in the frontend
+       (`{ phase, gates, all_passed }`), which is what
+       public/goals/manifesto and public/goals/roadmap destructure. Both
+       public pages were reading keys the API never returned.
+    3. The previous payload asserted that phases 0 and 1 were *completed* for
+       a protocol that has never compiled. That claim is removed.
+    """
+    gates = [
+        {
+            "id": pid,
+            "name": name,
+            "active": False,
+            "completed": False,
+            "duration_days": days,
+        }
+        for pid, name, days in (
+            ("P0", "Genesis", 30),
+            ("P1", "Impact Pilot", 90),
+            ("P2", "Verified Mint", 180),
+            ("P3", "Self-Custody", 365),
+            ("P4", "Carbon Branch", 540),
+            ("P5", "Governance", 0),
+        )
+    ]
     return {
-        "current_phase": 2,
-        "phase_name": "Verified Mint",
-        "phase_gates": {
-            "P0": {"name": "Genesis", "active": True, "completed": True},
-            "P1": {"name": "Impact Pilot", "active": True, "completed": True},
-            "P2": {"name": "Verified Mint", "active": True, "completed": False},
-            "P3": {"name": "Self-Custody", "active": False, "completed": False},
-            "P4": {"name": "Carbon Branch", "active": False, "completed": False},
-            "P5": {"name": "Governance", "active": False, "completed": False},
-        },
+        "phase": "P0",
+        "gates": gates,
+        # Nothing is passed, because nothing is implemented.
+        "all_passed": False,
+        "implemented": False,
+        "note": (
+            "No phase gate is satisfied. PhaseGate.sol has never compiled and "
+            "is not instantiated anywhere; its VVB gate returns a hardcoded "
+            "true and every phase cap initialises to 0. See "
+            "reports/ECOCOIN_STRATEGY_FA_2026-09-26.md."
+        ),
     }
 
 
 @router.post("/phasegate/activate/{phase}")
 async def activate_phase(phase: int):
-    return {"phase": phase, "status": "activated", "timestamp": "2026-09-20T12:00:00Z"}
+    """Phase activation is not available: there is no deployed PhaseGate.
+
+    Previously this returned a hardcoded `status: activated`, which implied
+    the transition had occurred.
+    """
+    raise HTTPException(
+        status_code=503,
+        detail=(
+            "Phase activation is unavailable: PhaseGate is not deployed and has "
+            "never compiled. See reports/ECOCOIN_STRATEGY_FA_2026-09-26.md"
+        ),
+    )
 
 
 # ============================================================================
@@ -325,71 +425,59 @@ async def add_milestone(grant_id: int, description: str, amount: float, deadline
 
 
 # ============================================================================
-# Phase Gate Status
+# Health and deployment status
+#
+# These two endpoints are read by the admin panel and the public health page
+# (apps/web/src/lib/api/health.ts, lib/workspaces/registry.ts,
+# components/admin/admin-sections.ts), so they must not overstate readiness.
+# 2026-09-26: all seven capability flags below were True while zero of the
+# seven were implemented. They are derived from _ECOCOIN_NOT_IMPLEMENTED so
+# the two endpoints cannot drift apart.
 # ============================================================================
-
-
-@router.get("/phasegate/status")
-async def phase_gate_status():
-    return {
-        "current_phase": 2,
-        "phases": {
-            "P0": {"name": "Genesis", "duration_days": 30, "active": True, "completed": True},
-            "P1": {"name": "Impact Pilot", "duration_days": 90, "active": True, "completed": True},
-            "P2": {
-                "name": "Verified Mint",
-                "duration_days": 180,
-                "active": True,
-                "completed": False,
-            },
-            "P3": {
-                "name": "Self-Custody",
-                "duration_days": 365,
-                "active": False,
-                "completed": False,
-            },
-            "P4": {
-                "name": "Carbon Branch",
-                "duration_days": 540,
-                "active": False,
-                "completed": False,
-            },
-            "P5": {"name": "Governance", "duration_days": 0, "active": False, "completed": False},
-        },
-    }
 
 
 @router.get("/health")
 async def blockchain_health():
     return {
-        "status": "operational",
+        "status": "degraded",
         "service": "Blockchain Ledger - EcoCoin Protocol",
         "mode": "simulation",
-        "features": {
-            "ecocoin": True,
-            "impact_certificate": True,
-            "phase_gate": True,
-            "oracle": True,
-            "treasury": True,
-            "ecosystem_fund": True,
-            "mint_controller": True,
-        },
-        "note": "In-memory simulation for research. Deploy to Polygon Amoy for testnet.",
+        "deployed": False,
+        "production_ready": False,
+        "features": dict.fromkeys(_ECOCOIN_NOT_IMPLEMENTED, False),
+        "implementation_status": dict(_ECOCOIN_NOT_IMPLEMENTED),
+        "note": (
+            "In-memory simulation for research. No contract is deployed on any "
+            "network and none has ever compiled. This endpoint previously "
+            "reported all seven capabilities as available, which was false. "
+            "See reports/ECOCOIN_STRATEGY_FA_2026-09-26.md."
+        ),
     }
 
 
 @router.get("/info")
 async def blockchain_info():
     return {
-        "network": "Polygon Amoy (Testnet)",
-        "chain_id": 80002,
-        "contracts": {
-            "EcoCoin": "0x...",
-            "ImpactCertificate": "0x...",
-            "PhaseGate": "0x...",
-            "ImpactOracle": "0x...",
-            "EcoTreasury": "0x...",
-            "EcosystemFund": "0x...",
-            "MintController": "0x...",
-        },
+        "network": None,
+        "chain_id": None,
+        "deployed": False,
+        "configured_network": "Polygon Amoy (Testnet)",
+        "contracts": dict.fromkeys(
+            (
+                "EcoCoin",
+                "ImpactCertificate",
+                "PhaseGate",
+                "ImpactOracle",
+                "EcoTreasury",
+                "EcosystemFund",
+                "MintController",
+            ),
+            None,
+        ),
+        "note": (
+            "No contract has been deployed. The '0x...' placeholders returned "
+            "before this correction implied otherwise."
+        ),
     }
+
+

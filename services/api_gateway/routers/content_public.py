@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Query
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from database.hub import hub
@@ -19,7 +20,31 @@ from services.content.rag_sync import search_published_content
 router = APIRouter(prefix="/api/v1/content", tags=["content"])
 
 
-@router.get("/search", response_model=dict)
+class ContentSearchHit(BaseModel):
+    """One published document returned by the search surface."""
+
+    id: str
+    title: str
+    category: str
+    language: str
+    published_at: str | None = None
+    snippet: str
+
+
+class ContentSearchResponse(BaseModel):
+    """Search over published content.
+
+    `response_model=dict` published an empty object schema, so a client could not
+    type the query it sent or a single result field. Every field here is set by
+    the route below, so the declaration states what the search actually returns.
+    """
+
+    query: str
+    count: int
+    results: list[ContentSearchHit] = Field(default_factory=list)
+
+
+@router.get("/search", response_model=ContentSearchResponse)
 def search_content(
     q: str = Query(..., min_length=1, max_length=200),
     limit: int = Query(10, ge=1, le=50),

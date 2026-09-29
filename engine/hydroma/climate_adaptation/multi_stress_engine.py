@@ -61,9 +61,21 @@ def salinity_ph_stress(ec: float, ph: float) -> dict:
     salinity_stress = min(1.0, max(0.0, (ec - 4) / 16)) if ec > 4 else 0.0
     alkalinity_stress = min(1.0, max(0.0, (ph - 8.5) / 5.5)) if ph > 8.5 else 0.0
 
-    # شوری + قلیائیت = سدیمی شدن (بسیار خطرناک)
-    # مدل وزن‌دهی تشدیدی (US Salinity Handbook)
-    # شوری عامل اصلی (60%)، قلیائیت عامل تشدید (40%)، و اثر تعاملی (30%)
+    # Salinity plus alkalinity -> sodification risk.
+    #
+    # The weighting below is THIS PROJECT'S construction, not a published one.
+    # The comment here previously attributed it to the "US Salinity Handbook" and
+    # a repository-wide search finds no such reference anywhere else. The US work
+    # of that description is Richards (1954), Agriculture Handbook 60, which is
+    # cited correctly in engine/hydroma/soil/salinity.py:7-8 and which contains
+    # no such weighting.
+    #
+    # The construction is defensible on its own terms -- salinity is the primary
+    # driver of sodicity and high pH compounds it, so the interaction term encodes
+    # a real mechanism -- and the 60/40 split plus a 30% interaction is a
+    # reasonable statement of that. What it is not is a published constant, so it
+    # is labelled as ours rather than borrowed.
+    # See engine/hydroma/formulas/research/__init__.py::multi_stress_amplification.
     sodification_risk = min(
         1.0,
         (salinity_stress * 0.6)

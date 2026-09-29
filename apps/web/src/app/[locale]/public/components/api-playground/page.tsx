@@ -1,7 +1,8 @@
 import { Metadata } from 'next';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
@@ -26,12 +27,6 @@ type ToolRegistry = {
   tools: RegistryTool[];
 };
 
-const TITLES: Record<string, string> = { fa: 'زمین بازی API', en: 'API Playground' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'کنسول تعاملی برای تست اندپوینت‌ها',
-  en: 'Interactive console for testing endpoints',
-};
-
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
@@ -40,21 +35,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-components-api-playground');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/components/api-playground`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/components/api-playground`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/components/api-playground`,
-        en: `${BASE_URL}/en/public/components/api-playground`,
-      },
+      canonical: canonicalFor(locale, '/public/components/api-playground'),
+      languages: languageAlternates('/public/components/api-playground'),
     },
   };
 }
@@ -66,8 +59,10 @@ export default async function APIPlaygroundPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const title = TITLES[locale] ?? TITLES.en;
-  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+
+  const meta = await getTranslations('pageMeta.public-components-api-playground');
+  const title = meta('title');
+  const description = meta('description');
 
   // The registered tool manifest is the only endpoint inventory the gateway
   // publishes; undocumented paths are never listed here.
@@ -79,14 +74,15 @@ export default async function APIPlaygroundPage({
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp
-          source={TOOL_REGISTRY_PATH}
-          label={title}
-          verified={registry.ok}
-          method={TOOL_REGISTRY_PATH}
-        >
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-        </ProvenanceStamp>
+          <ProvenanceStamp
+            source={TOOL_REGISTRY_PATH}
+            label={title}
+            verified={registry.ok}
+            method={TOOL_REGISTRY_PATH}
+          />
+        </div>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
       </section>
 

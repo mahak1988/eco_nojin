@@ -12,6 +12,8 @@ from pathlib import Path
 import numpy as np
 import xarray as xr
 
+from services._contracts.formula import ls_factor
+
 from ..base import MapPipeline, MapRequest, MapResult, MapType
 
 
@@ -132,13 +134,20 @@ class RUSLEPipeline(MapPipeline):
             return source
 
     def _compute_ls(self, dem: xr.DataArray) -> xr.DataArray:
-        """Compute LS-factor (Slope Length & Steepness)."""
+        """Compute LS-factor (Slope Length & Steepness).
+
+        The steepness term is the Foster & Nearing relation in the formula
+        registry, which takes the slope in degrees; the length term is the usual
+        (lambda/22.13)^m with the USDA slope-class exponent. This was already
+        the same relation written out inline, so the numbers do not move.
+        """
         dy = float(np.abs(dem.y[1] - dem.y[0])) * 111000
         dx = float(np.abs(dem.x[1] - dem.x[0])) * 111000
 
         grad_y, grad_x = np.gradient(dem.values, dy, dx, axis=(0, 1))
         slope_rad = np.arctan(np.sqrt(grad_x**2 + grad_y**2))
         slope_pct = np.tan(slope_rad) * 100
+        slope_deg = np.degrees(slope_rad)
 
         slope_length = 100.0  # typical field length in meters
 
@@ -146,8 +155,8 @@ class RUSLEPipeline(MapPipeline):
             slope_pct < 1, 0.2, np.where(slope_pct < 3, 0.3, np.where(slope_pct < 5, 0.4, 0.5))
         )
 
-        sin_b = np.sin(slope_rad)
-        ls = np.power(slope_length / 22.13, m) * (65.41 * sin_b**2 + 4.56 * sin_b + 0.065)
+        s_factor = np.vectorize(ls_factor, otypes=[float])(slope_deg)
+        ls = np.power(slope_length / 22.13, m) * s_factor
         ls = np.clip(ls, 0.1, 50.0)
 
         return xr.DataArray(

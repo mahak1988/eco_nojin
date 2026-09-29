@@ -6,6 +6,10 @@
 // Add OpenMP header
 #include <omp.h>
 
+#include <cstddef>
+#include <string>
+#include <vector>
+
 namespace hydroma {
 
 double rusle_annual_soil_loss(double R, double K, double LS, double C, double P) {
@@ -92,12 +96,18 @@ std::vector<double> rusle_annual_soil_loss_array(const std::vector<double>& R,
     check_same_size_erosion(R, P, "rusle_annual_soil_loss_array");
 
     std::vector<double> out(R.size());
+    // A C++ exception must not escape a structured OpenMP block: libgomp calls
+    // std::terminate, so the process dies instead of Python catching
+    // std::invalid_argument. Validate serially before entering the parallel
+    // region, which also makes the failure deterministic (lowest bad index).
+    for (std::size_t i = 0; i < R.size(); ++i) {
+        if (R[i] < 0.0 || K[i] < 0.0 || LS[i] < 0.0 || C[i] < 0.0 || P[i] < 0.0) {
+            throw std::invalid_argument("RUSLE factors must be non-negative at index " +
+                                        std::to_string(i));
+        }
+    }
     #pragma omp parallel for
     for (std::size_t i = 0; i < R.size(); ++i) {
-        // Directly implement the calculation to avoid scalar function overhead
-        if (R[i] < 0.0 || K[i] < 0.0 || LS[i] < 0.0 || C[i] < 0.0 || P[i] < 0.0) {
-            throw std::invalid_argument("RUSLE factors must be non-negative");
-        }
         out[i] = R[i] * K[i] * LS[i] * C[i] * P[i];
     }
     return out;
@@ -108,17 +118,21 @@ std::vector<double> ls_factor_array(const std::vector<double>& slope_length_m,
     check_same_size_erosion(slope_length_m, slope_percent, "ls_factor_array");
 
     std::vector<double> out(slope_length_m.size());
+    // Validation must stay outside the OpenMP region: throwing from inside it is
+    // undefined behaviour. See the note in rusle_annual_soil_loss_array.
+    for (std::size_t i = 0; i < slope_length_m.size(); ++i) {
+        if (slope_length_m[i] <= 0.0) {
+            throw std::invalid_argument("slope length must be positive at index " + std::to_string(i));
+        }
+        if (slope_percent[i] < 0.0) {
+            throw std::invalid_argument("slope cannot be negative at index " + std::to_string(i));
+        }
+    }
+
     #pragma omp parallel for
     for (std::size_t i = 0; i < slope_length_m.size(); ++i) {
         const double slope_len = slope_length_m[i];
         const double slope_pct = slope_percent[i];
-
-        if (slope_len <= 0.0) {
-            throw std::invalid_argument("slope length must be positive at index " + std::to_string(i));
-        }
-        if (slope_pct < 0.0) {
-            throw std::invalid_argument("slope cannot be negative at index " + std::to_string(i));
-        }
 
         const double slope_fraction = slope_pct / 100.0;
         const double theta = std::atan(slope_fraction);

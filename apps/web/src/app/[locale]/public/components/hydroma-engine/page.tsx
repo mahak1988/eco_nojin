@@ -4,6 +4,7 @@ import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
@@ -39,12 +40,6 @@ type PinnStatus = {
   note?: string;
 };
 
-const TITLES: Record<string, string> = { fa: 'موتور هیدروما', en: 'HydroMa Engine' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'نمایشگر ماژول‌های موتور علمی',
-  en: 'Scientific engine module showcase',
-};
-
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
@@ -53,21 +48,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-components-hydroma-engine');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/components/hydroma-engine`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/components/hydroma-engine`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/components/hydroma-engine`,
-        en: `${BASE_URL}/en/public/components/hydroma-engine`,
-      },
+      canonical: canonicalFor(locale, '/public/components/hydroma-engine'),
+      languages: languageAlternates('/public/components/hydroma-engine'),
     },
   };
 }
@@ -79,11 +72,13 @@ export default async function HydromaEnginePage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  const meta = await getTranslations('pageMeta.public-components-hydroma-engine');
   const status = await getTranslations('statusLine');
   const common = await getTranslations('common');
   const science = await getTranslations('science');
-  const title = TITLES[locale] ?? TITLES.en;
-  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+  const title = meta('title');
+  const description = meta('description');
 
   const [registry, cpp, pinn] = await Promise.all([
     apiGet<ModelsIndex>(MODELS_PATH),
@@ -97,14 +92,15 @@ export default async function HydromaEnginePage({
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp
-          source={MODELS_PATH}
-          label={title}
-          verified={registry.ok}
-          method={MODELS_PATH}
-        >
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-        </ProvenanceStamp>
+          <ProvenanceStamp
+            source={MODELS_PATH}
+            label={title}
+            verified={registry.ok}
+            method={MODELS_PATH}
+          />
+        </div>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
       </section>
 

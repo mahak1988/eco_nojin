@@ -7,7 +7,13 @@ services/ai/nlg.py
 
 from typing import Any
 
-from . import rag
+# The legacy local BM25 index (services.ai.rag) was removed in 5f9aa44; the live
+# RAG service is services.ai.unified_rag (Qdrant + embeddings). Every use of the
+# optional index below is already guarded, so the import must not be fatal.
+try:
+    from . import rag
+except ImportError:
+    rag = None
 
 # ── پایگاه دانش محلی ────────────────────────────────────────────
 _KNOWLEDGE_BASE: dict[str, dict[str, Any]] = {
@@ -143,16 +149,16 @@ def advise(query: str, metrics: dict[str, Any] | None = None) -> dict[str, Any]:
 
     # ۴) تطبیق با metrics
     metrics_context = ""
-    if metrics and "spi" in metrics and isinstance(metrics["spi"], (int, float)):
-        if metrics["spi"] < -0.5:
-            metrics_context = "با توجه به شرایط خشکسالی (SPI منفی)، "
-            evidence.append(
-                {
-                    "source": "metrics",
-                    "type": "metric_alert",
-                    "content": "SPI=" + str(metrics["spi"]) + " - شرایط خشک",
-                }
-            )
+    spi = metrics.get("spi") if metrics else None
+    if isinstance(spi, (int, float)) and spi < -0.5:
+        metrics_context = "با توجه به شرایط خشکسالی (SPI منفی)، "
+        evidence.append(
+            {
+                "source": "metrics",
+                "type": "metric_alert",
+                "content": "SPI=" + str(spi) + " - شرایط خشک",
+            }
+        )
 
     # ۵) ساخت پاسخ نهایی
     answer = metrics_context + " ".join(answer_parts)

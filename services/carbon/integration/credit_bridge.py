@@ -29,12 +29,32 @@ from services.carbon.service import CarbonService
 
 logger = logging.getLogger(__name__)
 
+#: Data modes that may back a tokenised issuance.
+#:
+#: `CarbonService.DataMode` defines exactly two: MODELLED_ESTIMATE and
+#: FIELD_VERIFIED. Its documented contract is that a purely-modelled estimate
+#: "may be registered & verified but yield no credit". A token is a stronger
+#: claim than a credit, so the set here is deliberately narrower than the set
+#: of issuable data modes. Kept as a set of strings (not a reference to the
+#: enum) so that an unexpected value is rejected rather than silently mapped.
+TOKEN_ELIGIBLE_DATA_MODES: frozenset[str] = frozenset({"field_verified"})
+
+
+class TokenIssuanceNotPermitted(PermissionError):
+    """Raised when issuance data quality does not support a token.
+
+    A PermissionError subclass so that callers which already guard
+    authorisation cannot accidentally swallow it as a generic error.
+    """
+
 
 class BridgeStatus(StrEnum):
     PENDING = "pending"
     SYNCED = "synced"
     FAILED = "failed"
     RESOLVED = "resolved"
+    #: 2026-09-26 — issuance refused by the data-quality gate, never attempted.
+    REJECTED = "rejected"
 
 
 class DoubleCountingRisk(StrEnum):
@@ -70,6 +90,16 @@ class ReconciliationResult:
     discrepancies: list[str]
     resolved: bool = False
     resolution: str | None = None
+
+
+def _state_value(state: Any) -> str:
+    """Normalise a credit state that may already be a string.
+
+    ``CarbonService`` stores the state from a ``.value`` in some paths and the
+    enum member in others, so ``credit.state.value`` raised AttributeError on
+    the string case and the whole fetch was swallowed into ``None``.
+    """
+    return state.value if hasattr(state, "value") else str(state)
 
 
 class CreditBridge:
@@ -128,12 +158,15 @@ class CreditBridge:
     # Double-counting prevention
     # ------------------------------------------------------------------ #
 
-    def check_double_counting_risk(self, credit_id: str) -> ReconciliationResult:
+    async def check_double_counting_risk(self, credit_id: str) -> ReconciliationResult:
         """Check if a credit exists in both systems or only in one.
 
         Returns a ReconciliationResult with risk assessment.
+
+        Async because the off-chain state has to be read through the
+        ``AsyncSession`` that ``CarbonService`` holds.
         """
-        off_chain_state = self._get_off_chain_state(credit_id)
+        off_chain_state = await self._get_off_chain_state(credit_id)
         on_chain_state = self._get_on_chain_state(credit_id)
 
         off_chain_exists = off_chain_state is not None
@@ -185,16 +218,35 @@ class CreditBridge:
 
     @staticmethod
     def _states_match(off_state: str, on_status: str) -> bool:
-        """Map off-chain states to on-chain status for comparison."""
+        """Map off-chain states to on-chain status for comparison.
+
+        2026-09-26 fix: `TokenStatus` has four members (ACTIVE, RETIRED,
+        TRANSFERRED, FROZEN) but the mapping omitted TRANSFERRED, so
+        `mapping.get(...)` returned None and every transferred credit was
+        reported as a DISCREPANCY. Reconciliation could therefore never pass
+        after a transfer. The guard below turns a future vocabulary gap into a
+        visible error instead of a silent mismatch.
+        """
+        from services.business_modules.carbon.tokenization import TokenStatus
+
         mapping = {
-            "ACTIVE": "active",
-            "RETIRED": "retired",
+            "ACTIVE": TokenStatus.ACTIVE.value,
+            "RETIRED": TokenStatus.RETIRED.value,
             "DRAFT": "draft",
             "SUBMITTED": "submitted",
             "VERIFIED": "verified",
-            "FROZEN": "frozen",
+            "FROZEN": TokenStatus.FROZEN.value,
+            "TRANSFERRED": TokenStatus.TRANSFERRED.value,
         }
-        return mapping.get(off_state) == on_status
+        if off_state not in mapping:
+            # Explicit failure beats a false DISCREPANCY that looks like a
+            # data-integrity incident.
+            raise ValueError(
+                f"Unknown off-chain credit state {off_state!r}; the off-chain "
+                f"and on-chain vocabularies have diverged. Known: "
+                f"{sorted(mapping)}"
+            )
+        return mapping[off_state] == on_status
 
     # ------------------------------------------------------------------ #
     # State synchronization
@@ -214,7 +266,48 @@ class CreditBridge:
 
         Must be called within the same transaction as the off-chain issuance
         to ensure atomicity.
+
+        Honesty gate (2026-09-26): `data_mode` was previously accepted as an
+        arbitrary string, written into the event dict, and never checked. A
+        caller passing `modelled_estimate` therefore obtained a tokenised
+        issuance with no error. This contradicted the contract in
+        `CarbonService.__doc__` ("purely-modelled estimates ... yield no
+        credit") and made every on-chain number disputable. The gate is now
+        enforced here, at the token boundary, and fails closed.
         """
+        if not TOKEN_ELIGIBLE_DATA_MODES.intersection({data_mode}):
+            event = BridgeEvent(
+                event_id=f"BR-{uuid4().hex}",
+                credit_id=credit_id,
+                event_type="issue",
+                off_chain_state={
+                    "credit_id": credit_id,
+                    "total_amount": amount,
+                    "available_amount": 0.0,
+                    "holder_id": holder_id,
+                    "data_mode": data_mode,
+                },
+                on_chain_state=None,
+                status=BridgeStatus.REJECTED,
+                error=(
+                    f"data_mode={data_mode!r} is not eligible for tokenised "
+                    f"issuance; allowed={sorted(TOKEN_ELIGIBLE_DATA_MODES)}"
+                ),
+                correlation_id=correlation_id,
+            )
+            self._bridge_events.append(event)
+            logger.error(
+                "Issuance rejected: credit=%s data_mode=%r is not token-eligible",
+                credit_id,
+                data_mode,
+            )
+            raise TokenIssuanceNotPermitted(
+                f"data_mode={data_mode!r} is not eligible for tokenised "
+                f"issuance. A modelled estimate cannot back a token: it has no "
+                f"measurement behind it. Allowed: "
+                f"{sorted(TOKEN_ELIGIBLE_DATA_MODES)}."
+            )
+
         event = BridgeEvent(
             event_id=f"BR-{uuid4().hex}",
             credit_id=credit_id,
@@ -344,24 +437,24 @@ class CreditBridge:
     # Reconciliation
     # ------------------------------------------------------------------ #
 
-    def reconcile_all(self) -> list[ReconciliationResult]:
+    async def reconcile_all(self) -> list[ReconciliationResult]:
         """Reconcile all correlated credits between off-chain and on-chain.
 
         Returns a list of ReconciliationResult with risk assessments
         for each credit. Discrepancies are NOT auto-resolved.
         """
         results: list[ReconciliationResult] = []
-        for credit_id in self._correlation:
-            result = self.check_double_counting_risk(credit_id)
+        for credit_id in list(self._correlation):
+            result = await self.check_double_counting_risk(credit_id)
             results.append(result)
         return results
 
-    def reconcile_project(self, project_id: str) -> dict[str, Any]:
+    async def reconcile_project(self, project_id: str) -> dict[str, Any]:
         """Reconcile all credits for a specific project."""
         results: list[ReconciliationResult] = []
-        for c in self._correlation.values():
+        for c in list(self._correlation.values()):
             if c.get("project_id") == project_id:
-                result = self.check_double_counting_risk(c["credit_id"])
+                result = await self.check_double_counting_risk(c["credit_id"])
                 results.append(result)
 
         critical = [
@@ -391,8 +484,16 @@ class CreditBridge:
     # Internal helpers
     # ------------------------------------------------------------------ #
 
-    def _get_off_chain_state(self, credit_id: str) -> dict[str, Any] | None:
-        """Fetch credit state from off-chain database."""
+    async def _get_off_chain_state(self, credit_id: str) -> dict[str, Any] | None:
+        """Fetch credit state from the off-chain database.
+
+        ``CarbonService`` holds an ``AsyncSession``, so ``scalar()`` returns a
+        coroutine. Calling it without ``await`` produced a coroutine object,
+        which is never ``None``, so the ``credit is None`` guard never fired and
+        the following attribute access raised ``AttributeError``. That was
+        swallowed into ``return None``, which made every credit look
+        ``OFF_CHAIN_ONLY`` and turned double-counting detection into a no-op.
+        """
         if self._off_chain is None:
             return None
         try:
@@ -400,7 +501,7 @@ class CreditBridge:
 
             from database.models import CarbonCredit
 
-            credit = self._off_chain.db.scalar(
+            credit = await self._off_chain.db.scalar(
                 select(CarbonCredit).where(CarbonCredit.credit_id == credit_id)
             )
             if credit is None:
@@ -411,7 +512,7 @@ class CreditBridge:
                 "available_amount": float(credit.available_amount),
                 "retired_amount": float(credit.retired_amount),
                 "holder_id": credit.holder_id,
-                "state": credit.state.value,
+                "state": _state_value(credit.state),
                 "frozen": credit.frozen,
                 "data_mode": credit.data_mode,
                 "project_id": credit.project_id,

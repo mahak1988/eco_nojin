@@ -1,9 +1,10 @@
 import { Metadata } from 'next';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
@@ -21,12 +22,6 @@ type SatelliteHealth = {
 
 type Providers = { providers: string[] };
 
-const TITLES: Record<string, string> = { fa: 'نمایشگاه ماهواره', en: 'Satellite View Demo' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'لایه‌های داده ماهواره‌ای و ویژوالایزیشن',
-  en: 'Satellite data layers and visualization',
-};
-
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
@@ -35,21 +30,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-components-satellite-view');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/components/satellite-view`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/components/satellite-view`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/components/satellite-view`,
-        en: `${BASE_URL}/en/public/components/satellite-view`,
-      },
+      canonical: canonicalFor(locale, '/public/components/satellite-view'),
+      languages: languageAlternates('/public/components/satellite-view'),
     },
   };
 }
@@ -61,8 +54,10 @@ export default async function SatelliteViewPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const title = TITLES[locale] ?? TITLES.en;
-  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+
+  const meta = await getTranslations('pageMeta.public-components-satellite-view');
+  const title = meta('title');
+  const description = meta('description');
 
   const [health, providers] = await Promise.all([
     apiGet<SatelliteHealth>(HEALTH_PATH),
@@ -76,14 +71,15 @@ export default async function SatelliteViewPage({
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp
-          source={HEALTH_PATH}
-          label={title}
-          verified={health.ok}
-          method={HEALTH_PATH}
-        >
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-        </ProvenanceStamp>
+          <ProvenanceStamp
+            source={HEALTH_PATH}
+            label={title}
+            verified={health.ok}
+            method={HEALTH_PATH}
+          />
+        </div>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
       </section>
 

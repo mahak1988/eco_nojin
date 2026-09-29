@@ -1,3 +1,7 @@
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
+import { dirname, join, relative, resolve, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 /**
  * Page catalog — the single registry of the 600 logical frontend paths.
  *
@@ -11,6 +15,7 @@
  * test so a page can never claim more than the repository proves:
  *
  *   endpoint === null                       -> 'unavailable' (noindex)
+ *   endpoint === null + declared content     -> 'static'      (index)
  *   endpoint + concrete route file          -> 'live'         (index)
  *   endpoint + registry-driven route file   -> 'capability'   (index)
  *   endpoint + no route file yet            -> 'planned'      (noindex)
@@ -39,7 +44,7 @@ export const CATALOG_DOMAINS = [
 
 export type CatalogDomain = (typeof CATALOG_DOMAINS)[number];
 
-export const CATALOG_STATUSES = ['live', 'capability', 'planned', 'unavailable'] as const;
+export const CATALOG_STATUSES = ['live', 'capability', 'static', 'planned', 'unavailable'] as const;
 
 export type CatalogStatus = (typeof CATALOG_STATUSES)[number];
 
@@ -77,7 +82,67 @@ interface CatalogSeed {
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   sourceOfTruth: string;
   routeFile: string | null;
+  /**
+   * Overrides the group's access label where the published contract disagrees
+   * with the team that owns the surface.
+   */
+  access?: CatalogAccess;
   description: string;
+}
+
+/**
+ * Repository root, found by walking up until a known marker is present.
+ *
+ * Counting `..` segments is what made this wrong twice — the path is five levels
+ * up, not four, and a wrong root turns every `routeFile` lookup into a silent
+ * miss, which then reads as "no page exists" for all 600 entries. A walk cannot
+ * be off by one, and it fails loudly if the layout changes.
+ */
+const REPO_ROOT = (() => {
+  let current = dirname(fileURLToPath(import.meta.url));
+  for (let depth = 0; depth < 12; depth += 1) {
+    if (existsSync(join(current, 'openapi.json'))) return current;
+    const parent = dirname(current);
+    if (parent === current) break;
+    current = parent;
+  }
+  return resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..', '..');
+})();
+
+/**
+ * Static public surfaces: content that is not an API resource.
+ *
+ * `docs/frontend/contract-allowlist.json` is the single written decision that a
+ * path is content rather than a contract-less endpoint. Reading it here keeps
+ * that decision and the catalogue in step: a path may be indexable without a
+ * gateway contract only while the allowlist says so.
+ */
+const DECLARED_STATIC: { routes: ReadonlySet<string>; prefixes: readonly string[] } = (() => {
+  try {
+    const raw = readFileSync(
+      join(REPO_ROOT, 'docs', 'frontend', 'contract-allowlist.json'),
+      'utf8',
+    );
+    const parsed = JSON.parse(raw) as {
+      declaredContent?: Array<{ path?: string }>;
+      declaredStaticRoutes?: string[];
+      declaredStaticPrefixes?: string[];
+    };
+    const routes = new Set<string>(
+      [
+        ...(parsed.declaredStaticRoutes ?? []),
+        ...(parsed.declaredContent ?? []).map((entry) => entry.path ?? ''),
+      ].filter((path) => path),
+    );
+    return { routes, prefixes: parsed.declaredStaticPrefixes ?? [] };
+  } catch {
+    return { routes: new Set<string>(), prefixes: [] };
+  }
+})();
+
+function isDeclaredStatic(path: string): boolean {
+  if (DECLARED_STATIC.routes.has(path)) return true;
+  return DECLARED_STATIC.prefixes.some((prefix) => path.startsWith(prefix));
 }
 
 /** Owner, gate, access and landing page per group, from the real route manifest. */
@@ -156,6 +221,49 @@ export const CATALOG_GROUPS = [
 /** `/market` is already owned by the marketplace catch-all route. */
 export const RESERVED_CATCH_ALL_PREFIXES = ['/market'] as const;
 
+/**
+ * Routes on disk that no catalogue entry claims.
+ *
+ * The catalogue is meant to be the single inventory of the product, so a page
+ * that exists without an entry is a gap. These four predate the catalogue and
+ * are declared rather than added, because each is a duplicate of a surface that
+ * *is* catalogued under a different path, and the reason is recorded per entry so
+ * the declaration cannot quietly become a dumping ground.
+ *
+ * `page-catalog.test.ts` asserts the list equals the computed difference, in both
+ * directions, so any further stray page fails the suite.
+ */
+export const OUT_OF_CATALOGUE_ROUTES: readonly {
+  routeFile: string;
+  path: string;
+  reason: string;
+}[] = [
+  {
+    routeFile: 'apps/web/src/app/[locale]/design-system/components/page.tsx',
+    path: '/design-system/components',
+    reason:
+      'A browsable gallery of the primitives at every density and every required state. It is a team reference rather than a product surface: noindex, and outside the catalogue on purpose so it is not counted as inventory.',
+  },
+  {
+    routeFile: 'apps/web/src/app/[locale]/admin/system/health/page.tsx',
+    path: '/admin/system/health',
+    reason:
+      'Operational health for administrators. The catalogue publishes /system/health for the same gateway read; this path is the role-gated alias.',
+  },
+  {
+    routeFile: 'apps/web/src/app/[locale]/workspace/operations/health/page.tsx',
+    path: '/workspace/operations/health',
+    reason:
+      'Workspace-scoped health. The catalogue publishes /system/health for the same gateway read; this path resolves the tenant.',
+  },
+  {
+    routeFile: 'apps/web/src/app/[locale]/developers/api/page.tsx',
+    path: '/developers/api',
+    reason:
+      'API reference. The catalogue publishes /developers for the developer surface; this path is the OpenAPI reference alias.',
+  },
+];
+
 export function isReservedPath(path: string): boolean {
   return RESERVED_CATCH_ALL_PREFIXES.some(
     (prefix) => path === prefix || path.startsWith(`${prefix}/`),
@@ -170,18 +278,22 @@ export function resolveCatalogStatus(input: {
   endpoint: string | null;
   hasRoute: boolean;
   registryDriven: boolean;
+  declaredContent?: boolean;
 }): CatalogStatus {
-  if (input.endpoint === null) return 'unavailable';
+  if (input.endpoint === null) {
+    if (input.hasRoute && input.declaredContent === true) return 'static';
+    return 'unavailable';
+  }
   if (input.hasRoute) return input.registryDriven ? 'capability' : 'live';
   return 'planned';
 }
 
 /**
- * Only a live route backed by a published contract may be indexed; every
- * other state is noindex.
+ * A live route backed by a published contract may be indexed, and so may a
+ * declared content surface; every other state is noindex.
  */
 export function resolveIndexable(status: CatalogStatus): boolean {
-  return status === 'live' || status === 'capability';
+  return status === 'live' || status === 'capability' || status === 'static';
 }
 
 export function resolveRobots(status: CatalogStatus): {
@@ -5734,6 +5846,7 @@ const SEEDS: readonly CatalogSeed[] = [
     method: 'GET',
     sourceOfTruth: 'services/api_gateway/routers/dashboard.py',
     routeFile: null,
+    access: 'public',
     description:
       'Registered surface /system/dashboard/public/analytics. Gateway contract: GET /dashboard/public/analytics, registered in services/api_gateway/routers/dashboard.py.',
   },
@@ -5746,6 +5859,7 @@ const SEEDS: readonly CatalogSeed[] = [
     method: 'GET',
     sourceOfTruth: 'services/api_gateway/routers/dashboard.py',
     routeFile: null,
+    access: 'public',
     description:
       'Registered surface /system/dashboard/public/carbon. Gateway contract: GET /dashboard/public/carbon, registered in services/api_gateway/routers/dashboard.py.',
   },
@@ -5758,6 +5872,7 @@ const SEEDS: readonly CatalogSeed[] = [
     method: 'GET',
     sourceOfTruth: 'services/api_gateway/routers/dashboard.py',
     routeFile: null,
+    access: 'public',
     description:
       'Registered surface /system/dashboard/public/full. Gateway contract: GET /dashboard/public/full, registered in services/api_gateway/routers/dashboard.py.',
   },
@@ -5770,6 +5885,7 @@ const SEEDS: readonly CatalogSeed[] = [
     method: 'GET',
     sourceOfTruth: 'services/api_gateway/routers/dashboard.py',
     routeFile: null,
+    access: 'public',
     description:
       'Registered surface /system/dashboard/public/mrv. Gateway contract: GET /dashboard/public/mrv, registered in services/api_gateway/routers/dashboard.py.',
   },
@@ -5782,6 +5898,7 @@ const SEEDS: readonly CatalogSeed[] = [
     method: 'GET',
     sourceOfTruth: 'services/api_gateway/routers/dashboard.py',
     routeFile: null,
+    access: 'public',
     description:
       'Registered surface /system/dashboard/public/projects. Gateway contract: GET /dashboard/public/projects, registered in services/api_gateway/routers/dashboard.py.',
   },
@@ -5794,6 +5911,7 @@ const SEEDS: readonly CatalogSeed[] = [
     method: 'GET',
     sourceOfTruth: 'services/api_gateway/routers/dashboard.py',
     routeFile: null,
+    access: 'public',
     description:
       'Registered surface /system/dashboard/public/satellite. Gateway contract: GET /dashboard/public/satellite, registered in services/api_gateway/routers/dashboard.py.',
   },
@@ -5806,6 +5924,7 @@ const SEEDS: readonly CatalogSeed[] = [
     method: 'GET',
     sourceOfTruth: 'services/api_gateway/routers/dashboard.py',
     routeFile: null,
+    access: 'public',
     description:
       'Registered surface /system/dashboard/public/simulations. Gateway contract: GET /dashboard/public/simulations, registered in services/api_gateway/routers/dashboard.py.',
   },
@@ -5818,6 +5937,7 @@ const SEEDS: readonly CatalogSeed[] = [
     method: 'GET',
     sourceOfTruth: 'services/api_gateway/routers/dashboard.py',
     routeFile: null,
+    access: 'public',
     description:
       'Registered surface /system/dashboard/public/soil. Gateway contract: GET /dashboard/public/soil, registered in services/api_gateway/routers/dashboard.py.',
   },
@@ -5830,6 +5950,7 @@ const SEEDS: readonly CatalogSeed[] = [
     method: 'GET',
     sourceOfTruth: 'services/api_gateway/routers/dashboard.py',
     routeFile: null,
+    access: 'public',
     description:
       'Registered surface /system/dashboard/public/test. Gateway contract: GET /dashboard/public/test, registered in services/api_gateway/routers/dashboard.py.',
   },
@@ -5842,6 +5963,7 @@ const SEEDS: readonly CatalogSeed[] = [
     method: 'GET',
     sourceOfTruth: 'services/api_gateway/routers/dashboard.py',
     routeFile: null,
+    access: 'public',
     description:
       'Registered surface /system/dashboard/public/tourism. Gateway contract: GET /dashboard/public/tourism, registered in services/api_gateway/routers/dashboard.py.',
   },
@@ -5854,6 +5976,7 @@ const SEEDS: readonly CatalogSeed[] = [
     method: 'GET',
     sourceOfTruth: 'services/api_gateway/routers/dashboard.py',
     routeFile: null,
+    access: 'public',
     description:
       'Registered surface /system/dashboard/public/weather. Gateway contract: GET /dashboard/public/weather, registered in services/api_gateway/routers/dashboard.py.',
   },
@@ -7305,7 +7428,7 @@ const SEEDS: readonly CatalogSeed[] = [
     endpoint: '/api/v1/content/search',
     method: 'GET',
     sourceOfTruth: 'apps/web/src/app/[locale]/public/education/advanced-search/page.tsx',
-    routeFile: 'apps/web/src/app/[locale]/public/education/advanced-search/page.tsx',
+    routeFile: null,
     description:
       'Registered surface /public/education/advanced-search. Gateway contract: GET /api/v1/content/search, registered in apps/web/src/app/[locale]/public/education/advanced-search/page.tsx.',
   },
@@ -7317,7 +7440,7 @@ const SEEDS: readonly CatalogSeed[] = [
     endpoint: null,
     method: 'GET',
     sourceOfTruth: 'apps/web/src/app/[locale]/public/education/certifications/page.tsx',
-    routeFile: 'apps/web/src/app/[locale]/public/education/certifications/page.tsx',
+    routeFile: null,
     description:
       'Registered surface /public/education/certifications. No gateway contract is published for it; apps/web/src/app/[locale]/public/education/certifications/page.tsx is the only source of truth.',
   },
@@ -7395,10 +7518,134 @@ const SEEDS: readonly CatalogSeed[] = [
   },
 ];
 
+/**
+ * Resolve the page file for a catalogue path by looking on disk.
+ *
+ * The declared `routeFile` in `SEEDS` is what the catalogue *claims*; this is
+ * what actually exists. Preferring the filesystem is what keeps the two from
+ * drifting, and it removes a whole failure mode: a generator that rewrites 600
+ * entries by regular expression can silently truncate the file, and it did so
+ * twice before this was changed.
+ *
+ * `{id}` in a catalogue path is a route parameter and `[id]` on disk. A path that
+ * names a param therefore resolves to any page whose route matches the shape,
+ * which is what `routeFileFor` below checks.
+ */
+function resolveRouteFile(path: string, declared: string | null): string | null {
+  if (declared) {
+    // A declared file is only trusted when it is actually there.
+    try {
+      statSync(join(REPO_ROOT, declared));
+      return declared;
+    } catch {
+      // Fall through to the filesystem scan.
+    }
+  }
+  return routeFileFor(path);
+}
+
+const ROUTE_FILE_CACHE = new Map<string, string | null>();
+
+/** Every `page.tsx` under the locale tree, as catalogue-shaped paths. */
+function realRouteFiles(): readonly string[] {
+  if (realRouteFiles.cached) return realRouteFiles.cached;
+  const files: string[] = [];
+  const walk = (dir: string) => {
+    let entries: import('node:fs').Dirent[];
+    try {
+      entries = readdirSync(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const item of entries) {
+      if (item.name.startsWith('_')) continue;
+      const full = join(dir, item.name);
+      if (item.isDirectory()) {
+        walk(full);
+      } else if (item.name === 'page.tsx') {
+        files.push(
+          relative(REPO_ROOT, full)
+            .split(sep)
+            .join('/')
+            .replace('apps/web/src/app/[locale]', '')
+            .replace('/page.tsx', '') || '/',
+        );
+      }
+    }
+  };
+  walk(join(REPO_ROOT, 'apps', 'web', 'src', 'app', '[locale]'));
+  realRouteFiles.cached = files;
+  return files;
+}
+realRouteFiles.cached = undefined as unknown as string[];
+
+/**
+ * Route-directory name aliases.
+ *
+ * The catalogue names a parameter `{site_id}`; the directory on disk is
+ * `[siteId]`. Matching on names alone left three learning-manual entries looking
+ * unrouted, and each was then a fallback path that the real `[siteId]` page
+ * silently swallowed.
+ *
+ * Matching on *shape* instead was tried and rejected: seventy-four catalogue
+ * paths are dynamic and the app has fewer dynamic directories, so shape-matching
+ * let many entries claim a hand-written page that serves a different logical
+ * path. Three explicit aliases say what is meant; a loose comparison says
+ * something nobody decided.
+ */
+const ROUTE_DIR_ALIASES: Record<string, string> = {
+  site_id: 'siteId',
+};
+
+/** Does a real route file serve this catalogue path? */
+function routeFileFor(path: string): string | null {
+  if (ROUTE_FILE_CACHE.has(path)) return ROUTE_FILE_CACHE.get(path) ?? null;
+
+  const aliased = path.replace(
+    /\{(\w+)\}/g,
+    (_match, name: string) => `{${ROUTE_DIR_ALIASES[name] ?? name}}`,
+  );
+
+  const literal = `apps/web/src/app/[locale]${aliased === '/' ? '' : aliased}/page.tsx`;
+  try {
+    statSync(join(REPO_ROOT, literal));
+    ROUTE_FILE_CACHE.set(path, literal);
+    return literal;
+  } catch {
+    // Not a static route. Try a parameterised one.
+  }
+
+  for (const file of realRouteFiles()) {
+    const logical = file
+      .replace(/^\[\.\.\.(\w+)\]$/, '')
+      .replace(/\[\.\.\.(\w+)\]/g, '{$1}')
+      .replace(/\[(\w+)\]/g, '{$1}');
+    if (
+      logical === path ||
+      logical === aliased ||
+      logical === `${path}/` ||
+      logical === `${aliased}/`
+    ) {
+      const full = `apps/web/src/app/[locale]${file}/page.tsx`;
+      ROUTE_FILE_CACHE.set(path, full);
+      return full;
+    }
+  }
+
+  ROUTE_FILE_CACHE.set(path, null);
+  return null;
+}
+
 function buildEntry(seed: CatalogSeed, group: (typeof CATALOG_GROUPS)[number]): CatalogEntry {
-  const hasRoute = seed.routeFile !== null;
+  const routeFile = resolveRouteFile(seed.path, seed.routeFile);
+  const hasRoute = routeFile !== null;
   const registryDriven = seed.path.includes('{');
-  const status = resolveCatalogStatus({ endpoint: seed.endpoint, hasRoute, registryDriven });
+  const status = resolveCatalogStatus({
+    endpoint: seed.endpoint,
+    hasRoute,
+    registryDriven,
+    declaredContent: isDeclaredStatic(seed.path),
+  });
   const renderedBy: CatalogEntry['renderedBy'] = hasRoute
     ? 'route'
     : isReservedPath(seed.path)
@@ -7414,8 +7661,8 @@ function buildEntry(seed: CatalogSeed, group: (typeof CATALOG_GROUPS)[number]): 
     sourceOfTruth: seed.sourceOfTruth,
     owner: group.owner,
     gate: group.gate,
-    access: group.access,
-    routeFile: seed.routeFile,
+    access: seed.access ?? group.access,
+    routeFile,
     renderedBy,
     indexable: resolveIndexable(status),
     description: seed.description,
@@ -7482,5 +7729,5 @@ export const CATALOG_STATUS_TOTALS = PAGE_CATALOG.reduce<Record<CatalogStatus, n
     totals[entry.status] += 1;
     return totals;
   },
-  { live: 0, capability: 0, planned: 0, unavailable: 0 },
+  { live: 0, capability: 0, static: 0, planned: 0, unavailable: 0 },
 );

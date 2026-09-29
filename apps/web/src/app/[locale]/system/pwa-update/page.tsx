@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { PwaUpdatePanel } from '@/components/system/PwaUpdatePanel';
 import { type RecoveryLinkItem, RecoveryLinks } from '@/components/system/RecoveryLinks';
-import { SITE_URL as BASE_URL } from '@/config/site';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import {
   LIVE_LABEL_KEY,
   METRIC_LABEL_KEY,
@@ -28,11 +28,8 @@ export async function generateMetadata({
     description: t('offline.description'),
     robots: { index: false, follow: false },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/system/pwa-update`,
-      languages: {
-        fa: `${BASE_URL}/fa/system/pwa-update`,
-        en: `${BASE_URL}/en/system/pwa-update`,
-      },
+      canonical: canonicalFor(locale, '/system/pwa-update'),
+      languages: languageAlternates('/system/pwa-update'),
     },
   };
 }

@@ -81,10 +81,20 @@ class EWSI(ScientificModel):
 
     @staticmethod
     def ndmi(nir: np.ndarray, swir: np.ndarray) -> np.ndarray:
-        """Normalized Difference Moisture Index"""
+        """Normalized Difference Moisture Index.
+
+        Uses the same exact zero-denominator guard as the native index kernels
+        (``engine/cpp_core/src/indices.cpp``). This previously added a 1e-9 epsilon
+        to the denominator, which biased every non-degenerate value, and then
+        called ``np.nan_to_num(result, nan=np.nan)`` -- replacing NaN with NaN, a
+        no-op that suggests an intent to clean the result but does nothing.
+        """
+        numerator = np.asarray(nir, dtype=np.float64) - np.asarray(swir, dtype=np.float64)
+        denominator = np.asarray(nir, dtype=np.float64) + np.asarray(swir, dtype=np.float64)
+        out = np.zeros(np.broadcast_shapes(numerator.shape, denominator.shape), dtype=np.float64)
         with np.errstate(divide="ignore", invalid="ignore"):
-            result = (nir - swir) / (nir + swir + 1e-9)
-        return np.clip(np.nan_to_num(result, nan=np.nan), -1, 1)
+            np.divide(numerator, denominator, out=out, where=(denominator != 0.0))
+        return np.clip(out, -1, 1)
 
     def compute(
         self,

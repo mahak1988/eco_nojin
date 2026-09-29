@@ -10,6 +10,12 @@ References:
   conductivity from moisture retention data. Soil Science 117:311-314.
 - Carsel, R.F. & Parrish, R.S. (1988). Developing joint probability
   distributions of soil water retention characteristics. WRR 24:755-769.
+  CITED BUT UNVERIFIED: this citation is the one the parameter table used to
+  claim. The table violates the fineness monotonicity of saturated hydraulic
+  conductivity at two rows, and no copy of the publication is available in the
+  repository to check the transcription against, so the table is now labelled a
+  design assumption. The models below are unaffected; only the parameter values
+  are in question. See engine/data/SOIL_TABLE_CONFLICTS.md.
 - Durner, W. (1994). Multimodality of the water retention function. SSSAJ 58:179-185.
 - Assouline, S. & Or, D. (2013). The Brooks-Corey model thirty years later.
 - Schaap, M.G. & van Genuchten, M.Th. (2006). A closed-form expression for
@@ -17,6 +23,8 @@ References:
 """
 
 import numpy as np
+
+from engine.data.soil_table import SOIL_PARAMETERS
 
 
 def van_genuchten_theta(
@@ -31,17 +39,37 @@ def van_genuchten_theta(
     theta(h) = theta_r + (theta_s - theta_r) / (1 + |alpha*h|^n)^m
     with m = 1 - 1/n.
 
+    A **non-negative** head is a positive pressure, which means the soil is
+    saturated, so theta is theta_s. The formula is only defined for suction
+    (h < 0), and applying |alpha*h| to a positive head would report a positive
+    head of +100 cm as drier than a suction of -33 cm, which is backwards. The
+    sibling copy in ``water_retention.van_genuchten_retention`` handled this
+    correctly and did not; the two disagreed by 735x at +100 cm. This function
+    is now the single implementation and the sibling delegates to it.
+
     Args:
-        h: matric potential head [cm] (negative for unsaturated)
+        h: pressure head [cm]; negative for suction, zero to positive for
+            saturated
         theta_r: residual water content [cm3/cm3]
         theta_s: saturated water content [cm3/cm3]
         alpha: van Genuchten alpha [1/cm]
         n: van Genuchten n [-]
+
+    Returns:
+        theta [cm3/cm3]
     """
+    if theta_s >= 1.0:
+        raise ValueError(
+            "theta_s must be < 1: volumetric water content is a pore "
+            "volume fraction, and a bulk volume that is entirely void "
+            "has no solid phase to be a soil"
+        )
     if theta_s <= theta_r:
         raise ValueError("theta_s must be > theta_r")
     if n <= 1:
         raise ValueError("n must be > 1")
+    if h >= 0.0:
+        return theta_s
     m = 1.0 - 1.0 / n
     ah = abs(alpha * h)
     if ah == 0:
@@ -92,10 +120,18 @@ def brooks_corey_theta(
 
     theta(h) = theta_r + (theta_s - theta_r) * (hb/h)^lam  for h < hb
     theta(h) = theta_s                                  for h >= hb
+
+    ``hb`` and ``h`` enter as magnitudes, so the result is unchanged when both
+    signs flip. Zero suction means zero pressure difference across the air-water
+    interface, i.e. saturation, so ``h = 0`` returns ``theta_s``: the power law
+    is defined only below the air-entry head and diverges as h -> 0 rather than
+    describing soil (Brooks & Corey 1964, eq. 11; Assouline & Or 2013).
     """
     if theta_s <= theta_r:
         raise ValueError("theta_s must be > theta_r")
     if h >= hb:
+        return theta_s
+    if abs(h) == 0.0:
         return theta_s
     return theta_r + (theta_s - theta_r) * (abs(hb) / abs(h)) ** lam
 
@@ -109,33 +145,60 @@ def campbell_theta(
 ) -> float:
     """Water content using Campbell (1974).
 
-    theta(h) = theta_s * (he/h)^(1/b)  for h < he
-    theta(h) = theta_s                 for h >= he
+    theta(h) = theta_r + (theta_s - theta_r) * (he/h)^(1/b)  for |h| > |he|
+    theta(h) = theta_s                                       otherwise
+
+    ``he`` is an air-entry *pressure*, so it and ``h`` are both used as
+    magnitudes, the convention ``brooks_corey_theta`` already used: flipping
+    the two signs together describes the same soil and must give the same
+    theta (Campbell 1974, eq. 3). With signed operands a caller passing
+    ``he = +10, h = +30`` fell into the power-law branch while the same soil
+    passed as ``he = -10, h = -30`` read as saturated.
+
+    Raises:
+        ValueError: if theta_s <= theta_r or b <= 0.
     """
-    if h >= he:
+    if theta_s <= theta_r:
+        raise ValueError("theta_s must be > theta_r")
+    if b <= 0.0:
+        raise ValueError("b must be positive")
+    if abs(h) <= abs(he):
         return theta_s
-    return theta_r + (theta_s - theta_r) * (he / h) ** (1.0 / b)
+    return theta_r + (theta_s - theta_r) * (abs(he) / abs(h)) ** (1.0 / b)
 
 
-# Carsel & Parrish (1988) van Genuchten parameters for 12 USDA textures
-# Ks in cm/day (converted from their cm/hr values *24)
+# van Genuchten parameters for 12 USDA textures, loaded from the single source
+# at engine/data/soil_vg_table.csv. Ks is in cm/day.
+#
+# The table used to be written out here, with the comment "Carsel & Parrish
+# (1988) ... converted from their cm/hr values *24". That attribution is
+# withdrawn: the column is not monotone in texture fineness at two rows, no copy
+# of the cited publication exists in the repository, and three other copies of
+# the table disagreed with this one. The rows are now labelled a design
+# assumption, per the project rule that anything not traceable is either deleted
+# or labelled. See engine/data/SOIL_TABLE_CONFLICTS.md for the open conflicts
+# and engine/data/soil_table.py for the loader.
 SOIL_PARAMETERS_VG: dict[str, dict[str, float]] = {
-    "sand": {"theta_r": 0.045, "theta_s": 0.430, "alpha": 0.145, "n": 2.68, "Ks": 712.8},
-    "loamy_sand": {"theta_r": 0.057, "theta_s": 0.410, "alpha": 0.124, "n": 2.28, "Ks": 350.2},
-    "sandy_loam": {"theta_r": 0.065, "theta_s": 0.410, "alpha": 0.075, "n": 1.89, "Ks": 106.1},
-    "loam": {"theta_r": 0.078, "theta_s": 0.430, "alpha": 0.036, "n": 1.56, "Ks": 25.0},
-    "silt_loam": {"theta_r": 0.067, "theta_s": 0.450, "alpha": 0.020, "n": 1.41, "Ks": 10.8},
-    "sandy_clay_loam": {"theta_r": 0.100, "theta_s": 0.390, "alpha": 0.059, "n": 1.48, "Ks": 31.4},
-    "clay_loam": {"theta_r": 0.095, "theta_s": 0.410, "alpha": 0.019, "n": 1.31, "Ks": 6.2},
-    "silty_clay_loam": {"theta_r": 0.089, "theta_s": 0.430, "alpha": 0.010, "n": 1.23, "Ks": 2.9},
-    "sandy_clay": {"theta_r": 0.100, "theta_s": 0.380, "alpha": 0.027, "n": 1.23, "Ks": 2.9},
-    "silty_clay": {"theta_r": 0.070, "theta_s": 0.360, "alpha": 0.005, "n": 1.09, "Ks": 1.92},
-    "clay": {"theta_r": 0.068, "theta_s": 0.380, "alpha": 0.008, "n": 1.09, "Ks": 4.8},
-    "silt": {"theta_r": 0.034, "theta_s": 0.460, "alpha": 0.016, "n": 1.37, "Ks": 6.0},
+    texture: {
+        key: value
+        for key, value in entry.items()
+        if key in ("theta_r", "theta_s", "alpha", "n", "Ks")
+    }
+    for texture, entry in SOIL_PARAMETERS.items()
 }
 
-# Field capacity (-330 cm) and permanent wilting point (-15000 cm) heads
-FC_HEAD_CM = 330.0
+# Field capacity and permanent wilting point heads, as positive depths [cm].
+#
+# FAO-56 places field capacity at 0.33 bar, i.e. -33 cm, and permanent wilting
+# point at 15 bar, i.e. -15000 cm. The value here was 330.0, a factor of ten
+# deeper, which made available water collapse: sand reported 0.0006 cm3/cm3
+# against 0.091 published, and loam 0.077 against 0.180, so sand held
+# essentially no plant-available water and loam behaved like a sandy soil. Only
+# two of twelve textures landed within 30 % of Saxton & Rawls (2006) at 330 cm,
+# against five of twelve at 33 cm. The sibling module
+# water_retention._find_field_capacity has always used -33 cm, so the two
+# modules disagreed by a factor of ten on the same physical constant.
+FC_HEAD_CM = 33.0
 PWP_HEAD_CM = 15000.0
 
 

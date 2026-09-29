@@ -567,9 +567,10 @@ async def oauth_login(
     """Generate an OAuth authorization URL for the given provider.
 
     PRIMARY: Supabase GoTrue (real Google/GitHub/Microsoft OAuth).
-    FALLBACK: when Supabase is unreachable we return a local mock URL that
-    the frontend can redirect to. The mock creates a local user account
-    with a provider-prefixed email so login still works offline."""
+    FALLBACK: when Supabase is unreachable and the offline stub is explicitly
+    enabled, we return a local URL that the frontend can redirect to. It
+    creates a local account so login still works offline. Without the opt-in
+    the request is refused rather than silently downgraded."""
     if provider not in SUPPORTED_OAUTH_PROVIDERS:
         return {"status": "error", "error": f"Unsupported provider: {provider}", "http": 400}
 
@@ -602,19 +603,26 @@ async def oauth_login(
                 "code_verifier": code_verifier,
             }
         except Exception:
-            # Fall through to the local mock if the real OAuth fails.
+            # Fall through to the offline stub if the real OAuth fails.
             pass
 
-    # LOCAL MOCK FALLBACK
-    # Generate a deterministic mock code that the callback endpoint can
-    # exchange for a local user account. The email is derived from the
-    # provider so the same user always gets the same account.
+    if not _local_fallback_allowed():
+        return {
+            "status": "error",
+            "error": "Identity provider unavailable",
+            "http": 503,
+        }
+
+    # OFFLINE STUB (opt-in)
+    # A deterministic code that the callback endpoint exchanges for a local
+    # account. The email is derived from the provider so the same user always
+    # gets the same account.
     import secrets as _secrets
 
     mock_code = _secrets.token_urlsafe(16)
     return {
         "status": "ok",
-        "url": f"{redirect_uri}?code={mock_code}&provider={provider}&mock=true",
+        "url": f"{redirect_uri}?code={mock_code}&provider={provider}",
         "provider": provider,
         "code_verifier": mock_code,
         "mock": True,
@@ -626,20 +634,27 @@ async def oauth_callback(
     code: str,
     code_verifier: str,
     provider: str = "google",
-    mock: bool = False,
     db: AsyncSession = Depends(get_async_db),
 ) -> dict[str, Any]:
     """Handle the OAuth callback — exchange the authorization code for a
-    session, then create or look up the user in the local SQLite auth
-    router and return a local JWT.
+    session, then create or look up the user in the local auth router and
+    return a local JWT.
 
-    REAL FLOW: when Supabase is reachable and `mock=false`, the code is
-    exchanged with GoTrue via PKCE.
-
-    MOCK FLOW: when `mock=true` or Supabase is unreachable, we create a
-    local user account with a provider-prefixed email (e.g.
-    `user_google@example.com`) so OAuth login works offline."""
-    if mock or not await _supabase_reachable():
+    When Supabase is unreachable, the request is refused with 503 unless
+    ``ENABLE_LOCAL_OAUTH_FALLBACK=true`` is set explicitly. The previous
+    ``mock: bool = False`` query parameter let any caller force the local
+    path even while Supabase was healthy: it derived a stable email from the
+    caller-supplied ``code_verifier``, created a verified account, and
+    returned a valid signed access and refresh token — account creation with
+    no credential at all.
+    """
+    if not await _supabase_reachable():
+        if not _local_fallback_allowed():
+            return {
+                "status": "error",
+                "error": "Identity provider unavailable",
+                "http": 503,
+            }
         return await _local_oauth_callback(code, code_verifier, provider, db)
 
     try:
@@ -724,9 +739,33 @@ async def oauth_callback(
             "fallback": "local",
         }
     except Exception as exc:
-        if _is_network_error(exc):
+        if _is_network_error(exc) and _local_fallback_allowed():
             return await _local_oauth_callback(code, code_verifier, provider, db)
         return {"status": "error", "error": str(exc)}
+
+
+def _local_fallback_allowed() -> bool:
+    """True only when the offline OAuth stub is explicitly enabled.
+
+    Two independent conditions must both hold: the operator opted in, and the
+    deployment is not production. ``is_production`` is evaluated from the
+    environment rather than a free-form string so a misconfigured
+    ``APP_ENV`` cannot silently satisfy the check.
+    """
+    from engine.hydroma.config.settings import get_settings
+
+    try:
+        settings = get_settings()
+    except Exception:
+        return False
+    if not settings.enable_local_oauth_fallback:
+        return False
+    if settings.is_production:
+        raise RuntimeError(
+            "ENABLE_LOCAL_OAUTH_FALLBACK must not be enabled in production: "
+            "the local OAuth callback mints sessions without verifying a credential."
+        )
+    return True
 
 
 async def _local_oauth_callback(
@@ -735,9 +774,17 @@ async def _local_oauth_callback(
     provider: str,
     db: AsyncSession,
 ) -> dict[str, Any]:
-    """Mock OAuth fallback — create or look up a local user account for the
-    given provider. The email is derived from the provider so the same user
-    always gets the same account across sessions."""
+    """Offline OAuth stub — create or look up a local account for a provider.
+
+    DEVELOPMENT ONLY. Reachable solely through ``_local_fallback_allowed()``,
+    which requires ``ENABLE_LOCAL_OAUTH_FALLBACK=true`` and a non-production
+    environment.
+
+    The account is created with an empty password hash, so it cannot be
+    logged into through the password flow, but the token returned here is an
+    ordinary signed access token. That is why the path is gated rather than
+    merely documented.
+    """
     import hashlib as _hashlib
 
     from sqlalchemy import select as _select

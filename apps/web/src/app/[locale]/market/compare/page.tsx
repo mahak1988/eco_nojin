@@ -167,7 +167,7 @@ export default function ComparePage() {
                     onClick={() => toggleProduct(product.id)}
                     aria-pressed={selected.includes(product.id)}
                     disabled={!selected.includes(product.id) && selected.length >= MAX_COMPARE}
-                    className={`rounded-md border p-3 text-left disabled:opacity-40 ${
+                    className={`rounded-md border p-3 text-start disabled:opacity-40 ${
                       selected.includes(product.id)
                         ? 'border-forest bg-forest/5'
                         : 'border-line hover:border-ink/30'
@@ -190,7 +190,7 @@ export default function ComparePage() {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-line">
-                        <th className="px-3 py-3 text-left font-medium text-ink-soft">
+                        <th className="px-3 py-3 text-start font-medium text-ink-soft">
                           {t('feature')}
                         </th>
                         {selectedProducts.map((product) => (

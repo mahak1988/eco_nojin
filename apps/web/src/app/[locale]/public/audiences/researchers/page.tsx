@@ -1,8 +1,9 @@
 import { Metadata } from 'next';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
@@ -15,12 +16,6 @@ type CitationItem = { slug: string; reference: string; doi: string | null };
 
 type CitationIndex = { count: number; items: CitationItem[] };
 
-const TITLES: Record<string, string> = { fa: 'پژوهشگران', en: 'Researchers' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'رجیستری مدل‌ها و مرجع علمی هر مدل',
-  en: 'The model registry and the scientific reference behind each model',
-};
-
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
@@ -29,21 +24,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-audiences-researchers');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/audiences/researchers`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/audiences/researchers`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/audiences/researchers`,
-        en: `${BASE_URL}/en/public/audiences/researchers`,
-      },
+      canonical: canonicalFor(locale, '/public/audiences/researchers'),
+      languages: languageAlternates('/public/audiences/researchers'),
     },
   };
 }
@@ -52,8 +45,10 @@ export default async function ResearchersPage({ params }: { params: Promise<{ lo
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const title = TITLES[locale] ?? TITLES.en;
-  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+  const meta = await getTranslations('pageMeta.public-audiences-researchers');
+
+  const title = meta('title');
+  const description = meta('description');
 
   const models = await apiGet<ModelsIndex>('/api/v1/models');
   const modelsState = toDataState(
@@ -72,14 +67,15 @@ export default async function ResearchersPage({ params }: { params: Promise<{ lo
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp
-          source={'/api/v1/models'}
-          label={title}
-          verified={models.ok}
-          method={'/api/v1/models'}
-        >
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-        </ProvenanceStamp>
+          <ProvenanceStamp
+            source={'/api/v1/models'}
+            label={title}
+            verified={models.ok}
+            method={'/api/v1/models'}
+          />
+        </div>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
       </section>
 

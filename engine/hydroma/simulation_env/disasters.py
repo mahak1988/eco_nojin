@@ -249,8 +249,19 @@ def simulate_flood(scenario: FloodScenario) -> FloodResult:
     slope_pct = np.degrees(np.arctan(slope)) * 100.0
 
     # SCS-CN runoff depth for the event.
+    #
+    # S is the potential maximum retention in MILLIMETRES, so the SI form
+    # S = (25400 / CN) - 254 applies. The US-customary form
+    # S = (1000 / CN) - 10 yields INCHES: 25.4x smaller. Against millimetre
+    # rainfall that shrinks the initial abstraction and inflates the event runoff
+    # -- by 11.1x at CN 50, 2.3x at CN 75, 1.2x at CN 95.
+    #
+    # The same defect was already found and fixed in
+    # engine/hydroma/models/runoff_model.py:113-117 and again in
+    # simulation_env/climate.py, but it survived here, where the expression had
+    # been re-derived independently for a third time.
     cn = scenario.curve_number
-    s = 1000.0 / cn - 10.0
+    s = (25400.0 / cn) - 254.0
     p = scenario.rainfall_24h_mm
     runoff_depth = max(0.0, (p - 0.2 * s) ** 2 / (p + 0.8 * s)) if p > 0.2 * s else 0.0
     cell_area_ha = scenario.area_ha / (grid * grid)
@@ -428,20 +439,38 @@ def _infinite_slope_fs(
 ) -> tuple[float, float]:
     """Infinite-slope factor of safety after rainfall infiltration.
 
-    FS = [c' + (gamma_sat - m*gamma_w) * z * cos(B) * tan(phi')] /
-         [gamma_sat * z * sin(B)]
-    where m = rain_saturation_factor * (1 - vegetation_reduction).
+    FS = [c' + (gamma_sat - m*gamma_w) * z * cos(beta) * tan(phi')] /
+         [gamma_sat * z * sin(beta)]
+
+    with m the degree of saturation. Two deviations from the textbook form are
+    retained deliberately, and both are now stated in the code:
+
+    * m is approximated by ``clip(rainfall/150, 0, 1) * (1 - vegetation)`` rather
+      than computed, because a true saturation degree needs antecedent moisture and
+      a water-table position that this signature does not carry. It is a rainfall
+      proxy, not a degree of saturation, and it is why vegetation reduces the
+      apparent saturation rather than modifying shear strength directly.
+    * ``cohesion_kpa`` is the EFFECTIVE cohesion while the pore-pressure term is
+      subtracted separately, so the two are combined as though the cohesion were
+      total. That double-counts where both are non-zero.
     """
     beta = math.radians(slope_pct / 100.0)
     phi = math.radians(phi_deg)
     c = cohesion_kpa  # kPa
     z = soil_depth_m  # m
-    # Rain infiltration raises pore pressure: m approximates saturation fraction.
+    # Pore-pressure rise from infiltration. The degree of saturation m is
+    # APPROXIMATED here by a rainfall proxy; a true m needs antecedent moisture
+    # and a water table, neither of which this interface carries.
     sat_frac = float(np.clip(rainfall_mm / 150.0, 0.0, 1.0))
     m = sat_frac * (1.0 - vegetation_reduction)
     effective_unit_weight = gamma_sat - m * gamma_w
     shear_strength = c + effective_unit_weight * z * math.cos(beta) * math.tan(phi)
-    driving = gamma_sat * z * math.sin(beta) * math.cos(beta)
+    # Driving stress for a planar infinite slope is gamma_sat * z * sin(beta).
+    # The extra cos(beta) this used to carry is not part of the standard form and
+    # was removed: it made the denominator fall off faster than sin(beta) and so
+    # inflated the factor of safety at high slope angles, which is backwards --
+    # steep slopes should be the least stable.
+    driving = gamma_sat * z * math.sin(beta)
     fs = shear_strength / max(driving, 1e-6)
     return fs, m
 

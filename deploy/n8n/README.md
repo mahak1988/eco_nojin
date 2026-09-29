@@ -13,17 +13,16 @@ In n8n: **Workflows → Import from File** and pick:
 
 ## 2. Environment
 
-Set on the n8n host (and on the backend host):
+Set `AGENT_TOKEN` in the environment used by the backend and Podman Compose:
 
 ```bash
-# backend (.env)
+# backend and compose environment
 AGENT_TOKEN=<a long random string>     # protects /api/v1/automation/agent-run
-
-# n8n
-ECONOJIN_AGENT_TOKEN=<the same value>
 ```
 
-Without `AGENT_TOKEN` the backend falls back to `dev-agent-token` (development only).
+The Compose file maps this value to both `AGENT_TOKEN` for the backend and
+`ECONOJIN_AGENT_TOKEN` for n8n workflows. Without `AGENT_TOKEN`, the backend
+falls back to `dev-agent-token` (development only).
 
 ## 3. Endpoints n8n uses
 

@@ -15,6 +15,13 @@
     "type-check": "pnpm -C apps/web type-check",
     "generate:api": "pnpm -C apps/web generate:api",
     "check:site-url": "node scripts/check-site-url.mjs",
+    "check:messages": "node scripts/check-message-usage.mjs",
+    "check:locales": "node scripts/check-locale-depth.mjs",
+    "check:locale-encoding": "node scripts/check-locale-encoding.mjs",
+    "check:page-meta": "node scripts/check-page-meta.mjs",
+    "check:font-coverage": "node scripts/check-font-coverage.mjs",
+    "check:ui-kit": "node scripts/check-ui-kit.mjs",
+    "check:orphan-components": "node scripts/check-orphan-components.mjs",
     "quality": "pnpm -C apps/web quality",
     "backend:test": "python -m pytest -q",
     "test:all": "pnpm test && pnpm backend:test"

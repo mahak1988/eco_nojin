@@ -381,9 +381,21 @@ def simulate_monsoon(
 
     peak_24h = float(df["precip"].rolling(24, min_periods=1).sum().max())
 
-    # SCS-CN runoff (event scale): Q = (P - 0.2*S)^2 / (P + 0.8*S), S = 1000/CN - 10
+    # SCS-CN runoff (event scale): Q = (P - 0.2*S)^2 / (P + 0.8*S).
+    #
+    # S is the potential maximum retention in MILLIMETRES, so the SI form
+    # S = (25400 / CN) - 254 applies. The US-customary form
+    # S = (1000 / CN) - 10 yields INCHES: 25.4x smaller. Against millimetre
+    # rainfall that shrinks the initial abstraction and inflates the event
+    # runoff -- by 11.1x at CN 50, 2.3x at CN 75, 1.2x at CN 95.
+    #
+    # This defect was already found and fixed in
+    # engine/hydroma/models/runoff_model.py:113-117, but it survived here and in
+    # simulation_env/disasters.py, where the same expression was re-derived.
+    # models/runoff_model.py now carries the note explaining why the two forms
+    # must never be mixed.
     cn = scenario.curve_number
-    s = 1000.0 / cn - 10.0
+    s = (25400.0 / cn) - 254.0
     total_p = float(df["precip"].sum())
     runoff_depth = (
         max(0.0, (total_p - 0.2 * s) ** 2 / (total_p + 0.8 * s)) if total_p > 0.2 * s else 0.0

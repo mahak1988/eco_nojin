@@ -14,7 +14,7 @@ import rioxarray
 import xarray as xr
 from shapely.geometry import Polygon
 
-from ..base import MapFetcher
+from ..base import DataOrigin, MapFetcher
 
 
 class VegetationFetcher(MapFetcher):
@@ -29,6 +29,9 @@ class VegetationFetcher(MapFetcher):
     - B11 (SWIR, 1610nm)
     - SCL (Scene Classification Layer)
     """
+
+    DATA_ORIGIN = DataOrigin.SYNTHETIC
+    ORIGIN_DETAIL = "VegetationFetcher returns a uniform random NDVI field; no Sentinel-2 or Landsat data is read"
 
     # Typical reflectance ranges (scaled 0-10000)
     BAND_PROFILES = {

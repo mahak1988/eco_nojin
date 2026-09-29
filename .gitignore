@@ -228,3 +228,15 @@ _nmb*/
 *mock_backup
 _quarantine_bak_*/
 _backup_*/
+
+# Vendored Solidity dependencies - install from the registry, do not commit.
+# 2026-09-26: removed a stale OpenZeppelin 5.7.0 copy that the 4.9.x source
+# could not compile against. See contracts/README.md.
+/lib/
+/contracts/lib/
+foundry/
+foundry.zip
+foundry.lock
+
+# Applier backup: written only when a pass removes catalogue entries
+apps/web/messages/*.bak

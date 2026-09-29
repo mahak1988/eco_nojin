@@ -7,7 +7,12 @@ from sqlalchemy import and_, desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from services.contracts.models import ContractTestRun, ContractVersionModel
+
+# The schema is named ContractCreate. It was previously imported as
+# CreateContractRequest, which does not exist, so this module raised NameError
+# at import time and the whole contract registry was unreachable.
 from services.contracts.schemas import (
+    ContractCreate,
     ContractResponse,
 )
 
@@ -22,7 +27,7 @@ class ContractRegistry:
     # Contract Version CRUD
     # =========================================================================
 
-    async def register_contract(self, data: CreateContractRequest) -> ContractResponse:
+    async def register_contract(self, data: ContractCreate) -> ContractResponse:
         """Register a new contract version."""
         # Check if version already exists
         existing = await self.db.execute(

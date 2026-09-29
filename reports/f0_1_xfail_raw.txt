@@ -1,0 +1,542 @@
+﻿
+XFAIL engine/strict_tests/test_s01_import_integrity.py::TestDanglingAbsoluteImports::test_scenario_manager_imports - 
+engine/hydroma/scenarios/scenario_manager.py:16 imports `engine.hydroma.risk.assessment`, and that package does not 
+exist in the repository. The source comment says '# hypothetical'. The whole scenario orchestration module is 
+therefore unimportable, so scenario definition, execution and storage are all dead.
+XFAIL 
+engine/strict_tests/test_s01_import_integrity.py::TestDanglingAbsoluteImports::test_dangling_absolute_imports_resolve 
+- The single dangling absolute import in the engine tree is the `engine.hydroma.risk.assessment` reference above; 
+removing it also clears this test.
+XFAIL engine/strict_tests/test_s01_import_integrity.py::TestNoDeadBranches::test_no_discarded_value_access - 
+watershed/calculator.py:119 drops the trapezoidal-storage rearrangement and line 400 drops the node-list lookup. Line 
+119 sits inside the check-dam height solve and is the visible remains of an abandoned formulation of the same equation 
+computed on the next line.
+XFAIL 
+engine/strict_tests/test_s01_import_integrity.py::TestSelfDocumentedClaims::test_design_functions_use_every_parameter 
+- engine/hydroma/watershed/calculator.py:82 docstring claims 'all inputs are used; none is decorative', but slope_pct 
+is accepted and never referenced in the body, so a check dam sized on a 2 % slope is identical to one on a 60 % slope. 
+design_half_moon ignores both slope_pct and rainfall_mm; design_terrace ignores terrace_width_m and instead hard-codes 
+channel_volume_per_m = 0.135 m3/m.
+XFAIL 
+engine/strict_tests/test_s02_climate_et0.py::TestExtraterrestrialRadiation::test_poles_are_exact_mirror_images[90.0] - 
+engine/hydroma/climate/et_calculator.py:66 computes the sunset-hour angle as acos(tan(phi)*tan(delta)). tan(+-pi/2) in 
+binary64 is a large sign-dependent finite number, about +-1.63e16, not infinity, so the clamp resolves differently for 
+the two poles. On day 1 of the year Ra(90, 1) is 0 while Ra(-90, 1) is 47.613 MJ/m2/day, although the two poles at the 
+same day of year are the same geometry. The pole that is meant to be in polar night is in polar day.
+XFAIL 
+engine/strict_tests/test_s02_climate_et0.py::TestExtraterrestrialRadiation::test_poles_are_exact_mirror_images[-90.0] 
+- engine/hydroma/climate/et_calculator.py:66 computes the sunset-hour angle as acos(tan(phi)*tan(delta)). tan(+-pi/2) 
+in binary64 is a large sign-dependent finite number, about +-1.63e16, not infinity, so the clamp resolves differently 
+for the two poles. On day 1 of the year Ra(90, 1) is 0 while Ra(-90, 1) is 47.613 MJ/m2/day, although the two poles at 
+the same day of year are the same geometry. The pole that is meant to be in polar night is in polar day.
+XFAIL engine/strict_tests/test_s02_climate_et0.py::TestPenmanMonteith::test_matches_the_compiled_backend - The 
+engine's Penman-Monteith violates the energy ceiling on 11.2 % of physically coherent days (60000 sampled, 6691 
+violations) and by up to 27x at the worst corner (Tmin 22.1 C, Tmax 33.0 C, rh_min 29 %, u2 5.89 m/s, Rs 0.5 MJ/m2/day 
+gives 10.44 mm/day of ET0 out of 0.38 mm/day of net radiation). Root cause is line 173: rn = data.solar_radiation * 
+0.77 is net SHORT-wave only, so the aerodynamic term of eq. 39 is not balanced by any energy budget and can dominate. 
+The fix is to add Rnl from FAO-56 eq. 40 (Stull 1996 cloudiness), which test_includes_net_longwave_loss specifies.
+XFAIL engine/strict_tests/test_s02_climate_et0.py::TestAutoSelection::test_hargreaves_substitutes_for_penman_monteith 
+- FAO-56 presents Hargreaves-Samani as the substitute to use when the full Penman-Monteith input set is unavailable, 
+and the two are expected to agree within roughly 10-20 % on the same day. The engine disagrees by more than that 
+because eq. 52 uses exponent 0.50 instead of 0.48 and eq. 39 omits the net longwave loss Rnl. Both gaps are pinned 
+separately; this test measures their combined effect.
+XFAIL engine/strict_tests/test_s02_climate_et0.py::TestAutoSelection::test_flat_temperature_day_returns_zero - 
+engine/hydroma/climate/et_calculator.py:91 rejects t_max <= t_min, so a day with no diurnal temperature swing (uniform 
+overcast, or a polar night) raises instead of returning the FAO-56 eq. 52 value of zero. Because calc_et0 routes 
+method selection through this exception, the auto-selector propagates the error rather than falling back. Such days 
+occur every year at every site.
+XFAIL engine/strict_tests/test_s03_hydrology_runoff.py::TestScsCurveNumber::test_non_positive_curve_number_raises_value
+_error[0.0] - engine/hydroma/models/runoff_model.py:117 computes S = 25400/CN - 254 with no lower guard on CN. CN = 0 
+raises ZeroDivisionError, which is not a ValueError and is not declared in the signature, so the API layer turns a 
+client-supplied curve number into a 500 instead of a 400. Negative CN is already caught by the s < 0 guard. The NRCS 
+table admits 30 <= CN <= 100.
+XFAIL engine/strict_tests/test_s03_hydrology_runoff.py::TestScsCurveNumber::test_non_positive_curve_number_raises_value
+_error[0.5] - engine/hydroma/models/runoff_model.py:117 computes S = 25400/CN - 254 with no lower guard on CN. CN = 0 
+raises ZeroDivisionError, which is not a ValueError and is not declared in the signature, so the API layer turns a 
+client-supplied curve number into a 500 instead of a 400. Negative CN is already caught by the s < 0 guard. The NRCS 
+table admits 30 <= CN <= 100.
+XFAIL 
+engine/strict_tests/test_s03_hydrology_runoff.py::TestScsCurveNumber::test_out_of_table_curve_number_is_rejected[5.0] 
+- The NRCS curve-number table is defined for 30 <= CN <= 100. The engine's RunoffInput.curve_number has no bounds, and 
+the pydantic field is typed float | CurveNumberType with float first, so the CurveNumberType members are coerced to 
+plain floats and the isinstance branch at line 105 is unreachable.
+XFAIL 
+engine/strict_tests/test_s03_hydrology_runoff.py::TestScsCurveNumber::test_out_of_table_curve_number_is_rejected[20.0] 
+- The NRCS curve-number table is defined for 30 <= CN <= 100. The engine's RunoffInput.curve_number has no bounds, and 
+the pydantic field is typed float | CurveNumberType with float first, so the CurveNumberType members are coerced to 
+plain floats and the isinstance branch at line 105 is unreachable.
+XFAIL 
+engine/strict_tests/test_s03_hydrology_runoff.py::TestScsCurveNumber::test_out_of_table_curve_number_is_rejected[29.0] 
+- The NRCS curve-number table is defined for 30 <= CN <= 100. The engine's RunoffInput.curve_number has no bounds, and 
+the pydantic field is typed float | CurveNumberType with float first, so the CurveNumberType members are coerced to 
+plain floats and the isinstance branch at line 105 is unreachable.
+XFAIL 
+engine/strict_tests/test_s03_hydrology_runoff.py::TestRationalMethod::test_intensity_uses_an_explicit_storm_duration - 
+engine/hydroma/models/runoff_model.py:93 hardcodes duration_hr = 1.0 and line 94 takes the design depth as the 
+intensity. The rational method is only valid for storms whose duration equals or exceeds the time of concentration, 
+and RunoffInput has no duration field, so a 50 mm daily total is silently treated as a 50 mm/hr burst.
+XFAIL engine/strict_tests/test_s03_hydrology_runoff.py::TestRationalMethod::test_rational_coefficient_is_bounded[-0.5] 
+- RunoffInput.rational_coefficient has no bounds. A coefficient of 0 or negative yields a negative peak flow, and a 
+coefficient above 1 yields a peak flow exceeding the rainfall intensity, both of which are physically impossible for 
+the rational method (0 <= C <= 1).
+XFAIL engine/strict_tests/test_s03_hydrology_runoff.py::TestRationalMethod::test_rational_coefficient_is_bounded[0.0] 
+- RunoffInput.rational_coefficient has no bounds. A coefficient of 0 or negative yields a negative peak flow, and a 
+coefficient above 1 yields a peak flow exceeding the rainfall intensity, both of which are physically impossible for 
+the rational method (0 <= C <= 1).
+XFAIL engine/strict_tests/test_s03_hydrology_runoff.py::TestRationalMethod::test_rational_coefficient_is_bounded[1.5] 
+- RunoffInput.rational_coefficient has no bounds. A coefficient of 0 or negative yields a negative peak flow, and a 
+coefficient above 1 yields a peak flow exceeding the rainfall intensity, both of which are physically impossible for 
+the rational method (0 <= C <= 1).
+XFAIL engine/strict_tests/test_s03_hydrology_runoff.py::TestRationalMethod::test_rational_coefficient_is_bounded[5.0] 
+- RunoffInput.rational_coefficient has no bounds. A coefficient of 0 or negative yields a negative peak flow, and a 
+coefficient above 1 yields a peak flow exceeding the rainfall intensity, both of which are physically impossible for 
+the rational method (0 <= C <= 1).
+XFAIL 
+engine/strict_tests/test_s03_hydrology_runoff.py::TestSpatialRunoff::test_cn_map_is_independent_of_the_soil_group - 
+engine/hydroma/models/runoff_model.py:179-197 builds the curve-number map from land-use codes alone (60/70/85/75) and 
+never consults the soil raster it was handed, even though the enclosing execute() reprojected and aligned that raster 
+specifically for this call. A clay hydrologic soil group and a sand group on the same land use therefore receive 
+byte-identical curve numbers, which is wrong by up to 25 curve-number units. The spatial result is therefore not an 
+SCS-CN computation.
+XFAIL engine/strict_tests/test_s03_hydrology_runoff.py::TestSpatialRunoff::test_spatial_output_path_is_reproducible_acr
+oss_processes - engine/hydroma/models/runoff_model.py:235 names the output raster 
+f'runoff_cn_{method}_site_{hash(dem_path)}.tif'. Python randomises str hashing per process unless PYTHONHASHSEED is 
+pinned, so the same DEM yields a different filename on every run. Verified by running this interpreter twice with 
+different seeds: hash('a.tif') is 4.8e18 under one seed and 2.3e18 under another. Written rasters therefore cannot be 
+found again, deduplicated, or cached, and a rerun of the same scenario silently produces a new artefact every time.
+XFAIL engine/strict_tests/test_s04_groundwater.py::TestBucketConservation::test_totals_are_exactly_the_sum_of_the_publi
+shed_series - engine/hydroma/groundwater/models.py:71-73 accumulates the totals from the unrounded monthly values 
+while lines 66-69 store rounded values, so the four totals and the four series describe slightly different runs. Any 
+downstream consumer that reconstructs the balance from the series gets a different answer from the one that reads the 
+totals.
+XFAIL engine/strict_tests/test_s04_groundwater.py::TestTheisDrawdown::test_non_positive_time_is_rejected[0.0] - 
+engine/hydroma/groundwater/models.py:154 returns 0.0 for t <= 0. The Theis solution diverges as t approaches zero: 
+drawdown at the well face at the instant pumping starts is unbounded. Returning 0.0 means 'no drawdown', which is the 
+physically impossible answer and the opposite of the limit of the formula on the neighbouring line.
+XFAIL engine/strict_tests/test_s04_groundwater.py::TestTheisDrawdown::test_non_positive_time_is_rejected[-1.0] - 
+engine/hydroma/groundwater/models.py:154 returns 0.0 for t <= 0. The Theis solution diverges as t approaches zero: 
+drawdown at the well face at the instant pumping starts is unbounded. Returning 0.0 means 'no drawdown', which is the 
+physically impossible answer and the opposite of the limit of the formula on the neighbouring line.
+XFAIL engine/strict_tests/test_s04_groundwater.py::TestTheisDrawdown::test_observation_at_the_well_is_rejected - 
+engine/hydroma/groundwater/models.py:158 returns 0.0 for u <= 0, which is reached at r = 0. Drawdown at the pumping 
+well is the singularity of the solution and is unbounded; the observation point must be excluded from the input, not 
+answered with zero.
+XFAIL engine/strict_tests/test_s04_groundwater.py::TestTheisDrawdown::test_invalid_input_raises - 
+engine/hydroma/groundwater/models.py:142 returns None for storativity <= 0 or transmissivity <= 0. A None return is 
+indistinguishable from 'not computed' downstream, and no log level above info() is emitted, so invalid input is 
+silently turned into a null field in an API response. calculate_theis_drawdown's signature declares float | None but 
+never explains the None case to a caller.
+XFAIL engine/strict_tests/test_s04_groundwater.py::TestAquiferProperties::test_conductivity_influences_the_result - 
+engine/hydroma/groundwater/models.py:87 accepts hydraulic_conductivity_m_s as a required argument, echoes it into the 
+result dict at line 117, and never uses it in any computation. Line 112 comments out the transmissivity calculation 
+for want of a thickness. A caller supplying a conductivity sees it returned as if it had informed the result, which is 
+the provenance failure the engine's own honesty contract elsewhere forbids.
+XFAIL engine/strict_tests/test_s04_groundwater.py::TestAquiferProperties::test_negative_geometry_is_rejected[-1.0-1.0] 
+- engine/hydroma/groundwater/models.py:105 validates specific_yield only. Negative area or negative drawdown produce a 
+negative available volume, i.e. a negative volume of water in an aquifer, and neither callers nor the API can 
+distinguish that from a sign convention.
+XFAIL engine/strict_tests/test_s04_groundwater.py::TestAquiferProperties::test_negative_geometry_is_rejected[1.0--1.0] 
+- engine/hydroma/groundwater/models.py:105 validates specific_yield only. Negative area or negative drawdown produce a 
+negative available volume, i.e. a negative volume of water in an aquifer, and neither callers nor the API can 
+distinguish that from a sign convention.
+XFAIL 
+engine/strict_tests/test_s04_groundwater.py::TestAquiferProperties::test_negative_geometry_is_rejected[-1.0--1.0] - 
+engine/hydroma/groundwater/models.py:105 validates specific_yield only. Negative area or negative drawdown produce a 
+negative available volume, i.e. a negative volume of water in an aquifer, and neither callers nor the API can 
+distinguish that from a sign convention.
+XFAIL 
+engine/strict_tests/test_s05_soil_retention.py::TestParameterTable::test_conductivity_decreases_with_texture_fineness 
+- The saturated-conductivity column of engine/hydroma/soil/physics.py:122-135 (SOIL_PARAMETERS_VG) is not monotone in 
+texture fineness, which hydraulic conductivity must be. Two inversions, both with the coarse texture given the HIGHER 
+value: sandy_clay_loam 31.4 cm/day exceeds loam 25.0 cm/day, and clay 4.8 cm/day exceeds silty_clay 1.92 cm/day and 
+sandy_clay 2.9 cm/day. Clay has the smallest effective pore throat of any texture, so it must have the lowest Ks. The 
+comment at line 121 attributes the column to Carsel & Parrish (1988) x24, but 712.8/24 = 29.7 cm/hr for sand where the 
+published value is about 50 cm/hr, so the provenance claim does not hold either.
+XFAIL engine/strict_tests/test_s05_soil_retention.py::TestRetention::test_rejects_saturated_content_above_one[1.0] - 
+engine/hydroma/soil/physics.py:41-44 validates only the ordering theta_s > theta_r. A saturated water content above 
+1.0 cm3/cm3 is impossible (there is more pore space than soil volume) yet is accepted and returned, so a caller can 
+hold a soil that reports 150 % water content. The Carsel & Parrish range tops out near 0.46.
+XFAIL engine/strict_tests/test_s05_soil_retention.py::TestRetention::test_rejects_saturated_content_above_one[1.5] - 
+engine/hydroma/soil/physics.py:41-44 validates only the ordering theta_s > theta_r. A saturated water content above 
+1.0 cm3/cm3 is impossible (there is more pore space than soil volume) yet is accepted and returned, so a caller can 
+hold a soil that reports 150 % water content. The Carsel & Parrish range tops out near 0.46.
+XFAIL engine/strict_tests/test_s05_soil_retention.py::TestRetention::test_rejects_saturated_content_above_one[2.0] - 
+engine/hydroma/soil/physics.py:41-44 validates only the ordering theta_s > theta_r. A saturated water content above 
+1.0 cm3/cm3 is impossible (there is more pore space than soil volume) yet is accepted and returned, so a caller can 
+hold a soil that reports 150 % water content. The Carsel & Parrish range tops out near 0.46.
+XFAIL engine/strict_tests/test_s05_soil_retention.py::TestConductivity::test_zero_conductivity_is_a_valid_input - 
+engine/hydroma/soil/physics.py:70-71 rejects ks <= 0. A perfectly impermeable substrate (ks = 0) is a real and 
+important case in landfill liners, capping and perched water tables, and the function has no way to represent it.
+XFAIL 
+engine/strict_tests/test_s05_soil_retention.py::TestAlternativeModels::test_campbell_is_odd_in_the_pair_of_signs[1.0] 
+- engine/hydroma/soil/physics.py:117 computes (he / h) ** (1 / b) with signed operands, while brooks_corey_theta on 
+line 100 uses abs(hb) / abs(h). A head pair with mismatched signs therefore either returns a saturated value where the 
+magnitude says the soil is dry, or raises on a negative base with a fractional exponent. Two adjacent functions 
+modelling the same physics use opposite sign conventions and neither normalises the input.
+XFAIL 
+engine/strict_tests/test_s05_soil_retention.py::TestAlternativeModels::test_campbell_is_odd_in_the_pair_of_signs[30.0] 
+- engine/hydroma/soil/physics.py:117 computes (he / h) ** (1 / b) with signed operands, while brooks_corey_theta on 
+line 100 uses abs(hb) / abs(h). A head pair with mismatched signs therefore either returns a saturated value where the 
+magnitude says the soil is dry, or raises on a negative base with a fractional exponent. Two adjacent functions 
+modelling the same physics use opposite sign conventions and neither normalises the input.
+XFAIL engine/strict_tests/test_s05_soil_retention.py::TestAlternativeModels::test_campbell_is_odd_in_the_pair_of_signs[
+100.0] - engine/hydroma/soil/physics.py:117 computes (he / h) ** (1 / b) with signed operands, while 
+brooks_corey_theta on line 100 uses abs(hb) / abs(h). A head pair with mismatched signs therefore either returns a 
+saturated value where the magnitude says the soil is dry, or raises on a negative base with a fractional exponent. Two 
+adjacent functions modelling the same physics use opposite sign conventions and neither normalises the input.
+XFAIL engine/strict_tests/test_s05_soil_retention.py::TestAlternativeModels::test_campbell_is_odd_in_the_pair_of_signs[
+1000.0] - engine/hydroma/soil/physics.py:117 computes (he / h) ** (1 / b) with signed operands, while 
+brooks_corey_theta on line 100 uses abs(hb) / abs(h). A head pair with mismatched signs therefore either returns a 
+saturated value where the magnitude says the soil is dry, or raises on a negative base with a fractional exponent. Two 
+adjacent functions modelling the same physics use opposite sign conventions and neither normalises the input.
+XFAIL engine/strict_tests/test_s05_soil_retention.py::TestAlternativeModels::test_campbell_is_odd_in_the_pair_of_signs[
+15000.0] - engine/hydroma/soil/physics.py:117 computes (he / h) ** (1 / b) with signed operands, while 
+brooks_corey_theta on line 100 uses abs(hb) / abs(h). A head pair with mismatched signs therefore either returns a 
+saturated value where the magnitude says the soil is dry, or raises on a negative base with a fractional exponent. Two 
+adjacent functions modelling the same physics use opposite sign conventions and neither normalises the input.
+XFAIL engine/strict_tests/test_s05_soil_retention.py::TestAlternativeModels::test_brooks_corey_does_not_divide_by_zero 
+- engine/hydroma/soil/physics.py:100 divides abs(hb) by abs(h) with no zero guard. An air-entry pressure of +10 cm (a 
+caller passing a magnitude) with h = 0 passes the h >= hb test at line 98 and then raises ZeroDivisionError, which is 
+neither a ValueError nor a documented outcome.
+XFAIL engine/strict_tests/test_s05_soil_retention.py::TestAlternativeModels::test_campbell_validates_its_parameters[0.0
+-0.05-0.43] - campbell_theta (line 103) validates neither theta_s > theta_r nor b against zero, while 
+brooks_corey_theta (line 96) validates the first and van_genuchten_theta (line 43) validates the second. Three sibling 
+retention models in one module have three different validation contracts; b = 0 raises ZeroDivisionError.
+XFAIL engine/strict_tests/test_s05_soil_retention.py::TestAlternativeModels::test_campbell_validates_its_parameters[0.5
+-0.5-0.4] - campbell_theta (line 103) validates neither theta_s > theta_r nor b against zero, while brooks_corey_theta 
+(line 96) validates the first and van_genuchten_theta (line 43) validates the second. Three sibling retention models 
+in one module have three different validation contracts; b = 0 raises ZeroDivisionError.
+XFAIL engine/strict_tests/test_s05_soil_retention.py::TestAvailableWaterCapacity::test_awc_increases_with_clay_content 
+- With FC_HEAD_CM = 330.0 the returned AWC is not monotone in texture fineness: silt_loam 0.1363 > sandy_clay_loam 
+0.0583 despite the latter being the finer soil, and sandy_clay 0.0969 < silty_clay_loam 0.1416 despite the former 
+being coarser. Plant-available water capacity must rise with clay content over this texture range.
+XFAIL engine/strict_tests/test_s05_soil_retention.py::TestWaterRetentionApi::test_unknown_texture_raises_instead_of_sub
+stituting - Two functions in the same package read the same table and disagree on the failure mode. 
+engine/hydroma/soil/physics.py:145 raises KeyError for an unknown texture, while 
+engine/hydroma/soil/water_retention.py:130 silently substitutes loam and returns a dict whose 'texture' field reads 
+'loam'. A caller asking for a volcanic sand receives loam parameters with no exception, and the returned dict gives no 
+hint that a substitution happened; the only trace is a log line that does not name the texture that was actually 
+requested. For a soil-specific digital twin this fails open into a wrong answer.
+XFAIL engine/strict_tests/test_s05_soil_retention.py::TestWaterRetentionApi::test_field_capacity_is_interpolated_for_ar
+bitrary_heads[heads0] - engine/hydroma/soil/water_retention.py:181-194 looks up field capacity by an exact list match 
+on -33 and wilting point on -15000, so a caller supplying any other set of pressure heads silently receives 
+field_capacity=None and wilting_point=None. Since the whole purpose of the function is to report these two points, a 
+head list that omits them produces a result object with no water-holding figures and no warning. Interpolation, or 
+interpolation onto the nearest bracketing heads, is required.
+XFAIL engine/strict_tests/test_s05_soil_retention.py::TestWaterRetentionApi::test_field_capacity_is_interpolated_for_ar
+bitrary_heads[heads1] - engine/hydroma/soil/water_retention.py:181-194 looks up field capacity by an exact list match 
+on -33 and wilting point on -15000, so a caller supplying any other set of pressure heads silently receives 
+field_capacity=None and wilting_point=None. Since the whole purpose of the function is to report these two points, a 
+head list that omits them produces a result object with no water-holding figures and no warning. Interpolation, or 
+interpolation onto the nearest bracketing heads, is required.
+XFAIL engine/strict_tests/test_s05_soil_retention.py::TestWaterRetentionApi::test_field_capacity_is_interpolated_for_ar
+bitrary_heads[heads2] - engine/hydroma/soil/water_retention.py:181-194 looks up field capacity by an exact list match 
+on -33 and wilting point on -15000, so a caller supplying any other set of pressure heads silently receives 
+field_capacity=None and wilting_point=None. Since the whole purpose of the function is to report these two points, a 
+head list that omits them produces a result object with no water-holding figures and no warning. Interpolation, or 
+interpolation onto the nearest bracketing heads, is required.
+XFAIL 
+engine/strict_tests/test_s05_soil_retention.py::TestWaterRetentionApi::test_available_water_rejects_impossible_inputs 
+- engine/hydroma/soil/water_retention.py:197 accepts theta_fc and theta_wp with no check against the physical range 
+0-1 and root_depth with no check against zero. root_depth = -50 returns -1500 mm of available water, i.e. a negative 
+store of water in a root zone, and theta_fc = 2.0 returns an AWC of 2.0 cm3/cm3.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestCheckDam::test_trap_efficiency_varies_with_catchment_scale 
+- engine/hydroma/watershed/calculator.py:96-113 solves the Brune (1953) trap efficiency with runoff_m3 (a WATER 
+volume) in the denominator while the numerator, storage_req_m3, is a SEDIMENT volume. The two quantities are different 
+physical things and their ratio is meaningless. The consequence is measurable: both terms scale linearly with 
+catchment area, so the ratio is scale-invariant and the computed trap efficiency is a constant 0.776 for every 
+catchment from 1000 to 1 000 000 m2, and it never responds to the required storage. A Brune curve that cannot respond 
+to storage is not a Brune curve. The correct ratio is storage_req_m3 / annual_sediment_m3, which for the same inputs 
+converges to the 0.95 clamp instead of 0.776.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestCheckDam::test_design_head_is_a_fraction_of_the_dam_height 
+- engine/hydroma/watershed/calculator.py:128 clamps the design head to [0.2, 0.5] m, so a 6 m dam is sized for 0.5 m 
+of head rather than the 1.2-2.4 m that its own depth implies. W = Q/(1.7 H^1.5) means the spillway is then 3.3x to 
+9.3x too wide for the head it will actually see, and the freeboard at line 130 is computed from the same clamped dam 
+height so the two cannot be cross-checked.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestContourTrench::test_rainfall_changes_the_design - 
+design_contour_trench accepts rainfall_mm (line 165) and never uses it. A trench layout for a 500 mm/yr site is 
+identical to one for a 100 mm/yr site, although trench depth and spacing in the FAO manual are set by the infiltration 
+opportunity the storm delivers.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestContourTrench::test_rejects_non_positive_area - 
+design_contour_trench does not validate area_m2. A negative area makes n_rows negative, total_length negative and 
+total_volume negative, i.e. a trench with a negative volume of excavated soil.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestHalfMoon::test_responds_to_slope_and_rainfall - 
+design_half_moon takes slope_pct and rainfall_mm and uses neither (line 219-223): diameter, depth and spacing are 
+hard-coded. The FAO manual sizes half-moons from the contributing area, the slope and the storm, so the current output 
+is a constant layout for every site.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestHalfMoon::test_rejects_non_positive_area[0.0] - 
+design_half_moon does not validate area_m2. A negative area makes math.ceil return a non-positive count, so the 
+function reports zero half-moons and zero cost for an impossible catchment instead of raising.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestHalfMoon::test_rejects_non_positive_area[-1.0] - 
+design_half_moon does not validate area_m2. A negative area makes math.ceil return a non-positive count, so the 
+function reports zero half-moons and zero cost for an impossible catchment instead of raising.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestHalfMoon::test_rejects_non_positive_area[-16.0] - 
+design_half_moon does not validate area_m2. A negative area makes math.ceil return a non-positive count, so the 
+function reports zero half-moons and zero cost for an impossible catchment instead of raising.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestTerrace::test_erosion_reduction_is_never_negative[50.0] - 
+engine/hydroma/watershed/calculator.py:276 computes erosion_reduction_pct = min(90, round((1 - spacing_m / field_side) 
+* 70)) with no lower bound. When the field is narrower than the terrace spacing, which line 269 forces to at least one 
+row, the ratio exceeds 1 and the result goes negative: a 50 m2 plot reports -425 %, a 100 m2 plot -280 % and a 400 m2 
+plot -105 %. A negative erosion reduction is an erosion increase presented as a design benefit.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestTerrace::test_erosion_reduction_is_never_negative[100.0] - 
+engine/hydroma/watershed/calculator.py:276 computes erosion_reduction_pct = min(90, round((1 - spacing_m / field_side) 
+* 70)) with no lower bound. When the field is narrower than the terrace spacing, which line 269 forces to at least one 
+row, the ratio exceeds 1 and the result goes negative: a 50 m2 plot reports -425 %, a 100 m2 plot -280 % and a 400 m2 
+plot -105 %. A negative erosion reduction is an erosion increase presented as a design benefit.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestTerrace::test_erosion_reduction_is_never_negative[400.0] - 
+engine/hydroma/watershed/calculator.py:276 computes erosion_reduction_pct = min(90, round((1 - spacing_m / field_side) 
+* 70)) with no lower bound. When the field is narrower than the terrace spacing, which line 269 forces to at least one 
+row, the ratio exceeds 1 and the result goes negative: a 50 m2 plot reports -425 %, a 100 m2 plot -280 % and a 400 m2 
+plot -105 %. A negative erosion reduction is an erosion increase presented as a design benefit.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestTerrace::test_erosion_reduction_is_never_negative[1600.0] 
+- engine/hydroma/watershed/calculator.py:276 computes erosion_reduction_pct = min(90, round((1 - spacing_m / 
+field_side) * 70)) with no lower bound. When the field is narrower than the terrace spacing, which line 269 forces to 
+at least one row, the ratio exceeds 1 and the result goes negative: a 50 m2 plot reports -425 %, a 100 m2 plot -280 % 
+and a 400 m2 plot -105 %. A negative erosion reduction is an erosion increase presented as a design benefit.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestTerrace::test_terrace_width_changes_the_channel_geometry - 
+design_terrace accepts terrace_width_m (line 250) and never uses it; line 273 hard-codes channel_volume_per_m = 0.135 
+m3/m instead. With a reported channel depth of 0.3 m that implies a 0.45 m wide channel, which contradicts both the 
+terrace width the caller supplied and the 0.135 m3/m figure's own comment. Three quantities for one channel section, 
+none of them linked.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestStrahlerOrdering::test_bifurcating_outflow_carries_the_node
+_order - engine/hydroma/watershed/calculator.py:432-436 finds the outgoing edge by scanning for from_node == node and 
+then assigns the new order to EVERY match. A node with two outgoing edges, i.e. a distributary or a bifurcation in the 
+channel network, gives both branches the same upstream order even though they have different upstream contributions.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestHortonRatios::test_ratio_types_are_consistent - 
+engine/hydroma/watershed/calculator.py:508 returns the integer 0 from the max_order < 2 branch while line 508 of the 
+general path returns np.mean(...), a numpy.float64. The same field therefore has two different types depending on the 
+network. Low severity: numpy.float64 subclasses float so json.dumps still works, which 
+test_result_is_json_serialisable confirms. It matters for schema generation and for any code that dispatches on type.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestKirpich::test_invalid_geometry_is_rejected[0.0-0.01] - 
+engine/hydroma/watershed/calculator.py:539-540 returns 0.0 for a non-positive length or slope. A time of concentration 
+of zero is physically impossible, and a caller that divides a design storm by Tc or computes a dimensionless unit 
+hydrograph from it will produce a singularity. The module returns it silently, with no log line.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestKirpich::test_invalid_geometry_is_rejected[-1.0-0.01] - 
+engine/hydroma/watershed/calculator.py:539-540 returns 0.0 for a non-positive length or slope. A time of concentration 
+of zero is physically impossible, and a caller that divides a design storm by Tc or computes a dimensionless unit 
+hydrograph from it will produce a singularity. The module returns it silently, with no log line.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestKirpich::test_invalid_geometry_is_rejected[1000.0-0.0] - 
+engine/hydroma/watershed/calculator.py:539-540 returns 0.0 for a non-positive length or slope. A time of concentration 
+of zero is physically impossible, and a caller that divides a design storm by Tc or computes a dimensionless unit 
+hydrograph from it will produce a singularity. The module returns it silently, with no log line.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestKirpich::test_invalid_geometry_is_rejected[1000.0--0.01] - 
+engine/hydroma/watershed/calculator.py:539-540 returns 0.0 for a non-positive length or slope. A time of concentration 
+of zero is physically impossible, and a caller that divides a design storm by Tc or computes a dimensionless unit 
+hydrograph from it will produce a singularity. The module returns it silently, with no log line.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestMuskingumRouting::test_unstable_timestep_is_rejected[1.0-0.
+2-10.0] - engine/hydroma/watershed/calculator.py:593 checks C0 + C1 + C2 against 1, but that sum is algebraically 
+exactly 1 by construction, so the check is vacuous and can never fire. The condition that actually matters is 2 K x <= 
+dt <= 2 K (1 - x). Outside it the engine silently emits negative discharge: for K = 1 h, x = 0.2, dt = 10 h a 
+hydrograph that ends at zero inflow is routed to -1.723 m3/s, and for K = 0.5, x = 0.2, dt = 3 h it reaches -1.819 
+m3/s. Discharge cannot be negative, and a negative hydrograph area is a mass-creation event.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestMuskingumRouting::test_unstable_timestep_is_rejected[0.5-0.
+2-3.0] - engine/hydroma/watershed/calculator.py:593 checks C0 + C1 + C2 against 1, but that sum is algebraically 
+exactly 1 by construction, so the check is vacuous and can never fire. The condition that actually matters is 2 K x <= 
+dt <= 2 K (1 - x). Outside it the engine silently emits negative discharge: for K = 1 h, x = 0.2, dt = 10 h a 
+hydrograph that ends at zero inflow is routed to -1.723 m3/s, and for K = 0.5, x = 0.2, dt = 3 h it reaches -1.819 
+m3/s. Discharge cannot be negative, and a negative hydrograph area is a mass-creation event.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestMuskingumRouting::test_unstable_timestep_is_rejected[1.0-0.
+25-5.0] - engine/hydroma/watershed/calculator.py:593 checks C0 + C1 + C2 against 1, but that sum is algebraically 
+exactly 1 by construction, so the check is vacuous and can never fire. The condition that actually matters is 2 K x <= 
+dt <= 2 K (1 - x). Outside it the engine silently emits negative discharge: for K = 1 h, x = 0.2, dt = 10 h a 
+hydrograph that ends at zero inflow is routed to -1.723 m3/s, and for K = 0.5, x = 0.2, dt = 3 h it reaches -1.819 
+m3/s. Discharge cannot be negative, and a negative hydrograph area is a mass-creation event.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestMuskingumRouting::test_unstable_timestep_is_rejected[2.0-0.
+2-20.0] - engine/hydroma/watershed/calculator.py:593 checks C0 + C1 + C2 against 1, but that sum is algebraically 
+exactly 1 by construction, so the check is vacuous and can never fire. The condition that actually matters is 2 K x <= 
+dt <= 2 K (1 - x). Outside it the engine silently emits negative discharge: for K = 1 h, x = 0.2, dt = 10 h a 
+hydrograph that ends at zero inflow is routed to -1.723 m3/s, and for K = 0.5, x = 0.2, dt = 3 h it reaches -1.819 
+m3/s. Discharge cannot be negative, and a negative hydrograph area is a mass-creation event.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestMuskingumRouting::test_output_dtype_survives_integer_input 
+- engine/hydroma/watershed/calculator.py:597 uses np.zeros_like(inflow), so an integer input array yields an int64 
+output array and every fractional routing result is truncated toward zero. A caller passing a discharge table read 
+from a file as integers silently loses precision on every step.
+XFAIL engine/strict_tests/test_s06_watershed_design.py::TestMuskingumRouting::test_degenerate_parameters_raise_instead_
+of_passthrough - Lines 578 and 586 return inflow.copy() for a non-positive K or a non-positive denominator. For a 
+NumPy array that is a float copy, but for a Python list it is a list, so the function's return type depends on its 
+input type. The caller also cannot distinguish 'no routing was performed' from 'the hydrograph was already routed'.
+XFAIL engine/strict_tests/test_s07_carbon.py::TestAccountingIdentities::test_biochar_range_brackets_the_point_estimate 
+- Symptom of the one-time-basis bug: for 100 ha over 10 years the reported band is 1700 to 4250 t while the reported 
+point estimate is 255 t, so the lower bound exceeds the answer by 6.7x and the interval does not contain it. See 
+test_biochar_range_uses_the_one_time_basis for the cause.
+XFAIL engine/strict_tests/test_s07_carbon.py::TestAccountingIdentities::test_biochar_annual_rate_is_not_double_scaled_b
+y_area - engine/hydroma/carbon/calculator.py:197-198 amortises the biochar one-time total by the project duration, 
+then line 217 multiplies the already area-scaled annual_rate by area_ha a second time. Measured for 100 ha over 10 
+years: total_carbon_tonnes 255 t is right, but annual_rate_tonnes reports 3000 t/yr against a correct 300 t/yr, and 
+annual_revenue_usd 25 500 USD against a total lifetime revenue of 2550 USD, i.e. the annual revenue exceeds the total 
+revenue tenfold. Every other project type is unaffected because its annual_rate is per-hectare.
+XFAIL engine/strict_tests/test_s07_carbon.py::TestAccountingIdentities::test_biochar_range_uses_the_one_time_basis - 
+engine/hydroma/carbon/calculator.py:219-220 computes the min/max band with the multi-year expression min_rate * 
+area_ha * duration_years * discount for every project type, including the one-time biochar, while line 197 computes 
+the point estimate on a one-time basis. Measured for 100 ha over 10 years: point estimate 255 t but the reported band 
+is 1700 to 4250 t, so the reported uncertainty interval does not contain the reported answer and its lower bound 
+exceeds it by 6.7x.
+XFAIL engine/strict_tests/test_s07_carbon.py::TestInputValidation::test_biochar_with_zero_duration_is_rejected - 
+engine/hydroma/carbon/calculator.py:198 divides total_carbon by duration_years with no guard, so duration_years = 0 
+raises ZeroDivisionError rather than a declared ValueError. A zero-length project is a plausible client input (a 
+credit period of zero years) and the failure surfaces as an unhandled 500 rather than a validation message.
+XFAIL engine/strict_tests/test_s07_carbon.py::TestInputValidation::test_negative_area_is_rejected[-1.0] - 
+engine/hydroma/carbon/calculator.py:161 accepts area_ha with no check. A negative area returns a negative 
+sequestration, i.e. the model reports the site as a carbon source: area_ha = -50 with afforestation returns 
+total_carbon_tonnes = -3400 and estimated_revenue_usd = -34 000. There is no field, no exception and no warning.
+XFAIL engine/strict_tests/test_s07_carbon.py::TestInputValidation::test_negative_area_is_rejected[-50.0] - 
+engine/hydroma/carbon/calculator.py:161 accepts area_ha with no check. A negative area returns a negative 
+sequestration, i.e. the model reports the site as a carbon source: area_ha = -50 with afforestation returns 
+total_carbon_tonnes = -3400 and estimated_revenue_usd = -34 000. There is no field, no exception and no warning.
+XFAIL engine/strict_tests/test_s07_carbon.py::TestInputValidation::test_unknown_region_is_rejected - 
+engine/hydroma/carbon/calculator.py:188 uses region_factors.get(region, 1.0), so a misspelt region silently returns 
+the temperate answer. Measured: region 'troppical' returns 6800 t, identical to 'temperate' and 23 % below the true 
+tropical 8200 t. For a climate-sensitive sequestration model a typo in one string is an undetectable 23 % error in the 
+headline figure.
+XFAIL engine/strict_tests/test_s07_carbon.py::TestInputValidation::test_non_positive_duration_is_rejected_for_annual_ty
+pes[0] - For the annually sequestering types a zero or negative duration still returns a well-formed result with zero 
+total carbon and zero revenue, i.e. a project that sequesters nothing is indistinguishable from a valid project of no 
+consequence.
+XFAIL engine/strict_tests/test_s07_carbon.py::TestInputValidation::test_non_positive_duration_is_rejected_for_annual_ty
+pes[-5] - For the annually sequestering types a zero or negative duration still returns a well-formed result with zero 
+total carbon and zero revenue, i.e. a project that sequesters nothing is indistinguishable from a valid project of no 
+consequence.
+XFAIL engine/strict_tests/test_s07_carbon.py::TestComparison::test_a_failing_project_type_is_reported_not_dropped - 
+engine/hydroma/carbon/calculator.py:245 wraps each project type in `except Exception: continue`, so a type that raises 
+disappears from the ranking with no trace. A caller comparing project types cannot tell a complete comparison from a 
+partial one, and the module's own screening contract makes silent omission the more damaging failure: the omitted 
+option may have been the best one.
+XFAIL engine/strict_tests/test_s07_carbon.py::TestRegistryProvenance::test_repository_failure_is_surfaced - 
+engine/hydroma/carbon/calculator.py:266, 287, 310 and 334 catch every exception from the configured repository and 
+fall through to the in-memory dict. When the database is down, register_project reports success, the row exists only 
+in process memory, and the next read returns None once the process restarts. The caller's only signal is none at all: 
+no log above debug, no exception, and an id that looks durably stored. This is the exact failure mode the engine's own 
+formulas/registry.py docstring says it exists to prevent.
+XFAIL engine/strict_tests/test_s07_carbon.py::TestRegistryProvenance::test_registry_is_not_shared_process_wide - 
+engine/hydroma/carbon/calculator.py:262 holds the registry in a module level dict mutated by register_project with no 
+lock. Two concurrent requests registering projects interleave on the same dict; on CPython the GIL makes individual 
+dict writes atomic, so the realistic failure is not corruption but the absence of any request isolation: a shared 
+global project store in a multi-tenant API gateway. The engine's own audit rules require a DB-backed repository for 
+this reason, yet the fallback is the path taken whenever the repository errors.
+XFAIL engine/strict_tests/test_s08_irrigation.py::TestApplicationDepth::test_non_positive_efficiency_is_rejected[0.0] 
+- engine/hydroma/irrigation/scheduler.py:33 returns 0.0 when efficiency <= 0. An efficiency of zero means no water 
+ever reaches the root zone, so the correct depth is unbounded, not zero. Returning 0.0 tells the scheduler the field 
+needs no water, which is the most dangerous answer the function can give: the crop is irrigated zero times and no 
+error is raised. A negative efficiency, which is not even physically meaningful, produces the same 0.0.
+XFAIL engine/strict_tests/test_s08_irrigation.py::TestApplicationDepth::test_non_positive_efficiency_is_rejected[-0.1] 
+- engine/hydroma/irrigation/scheduler.py:33 returns 0.0 when efficiency <= 0. An efficiency of zero means no water 
+ever reaches the root zone, so the correct depth is unbounded, not zero. Returning 0.0 tells the scheduler the field 
+needs no water, which is the most dangerous answer the function can give: the crop is irrigated zero times and no 
+error is raised. A negative efficiency, which is not even physically meaningful, produces the same 0.0.
+XFAIL engine/strict_tests/test_s08_irrigation.py::TestApplicationDepth::test_non_positive_efficiency_is_rejected[-1.0] 
+- engine/hydroma/irrigation/scheduler.py:33 returns 0.0 when efficiency <= 0. An efficiency of zero means no water 
+ever reaches the root zone, so the correct depth is unbounded, not zero. Returning 0.0 tells the scheduler the field 
+needs no water, which is the most dangerous answer the function can give: the crop is irrigated zero times and no 
+error is raised. A negative efficiency, which is not even physically meaningful, produces the same 0.0.
+XFAIL engine/strict_tests/test_s08_irrigation.py::TestApplicationDepth::test_efficiency_above_one_is_rejected[1.01] - 
+engine/hydroma/irrigation/scheduler.py has no bounds on the efficiency argument. Application efficiency above 1.0 is 
+impossible - it would mean the field receives more water than the irrigation system delivers - yet efficiency = 2.0 is 
+accepted and silently halves the applied depth, under-irrigating by 50 % with no diagnostic.
+XFAIL engine/strict_tests/test_s08_irrigation.py::TestApplicationDepth::test_efficiency_above_one_is_rejected[1.5] - 
+engine/hydroma/irrigation/scheduler.py has no bounds on the efficiency argument. Application efficiency above 1.0 is 
+impossible - it would mean the field receives more water than the irrigation system delivers - yet efficiency = 2.0 is 
+accepted and silently halves the applied depth, under-irrigating by 50 % with no diagnostic.
+XFAIL engine/strict_tests/test_s08_irrigation.py::TestApplicationDepth::test_efficiency_above_one_is_rejected[5.0] - 
+engine/hydroma/irrigation/scheduler.py has no bounds on the efficiency argument. Application efficiency above 1.0 is 
+impossible - it would mean the field receives more water than the irrigation system delivers - yet efficiency = 2.0 is 
+accepted and silently halves the applied depth, under-irrigating by 50 % with no diagnostic.
+XFAIL engine/strict_tests/test_s08_irrigation.py::TestApplicationDepth::test_negative_rainfall_is_rejected - 
+engine/hydroma/irrigation/scheduler.py:32 computes net_need = max(0, etc_mm - effective_rain_mm) with no validation. A 
+negative effective rainfall, which a client can send, increases the applied depth instead of being rejected, so a 
+corrupted rain sensor reading inflates the irrigation requirement without limit.
+XFAIL engine/strict_tests/test_s08_irrigation.py::TestInterval::test_non_positive_demand_is_rejected[0.0] - 
+engine/hydroma/irrigation/scheduler.py:22-23 returns 0 when ETc <= 0, so an irrigation interval of zero days is 
+reported. A scheduler that loops over a date range driven by this value will either spin or, more likely, be read as 
+'no irrigation needed'. The physically meaningful answers are 'infinitely far away' (ETc = 0) and 'invalid' (ETc < 0); 
+zero is neither.
+XFAIL engine/strict_tests/test_s08_irrigation.py::TestInterval::test_non_positive_demand_is_rejected[-1.0] - 
+engine/hydroma/irrigation/scheduler.py:22-23 returns 0 when ETc <= 0, so an irrigation interval of zero days is 
+reported. A scheduler that loops over a date range driven by this value will either spin or, more likely, be read as 
+'no irrigation needed'. The physically meaningful answers are 'infinitely far away' (ETc = 0) and 'invalid' (ETc < 0); 
+zero is neither.
+XFAIL engine/strict_tests/test_s08_irrigation.py::TestInterval::test_depletion_must_be_a_fraction[0.0] - The 
+allowable_depletion argument is a FRACTION in [0, 1] but the function never says so and never checks. Passing the 
+percentage 55 instead of the fraction 0.55 returns an interval of 1000 days instead of 11, a factor of 100 that leaves 
+the crop unwatered for most of the season with no diagnostic. Passing 0 is also accepted and silently yields the 1-day 
+floor.
+XFAIL engine/strict_tests/test_s08_irrigation.py::TestInterval::test_depletion_must_be_a_fraction[50.0] - The 
+allowable_depletion argument is a FRACTION in [0, 1] but the function never says so and never checks. Passing the 
+percentage 55 instead of the fraction 0.55 returns an interval of 1000 days instead of 11, a factor of 100 that leaves 
+the crop unwatered for most of the season with no diagnostic. Passing 0 is also accepted and silently yields the 1-day 
+floor.
+XFAIL engine/strict_tests/test_s08_irrigation.py::TestInterval::test_depletion_must_be_a_fraction[55.0] - The 
+allowable_depletion argument is a FRACTION in [0, 1] but the function never says so and never checks. Passing the 
+percentage 55 instead of the fraction 0.55 returns an interval of 1000 days instead of 11, a factor of 100 that leaves 
+the crop unwatered for most of the season with no diagnostic. Passing 0 is also accepted and silently yields the 1-day 
+floor.
+XFAIL engine/strict_tests/test_s08_irrigation.py::TestInterval::test_depletion_must_be_a_fraction[100.0] - The 
+allowable_depletion argument is a FRACTION in [0, 1] but the function never says so and never checks. Passing the 
+percentage 55 instead of the fraction 0.55 returns an interval of 1000 days instead of 11, a factor of 100 that leaves 
+the crop unwatered for most of the season with no diagnostic. Passing 0 is also accepted and silently yields the 1-day 
+floor.
+XFAIL engine/strict_tests/test_s08_irrigation.py::TestModuleContract::test_module_can_produce_a_schedule - 
+IrrigationEvent is declared at engine/hydroma/irrigation/scheduler.py:12 and is never constructed anywhere in the 
+module. The module therefore computes an interval and a depth but has no representation of a scheduled event, so the 
+schedule the function is named for cannot be produced from it.
+XFAIL engine/strict_tests/test_s10_property_invariants.py::TestFunctionComposition::test_scs_and_rational_agree_where_b
+oth_are_active - The two methods estimate the same storm peak and differ by five orders of magnitude. Two independent 
+defects compose to produce it. (1) engine/hydroma/models/runoff_model.py:131 divides the runoff VOLUME by 36000 to 
+obtain a peak flow, so the SCS branch reports a value 10x too small and, being a volume rather than a rate, carries no 
+time dimension at all. (2) The rational branch computes its peak flow correctly. Measured on 100 mm over a small area 
+at CN 34 the rational peak is 128 281x the SCS peak. Pinning the SCS peak flow alone brings this comparison to within 
+the spread two legitimate empirical runoff methods actually have.
+XFAIL 
+engine/strict_tests/test_s11_parity_tripwires.py::TestHargreavesCopies::test_crop_water_copy_is_fao56_equation_52 - 
+engine/hydroma/calculations/crop_water_req_calc.py:62 computes et0 = 0.0023 * (Tmax - Tmin)**0.5 * (Tmean + 17.8) * 
+ra**0.5. FAO-56 eq. 52 is LINEAR in the millimetre-equivalent Ra, not its square root, so this is a different 
+equation. Measured on the reference day it returns 1.4382 mm/day against 5.9275 for the three correct copies, i.e. 
+0.243x and 4.1x under. The module's own comment calls it 'simplified version for demonstration'. Every seasonal ETc, 
+and therefore every irrigation requirement, computed through this path is wrong by that factor.
+XFAIL engine/strict_tests/test_s11_parity_tripwires.py::TestSoilParameterTable::test_every_copy_carries_the_same_twelve
+_textures - The van Genuchten table exists in four copies of three sizes. engine/hydroma/soil/physics.py carries 12 
+textures, cpp_core/src/soil.cpp and cpp_bridge/soil_physics_fast.py carry 7, and land/integration/soil_integrator.py 
+carries 4. The five missing from the compiled path are sandy_clay, sandy_clay_loam, silt, silty_clay and 
+silty_clay_loam, so a request for any of them raises KeyError under C++ and succeeds under Python. The C++ copy also 
+stores Ks in cm/hr while the Python table is cm/day, and the engine's own comment at cpp_core/src/soil.cpp claims the 
+values are matched exactly to the Python file. Separately, physics.py:121 attributes its Ks column to Carsel & Parrish 
+(1988) x24, which the column does not satisfy: sandy_clay_loam 31.4 exceeds loam 25.0 and clay 4.8 exceeds silty_clay 
+1.92, and hydraulic conductivity cannot increase with fineness. Consolidation must publish the table from one source 
+and generate the C++ copy from it.
+XFAIL engine/strict_tests/test_s11_parity_tripwires.py::TestCheckDamCopies::test_both_versions_return_a_shared_schema 
+- The two versions return disjoint schemas. The canonical design has 24 keys, the screening estimate 7, and they share 
+none: the canonical returns dam_height_m, dam_volume_m3, storage_required_m3, trap_efficiency, spillway_width_m and 
+design_standard, the screening returns height_m, width_m, estimated_discharge_m3s, material and notes. The names are 
+now distinct and the screening output is flagged, but the schemas are still not reconciled, so a caller who switches 
+between them has no compatibility layer. Measured for slope 5 %, area 50 000 m2, rainfall 120 mm the discharge differs 
+by a factor of 6.3 (0.0069 against 0.0437 m3/s), driven by the uncited weir coefficient 1.84 against the FAO 1.7 and 
+by a 0.1-slope runoff adjustment the canonical design does not apply.
+XFAIL engine/strict_tests/test_s11_parity_tripwires.py::TestCheckDamCopies::test_weir_coefficient_is_the_same_in_both_v
+ersions - The simplified version hard-codes runoff_coefficient = 0.6 + (slope_pct / 100) * 0.2 and a weir coefficient 
+of 1.84, while the canonical version uses C = 0.6 and Cd = 1.7 per the FAO manual. At a 30 % slope the simplified 
+version therefore reports 66 % more runoff and a 10 % larger discharge than the standard it appears to implement, with 
+no marker in the output distinguishing the two.
+XFAIL engine/strict_tests/test_s11_parity_tripwires.py::TestBridgeReachability::test_soil_params_is_callable - 
+engine/hydroma/cpp_bridge exposes soil_params(texture: str) -> hydroma::SoilTextureParams, and calling it with a valid 
+argument raises TypeError: 'Unable to convert function return value to a Python type'. The struct has no pybind11 type 
+caster registered, so the symbol is advertised in the module's public API and can never return a value. This is the 
+C++ half of the soil-table consolidation: the C++ table cannot be read from Python at all, which is why the 
+texture-coverage gap went unnoticed. The other 60 exposed symbols take arguments and were verified callable with 
+argument lists derived from their own docstrings.
+XFAIL 
+engine/strict_tests/test_s13_soil_table.py::TestPhysicalAdmissibility::test_conductivity_falls_with_texture_fineness - 
+The Ks column is not monotone in texture fineness, which hydraulic conductivity cannot be. Two rows break it: 
+sandy_clay_loam carries 31.4 cm/day while the coarser silt carries 6.0, and clay carries 4.8 while the coarser 
+silty_clay carries 1.92. The n column breaks it once at the same row, sandy_clay_loam 1.48 against silt 1.37. This is 
+the evidence that withdraws the Carsel & Parrish attribution: a faithful transcription of a published table would not 
+violate the defining ordering of the quantity it tabulates. The rows are retained and labelled disputed rather than 
+corrected, because the correct values require the source publication, which is not available offline. See 
+engine/data/SOIL_TABLE_CONFLICTS.md.
+XFAIL engine/strict_tests/test_s13_soil_table.py::TestPhysicalAdmissibility::test_pore_size_index_falls_with_texture_fi
+neness - The pore-size index n is not monotone in texture fineness either. The van Genuchten n is a shape parameter of 
+the retention curve and falls as the median pore size falls, so it must decrease from sand to clay. One row breaks it: 
+sandy_clay_loam carries n = 1.48 against silt's 1.37, and sandy_clay_loam is the finer of the two. The same row also 
+breaks the conductivity ordering, which is what makes it a suspected mis-assembly rather than a rounding difference. n 
+is otherwise monotone across the other eleven textures, so this is one row rather than a systematic transcription 
+error. The row is retained and labelled disputed; correcting it needs the source publication.
+
+

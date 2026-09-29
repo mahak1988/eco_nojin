@@ -1,0 +1,143 @@
+{
+  "generatedFor": "contract gate (scripts/check-api-contract.mjs)",
+  "updated": "2026-09-28",
+  "reason": "Static public surfaces consumed through lib/api/public.ts. These are content, not API resources: the product decision (2026-09-28) is that they render from the app's own content layer and therefore have no gateway endpoint by design. A path listed here must stay unpublished; if it becomes published, the gate reports allowlist rot and the entry must be deleted.",
+  "declaredContent": [
+    {
+      "path": "/api/v1/public/components",
+      "reason": "overview of platform components (static marketing content)"
+    },
+    {
+      "path": "/api/v1/public/components/api-playground",
+      "reason": "component walkthrough (static)"
+    },
+    {
+      "path": "/api/v1/public/components/dispute-resolution",
+      "reason": "component walkthrough (static)"
+    },
+    {
+      "path": "/api/v1/public/components/ecowallet",
+      "reason": "component walkthrough (static)"
+    },
+    {
+      "path": "/api/v1/public/components/hydroma-engine",
+      "reason": "component walkthrough (static)"
+    },
+    {
+      "path": "/api/v1/public/components/land-profiler",
+      "reason": "component walkthrough (static)"
+    },
+    {
+      "path": "/api/v1/public/components/marketplace",
+      "reason": "component walkthrough (static)"
+    },
+    {
+      "path": "/api/v1/public/components/mrv-dashboard",
+      "reason": "component walkthrough (static)"
+    },
+    {
+      "path": "/api/v1/public/components/satellite-view",
+      "reason": "component walkthrough (static)"
+    },
+    {
+      "path": "/api/v1/public/policy/accessibility",
+      "reason": "legal text (static; versioning uses content_versions separately)"
+    },
+    {
+      "path": "/api/v1/public/policy/cookies",
+      "reason": "legal text (static)"
+    },
+    {
+      "path": "/api/v1/public/policy/governance",
+      "reason": "legal text (static)"
+    },
+    {
+      "path": "/api/v1/public/policy/licensing",
+      "reason": "legal text (static)"
+    },
+    {
+      "path": "/api/v1/public/policy/privacy",
+      "reason": "legal text (static)"
+    },
+    {
+      "path": "/api/v1/public/policy/terms",
+      "reason": "legal text (static)"
+    },
+    {
+      "path": "/api/v1/public/science/data-sources",
+      "reason": "evidence page (static narrative)"
+    },
+    {
+      "path": "/api/v1/public/science/evidence-base",
+      "reason": "evidence page (static narrative)"
+    },
+    {
+      "path": "/api/v1/public/science/methodology",
+      "reason": "evidence page (static narrative)"
+    },
+    {
+      "path": "/api/v1/public/science/reproducibility",
+      "reason": "evidence page (static narrative)"
+    },
+    {
+      "path": "/api/v1/public/science/uncertainty",
+      "reason": "evidence page (static narrative)"
+    },
+    {
+      "path": "/api/v1/public/science/validation",
+      "reason": "evidence page (static narrative; model validation records live under /api/v1/models)"
+    },
+    {
+      "path": "/api/v1/public/api/endpoints",
+      "reason": "generated from openapi.json at build time, not an endpoint"
+    },
+    {
+      "path": "/api/v1/public/api/schema",
+      "reason": "generated from openapi.json at build time, not an endpoint"
+    },
+    {
+      "path": "/api/v1/public/education/certifications",
+      "reason": "learning content (static catalog of certifications)"
+    },
+    {
+      "path": "/api/v1/public/education/courses",
+      "reason": "learning content (course catalogue)"
+    },
+    {
+      "path": "/api/v1/public/education/video",
+      "reason": "learning content (video metadata)"
+    },
+    {
+      "path": "/api/v1/public/education/video/{param}",
+      "reason": "learning content (single video)"
+    },
+    {
+      "path": "/api/v1/public/education/videos",
+      "reason": "learning content (video list)"
+    },
+    {
+      "path": "/api/v1/public/education/workshops",
+      "reason": "learning content (workshop list)"
+    },
+    {
+      "path": "/api/v1/lms/courses",
+      "reason": "learning content (LMS course list; same class as education/*)"
+    }
+  ],
+  "declaredStaticPrefixes": [
+    "/public/policy/",
+    "/public/science/",
+    "/public/components/",
+    "/public/education/"
+  ],
+  "declaredStaticRoutes": [
+    "/about",
+    "/statements",
+    "/services",
+    "/trust",
+    "/ai",
+    "/accessibility",
+    "/offline",
+    "/simple"
+  ]
+}

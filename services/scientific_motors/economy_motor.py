@@ -9,7 +9,13 @@ advice and not a carbon certification.
 import time
 from typing import Any
 
-from services.scientific_motors.base import MotorResult, MotorStatus
+from services.scientific_motors.base import (
+    MotorInput,
+    MotorOutput,
+    MotorResult,
+    MotorStatus,
+    MotorType,
+)
 from services.scientific_motors.chain_runner import run_scientific_chain
 
 C_TO_CO2E = 3.667  # IPCC t C -> tCO2e
@@ -67,7 +73,31 @@ INTERVENTIONS: dict[str, dict[str, Any]] = {
 
 
 class EconomyMotor:
-    motor_type = "economy"
+    """Cost-benefit accounting over the real scientific chain.
+
+    Declared its type during the phase 4 S-SCI consolidation; it previously
+    reported ``motor_type`` as a bare string and had no input/output metadata,
+    so it was invisible to any consumer walking the common motor interface.
+    """
+
+    motor_type = MotorType.ECONOMY
+    display_name = "Economy / livelihood cost-benefit"
+
+    def get_input_requirements(self) -> list[MotorInput]:
+        return [
+            MotorInput("lat", "scalar", True, "Site latitude, degrees"),
+            MotorInput("lon", "scalar", True, "Site longitude, degrees"),
+            MotorInput("area_ha", "scalar", False, "Intervention area, hectares"),
+            MotorInput("intervention", "scalar", False, "Intervention identifier"),
+            MotorInput("slope_pct", "scalar", False, "Mean slope, percent"),
+        ]
+
+    def get_outputs(self) -> list[MotorOutput]:
+        return [
+            MotorOutput("npv_usd", "scalar", "USD", "Net present value over the horizon"),
+            MotorOutput("bcr", "scalar", "ratio", "Benefit-cost ratio"),
+            MotorOutput("co2e_t", "scalar", "tCO2e", "Sequestration from the chain"),
+        ]
 
     async def arun(
         self,

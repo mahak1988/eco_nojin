@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
@@ -18,12 +19,6 @@ type PilotStats = {
   generated_at: string;
 };
 
-const TITLES: Record<string, string> = { fa: 'تعاونی‌ها', en: 'Cooperatives' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'تقاضای ثبت‌شده و آمار واقعی بازارگاه',
-  en: 'Registered applications and the real marketplace counters',
-};
-
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
@@ -32,21 +27,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-audiences-cooperatives');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/audiences/cooperatives`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/audiences/cooperatives`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/audiences/cooperatives`,
-        en: `${BASE_URL}/en/public/audiences/cooperatives`,
-      },
+      canonical: canonicalFor(locale, '/public/audiences/cooperatives'),
+      languages: languageAlternates('/public/audiences/cooperatives'),
     },
   };
 }
@@ -58,11 +51,13 @@ export default async function CooperativesPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  const meta = await getTranslations('pageMeta.public-audiences-cooperatives');
   const status = await getTranslations('statusLine');
   const marketText = await getTranslations('market');
 
-  const title = TITLES[locale] ?? TITLES.en;
-  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+  const title = meta('title');
+  const description = meta('description');
 
   const market = await apiGet<MarketStats>('/api/v1/marketplace/stats');
   const marketState = toDataState('/api/v1/marketplace/stats', market, market.ok ? 1 : 0);
@@ -73,14 +68,15 @@ export default async function CooperativesPage({
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp
-          source={'/api/v1/pilot/stats'}
-          label={title}
-          verified={pilot.ok}
-          method={'/api/v1/pilot/stats'}
-        >
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-        </ProvenanceStamp>
+          <ProvenanceStamp
+            source={'/api/v1/pilot/stats'}
+            label={title}
+            verified={pilot.ok}
+            method={'/api/v1/pilot/stats'}
+          />
+        </div>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
       </section>
 

@@ -1,9 +1,10 @@
 import { Metadata } from 'next';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
@@ -30,12 +31,6 @@ type Gate = {
 
 type PhaseGateStatus = { phase: string; gates: Gate[]; all_passed: boolean };
 
-const TITLES: Record<string, string> = { fa: 'منشور', en: 'Manifesto' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'فازهای ثبت‌شده و دروازه‌های فعال‌شدهٔ مسیر رشد',
-  en: 'The registered phases and the gates that currently gate the path',
-};
-
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
@@ -44,21 +39,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-goals-manifesto');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/goals/manifesto`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/goals/manifesto`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/goals/manifesto`,
-        en: `${BASE_URL}/en/public/goals/manifesto`,
-      },
+      canonical: canonicalFor(locale, '/public/goals/manifesto'),
+      languages: languageAlternates('/public/goals/manifesto'),
     },
   };
 }
@@ -66,8 +59,10 @@ export async function generateMetadata({
 export default async function ManifestoPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const title = TITLES[locale] ?? TITLES.en;
-  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+
+  const meta = await getTranslations('pageMeta.public-goals-manifesto');
+  const title = meta('title');
+  const description = meta('description');
 
   const phases = await apiGet<ToolRegistryPhases>('/api/v1/tool-registry/phases');
   const phasesState = toDataState(
@@ -86,14 +81,15 @@ export default async function ManifestoPage({ params }: { params: Promise<{ loca
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <div className="mx-auto max-w-4xl px-6 pb-12 pt-8">
-        <ProvenanceStamp
-          source={'/api/v1/tool-registry/phases'}
-          label={title}
-          verified={phases.ok}
-          method={'/api/v1/tool-registry/phases'}
-        >
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-        </ProvenanceStamp>
+          <ProvenanceStamp
+            source={'/api/v1/tool-registry/phases'}
+            label={title}
+            verified={phases.ok}
+            method={'/api/v1/tool-registry/phases'}
+          />
+        </div>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
 
         <section className="mt-8">

@@ -114,7 +114,12 @@ int main() {
         for (int i = 0; i < 200; ++i) h0[i] = 1.0;  // left reservoir
         const SaintVenantResult r = simulate_saint_venant(h0, 0.0, sv);
         check(r.stable, "dam break: stable");
-        check(std::fabs(r.mass_balance - 1.0) < 0.02,
+        // `mass_balance` is now the conservation residual
+        // (V_in - V_out) - d(storage) in m3, with `mass_balance_error` that
+        // residual normalised by throughput; 0 is perfect. The previous check
+        // compared V_final/V_initial against 1.0, which was a storage ratio
+        // rather than a balance.
+        check(r.mass_balance_error < 0.02,
               "dam break: mass conserved within 2%");
         check(r.depth_m.back().size() == 400, "dam break: output size");
         // Wave must have propagated: some cells right of the dam now wet.

@@ -56,7 +56,7 @@ export function LocaleSelector({
           value={pending}
           onChange={(event) => setPending(event.target.value)}
           aria-describedby={statusId}
-          className="mt-1 rounded-md border border-line bg-background px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-forest"
+          className="mt-1 rounded-md border border-line-strong bg-surface px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-focus"
         >
           {locales.map((locale) => (
             <option key={locale} value={locale} lang={locale}>

@@ -90,7 +90,7 @@ export default function PlaygroundPage() {
                   id="playground-endpoint"
                   value={endpoint}
                   onChange={(event) => setEndpoint(event.target.value)}
-                  className="w-full rounded-md border border-line bg-background px-3 py-2 font-mono text-sm text-ink focus:outline-none focus:ring-2 focus:ring-forest"
+                  className="w-full rounded-md border border-line-strong bg-surface px-3 py-2 font-mono text-sm text-ink focus:outline-none focus:ring-2 focus:ring-focus"
                 >
                   {READ_ENDPOINTS.map((path) => (
                     <option key={path} value={path}>

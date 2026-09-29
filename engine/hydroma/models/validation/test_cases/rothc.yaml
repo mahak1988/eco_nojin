@@ -59,11 +59,19 @@ cases:
       initial_soc_t_ha: 50.0
       clay_pct: 10.0  # Sandy soil - low stabilization
       monthly_inputs:
-        carbon_input: [1.0]*12
-        dpm_rpm_split: [0.59]*12
+        carbon_input:
+          value: 1.0
+          repeat: 12
+        dpm_rpm_split:
+          value: 0.59
+          repeat: 12
       monthly_climate:
-        temp_c: [15.0]*12
-        smd_mm: [0.0]*12
+        temp_c:
+          value: 15.0
+          repeat: 12
+        smd_mm:
+          value: 0.0
+          repeat: 12
         max_smd_mm: 50.0
       p_factor: 0.6
     expected:
@@ -79,11 +87,19 @@ cases:
       initial_soc_t_ha: 50.0
       clay_pct: 40.0
       monthly_inputs:
-        carbon_input: [1.0]*12
-        dpm_rpm_split: [0.59]*12
+        carbon_input:
+          value: 1.0
+          repeat: 12
+        dpm_rpm_split:
+          value: 0.59
+          repeat: 12
       monthly_climate:
-        temp_c: [15.0]*12
-        smd_mm: [0.0]*12
+        temp_c:
+          value: 15.0
+          repeat: 12
+        smd_mm:
+          value: 0.0
+          repeat: 12
         max_smd_mm: 50.0
       p_factor: 0.6
     expected:
@@ -99,11 +115,19 @@ cases:
       initial_soc_t_ha: 100.0
       clay_pct: 25.0
       monthly_inputs:
-        carbon_input: [0.0]*12  # No inputs - pure decomposition
-        dpm_rpm_split: [0.59]*12
+        carbon_input:  # No inputs - pure decomposition
+          value: 0.0
+          repeat: 12
+        dpm_rpm_split:
+          value: 0.59
+          repeat: 12
       monthly_climate:
-        temp_c: [10.0]*12
-        smd_mm: [0.0]*12
+        temp_c:
+          value: 10.0
+          repeat: 12
+        smd_mm:
+          value: 0.0
+          repeat: 12
         max_smd_mm: 100.0
       p_factor: 0.6
     expected:
@@ -119,11 +143,19 @@ cases:
       initial_soc_t_ha: 100.0
       clay_pct: 25.0
       monthly_inputs:
-        carbon_input: [0.0]*12
-        dpm_rpm_split: [0.59]*12
+        carbon_input:
+          value: 0.0
+          repeat: 12
+        dpm_rpm_split:
+          value: 0.59
+          repeat: 12
       monthly_climate:
-        temp_c: [15.0]*12
-        smd_mm: [44.4]*12  # Exactly 0.444 * 100
+        temp_c:
+          value: 15.0
+          repeat: 12
+        smd_mm:  # Exactly 0.444 * 100
+          value: 44.4
+          repeat: 12
         max_smd_mm: 100.0
       p_factor: 0.6
     expected:
@@ -140,11 +172,19 @@ cases:
       initial_soc_t_ha: 80.0
       clay_pct: 40.0  # High clay
       monthly_inputs:
-        carbon_input: [0.0]*12
-        dpm_rpm_split: [0.59]*12
+        carbon_input:
+          value: 0.0
+          repeat: 12
+        dpm_rpm_split:
+          value: 0.59
+          repeat: 12
       monthly_climate:
-        temp_c: [15.0]*12
-        smd_mm: [0.0]*12
+        temp_c:
+          value: 15.0
+          repeat: 12
+        smd_mm:
+          value: 0.0
+          repeat: 12
         max_smd_mm: 100.0
       p_factor: 0.6
     expected:
@@ -159,11 +199,19 @@ cases:
       initial_soc_t_ha: 100.0
       clay_pct: 25.0
       monthly_inputs:
-        carbon_input: [1.0]*12
-        dpm_rpm_split: [0.59]*12
+        carbon_input:
+          value: 1.0
+          repeat: 12
+        dpm_rpm_split:
+          value: 0.59
+          repeat: 12
       monthly_climate:
-        temp_c: [15.0]*12
-        smd_mm: [0.0]*12
+        temp_c:
+          value: 15.0
+          repeat: 12
+        smd_mm:
+          value: 0.0
+          repeat: 12
         max_smd_mm: 100.0
       p_factor: 0.6
     expected:

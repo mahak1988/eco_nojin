@@ -6,6 +6,7 @@ Wind & Water Erosion Adapters
 
 from datetime import UTC, datetime
 
+from services._contracts.formula import k_factor_epic
 from services.simulation.base import BaseSimulator, SimulatorRegistry
 from services.simulation.schemas import (
     SimulationContext,
@@ -116,14 +117,21 @@ class WaterErosionAdapter(BaseSimulator):
         )
 
     def _k_factor(self, soil) -> float:
-        k = {
-            "sand": 0.15,
-            "loamy_sand": 0.20,
-            "sandy_loam": 0.25,
-            "loam": 0.30,
-            "silt_loam": 0.35,
-            "silt": 0.45,
-            "clay_loam": 0.30,
-            "clay": 0.25,
-        }.get(soil.texture.lower(), 0.30)
-        return max(0.05, k * (1 - soil.organic_carbon_pct * 0.05))
+        """EPIC erodibility K (Renard et al. 1997), from the formula registry.
+
+        Replaces a texture-class lookup that returned 0.15-0.45 -- up to five
+        times the 0.09 physical ceiling for the erodibility factor -- with the
+        registry's bounded relation. The texture signal is not lost: it now
+        arrives as the real clay and silt percentages the context carries,
+        rather than as a class name.
+
+        ``SoilProfile.organic_carbon_pct`` is a percentage and the registry takes
+        g/kg, so it is multiplied by 10 (1 % == 10 g/kg). The registry rejects
+        percentages outside 0..100, so an out-of-range profile now raises
+        instead of silently returning a plausible number.
+        """
+        return k_factor_epic(
+            soil.organic_carbon_pct * 10.0,
+            soil.clay_pct,
+            soil.silt_pct,
+        )

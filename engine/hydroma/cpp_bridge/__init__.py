@@ -29,8 +29,10 @@ except ImportError:  # pragma: no cover - numpy is a hard dependency in practice
 
 # Telemetry storage
 _telemetry = {
+    "numba_calls": 0,
     "cpp_calls": 0,
     "fallback_calls": 0,
+    "total_numba_time_ms": 0.0,
     "total_cpp_time_ms": 0.0,
     "total_fallback_time_ms": 0.0,
 }
@@ -89,6 +91,16 @@ def is_cpp_available() -> bool:
     return _cpp_available
 
 
+def get_module() -> Any:
+    """The loaded ``hydroma_core`` extension, or None.
+
+    This is the single owned reference to the extension. Other loaders must
+    delegate here rather than re-executing the module init, which pybind11
+    rejects with ``generic_type: type "..." is already registered!``.
+    """
+    return _hydroma_core
+
+
 def get_telemetry() -> dict:
     """Get performance telemetry."""
     return _telemetry.copy()
@@ -98,8 +110,10 @@ def reset_telemetry() -> None:
     """Reset telemetry counters."""
     global _telemetry
     _telemetry = {
+        "numba_calls": 0,
         "cpp_calls": 0,
         "fallback_calls": 0,
+        "total_numba_time_ms": 0.0,
         "total_cpp_time_ms": 0.0,
         "total_fallback_time_ms": 0.0,
     }
@@ -116,20 +130,103 @@ def _has_array_arg(args: tuple, kwargs: dict) -> bool:
     return False
 
 
+# =============================================================================
+# Backend dispatch for array workloads
+# =============================================================================
+# The C++ ``*_array`` symbols used to bind ``const std::vector<double>&``, so
+# pybind11 converted NumPy arrays element-by-element through Python objects. That
+# cost scaled with the ROW count, not the element count, so a (1000000, 1) request
+# -- the natural shape for a reflectance time series -- took 6.77 s while the
+# same elements as (250000, 2) took 0.010 s. Because the shape is chosen by the
+# caller, that was a remote CPU-exhaustion vector.
+#
+# engine/cpp_core/bindings/bindings.cpp now binds those symbols to
+# py::array_t<double, c_style | forcecast>, which reads the caller's buffer with
+# zero copy. The same shape now takes 0.005 s: 1339x faster, with the result
+# bit-identical to NumPy (max abs diff 0.0). This file only has to choose between
+# backends; it no longer has to work around the conversion.
+try:  # pragma: no cover - exercised through the dispatch tests
+    from engine.hydroma.cpp_bridge import indices_fast as _numba_indices
+
+    _NUMBA_AVAILABLE = bool(getattr(_numba_indices, "HAS_NUMBA", False))
+except Exception:  # pragma: no cover - numba is optional
+    _numba_indices = None
+    _NUMBA_AVAILABLE = False
+
+#: bridge function name -> Numba twin
+_NUMBA_TWINS: dict[str, str] = {
+    "ndvi": "ndvi_fast",
+    "evi": "evi_fast",
+    "savi": "savi_fast",
+    "nbr": "nbr_fast",
+}
+
+
+def _numba_target(func_name: str) -> Callable | None:
+    """Return the Numba twin for ``func_name`` when Numba is usable."""
+    if not _NUMBA_AVAILABLE or _numba_indices is None:
+        return None
+    twin = _NUMBA_TWINS.get(func_name)
+    if twin is None:
+        return None
+    return getattr(_numba_indices, twin, None)
+
+
+#: Below this element count the fixed pybind11 dispatch cost dominates and the
+#: Numba kernel is the faster choice. Above it, the two are within a small
+#: factor of each other and either is acceptable. Measured on this machine with
+#: the py::array_t bindings in place (max |cpp - numba| == 0.0):
+#:
+#:   N          C++         Numba
+#:   1e3        0.00706s    0.00002s
+#:   4e5        0.00757s    0.00216s
+#:   1e6        0.00683s    0.00890s
+#:   5e6        0.03362s    0.03327s
+#:
+#: So Numba is kept for small payloads and the C++ kernel is used from here up.
+#: Both compute the identical expression, so the choice is performance-only.
+_ARRAY_CPP_THRESHOLD = 1_000_000
+
+
+def _array_size(args: tuple, kwargs: dict) -> int:
+    """Largest ndarray among the arguments; 0 when there is none."""
+    biggest = 0
+    for value in list(args) + list(kwargs.values()):
+        if _np is not None and isinstance(value, _np.ndarray):
+            biggest = max(biggest, int(value.size))
+    return biggest
+
+
 def _with_telemetry(func_name: str, cpp_func: Callable | None, py_func: Callable) -> Callable:
     """Wrap a function pair with telemetry, array dispatch and fallback.
+
+    Dispatch order, all paths producing the identical expression:
+
+    * scalar arguments  -> C++ -> NumPy
+    * array arguments   -> Numba (small) -> C++ (large) -> NumPy
 
     The C++ extension exposes both scalar (``name``) and vectorised
     (``name_array``) entry points. The scalar symbol must never be handed an
     array (pybind11 raises 'incompatible function arguments'), so array calls
     are routed to the ``_array`` symbol when it exists.
     """
+    numba_func = _numba_target(func_name)
 
     @functools.wraps(py_func)
     def wrapper(*args, **kwargs):
+        array_call = _has_array_arg(args, kwargs)
+
+        if array_call and numba_func is not None and _array_size(args, kwargs) < _ARRAY_CPP_THRESHOLD:
+            t0 = time.perf_counter()
+            result = numba_func(*args, **kwargs)
+            elapsed = (time.perf_counter() - t0) * 1000
+            _telemetry["numba_calls"] += 1
+            _telemetry["total_numba_time_ms"] += elapsed
+            return result
+
         if _cpp_available and cpp_func is not None:
             target = cpp_func
-            if _has_array_arg(args, kwargs):
+            if array_call:
                 array_func = getattr(_hydroma_core, f"{func_name}_array", None)
                 if array_func is not None:
                     target = array_func
@@ -141,7 +238,10 @@ def _with_telemetry(func_name: str, cpp_func: Callable | None, py_func: Callable
                 _telemetry["total_cpp_time_ms"] += elapsed
                 return result
             except Exception as e:
-                logger.debug(f"C++ {func_name} failed, falling back: {e}")
+                # A C++ *defect* is recorded as a benign fallback at debug level.
+                # Telemetry therefore cannot distinguish "C++ absent" from
+                # "C++ wrong"; keep the log at warning so it is diagnosable.
+                logger.warning("C++ %s failed, falling back to Python: %s", func_name, e)
         # Fallback to Python
         t0 = time.perf_counter()
         result = py_func(*args, **kwargs)
@@ -156,36 +256,65 @@ def _with_telemetry(func_name: str, cpp_func: Callable | None, py_func: Callable
 # =============================================================================
 # Python fallbacks (always work)
 # =============================================================================
+# Index fallbacks
+#
+# Two divergences from the native kernels were corrected here.
+#
+# 1. Every function used to add a 1e-10 epsilon to the denominator. That is not
+#    only a difference from the native `denominator == 0.0` guard
+#    (src/indices.cpp:14-17): the epsilon also perturbed every non-degenerate
+#    value, biasing each index by ~2e-10 relative.
+#
+# 2. None of them clipped the result to [-1, 1], which the native kernels all
+#    do (src/indices.cpp:12,28-40). EVI in particular exceeds 1 whenever the
+#    denominator is small, so the fallback could return values the native path
+#    can never produce -- a consumer that clamps downstream would get a different
+#    answer depending on which backend served the request. Measured divergence
+#    before the fix: EVI ~100%, the other four ~4e-10.
+# =============================================================================
+
+
+def _safe_ratio(numerator, denominator):
+    """Divide, returning 0.0 where the denominator is exactly zero.
+
+    Mirrors ``safe_ratio`` in engine/cpp_core/src/indices.cpp.
+    """
+    num = _np.asarray(numerator, dtype=float)
+    den = _np.asarray(denominator, dtype=float)
+    out = _np.zeros(_np.broadcast_shapes(num.shape, den.shape), dtype=float)
+    with _np.errstate(divide="ignore", invalid="ignore"):
+        _np.divide(num, den, out=out, where=(den != 0.0))
+    return out if out.ndim else float(out)
+
+
+def _clip(value):
+    """Clip to [-1, 1], matching ``clip`` in src/indices.cpp."""
+    return _np.clip(value, -1.0, 1.0)
 
 
 def _py_ndvi(red, nir):
-    """NDVI: (NIR - Red) / (NIR + Red)"""
-    denom = nir + red
-    if isinstance(denom, (int, float)):
-        return (nir - red) / (denom + 1e-10) if denom != 0 else 0.0
-    # numpy array
-    return (nir - red) / (denom + 1e-10)
+    """NDVI: (NIR - Red) / (NIR + Red), clipped to [-1, 1]."""
+    return _clip(_safe_ratio(nir - red, nir + red))
 
 
 def _py_evi(red, nir, blue):
-    """EVI: 2.5 * (NIR - Red) / (NIR + 6*Red - 7.5*Blue + 1)"""
-    denom = nir + 6 * red - 7.5 * blue + 1
-    return 2.5 * (nir - red) / (denom + 1e-10)
+    """EVI: 2.5 * (NIR - Red) / (NIR + 6*Red - 7.5*Blue + 1), clipped to [-1, 1]."""
+    return _clip(2.5 * _safe_ratio(nir - red, nir + 6 * red - 7.5 * blue + 1))
 
 
 def _py_savi(red, nir, L=0.5):
-    """SAVI: ((NIR - Red) / (NIR + Red + L)) * (1 + L)"""
-    return ((nir - red) / (nir + red + L + 1e-10)) * (1 + L)
+    """SAVI: ((NIR - Red) / (NIR + Red + L)) * (1 + L), clipped to [-1, 1]."""
+    return _clip(_safe_ratio((nir - red) * (1 + L), nir + red + L))
 
 
 def _py_ndwi(green, nir):
-    """NDWI: (Green - NIR) / (Green + NIR)"""
-    return (green - nir) / (green + nir + 1e-10)
+    """NDWI: (Green - NIR) / (Green + NIR), clipped to [-1, 1]."""
+    return _clip(_safe_ratio(green - nir, green + nir))
 
 
 def _py_nbr(nir, swir):
-    """NBR: (NIR - SWIR) / (NIR + SWIR)"""
-    return (nir - swir) / (nir + swir + 1e-10)
+    """NBR: (NIR - SWIR) / (NIR + SWIR), clipped to [-1, 1]."""
+    return _clip(_safe_ratio(nir - swir, nir + swir))
 
 
 def _py_rusle_annual_soil_loss(r, k, ls, c, p):
@@ -194,12 +323,27 @@ def _py_rusle_annual_soil_loss(r, k, ls, c, p):
 
 
 def _py_latin_hypercube(n_samples, n_dimensions, seed=None):
-    """Latin Hypercube Sampling over the unit hypercube."""
+    """Latin Hypercube Sampling over the unit cube.
+
+    One sample per stratum per dimension. This previously raised
+    ``ValueError: shape mismatch`` for any ``n_dimensions > 1``: it asked
+    ``rng.uniform`` for an ``(n_samples, n_dimensions)`` result while passing
+    ``low``/``high`` arrays of shape ``(n_samples,)``, which broadcast only when
+    ``n_dimensions == 1``. Since ``_with_telemetry`` falls back to this function
+    whenever the native call raises, any C++ failure would have cascaded into a
+    second, unrelated error instead of degrading cleanly.
+    """
+    if n_samples <= 0 or n_dimensions <= 0:
+        return _np.zeros((0, 0))
     rng = _np.random.default_rng(seed)
     cut = _np.linspace(0.0, 1.0, n_samples + 1)
-    samples = rng.uniform(cut[:-1], cut[1:], size=(n_samples, n_dimensions))
+    # One uniform draw inside each stratum, then one random permutation per
+    # dimension so the strata are not aligned across dimensions.
+    samples = _np.empty((n_samples, n_dimensions), dtype=float)
     for j in range(n_dimensions):
-        rng.shuffle(samples[:, j])
+        column = rng.uniform(cut[:-1], cut[1:])
+        rng.shuffle(column)
+        samples[:, j] = column
     return samples
 
 
@@ -211,8 +355,18 @@ def _py_monte_carlo_uniform(n_samples, bounds, seed=None):
     return rng.uniform(lo, hi, size=(n_samples, len(bounds)))
 
 
-def _py_penman_monteith_et0(tmin, tmax, rh_mean, rs, u2, z, lat, doy):
-    """FAO-56 Penman-Monteith reference ET0 [mm/day] (vectorised)."""
+def _py_penman_monteith_et0(tmin, tmax, rh_mean, u2, rs, z, lat, doy):
+    """FAO-56 Penman-Monteith reference ET0 [mm/day] (vectorised).
+
+    The parameter order matches the native binding
+    ``penman_monteith_et0(t_min, t_max, rh_mean_pct, u2, rs_mj, elevation_m,
+    lat_deg, doy)`` exactly. It previously read ``(tmin, tmax, rh, rs, u2, ...)``,
+    i.e. positions 4 and 5 were swapped relative to the native symbol. Because
+    ``_with_telemetry`` forwards the same positional arguments to whichever
+    backend it selects, every call made while the C++ extension was unavailable
+    fed the wind speed in as solar radiation and the solar radiation in as wind
+    speed, and returned a plausible but wrong ET0 with no error.
+    """
     tmin = _np.asarray(tmin, dtype=float)
     tmax = _np.asarray(tmax, dtype=float)
     rh = _np.asarray(rh_mean, dtype=float)
@@ -245,12 +399,25 @@ def _py_penman_monteith_et0(tmin, tmax, rh_mean, rs, u2, z, lat, doy):
     )
     rso = (0.75 + 2e-5 * z) * ra
     rns = (1.0 - 0.23) * rs
+
+    # Cloudiness factor for Rnl, FAO-56 eq. 45: (1.35 * Rs/Rso) - 0.35.
+    #
+    # The clear-sky RATIO is limited to [0.3, 1.0] and the derived factor is
+    # then used as-is. This function used to clip the *derived factor* to
+    # [0.05, 1.0] instead, which is a different operation on a different
+    # quantity: the two forms agree only where the derived factor already
+    # exceeded the clip, and disagree for every ratio below ~0.296 -- the
+    # overcast and winter range FAO-56 is written for.
+    # engine/cpp_core/src/climate.cpp:78-86 has always limited the ratio, so
+    # this change also closes a C++/Python divergence.
+    _rs_rso = _np.clip(rs / _np.maximum(rso, 1e-6), 0.3, 1.0)
+
     rnl = (
         4.903e-9
         * ((tmax + 273.16) ** 4 + (tmin + 273.16) ** 4)
         / 2.0
         * (0.34 - 0.14 * _np.sqrt(_np.maximum(ea, 0.0)))
-        * _np.clip(1.35 * rs / _np.maximum(rso, 1e-6) - 0.35, 0.05, 1.0)
+        * (1.35 * _rs_rso - 0.35)
     )
     rn = rns - rnl
     num = 0.408 * delta * rn + gamma * (900.0 / (tmean + 273.0)) * u2 * (es - ea)

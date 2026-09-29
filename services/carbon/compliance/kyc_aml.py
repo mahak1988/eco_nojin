@@ -9,16 +9,54 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from enum import StrEnum
+from enum import IntEnum, StrEnum
 
 
-class RiskLevel(StrEnum):
-    """Risk level for KYC/AML assessment."""
+class RiskLevel(IntEnum):
+    """Risk level for KYC/AML assessment.
 
-    LOW = "low"
-    MEDIUM = "medium"
-    HIGH = "high"
-    CRITICAL = "critical"
+    Ordered by severity, not by name. The values used to be strings compared
+    with ``>``, which orders them ``critical < high < low < medium`` — so a
+    CRITICAL finding such as a sanctioned jurisdiction was downgraded to LOW,
+    and MEDIUM was never chosen over HIGH. In an AML control that inverts the
+    two levels that matter most.
+
+    ``.value`` is now the integer rank, so any code that serialised the level
+    as a string must use :attr:`label`.
+    """
+
+    LOW = 1
+    MEDIUM = 2
+    HIGH = 3
+    CRITICAL = 4
+
+    @property
+    def label(self) -> str:
+        """Human/API-facing name: ``low`` .. ``critical``."""
+        return self.name.lower()
+
+    def __str__(self) -> str:
+        return self.label
+
+    @classmethod
+    def from_label(cls, value: object) -> RiskLevel:
+        """Parse a level from its string name, or from an int rank.
+
+        Tolerates ints so records written before this change, which stored the
+        string, still load.
+        """
+        if isinstance(value, cls):
+            return value
+        if isinstance(value, int):
+            return cls(value)
+        text = str(value).strip().lower()
+        for member in cls:
+            if member.label == text:
+                return member
+        try:
+            return cls(int(text))
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"unknown risk level: {value!r}") from exc
 
 
 class KYCStatus(StrEnum):
@@ -197,10 +235,12 @@ class KYCService:
 
         record.aml_checks = checks
 
-        # Calculate overall risk level
+        # Calculate overall risk level: the worst finding wins.
+        # Comparing the IntEnum members directly, rather than their previous
+        # string values, is what makes CRITICAL actually win.
         max_risk = RiskLevel.LOW
         for check in checks:
-            if check.risk_level.value > max_risk.value:
+            if check.risk_level > max_risk:
                 max_risk = check.risk_level
         record.risk_level = max_risk
 

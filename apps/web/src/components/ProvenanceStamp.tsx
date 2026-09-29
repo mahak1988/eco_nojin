@@ -67,16 +67,16 @@ export function ProvenanceStamp({
       {hasDetails && (
         <>
           {verified !== undefined && (
-            <span className="ml-1 inline-flex" role="img" aria-label={verifiedText}>
+            <span className="ms-1 inline-flex" role="img" aria-label={verifiedText}>
               {verified ? '✓' : '✗'}
             </span>
           )}
           {timestamp && (
-            <span className="num ml-1 text-[10px] opacity-70">
+            <span className="num ms-1 text-[10px] opacity-70">
               {new Date(timestamp).toLocaleDateString()}
             </span>
           )}
-          {method && <span className="ml-1 text-[10px] opacity-70">· {method}</span>}
+          {method && <span className="ms-1 text-[10px] opacity-70">· {method}</span>}
         </>
       )}
 

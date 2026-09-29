@@ -1,0 +1,18 @@
+{
+    "agent": "contract-gaps",
+    "blocked": [],
+    "remainingPaths": [
+        "/api/v1/security/status"
+    ],
+    "lastRun": "2026-09-29T01:03:46.762266+03:30",
+    "processed": [
+        "gate-precision: prefix constants skipped",
+        "gate-precision: trailing slash normalised",
+        "declared-content: education/* and lms/courses added to allowlist",
+        "doc-row: lms/courses → «صفحه static شد» (هم‌راستا با اعلام allowlist)",
+        "doc-row: policy/{param}/versions → «بدون قرارداد» + اقدام پیشنهادی",
+        "code-removal: policy/{param}/versions → تابع بلامصرف policy.versions از public.ts حذف شد (بدون مصرف‌کننده، بدون معادل منتشرشده؛ وضعیت سند: از کد حذف شد)",
+        "doc-row: security/status → «بدون قرارداد» + اقدام پیشنهادی (بدون معادل منتشرشده؛ mount امنیتی در درخت کاری در جریان و کامیت‌نشده؛ دروازهٔ زنده ۴۰۴؛ نیازمند انتشار قرارداد؛ خارج از دامنهٔ فایلی عامل ۱)"
+    ],
+    "remaining": 1
+}

@@ -205,10 +205,23 @@ class TestTelemetryBenchmarks:
     """Benchmarks to verify telemetry overhead."""
 
     def test_telemetry_overhead(self, benchmark):
-        """Benchmark telemetry overhead on simple function."""
-        reset_telemetry()
-        red = np.random.uniform(0, 1, 1000).astype(np.float64)
-        nir = np.random.uniform(0, 1, 1000).astype(np.float64)
+        """Benchmark telemetry overhead on simple function.
+
+        1000 rows is below ``_ARRAY_CPP_THRESHOLD``, so the router sends this to
+        the Numba twin and ``cpp_calls`` stays at zero. Asserting ``cpp_calls ==
+        1`` here was asserting a routing decision the array path is not supposed
+        to make, which is why it failed on every run.
+
+        What is worth asserting is that the call is counted exactly once, in
+        whichever counter the router actually chose, and that the choice matches
+        the threshold. Both are checked; the C++ path is covered separately by
+        ``test_telemetry_records_the_cpp_backend`` below.
+        """
+        from engine.hydroma.cpp_bridge import _ARRAY_CPP_THRESHOLD
+
+        size = 1000
+        red = np.random.uniform(0, 1, size).astype(np.float64)
+        nir = np.random.uniform(0, 1, size).astype(np.float64)
 
         def run():
             reset_telemetry()
@@ -216,7 +229,41 @@ class TestTelemetryBenchmarks:
             return get_telemetry()
 
         telemetry = benchmark(run)
-        assert telemetry["cpp_calls"] == 1
+        assert size < _ARRAY_CPP_THRESHOLD, "this test's premise is the small-array path"
+        counted = telemetry["numba_calls"] + telemetry["cpp_calls"] + telemetry["fallback_calls"]
+        assert counted == 1, f"the call was not counted exactly once: {telemetry}"
+        assert telemetry["cpp_calls"] == 0, (
+            "1000 rows must not reach the C++ backend; the array router is "
+            f"supposed to prefer Numba below {_ARRAY_CPP_THRESHOLD} rows"
+        )
+
+    def test_telemetry_records_the_cpp_backend(self):
+        """The C++ path really does increment cpp_calls, at a size that uses it.
+
+        Without this, the small-array test above would also pass if the C++
+        backend were never reached by anything.
+        """
+        from engine.hydroma.cpp_bridge import _ARRAY_CPP_THRESHOLD, get_module
+
+        if not is_cpp_available():
+            pytest.skip("C++ hydroma_core not available")
+
+        size = _ARRAY_CPP_THRESHOLD + 1
+        red = np.random.uniform(0, 1, size).astype(np.float64)
+        nir = np.random.uniform(0, 1, size).astype(np.float64)
+
+        reset_telemetry()
+        result = ndvi(red, nir)
+        telemetry = get_telemetry()
+
+        assert result.shape == (size,), f"unexpected output shape {result.shape}"
+        assert telemetry["cpp_calls"] == 1, (
+            f"{size} rows should reach the C++ backend, got {telemetry}"
+        )
+        assert telemetry["fallback_calls"] == 0, (
+            f"the C++ backend fell back instead of running: {telemetry}; "
+            f"get_module() returned {'a module' if get_module() is not None else 'None'}"
+        )
 
 
 class TestMemoryEfficiency:

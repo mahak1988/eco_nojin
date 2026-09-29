@@ -1,0 +1,14 @@
+{
+    "done": [
+        "de:admin",
+        "es:admin"
+    ],
+    "lastError": null,
+    "agent": "i18n",
+    "lastRun": "2026-09-29T02:25:03.568+03:30",
+    "note": "12 locales x 10 missing namespaces",
+    "target": {
+        "wave1": 0.8,
+        "wave0": 0.95
+    }
+}

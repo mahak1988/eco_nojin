@@ -198,17 +198,19 @@ def run_volume_stress(sizes: list[int] | None = None, seed: int = 42) -> list[Vo
 def validate_fallbacks() -> list[StressTestResult]:
     """Verify the wrapper/indices fallback paths produce finite values.
 
-    Checks the pure-Python fallback used when the C++ binding is unavailable,
+    Checks the Numba index kernels (used when the C++ binding is unavailable)
     and confirms index functions never return non-finite values.
     """
-    from engine.hydroma.cpp_bridge import indices_fallback
+    from engine.hydroma.cpp_bridge import indices_fast
     from engine.hydroma.simulation_env.contracts import StressTestResult as SRT
     from engine.hydroma.wrapper import compute_all_indices, compute_evi, compute_ndvi, compute_savi
 
     results: list[StressTestResult] = []
 
-    # Numba fallback path
-    a = indices_fallback.ndvi_fast(
+    # Numba path. There is no separate "fallback" module to validate: the
+    # *_fast and *_fallback files were byte-identical (same MD5), so the
+    # fallback check was validating a file against itself.
+    a = indices_fast.ndvi_fast(
         np.array([[0.1, 0.2], [0.3, 0.4]]), np.array([[0.4, 0.5], [0.6, 0.7]])
     )
     r = SRT(

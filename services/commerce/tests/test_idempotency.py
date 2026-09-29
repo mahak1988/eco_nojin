@@ -121,10 +121,26 @@ class TestIdempotencyMiddlewareDirect:
         m = IdempotencyMiddleware(app=None)
 
         req = Request(_scope("POST", "/api/v1/marketplace/orders"))
-        assert m._user_id(req) == "anonymous"
+        anonymous = m._user_id(req)
+        # The literal "anonymous" is forbidden: FinIdempotencyKey is unique on
+        # (user_id, key), so a shared literal would let one caller read another
+        # caller's cached response and poison their key.
+        assert anonymous != "anonymous"
+        assert anonymous.startswith("anon:")
+        # Stable for the same peer, so replay protection still works.
+        assert m._user_id(Request(_scope("POST", "/api/v1/marketplace/orders"))) == anonymous
 
         req.state.user_id = "user-123"
         assert m._user_id(req) == "user-123"
+
+    def test_anonymous_scope_isolates_peers(self):
+        m = IdempotencyMiddleware(app=None)
+
+        other = _scope("POST", "/api/v1/marketplace/orders")
+        other["client"] = ("10.0.0.9", 8000)
+        assert m._user_id(Request(other)) != m._user_id(
+            Request(_scope("POST", "/api/v1/marketplace/orders"))
+        )
 
     def test_protected_prefixes_complete_coverage(self):
         protected_endpoints = [

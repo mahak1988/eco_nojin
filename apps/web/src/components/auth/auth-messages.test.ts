@@ -57,14 +57,59 @@ describe('auth message-key contract', () => {
     }
   });
 
-  it('serves non-fa/en auth copy from the English keys', () => {
-    const english = loadCatalogue('en');
+  it('gives every locale a non-empty string for every key', () => {
+    // A locale is allowed to omit a key: `loadMessages` merges `en` underneath,
+    // so an absent key still renders. What must never happen is a key resolving
+    // to an empty string, which renders as a blank control with a label.
     for (const locale of LOCALES) {
-      if (locale === 'en' || locale === 'fa') continue;
       const catalogue = loadCatalogue(locale);
       for (const key of CONTRACT_KEYS) {
-        expect(resolveKey(catalogue, key), `${locale}.${key}`).toBe(resolveKey(english, key));
+        const value = resolveKey(catalogue, key);
+        expect(typeof value, `${locale} is missing ${key}`).toBe('string');
+        expect(String(value).trim().length, `${locale}.${key} is blank`).toBeGreaterThan(0);
       }
+    }
+  });
+
+  it('keeps the hand-written locales translated rather than copied from English', () => {
+    // This test used to assert that every non-fa/en auth string equals the
+    // English one, which was true only because no other catalog carried real
+    // auth copy. That assertion made it impossible to ship a translation: it
+    // would have failed the moment a catalog was correctly localised. The
+    // fallback contract is enforced by `i18n-check.mjs`, which checks the merged
+    // view the runtime actually serves; what belongs here is that the locales
+    // carrying auth translation are not silently English.
+    //
+    // `ar` and `ur` are deliberately absent: their catalogs are hand-written but
+    // still carry the English auth block verbatim, so every contract key matches
+    // English. That is a registered gap, tracked as R-16 in
+    // FRONTEND_COMPLETION_PLAN_FA_2026-09-26.md, and listing them here would
+    // either fail the suite or hide the gap behind a weaker threshold.
+    const english = loadCatalogue('en');
+    const translated = ['fa', 'ru', 'zh', 'hi', 'bn', 'it', 'pt', 'ms'] as const;
+    for (const locale of translated) {
+      const catalogue = loadCatalogue(locale);
+      const identical = CONTRACT_KEYS.filter(
+        (key) => resolveKey(catalogue, key) === resolveKey(english, key),
+      );
+      expect(
+        identical.length,
+        `${locale} copies ${identical.length} of ${CONTRACT_KEYS.length} English auth strings`,
+      ).toBeLessThan(CONTRACT_KEYS.length / 2);
+    }
+  });
+
+  it('records ar and ur as still serving English auth copy', () => {
+    // A deliberate assertion of a known gap. When the Arabic and Urdu auth
+    // blocks are translated, this test must be replaced by the real expectation,
+    // not deleted — otherwise the gap becomes invisible again.
+    const english = loadCatalogue('en');
+    for (const locale of ['ar', 'ur'] as const) {
+      const catalogue = loadCatalogue(locale);
+      const identical = CONTRACT_KEYS.filter(
+        (key) => resolveKey(catalogue, key) === resolveKey(english, key),
+      );
+      expect(identical.length, `${locale} auth copy status changed`).toBe(CONTRACT_KEYS.length);
     }
   });
 

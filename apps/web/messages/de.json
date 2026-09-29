@@ -1,5 +1,8 @@
 {
-  "meta": { "machineTranslated": true, "fallbackLocale": "fa" },
+  "meta": {
+    "machineTranslated": true,
+    "fallbackLocale": "fa"
+  },
   "brand": {
     "name": "HyDroMa Nojin",
     "description": "Wissenschaftlicher Teil von Eco Nojin; Begleitung für ein besseres Verständnis von Wasser, Boden, Vegetation und Klima."
@@ -401,6 +404,434 @@
       "unknown": "Not provided",
       "source": "bff:/api/auth/session",
       "method": "HttpOnly session cookie"
+    }
+  },
+  "pageMeta": {
+    "public-audiences-cooperatives": {
+      "title": "Genossenschaften",
+      "description": "Registrierte Anträge und die realen Marktplatzzähler"
+    },
+    "public-audiences-farmers": {
+      "title": "Landwirte",
+      "description": "Registrierte Anträge und die in der Datenbank vorhandenen Landprofile"
+    },
+    "public-audiences-government": {
+      "title": "Verwaltung",
+      "description": "Registrierte Anträge und die realen Datenbankzähler"
+    },
+    "public-audiences-investors": {
+      "title": "Investoren",
+      "description": "Registrierte Anträge und reale Projektzähler; es wird keine Rendite behauptet"
+    },
+    "public-audiences-ngos": {
+      "title": "NRO",
+      "description": "Registrierte Anträge und der reale Indikatorstatus"
+    },
+    "public-audiences-researchers": {
+      "title": "Forschung",
+      "description": "Modellregister und die wissenschaftliche Referenz hinter jedem Modell"
+    },
+    "public-channels": {
+      "title": "Zugangskanäle",
+      "description": "Der reale Status von USSD-, Sprach- und Synchronisationskanälen"
+    },
+    "public-components-api-playground": {
+      "title": "API-Spielplatz",
+      "description": "Interaktive Konsole zum Testen von Endpunkten"
+    },
+    "public-components-dispute-resolution": {
+      "title": "Konfliktlösung",
+      "description": "Im Gateway ist keine Streitliste registriert; es wird kein Fall und kein Urteil gezeigt"
+    },
+    "public-components-ecowallet": {
+      "title": "EcoWallet",
+      "description": "Präsentation der Funktionen der digitalen Geldbörse"
+    },
+    "public-components-hydroma-engine": {
+      "title": "HydroMa-Engine",
+      "description": "Präsentation der Module der wissenschaftlichen Engine"
+    },
+    "public-components-land-profiler": {
+      "title": "Land-Profiler",
+      "description": "Landanalyse- und Bewirtschaftungsszenarien"
+    },
+    "public-components-marketplace": {
+      "title": "Marktplatz",
+      "description": "Vorführung der Marktplatzfunktionen"
+    },
+    "public-components-mrv-dashboard": {
+      "title": "MRV-Dashboard",
+      "description": "Präsentation von Monitoring, Reporting und Verifizierung"
+    },
+    "public-components-satellite-view": {
+      "title": "Satellitenansicht",
+      "description": "Satellitendatenebenen und Visualisierung"
+    },
+    "public-cta": {
+      "title": "Mitmachen",
+      "description": "Verfügbare Wege als echte Endpunkte und ein Formular, das an das Gateway sendet"
+    },
+    "public-education-advanced-search": {
+      "title": "Erweiterte Suche",
+      "description": "Mehrkriteriensuche in der Bibliothek"
+    },
+    "public-education-certifications": {
+      "title": "Zertifizierungsprogramme",
+      "description": "Im Gateway ist kein Zertifikatsregister registriert; es wird kein Zertifikat gezeigt"
+    },
+    "public-education-courses": {
+      "title": "Kurse",
+      "description": "Der Kursdienst ist nicht im Gateway registriert; veröffentlichte Inhalte sind in der Bibliothek auffindbar"
+    },
+    "public-education-glossary": {
+      "title": "Zweisprachiges Glossar",
+      "description": "Durchsuchbares zweisprachiges Fachglossar"
+    },
+    "public-education-library": {
+      "title": "Bildungsbibliothek",
+      "description": "Die veröffentlichten Lerninhalte durchsuchen"
+    },
+    "public-education-library-advanced": {
+      "title": "Erweiterte Bibliothek",
+      "description": "Breite Inhaltssuche und die realen Fachtermini-Gruppen"
+    },
+    "public-education-video-player": {
+      "title": "Videoplayer",
+      "description": "Der Videodienst ist nicht im Gateway registriert; es wird kein Player und keine Untertitel geladen"
+    },
+    "public-education-workshops": {
+      "title": "Workshops",
+      "description": "Im Gateway ist kein Workshop-Kalender registriert; es werden keine Termine oder Kapazitäten gezeigt"
+    },
+    "public-goals-impact": {
+      "title": "Wirkung",
+      "description": "Die realen Zähler registrierter Anträge; es wird keine geprüfte Kennzahl behauptet"
+    },
+    "public-goals-manifesto": {
+      "title": "Manifest",
+      "description": "Die registrierten Phasen und die Schranken, die den Weg derzeit begrenzen"
+    },
+    "public-goals-mission": {
+      "title": "Mission",
+      "description": "Die vom Gateway zurückgegebenen Ledger-Netzwerk- und Vertragsdaten"
+    },
+    "public-goals-roadmap": {
+      "title": "Roadmap",
+      "description": "Die registrierten Phasenschranken und Phasen im Werkzeugregister"
+    },
+    "public-goals-values": {
+      "title": "Werte",
+      "description": "Der reale Status des Zugangs über Feature-Telefone aus den USSD- und Sprachrouten"
+    },
+    "public-goals-vision": {
+      "title": "Vision",
+      "description": "Die im Werkzeugregister registrierten Domänen"
+    },
+    "public-home": {
+      "title": "Ökologisches Monitoring- und Entscheidungsplattform",
+      "description": "Boden-, Wasser-, Klima- und Kohlenstoffmonitoring auf wissenschaftlicher Grundlage"
+    },
+    "public-model-count": {
+      "title": "Modellanzahl",
+      "description": "Anzahl und Status der registrierten wissenschaftlichen Modelle"
+    },
+    "public-policy-accessibility": {
+      "title": "Erklärung zur Barrierefreiheit",
+      "description": "In legal-texts ist kein slug für Barrierefreiheit registriert, daher wird kein Konformitätsstatus gezeigt"
+    },
+    "public-policy-cookies": {
+      "title": "Cookie-Richtlinie",
+      "description": "Der Text der Cookie-Richtlinie wird aus dem veröffentlichten legal-texts-Datensatz gelesen."
+    },
+    "public-policy-governance": {
+      "title": "Governance-Struktur",
+      "description": "In legal-texts ist kein slug für Governance registriert, daher wird keine Struktur gezeigt"
+    },
+    "public-policy-licensing": {
+      "title": "Open-Source-Lizenzen",
+      "description": "In legal-texts ist kein slug für Lizenzen registriert, daher wird kein Lizenzverzeichnis gezeigt"
+    },
+    "public-policy-privacy": {
+      "title": "Datenschutzerklärung",
+      "description": "Der Text der Datenschutzerklärung wird aus dem veröffentlichten legal-texts-Datensatz gelesen."
+    },
+    "public-policy-terms": {
+      "title": "Nutzungsbedingungen",
+      "description": "Der Text der Bedingungen und seine Versionshistorie werden aus dem legal-texts-Dienst gelesen."
+    },
+    "public-science-benchmarks": {
+      "title": "Benchmarking",
+      "description": "Reale Formelprüfungsergebnisse gegen veröffentlichte Referenzen"
+    },
+    "public-science-case-studies": {
+      "title": "Fallstudien",
+      "description": "Registrierte wissenschaftliche Referenz hinter jedem Modell"
+    },
+    "public-science-data-sources": {
+      "title": "Datenquellen",
+      "description": "Datenquellenkatalog mit Status und Lizenzierung"
+    },
+    "public-science-evidence-base": {
+      "title": "Wissenschaftliche Nachweisgrundlage",
+      "description": "Kuratierte wissenschaftliche Nachweise mit DOI und Verifizierungsstatus"
+    },
+    "public-science-gap-analysis": {
+      "title": "Lückenanalyse",
+      "description": "Registriertes Gültigkeitsgebiet und Einschränkungen je Modell"
+    },
+    "public-science-limitations": {
+      "title": "Einschränkungen",
+      "description": "Bekannte Einschränkungen von Modellen und Daten"
+    },
+    "public-science-methodology": {
+      "title": "Methodik",
+      "description": "Standards und wissenschaftliche Berechnungsmethoden"
+    },
+    "public-science-peer-review": {
+      "title": "Peer Review",
+      "description": "Registrierte wissenschaftliche Referenz je Modell; es existiert kein veröffentlichter Prüfbericht"
+    },
+    "public-science-reproducibility": {
+      "title": "Reproduzierbarkeit",
+      "description": "Registrierte gemeinsame Läufe und der reale DOI-Ausstellungsstatus"
+    },
+    "public-science-uncertainty": {
+      "title": "Unsicherheit",
+      "description": "Erklärte Einschränkungen und der reale Status der Formelprüfung"
+    },
+    "public-science-validation": {
+      "title": "Validierungswerkzeuge",
+      "description": "Daten- und Modellqualitätsprüfungen"
+    },
+    "public-science-validation-methods": {
+      "title": "Validierungsmethoden",
+      "description": "Wissenschaftliche Methoden zur Modellvalidierung"
+    },
+    "public-services-satellite-intelligence": {
+      "title": "Satellitenintelligenz",
+      "description": "Satellitendatenprodukte und Endpunkte"
+    },
+    "public-visit": {
+      "title": "Hofbesuch",
+      "description": "Die Besuchsanfrage wird an das Gateway gesendet; es wird kein geplanter Besuch gezeigt"
+    },
+    "public-why": {
+      "title": "Warum diese Plattform",
+      "description": "Das Problem, die Lösung und die überprüfbaren Belege"
+    },
+    "marketplace-market-producers": {
+      "title": "Produzenten",
+      "description": "Die Produzenten, die der Marktplatz registriert hat, mit dem verzeichneten Prüfstatus."
+    },
+    "marketplace-market-stats": {
+      "title": "Marktplatz-Statistiken",
+      "description": "Aus dem Statistik-Endpunkt gelesene Zähler, oder die Feststellung, dass der Dienst nicht erreichbar war."
+    },
+    "marketplace-market-admin-orders": {
+      "title": "Bestellverwaltung",
+      "description": "Das Bestellbuch, das das Gateway bereitstellt, mit seinem echten Zustand und ohne erfundene Zeilen."
+    },
+    "marketplace-market-admin-stats": {
+      "title": "Marktplatz-Statistiken",
+      "description": "Aus dem Statistik-Endpunkt gelesene Zähler, oder die ausdrückliche Feststellung, dass der Dienst nicht erreichbar ist."
+    },
+    "marketplace-market-marketplaces": {
+      "title": "Marktplätze",
+      "description": "Die Marktplätze, die das Gateway registriert hat, so wie sie tatsächlich erfasst sind."
+    },
+    "marketplace-market-marketplaces-marketplace_id": {
+      "title": "Marktplatz-Datensatz",
+      "description": "Ein Marktplatz nach Kennung: der Zustand, den das Gateway für ihn hält, nicht eine Beschreibung dessen, was er sein sollte."
+    },
+    "marketplace-market-marketplaces-marketplace_id-shops": {
+      "title": "Marktplatz-Läden",
+      "description": "Für einen Marktplatz registrierte Läden, so wie das Gateway sie tatsächlich erfasst."
+    },
+    "marketplace-market-orders-order_id": {
+      "title": "Bestelldatensatz",
+      "description": "Eine Bestellung nach Kennung, mit dem zuletzt aufgezeichneten Statusübergang."
+    },
+    "marketplace-market-orders-order_id-status": {
+      "title": "Bestellstatus",
+      "description": "Der aktuelle Status einer Bestellung, im Moment der Anfrage aus dem Gateway gelesen."
+    },
+    "marketplace-market-orders-order_id-timeline": {
+      "title": "Bestellverlauf",
+      "description": "Die aufgezeichnete Statushistorie einer Bestellung, in der Reihenfolge des Gateways."
+    },
+    "marketplace-market-orders-order_id-track": {
+      "title": "Sendungsverfolgung",
+      "description": "Der Sendungsverlauf, den das Gateway zu einer Bestellung hält, mit ihrem aktuellen Stand."
+    },
+    "marketplace-market-payments-payment_id-escrow": {
+      "title": "Treuhand-Datensatz",
+      "description": "Der Treuhandstand, den das Gateway zu einer Zahlung hält, mit den aufgezeichneten Übergängen."
+    },
+    "marketplace-market-products": {
+      "title": "Produkte",
+      "description": "Die Produkte, die der Marktplatz registriert hat, mit Preis und Menge, die das Gateway für jedes meldet."
+    },
+    "marketplace-market-products-search": {
+      "title": "Produktsuche",
+      "description": "Den registrierten Katalog durchsuchen. Die Ergebnisse sind, was das Gateway findet — keine hier erfundene Rangfolge."
+    },
+    "marketplace-market-products-product_id": {
+      "title": "Produkt-Datensatz",
+      "description": "Ein Produkt nach Kennung, mit den Feldern, die das Gateway dafür hält."
+    },
+    "marketplace-market-products-product_id-carbon-credits": {
+      "title": "Produkt-Kohlenstoffgutschriften",
+      "description": "Dem Produkt zugeordnete Kohlenstoffgutschriften, mit der vom Gateway verzeichneten Methode."
+    },
+    "marketplace-market-products-product_id-trace": {
+      "title": "Produktherkunft",
+      "description": "Die verzeichnete Lieferkette eines Produkts, aus den Einträgen, die das Gateway hält."
+    },
+    "marketplace-market-shops-shop_id": {
+      "title": "Ladendatensatz",
+      "description": "Ein Laden nach Kennung, mit den Feldern, die das Gateway dafür hält."
+    },
+    "marketplace-market-shops-shop_id-orders": {
+      "title": "Ladenbestellungen",
+      "description": "Für einen Laden aufgezeichnete Bestellungen, ohne erfundene Summen oder Status."
+    },
+    "marketplace-market-shops-shop_id-products": {
+      "title": "Ladenprodukte",
+      "description": "Die von einem Laden registrierten Produkte, mit den Mengen, die das Gateway meldet."
+    },
+    "marketplace-market-shops-shop_id-stats": {
+      "title": "Ladenstatistiken",
+      "description": "Zähler aus dem Statistik-Endpunkt für einen einzelnen Laden."
+    },
+    "marketplace-market-transactions": {
+      "title": "Transaktionen",
+      "description": "Das Transaktionsbuch, das das Marktplatz-Gateway bereitstellt, so wie erfasst."
+    },
+    "marketplace-market-transactions-transaction_id": {
+      "title": "Transaktionsdatensatz",
+      "description": "Eine Transaktion nach Kennung, mit dem eigenen Datensatz des Gateways."
+    },
+    "marketplace-market-vendors-vendor_id": {
+      "title": "Lieferantendatensatz",
+      "description": "Ein Lieferant nach Kennung, mit dem vom Gateway verzeichneten Prüfstatus."
+    },
+    "marketplace-market-vendors-vendor_id-orders": {
+      "title": "Lieferantenbestellungen",
+      "description": "Für einen Lieferanten aufgezeichnete Bestellungen, in dem Zustand, in dem sie tatsächlich sind."
+    },
+    "marketplace-market-vendors-vendor_id-products": {
+      "title": "Lieferantenprodukte",
+      "description": "Die von einem Lieferanten registrierten Produkte, mit den Mengen, die das Gateway meldet."
+    },
+    "marketplace-market-wallet": {
+      "title": "Marktplatz-Wallet",
+      "description": "Das Wallet-Guthaben, das das Gateway meldet, oder die Feststellung, dass es nicht gelesen werden konnte."
+    },
+    "marketplace-market-wallet-balance": {
+      "title": "Wallet-Guthaben",
+      "description": "Der Stand, wie ihn das Gateway im Moment der Anfrage erfasst."
+    },
+    "marketplace-market-wallet-history": {
+      "title": "Wallet-Verlauf",
+      "description": "Die verzeichnete Bewegungshistorie der Wallet, in der Reihenfolge des Gateways."
+    },
+    "marketplace-market-wallet-methods": {
+      "title": "Zahlungsmethoden",
+      "description": "Die aktivierten Zahlungsmethoden, so wie sie konfiguriert sind."
+    },
+    "marketplace-market-wallet-methods-method_id": {
+      "title": "Zahlungsmethode",
+      "description": "Eine Zahlungsmethode nach Kennung, mit ihrem konfigurierten Zustand."
+    },
+    "marketplace-market-wallet-payouts": {
+      "title": "Auszahlungen",
+      "description": "Verzeichnete Auszahlungen, mit den Beträgen und Zuständen, die das Gateway hält."
+    },
+    "marketplace-market-wallet-payouts-payout_id": {
+      "title": "Auszahlungsdatensatz",
+      "description": "Eine Auszahlung nach Kennung und der zuletzt verzeichnete Zustand."
+    },
+    "marketplace-market-wallet-payouts-payout_id-status": {
+      "title": "Auszahlungsstatus",
+      "description": "Der aktuelle Zustand einer Auszahlung, im Moment der Anfrage gelesen."
+    },
+    "marketplace-market-wallet-transactions": {
+      "title": "Wallet-Buchungen",
+      "description": "Wallet-Bewegungen, wie vom Gateway erfasst, ohne abgeleitete Salden."
+    },
+    "marketplace-market-wallet-transactions-tx_id": {
+      "title": "Wallet-Buchung",
+      "description": "Eine Wallet-Bewegung nach Kennung und der dafür verzeichnete Zustand."
+    },
+    "marketplace-market-wallet-verification": {
+      "title": "Wallet-Verifizierung",
+      "description": "Der Verifizierungsstand, den das Gateway für eine Wallet hält — keine Aussage über die Inhaberin."
+    },
+    "marketplace-market-wallet-verification-methods": {
+      "title": "Verifizierungsmethoden",
+      "description": "Die vom Gateway konfigurierten Identitätsprüfverfahren."
+    },
+    "marketplace-market-wallet-verification-methods-method_id": {
+      "title": "Verifizierungsmethode",
+      "description": "Ein Identitätsprüfverfahren nach Kennung und sein konfigurierter Zustand."
+    }
+  },
+  "offline": {
+    "code": "Verbindung nicht verfügbar",
+    "title": "Offline-Modus",
+    "description": "Zwischengespeicherte Daten sind verfügbar; versuchen Sie es erneut, um zu aktualisieren.",
+    "retry": "Erneut versuchen"
+  },
+  "admin": {
+    "title": "Plattformverwaltung",
+    "sections": {
+      "overview": "Übersicht",
+      "systemHealth": "Systemzustand",
+      "jobs": "Jobs und Warteschlangen",
+      "localization": "Lokalisierung",
+      "featureFlags": "Feature-Flags und Fähigkeiten",
+      "security": "Sicherheit",
+      "content": "Inhalte",
+      "users": "Benutzer",
+      "designTokens": "Design-Tokens"
+    },
+    "leads": {
+      "overview": "Live-Zustand der Plattform und Überblick über ihre Fähigkeiten.",
+      "systemHealth": "Zustand je Dienst, Abhängigkeiten und letzte Prüfungen.",
+      "jobs": "Registrierte Fähigkeiten für Warteschlangen, Worker und Jobs.",
+      "localization": "Sprachabdeckung, maschinelle Übersetzung und veröffentlichte Sprachfassungen der Rechtstexte.",
+      "featureFlags": "Fähigkeitsregister und Einstellungsverträge.",
+      "security": "Sicherheits- und Audit-Fähigkeiten mit Rollenkontrolle.",
+      "content": "Veröffentlichte Inhalte und registrierte Inhaltsverträge.",
+      "users": "Benutzerverwaltung mit Rollenkontrolle und Verträge für Massenaktionen.",
+      "designTokens": "Die im Repository mitgelieferten DTCG-, CSS- und Laufzeit-Token-Quellen."
+    },
+    "grid": {
+      "search": "Suche",
+      "submit": "Suchen",
+      "clear": "Filter zurücksetzen",
+      "results": "{filtered} von {total} Zeilen"
+    },
+    "capabilities": {
+      "serviceMatrix": "Dienstzustandsmatrix",
+      "adminOverview": "Verwaltungsübersicht",
+      "channelHealth": "Kanalzustand",
+      "jobIndex": "Job-Index",
+      "automationRuns": "Automatisierungsläufe",
+      "messageCatalogues": "Nachrichtenkataloge",
+      "legalLocales": "Rechtstextsprachen",
+      "contentTranslations": "Inhaltsübersetzungen",
+      "capabilityMatrix": "Fähigkeitsmatrix",
+      "settingsIndex": "Einstellungsindex",
+      "loginHistory": "Anmeldeverlauf",
+      "securityAudit": "Sicherheitsaudit",
+      "contentIndex": "Inhaltsindex",
+      "contentWrites": "Vertrag für das Schreiben von Inhalten",
+      "usersIndex": "Benutzerindex",
+      "userBulkActions": "Vertrag für Benutzer-Massenaktionen",
+      "dtcgTokens": "DTCG-Token-Quelle",
+      "cssVariables": "CSS-Variablen-Quelle",
+      "runtimeTokens": "Laufzeit-Token-Quelle"
     }
   }
 }

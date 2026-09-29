@@ -51,10 +51,17 @@ POWER_API_URL = "https://power.larc.nasa.gov/api/temporal/daily/point"
 
 
 def hargreaves_et0(tmax: float, tmin: float, tmean: float, doy: int, lat: float) -> float:
-    """Hargreaves reference evapotranspiration (mm/day).
+    """Hargreaves reference evapotranspiration (mm/day), FAO-56 eq. 52.
 
-    Formula: ET0 = 0.0023 * Ra * (Tmean + 17.8) * sqrt(Tmax - Tmin) / 2.45
-    where Ra is extraterrestrial radiation (MJ/m^2/day) from FAO-56.
+    Delegates to ``engine.hydroma.climate.et_calculator.calc_et0_hargreaves``,
+    the single implementation. This copy was correct in its unit handling — it
+    divided by 2.45, the latent heat of vaporization, which is numerically
+    1/2.45 = 0.4082, the same conversion FAO-56 eq. 40 reaches by multiplying
+    by 0.408 — but it evaluated the formula itself with exponent 0.50 where
+    FAO-56 publishes 0.48.
+
+    Callers: ``services/api_gateway/routers/satellite.py`` and
+    ``services/satellite/real_land.py``, both live paths.
 
     Args:
         tmax: daily maximum temperature (C)
@@ -64,28 +71,25 @@ def hargreaves_et0(tmax: float, tmin: float, tmean: float, doy: int, lat: float)
         lat: latitude in decimal degrees (-90..90)
 
     Returns:
-        ET0 in mm/day; 0.0 for physically invalid inputs (never raises).
+        ET0 in mm/day, rounded to 2 dp; 0.0 for physically invalid inputs
+        (never raises), which is this module's established contract.
     """
     if not (-90.0 <= lat <= 90.0) or not (1 <= doy <= 366):
         return 0.0
     if tmax < tmin or tmax == tmin:
         return 0.0
-    gsc = 0.0820  # solar constant MJ/m^2/min
-    phi = math.radians(lat)
-    dr = 1.0 + 0.033 * math.cos(2.0 * math.pi * doy / 365.0)
-    delta = 0.409 * math.sin(2.0 * math.pi * doy / 365.0 - 1.39)
-    cos_ws = max(-1.0, min(1.0, -math.tan(phi) * math.tan(delta)))
-    ws = math.acos(cos_ws)
-    ra = (
-        (24.0 * 60.0 / math.pi)
-        * gsc
-        * dr
-        * (ws * math.sin(phi) * math.sin(delta) + math.cos(phi) * math.cos(delta) * math.sin(ws))
+    # Imported here rather than at module scope: services/satellite is imported
+    # by the satellite API route, and a module-level import would make every
+    # satellite request pay for the engine's climate package.
+    from engine.hydroma.climate.et_calculator import (
+        calc_et0_hargreaves,
+        calc_extraterrestrial_radiation,
     )
-    if ra <= 0.0:
+
+    ra_mj = calc_extraterrestrial_radiation(lat, doy)
+    if ra_mj <= 0.0:
         return 0.0
-    et0 = 0.0023 * ra * (tmean + 17.8) * math.sqrt(tmax - tmin)
-    return max(0.0, round(et0 / 2.45, 2))
+    return round(calc_et0_hargreaves(t_min=tmin, t_max=tmax, t_mean=tmean, ra_mj=ra_mj), 2)
 
 
 def validate_climate_value(value: Any, default: float = 0.0) -> float:

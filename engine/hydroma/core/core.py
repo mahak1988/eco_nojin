@@ -74,7 +74,16 @@ class HydromaCore:
     ) -> float:
         """Compute soil health score (0-100).
 
-        Based on USDA Soil Quality Index.
+        A weighted combination of four agronomic sub-scores. This is this
+        project's construction, NOT the USDA Soil Quality Index.
+
+        The docstring previously said "Based on USDA Soil Quality Index". The
+        USDA NRCS SQI (Andrews et al., 2002) is a principal-components index: it
+        derives weights from the observed covariance of the measurements. These
+        weights are fixed and hand-chosen, and appear nowhere in that method or in
+        any other. The component optima (pH 6.0-7.5, organic matter saturating at
+        2.5%, clay 15-35%) are standard agronomic values; the combination is ours.
+        See engine/hydroma/formulas/research/__init__.py::core_soil_health_score.
         """
         # pH score (optimal: 6.0-7.5)
         ph_score = 100 if 6.0 <= ph <= 7.5 else max(0, 100 - abs(ph - 6.75) * 15)
@@ -172,22 +181,43 @@ class HydromaCore:
         mean_temp_c: float,
         plant_cover_fraction: float = 0.6,
     ) -> float:
-        """RothC decomposition rate modifier."""
-        # Temperature factor (Q10 = 2)
-        temp_factor = 2.0 ** ((mean_temp_c - 20) / 10)
-        temp_factor = max(0.1, min(temp_factor, 3.0))
+        """Combined RothC rate modifier: temperature x moisture x cover.
 
-        # Moisture factor
-        if annual_rainfall_mm < 400:
-            moisture_factor = 0.4
-        elif annual_rainfall_mm < 800:
-            moisture_factor = 0.7
-        elif annual_rainfall_mm < 1500:
-            moisture_factor = 0.9
-        else:
-            moisture_factor = 1.0
+        Delegates to the canonical implementation in
+        ``engine/hydroma/simulation/runners/rothc_runner.py``.
 
-        return temp_factor * moisture_factor * plant_cover_fraction
+        This method previously computed its own, different result: a Q10
+        exponential of 2.0 about a 20 C base with an ad-hoc [0.1, 3.0] clamp, and
+        a four-step moisture ladder keyed on *annual rainfall* rather than on
+        soil-moisture deficit. That is not RothC -- the canonical temperature
+        response is ``47.9 / (1 + exp(106.06 / (T + 18.27)))`` and the canonical
+        moisture response is a continuous function of the monthly deficit. Two
+        implementations of the same named quantity guaranteed that a caller got a
+        different answer depending on which one it reached.
+
+        ``annual_rainfall_mm`` is retained in the signature, but rainfall does not
+        determine a soil-moisture deficit -- a deficit is what evapotranspired,
+        which needs potential ET. The mapping below is therefore an explicit
+        stand-in, not a derivation: a wetter climate gets a smaller deficit and
+        so a larger moisture factor, which is the direction the previous
+        rainfall-keyed ladder had. Callers holding monthly rainfall and ET
+        should use ``run_rothc`` directly, which takes the real deficit.
+        """
+        from engine.hydroma.simulation.runners.rothc_runner import (
+            temp_factor,
+            water_factor,
+        )
+
+        max_deficit = 60.0
+        # 0 mm rain -> the full deficit; 1200 mm and above -> no deficit.
+        wetness = min(max(annual_rainfall_mm / 1200.0, 0.0), 1.0)
+        deficit = max_deficit * (1.0 - wetness)
+
+        return (
+            float(temp_factor(mean_temp_c))
+            * float(water_factor(deficit, max_deficit))
+            * float(plant_cover_fraction)
+        )
 
     @staticmethod
     def estimate_carbon_sequestration_potential(
@@ -249,10 +279,20 @@ class HydromaCore:
         ls_factor: float,
         c_factor: float,
         p_factor: float,
-        calibration: float = 0.10,
     ) -> float:
-        """RUSLE soil loss calculation (t/ha/yr)."""
-        return r_factor * k_factor * ls_factor * c_factor * p_factor * calibration
+        """RUSLE soil loss, t/ha/yr.
+
+        A = R * K * LS * C * P, as in Renard et al., USDA Agriculture Handbook 703
+        (1997) and Foster et al. (1981). The native kernel implements the same
+        plain product at engine/cpp_core/src/erosion.cpp:19.
+
+        This previously multiplied the result by a default ``calibration`` of
+        0.10. That factor is not part of RUSLE, was cited nowhere, and silently
+        divided a published quantity by ten. Any local calibration belongs to the
+        caller, which is the only place that can justify it -- and it must be
+        applied to a measured erosion rate, not buried in the standard equation.
+        """
+        return r_factor * k_factor * ls_factor * c_factor * p_factor
 
     @staticmethod
     def classify_erosion_risk(soil_loss: float) -> str:

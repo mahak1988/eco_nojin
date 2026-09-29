@@ -28,10 +28,16 @@ LIMITATIONS:
   project-specific measurement and third-party verification.
 """
 
+import logging
+import math
+import threading
 import uuid
+from collections.abc import Iterator, MutableMapping
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
+
+logger = logging.getLogger(__name__)
 
 
 class CarbonProjectType(Enum):
@@ -133,6 +139,23 @@ SEQUESTRATION_RATES: dict[CarbonProjectType, dict[str, float]] = {
 }
 
 # Market prices (USD/tonne CO2) by standard
+#
+# LIMITATIONS — read before using these numbers:
+# - These are *illustrative planning defaults*, not market quotations. They
+#   carry no as-of date, no source citation, and no variance range.
+# - The observed market has moved sharply and in both directions. As of the
+#   World Bank Pink Sheet release of 2 September 2026: DAP 793.50 USD/t,
+#   urea 390.00 USD/t, Fertilizers index 146.4 (2010=100). Voluntary carbon
+#   average reported prices were ~6.34 USD/t for 2024, with the MSCI Carbon
+#   Credit Price Index averaging ~3.5 USD/t in 2025 — far below every value
+#   below. Do not present these defaults as achievable prices.
+# - Nothing here is a VVB determination, a clearing price, or a valuation.
+#   Using them in a monetised "impact" figure produces a number with no
+#   evidentiary basis, which is the exact failure mode the EU Empowering
+#   Consumers Directive ((EU) 2024/825, applicable from 27 September 2026)
+#   prohibits. See reports/HYDROMA_NOJIN_CONSULTING_FRAMEWORK_FA.md §0.2.
+# - Prefer passing a caller-supplied price table (see EconomyRequest.prices)
+#   over relying on these defaults.
 CARBON_PRICES: dict[str, float] = {
     "verra_vcs": 12.0,
     "gold_standard": 18.0,
@@ -157,10 +180,27 @@ def calculate_carbon_sequestration(
 
     Returns:
         Sequestration estimates and economic value
+
+    Raises:
+        ValueError: If the project type, region, area or duration is not
+            admissible. None of them is defaulted: an unrecognised region
+            priced as temperate is a silent 23 % error in the headline figure,
+            and a negative area turns a sink into a source.
     """
     rates = SEQUESTRATION_RATES.get(project_type)
     if not rates:
         raise ValueError(f"Unknown project type: {project_type}")
+
+    if area_ha < 0:
+        raise ValueError(
+            f"area_ha must not be negative, got {area_ha!r}: a negative area "
+            f"reports the site as a carbon source"
+        )
+    if duration_years <= 0:
+        raise ValueError(
+            f"duration_years must be positive, got {duration_years!r}: a "
+            f"non-positive credit period has no defensible total"
+        )
 
     # Regional adjustment factor
     region_factors = {
@@ -168,39 +208,45 @@ def calculate_carbon_sequestration(
         "temperate": 1.0,  # Baseline
         "arid": 0.6,  # Lower growth rates
     }
-    factor = region_factors.get(region, 1.0)
-
-    # Adjusted annual rate
-    annual_rate = rates["rate"] * factor
-    min_rate = rates["min"] * factor
-    max_rate = rates["max"] * factor
-
-    # For biochar, sequestration is one-time (not annual)
-    if project_type == CarbonProjectType.BIOCHAR:
-        total_carbon = annual_rate * area_ha
-        annual_rate = total_carbon / duration_years  # Amortized
-    else:
-        total_carbon = annual_rate * area_ha * duration_years
+    if region not in region_factors:
+        raise ValueError(f"Unknown region: {region!r}; use one of {sorted(region_factors)}")
+    factor = region_factors[region]
 
     # Apply discount for uncertainty (conservative approach)
     discount_factor = 0.85  # 15% discount for uncertainty
 
+    # Biochar is a one-time application, so its lifetime total and its reported
+    # band are per-hectare one-off quantities; only the annual figure is
+    # amortised over the credit period. Every other type accumulates per year,
+    # so total and band both carry duration_years and the annual figure does not.
+    if project_type == CarbonProjectType.BIOCHAR:
+        total_carbon = rates["rate"] * factor * area_ha
+        band_min = rates["min"] * factor * area_ha
+        band_max = rates["max"] * factor * area_ha
+    else:
+        total_carbon = rates["rate"] * factor * area_ha * duration_years
+        band_min = rates["min"] * factor * area_ha * duration_years
+        band_max = rates["max"] * factor * area_ha * duration_years
+
     estimated_carbon = total_carbon * discount_factor
+    # The annual figure is the reported total spread over the credit period, so
+    # it carries the same uncertainty discount and the same basis as the total.
+    annual_total = estimated_carbon / duration_years
 
     # Economic value
     price_per_tonne = CARBON_PRICES["voluntary_market"]
     estimated_revenue = estimated_carbon * price_per_tonne
-    annual_revenue = annual_rate * area_ha * price_per_tonne * discount_factor
+    annual_revenue = annual_total * price_per_tonne
 
     return {
         "project_type": project_type.value,
         "area_ha": area_ha,
         "duration_years": duration_years,
         "region": region,
-        "annual_rate_tonnes": round(annual_rate * area_ha, 2),
+        "annual_rate_tonnes": round(annual_total, 2),
         "total_carbon_tonnes": round(estimated_carbon, 2),
-        "total_carbon_min": round(min_rate * area_ha * duration_years * discount_factor, 2),
-        "total_carbon_max": round(max_rate * area_ha * duration_years * discount_factor, 2),
+        "total_carbon_min": round(band_min * discount_factor, 2),
+        "total_carbon_max": round(band_max * discount_factor, 2),
         "permanence_years": rates["permanence_years"],
         "estimated_revenue_usd": round(estimated_revenue, 0),
         "annual_revenue_usd": round(annual_revenue, 0),
@@ -210,12 +256,22 @@ def calculate_carbon_sequestration(
     }
 
 
+def _ranking_value(result: dict) -> float:
+    """Sort key for a comparison entry; a type that failed has nothing to rank on."""
+    value = result["total_carbon_tonnes"]
+    return -math.inf if value is None else value
+
+
 def compare_project_types(area_ha: float = 100, duration_years: int = 10) -> dict:
     """Compare all carbon project types for given parameters.
 
-    Returns ranking by total carbon and revenue.
+    Returns ranking by total carbon and revenue. A project type that cannot be
+    evaluated keeps its place in ``ranking`` with a null carbon total and is
+    named in ``failures``: a comparison that silently dropped the type the
+    caller was about to choose is worse than one that raises.
     """
     results = []
+    failures = []
 
     for project_type in CarbonProjectType:
         try:
@@ -224,25 +280,82 @@ def compare_project_types(area_ha: float = 100, duration_years: int = 10) -> dic
                 area_ha=area_ha,
                 duration_years=duration_years,
             )
-            results.append(result)
-        except Exception:
-            continue
+        except Exception as exc:
+            logger.error(
+                "carbon project type failed comparison",
+                extra={"project_type": project_type.value, "error": str(exc)},
+            )
+            result = {
+                "project_type": project_type.value,
+                "total_carbon_tonnes": None,
+                "estimated_revenue_usd": None,
+                "error": f"{type(exc).__name__}: {exc}",
+            }
+            failures.append(result)
+        results.append(result)
 
-    # Sort by total carbon (descending)
-    ranked = sorted(results, key=lambda x: x["total_carbon_tonnes"], reverse=True)
+    # Sort by total carbon (descending), failures last
+    ranked = sorted(results, key=_ranking_value, reverse=True)
+    scored = [r for r in ranked if r["total_carbon_tonnes"] is not None]
 
     return {
         "ranking": [r["project_type"] for r in ranked],
         "details": results,
-        "best_carbon": ranked[0]["project_type"] if ranked else None,
-        "best_revenue": max(results, key=lambda x: x["estimated_revenue_usd"])["project_type"]
-        if results
+        "failures": failures,
+        "best_carbon": scored[0]["project_type"] if scored else None,
+        "best_revenue": max(scored, key=lambda x: x["estimated_revenue_usd"])["project_type"]
+        if scored
         else None,
     }
 
 
-# Project registry (DB-backed when repository is provided; in-memory fallback otherwise)
-_projects: dict[str, CarbonProject] = {}
+class _ScopedProjectStore(MutableMapping[str, CarbonProject]):
+    """In-memory project store scoped to the calling thread.
+
+    A module-level dict is one store for every thread and every request a worker
+    thread serves, so a multi-tenant gateway cannot keep tenants apart and
+    concurrent registrations observe each other half-written. This store keeps
+    one mapping per thread. It is a scratchpad rather than a register: anything
+    that must outlive the process belongs in a repository set with
+    :func:`set_repository`.
+    """
+
+    def __init__(self) -> None:
+        self._local = threading.local()
+
+    @property
+    def _store(self) -> dict[str, CarbonProject]:
+        store = getattr(self._local, "store", None)
+        if store is None:
+            store = {}
+            self._local.store = store
+        return store
+
+    def __getitem__(self, project_id: str) -> CarbonProject:
+        return self._store[project_id]
+
+    def __setitem__(self, project_id: str, project: CarbonProject) -> None:
+        self._store[project_id] = project
+
+    def __delitem__(self, project_id: str) -> None:
+        del self._store[project_id]
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(dict(self._store))
+
+    def __len__(self) -> int:
+        return len(self._store)
+
+    def clear(self) -> None:
+        self._store.clear()
+
+
+# Project registry. When a repository is configured it is the only source of
+# truth: its errors propagate to the caller, because a write that falls back to
+# process memory returns an id for a row that was never stored. The in-memory
+# store is per-thread (see _ScopedProjectStore) and exists for single-process
+# screening only.
+_projects: MutableMapping[str, CarbonProject] = _ScopedProjectStore()
 _repository = None
 
 
@@ -253,69 +366,64 @@ def set_repository(repository) -> None:
 
 
 def register_project(project: CarbonProject) -> str:
-    """Register a new carbon project."""
+    """Register a new carbon project.
+
+    Returns the durable identifier the registry assigned. A repository failure
+    raises; it is never reported as a successful in-memory registration.
+    """
     if _repository is not None:
-        try:
-            db_project = _repository.create_project(
-                project_id=project.id,
-                name=project.name,
-                project_type=project.project_type.value,
-                area_ha=project.area_ha,
-                status=project.status,
-                estimated_carbon_tonnes=project.estimated_carbon_tonnes,
-                annual_rate_tonnes=project.annual_rate_tonnes,
-                methodology=project.methodology,
-            )
-            return str(db_project.id)
-        except Exception:
-            pass
+        db_project = _repository.create_project(
+            project_id=project.id,
+            name=project.name,
+            project_type=project.project_type.value,
+            area_ha=project.area_ha,
+            status=project.status,
+            estimated_carbon_tonnes=project.estimated_carbon_tonnes,
+            annual_rate_tonnes=project.annual_rate_tonnes,
+            methodology=project.methodology,
+        )
+        return str(db_project.id)
     _projects[project.id] = project
     return project.id
 
 
 def get_project(project_id: str) -> CarbonProject | None:
-    """Get project by ID."""
-    if _repository is not None:
-        try:
-            db_project = _repository.get_project(project_id)
-            if db_project is not None:
-                return CarbonProject(
-                    id=db_project.project_id,
-                    name=db_project.name,
-                    project_type=CarbonProjectType(db_project.project_type or "afforestation"),
-                    area_ha=db_project.area_hectares or 0.0,
-                    status=db_project.status or "draft",
-                    estimated_carbon_tonnes=db_project.estimated_carbon_tonnes or 0.0,
-                    annual_rate_tonnes=db_project.annual_rate_tonnes or 0.0,
-                    methodology=db_project.methodology or "",
-                    created_at=db_project.created_at or datetime.utcnow(),
-                )
-        except Exception:
-            pass
-    return _projects.get(project_id)
+    """Get project by ID. Returns None only when the registry has no such project."""
+    if _repository is None:
+        return _projects.get(project_id)
+    db_project = _repository.get_project(project_id)
+    if db_project is None:
+        return None
+    return CarbonProject(
+        id=db_project.project_id,
+        name=db_project.name,
+        project_type=CarbonProjectType(db_project.project_type or "afforestation"),
+        area_ha=db_project.area_hectares or 0.0,
+        status=db_project.status or "draft",
+        estimated_carbon_tonnes=db_project.estimated_carbon_tonnes or 0.0,
+        annual_rate_tonnes=db_project.annual_rate_tonnes or 0.0,
+        methodology=db_project.methodology or "",
+        created_at=db_project.created_at or datetime.utcnow(),
+    )
 
 
 def list_projects(status: str | None = None) -> list:
     """List all projects with optional status filter."""
     if _repository is not None:
-        try:
-            db_projects = _repository.list_projects(status=status)
-            return [
-                CarbonProject(
-                    id=p.project_id,
-                    name=p.name,
-                    project_type=CarbonProjectType(p.project_type or "afforestation"),
-                    area_ha=p.area_hectares or 0.0,
-                    status=p.status or "draft",
-                    estimated_carbon_tonnes=p.estimated_carbon_tonnes or 0.0,
-                    annual_rate_tonnes=p.annual_rate_tonnes or 0.0,
-                    methodology=p.methodology or "",
-                    created_at=p.created_at or datetime.utcnow(),
-                )
-                for p in db_projects
-            ]
-        except Exception:
-            pass
+        return [
+            CarbonProject(
+                id=p.project_id,
+                name=p.name,
+                project_type=CarbonProjectType(p.project_type or "afforestation"),
+                area_ha=p.area_hectares or 0.0,
+                status=p.status or "draft",
+                estimated_carbon_tonnes=p.estimated_carbon_tonnes or 0.0,
+                annual_rate_tonnes=p.annual_rate_tonnes or 0.0,
+                methodology=p.methodology or "",
+                created_at=p.created_at or datetime.utcnow(),
+            )
+            for p in _repository.list_projects(status=status)
+        ]
     projects = list(_projects.values())
     if status:
         projects = [p for p in projects if p.status == status]

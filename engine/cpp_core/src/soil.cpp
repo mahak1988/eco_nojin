@@ -6,25 +6,47 @@
 // Add OpenMP header
 #include <omp.h>
 
+#include <cstddef>
+#include <string>
+#include <vector>
+
 namespace hydroma {
 
 namespace {
 
-// Typical parameters from Carsel & Parrish (1988) / Rosetta pedotransfer,
-// matching engine/hydroma/cpp_bridge/soil_physics_fast.py exactly.
+// Parameters are generated from engine/data/soil_vg_table.csv, which every
+// backend shares. The Carsel & Parrish (1988) attribution formerly quoted here
+// is withdrawn: see engine/data/SOIL_TABLE_CONFLICTS.md.
 struct TextureEntry {
     const char* key;
     SoilTextureParams params;
 };
 
+// GENERATED FILE - do not edit by hand.
+// Source of truth: engine/data/soil_vg_table.csv
+// Regenerate with: python -m engine.data.generate_cpp_table
+//
+// Units: Ks is cm/hr here because the compiled kernel has always used it;
+// the CSV stores cm/day. That conversion is the only difference for six of the
+// seven rows this file carried before consolidation.
+//
+// Provenance: design assumption, unverified. The former Carsel & Parrish (1988)
+// attribution is withdrawn because the Ks column is not monotone in texture
+// fineness at two rows. Clay and sandy_clay_loam are marked disputed in the CSV.
+// See engine/data/SOIL_TABLE_CONFLICTS.md.
 constexpr TextureEntry kTextures[] = {
-    {"sand",        {0.045, 0.43, 0.145, 2.68, 29.7}},
-    {"loamy_sand",  {0.057, 0.41, 0.124, 2.28, 14.6}},
-    {"sandy_loam",  {0.065, 0.41, 0.075, 1.89, 4.42}},
-    {"loam",        {0.078, 0.43, 0.036, 1.56, 1.05}},
-    {"silt_loam",   {0.067, 0.45, 0.020, 1.41, 0.45}},
-    {"clay_loam",   {0.095, 0.41, 0.019, 1.31, 0.26}},
-    {"clay",        {0.068, 0.38, 0.008, 1.09, 0.12}},
+    {"sand",             {0.045, 0.43, 0.145, 2.68, 29.7}},
+    {"loamy_sand",       {0.057, 0.41, 0.124, 2.28, 14.59166667}},
+    {"sandy_loam",       {0.065, 0.41, 0.075, 1.89, 4.420833333}},
+    {"loam",             {0.078, 0.43, 0.036, 1.56, 1.041666667}},
+    {"silt_loam",        {0.067, 0.45, 0.02, 1.41, 0.45}},
+    {"silt",             {0.034, 0.46, 0.016, 1.37, 0.25}},
+    {"sandy_clay_loam",  {0.1, 0.39, 0.059, 1.48, 1.308333333}},
+    {"clay_loam",        {0.095, 0.41, 0.019, 1.31, 0.2583333333}},
+    {"silty_clay_loam",  {0.089, 0.43, 0.01, 1.23, 0.1208333333}},
+    {"sandy_clay",       {0.1, 0.38, 0.027, 1.23, 0.1208333333}},
+    {"silty_clay",       {0.07, 0.36, 0.005, 1.09, 0.08}},
+    {"clay",             {0.068, 0.38, 0.008, 1.09, 0.2}},
 };
 
 const SoilTextureParams* find_texture(const std::string& texture) {

@@ -50,13 +50,19 @@ class ESRI(ScientificModel):
     def salinity_index_s2(
         blue: np.ndarray, red: np.ndarray, nir: np.ndarray, swir: np.ndarray
     ) -> np.ndarray:
-        """Sentinel-2 Salinity Index"""
+        """Sentinel-2 Salinity Index.
+
+        The previous implementation ended with ``np.nan_to_num(si, nan=np.nan)``,
+        which replaces NaN with NaN and therefore does nothing -- it reads as an
+        intent to sanitise the result while leaving every NaN in place. A genuine
+        undefined result is propagated explicitly instead.
+        """
         with np.errstate(divide="ignore", invalid="ignore"):
-            numerator = np.sqrt(blue * red + 1e-9)
+            numerator = np.sqrt(blue * red)
             ratio1 = nir / (swir + 1e-6)
             ratio2 = blue / (red + 1e-6)
             si = numerator / (ratio1 * ratio2 + 1e-6)
-        return np.nan_to_num(si, nan=np.nan)
+        return si
 
     @staticmethod
     def leaching_requirement(ec_w: float, ec_e: float) -> float:

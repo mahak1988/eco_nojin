@@ -234,7 +234,7 @@ export default function ProductPage({
                     {product.producerName || product.originLocation ? (
                       <div className="flex justify-between">
                         <dt className="text-sm text-ink-soft">{market('producers')}</dt>
-                        <dd className="text-right text-ink">
+                        <dd className="text-end text-ink">
                           {product.producerName}
                           {product.originLocation ? (
                             <span className="block text-xs text-ink-soft">

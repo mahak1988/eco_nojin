@@ -58,7 +58,7 @@ class PywrWaterAllocationMotor(AbstractScientificMotor):
 
     @property
     def motor_type(self) -> MotorType:
-        return MotorType.WHAT_IF  # reuse enum slot; display name clarifies
+        return MotorType.IRRIGATION
 
     @property
     def display_name(self) -> str:

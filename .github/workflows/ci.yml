@@ -81,6 +81,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm test
+      - run: pnpm -C apps/web test:coverage
 
   build:
     name: Build
@@ -125,7 +126,9 @@ jobs:
       - uses: playwright/action@v1
         with:
           browser: chromium
-      - run: pnpm -C apps/web test:e2e
+      # Smoke slice (~30 tests). The full 1,385-test matrix runs nightly:
+      # .github/workflows/nightly-e2e.yml
+      - run: pnpm -C apps/web test:smoke
 
   i18n-check:
     name: i18n Validation

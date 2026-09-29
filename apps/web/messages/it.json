@@ -1,406 +1,790 @@
 {
-  "meta": { "machineTranslated": true, "fallbackLocale": "fa" },
+  "meta": {
+    "machineTranslated": true,
+    "fallbackLocale": "en"
+  },
   "brand": {
-    "name": "ظ‡غŒط¯ط±ظˆظ…ط§ ظ†ظˆعکغŒظ†",
-    "description": "ط¨ط®ط´ ط¹ظ„ظ…غŒ ط§ع©ظˆ ظ†ظˆعکغŒظ†ط› ظ‡ظ…ط±ط§ظ‡غŒ ط¨ط±ط§غŒ ظپظ‡ظ… ط¨ظ‡طھط± ط¢ط¨طŒ ط®ط§ع©طŒ ظ¾ظˆط´ط´ ع¯غŒط§ظ‡غŒ ظˆ ط§ظ‚ظ„غŒظ…."
+    "name": "Hydroma Nojin",
+    "description": "Gestione intelligente del territorio per il recupero di acqua, suolo e mezzi di sussistenza."
   },
   "nav": {
-    "home": "ط®ط§ظ†ظ‡",
-    "about": "ط¯ط±ط¨ط§ط±ظ‡",
-    "science": "ط¹ظ„ظ…",
-    "market": "ط¨ط§ط²ط§ط±ع¯ط§ظ‡",
-    "status": "ظˆط¶ط¹غŒطھ"
+    "home": "Home",
+    "about": "Informazioni",
+    "science": "Scienza",
+    "market": "Mercato",
+    "status": "Stato"
   },
   "home": {
-    "title": "ظ‡غŒط¯ط±ظˆظ…ط§ ظ†ظˆعکغŒظ† â€” ظ‡ظ…ط±ط§ظ‡ ط²ظ…غŒظ† ظˆ ظ…ط¹غŒط´طھ",
-    "lead": "ط¯ط± ط§غŒظ† طµظپط­ظ‡طŒ ظˆط¶ط¹غŒطھ ط«ط¨طھâ€Œط´ط¯ظ‡ظ” ط²ظ…غŒظ†â€Œظ‡ط§طŒ ظ¾ط±ظˆعکظ‡â€Œظ‡ط§ ظˆ ظ…ط­طµظˆظ„ط§طھ ط±ط§ ط¨ط¯ظˆظ† ط¨ط²ط±ع¯â€Œظ†ظ…ط§غŒغŒ ظ…غŒâ€Œط¨غŒظ†غŒط¯. ظ‡ط± ط¹ط¯ط¯طŒ ط²ظ…ط§ظ†غŒ ظ…ط¹ظ†ط§ ظ¾غŒط¯ط§ ظ…غŒâ€Œع©ظ†ط¯ ع©ظ‡ ط²ظ…غŒظ†ظ‡ ظˆ ظ…ط±ط² ط¢ظ† ط±ظˆط´ظ† ط¨ط§ط´ط¯.",
-    "landsTitle": "ط²ظ…غŒظ†â€Œظ‡ط§غŒ ط«ط¨طھâ€Œط´ط¯ظ‡",
-    "landsEmpty": "ظ‡ظ†ظˆط² ط²ظ…غŒظ†غŒ ط«ط¨طھ ظ†ط´ط¯ظ‡ ط§ط³طھ.",
-    "productsTitle": "ظ…ط­طµظˆظ„ط§طھ ط¨ط§ط²ط§ط±ع¯ط§ظ‡",
-    "productsEmpty": "ظ‡ظ†ظˆط² ظ…ط­طµظˆظ„غŒ ط«ط¨طھ ظ†ط´ط¯ظ‡ ط§ط³طھ.",
-    "marketCta": "ظ…ط´ط§ظ‡ط¯ظ‡ظ” ط¨ط§ط²ط§ط±ع¯ط§ظ‡",
-    "scienceCta": "ط¢ط´ظ†ط§غŒغŒ ط¨ط§ ط§ط¨ط²ط§ط±ظ‡ط§غŒ ط¹ظ„ظ…غŒ"
+    "title": "Hydroma Nojin — Gestione intelligente del territorio",
+    "lead": "Il terreno non è solo suolo: è acqua, vita e reddito. Usiamo scienza verificata e strumenti accessibili per proteggere la produzione agricola di chi lavora la terra.",
+    "landsTitle": "Profili territoriali",
+    "landsEmpty": "Nessun profilo territoriale disponibile.",
+    "productsTitle": "Prodotti del mercato",
+    "productsEmpty": "Nessun prodotto disponibile.",
+    "marketCta": "Entra nel mercato",
+    "scienceCta": "Vedi i modelli scientifici"
   },
   "science": {
-    "title": "ط¹ظ„ظ…طŒ ط¨ط§ ظ…ط±ط²ظ‡ط§غŒ ط±ظˆط´ظ†",
-    "lead": "ظ‡غŒط¯ط±ظˆظ…ط§ ظ†ظˆعکغŒظ† ط§ط¨ط²ط§ط±ظ‡ط§غŒغŒ ط¨ط±ط§غŒ ظپظ‡ظ… ط¨ظ‡طھط± ط¢ط¨طŒ ط®ط§ع©طŒ ظ¾ظˆط´ط´ ع¯غŒط§ظ‡غŒ ظˆ ط§ظ‚ظ„غŒظ… ظپط±ط§ظ‡ظ… ظ…غŒâ€Œع©ظ†ط¯ط› ط¨ط¯ظˆظ† ظˆط¹ط¯ظ‡ظ” ظ‚ط·ط¹غŒطھ ظˆ ط¨ط§ ط§ط­طھط±ط§ظ… ط¨ظ‡ طھط¬ط±ط¨ظ‡ظ” ظ…ط­ظ„غŒ.",
-    "modelsTitle": "ط§ط¨ط²ط§ط±ظ‡ط§غŒ ط¹ظ„ظ…غŒ",
-    "modelsEmpty": "ظ‡ظ†ظˆط² ط§ط¨ط²ط§ط±غŒ ط¨ط±ط§غŒ ظ†ظ…ط§غŒط´ ظˆط¬ظˆط¯ ظ†ط¯ط§ط±ط¯.",
-    "modelsPublicNote": "ظپظ‡ط±ط³طھ ط¹ظ…ظˆظ…غŒ ط§ط¨ط²ط§ط±ظ‡ط§ ظ¾ط³ ط§ط² طھع©ظ…غŒظ„ ظ…ط³طھظ†ط¯ط§طھ ظ…ظ†طھط´ط± ظ…غŒâ€Œط´ظˆط¯.",
-    "cppOk": "ط§ظ…ع©ط§ظ†ط§طھ ط¹ظ„ظ…غŒ ط¢ظ…ط§ط¯ظ‡ظ” ط§ط³طھظپط§ط¯ظ‡ ط§ط³طھ.",
-    "cppMissing": "ط§ظ…ع©ط§ظ†ط§طھ ط¹ظ„ظ…غŒ ظپط¹ظ„ط§ظ‹ ط¯ط± ط¯ط³طھط±ط³ ظ†غŒط³طھ.",
-    "kernels": "ظ‚ط§ط¨ظ„غŒطھâ€Œظ‡ط§غŒ ط¹ظ„ظ…غŒ"
+    "title": "Scienza applicata al territorio",
+    "lead": "Ogni valore ha una fonte: versione del modello, calibrazione e verifica. Puoi esaminare ogni assunzione, citare la fonte e valutare l'incertezza.",
+    "modelsTitle": "Modelli scientifici",
+    "modelsEmpty": "Nessun modello implementato o verificato.",
+    "modelsPublicNote": "Solo i modelli con contratto API pubblicato sono visibili qui.",
+    "cppOk": "Kernel numerici: operativi",
+    "cppMissing": "Kernel numerici: nessun pacchetto registrato",
+    "kernels": "Kernel implementati"
   },
   "market": {
-    "title": "ط¨ط§ط²ط§ط±ع¯ط§ظ‡",
-    "lead": "ظ…ط­طµظˆظ„ط§طھ طھظˆظ„غŒط¯ع©ظ†ظ†ط¯ع¯ط§ظ†طŒ ظ‡ظ…ط±ط§ظ‡ ط¨ط§ ظ‚غŒظ…طھ ظˆ ظ…ظˆط¬ظˆط¯غŒ ط«ط¨طھâ€Œط´ط¯ظ‡ط› ط¨ط¯ظˆظ† ط¨ط²ط±ع¯â€Œظ†ظ…ط§غŒغŒ ظˆ ط¨ط¯ظˆظ† ظˆط¹ط¯ظ‡ظ” ظ‚ط·ط¹غŒ.",
-    "products": "ظ…ط­طµظˆظ„ط§طھ",
-    "producers": "طھظˆظ„غŒط¯ع©ظ†ظ†ط¯ع¯ط§ظ†",
-    "organic": "ط¯ط§ط±ط§غŒ ظ†ط´ط§ظ† ط²غŒط³طھâ€Œظ…ط­غŒط·غŒ",
-    "organicBadge": "ط²غŒط³طھâ€Œظ…ط­غŒط·غŒ",
-    "empty": "ظ‡غŒع† ظ…ط­طµظˆظ„غŒ ط¨ط±ط§غŒ ظ†ظ…ط§غŒط´ ظˆط¬ظˆط¯ ظ†ط¯ط§ط±ط¯."
+    "title": "Mercato",
+    "lead": "Prodotti con origine tracciata: chi li ha prodotti, come sono stati coltivati e con quali dati verificati.",
+    "products": "Prodotti",
+    "producers": "Produttori",
+    "organic": "Agricoltura biologica",
+    "organicBadge": "Biologico",
+    "empty": "Nessun prodotto corrisponde ai filtri scelti."
   },
   "cover": {
-    "subtitle": "ظ‡ظ…ط±ط§ظ‡ ظ‡ظ… ط¨ط±ط§غŒ ط¢ط¨طŒ ط®ط§ع© ظˆ ظ…ط¹غŒط´طھ",
-    "slogan": "ظ…ط§ ط¨ط§ ظ‡ظ… ط§غŒظ† ط±ط§ظ‡ ط±ط§ ظ…غŒâ€Œط±ظˆغŒظ…. ط¨ط±ط§غŒ ظ…ط±ط¯ظ…. ط¨ط±ط§غŒ ط²ظ…غŒظ†. ط¨ط±ط§غŒ ط¢غŒظ†ط¯ظ‡.",
-    "quote": "آ«ط§غŒظ† ظ¾ط±ظˆعکظ‡ ط±ط§ ظ…ط§ ط¨ط§ ظ‡ظ… ط³ط§ط®طھغŒظ…â€¦ ط¨ط±ط§غŒ ظ…ط±ط¯ظ…غŒ ع©ظ‡ طھط­ظ…ظ„ ع¯ط±ط³ظ†ع¯غŒ ظˆ ظپظ‚ط± ط±ط§ ظ†ط¯ط§ط±ظ†ط¯ ظˆ ط¨ط±ط§غŒ ط§ع©ظˆط³غŒط³طھظ…غŒ ع©ظ‡ ط¯غŒع¯ط± طھط­ظ…ظ„ ط³غŒظ„ط§ط¨ ظˆ ظپط±ط³ط§غŒط´ ط®ط§ع© ط±ط§ ظ†ط¯ط§ط±ط¯.آ»",
-    "enterPublic": "ظˆط±ظˆط¯ ط¨ظ‡ طµظپط­ط§طھ ط¹ظ…ظˆظ…غŒ",
-    "enterMarketplace": "ظˆط±ظˆط¯ ط¨ظ‡ ط¨ط§ط²ط§ط±ع¯ط§ظ‡",
-    "languageLabel": "ط²ط¨ط§ظ†",
-    "comingSoon": "ط¨ظ‡â€Œط²ظˆط¯غŒ"
+    "subtitle": "Acqua, suolo, vita",
+    "slogan": "Prima il terreno, poi la produzione. L'acqua prima. Il raccolto dopo.",
+    "quote": "«L'acqua non è solo acqua: è un sistema di sostentamento. Se lo capiamo bene, diventa la base di un futuro sostenibile per chi resta in questa terra.»",
+    "enterPublic": "Vai alle pagine pubbliche",
+    "enterMarketplace": "Vai al mercato",
+    "languageLabel": "Lingua",
+    "comingSoon": "In arrivo",
+    "waveLabel": "ondata"
   },
   "statusLine": {
-    "beneficiaries": "ظ‡ظ…ط±ط§ظ‡ط§ظ† ط¨ط±ظ†ط§ظ…ظ‡",
-    "markets": "ط¨ط§ط²ط§ط±ع†ظ‡â€Œظ‡ط§غŒ ظپط¹ط§ظ„",
-    "landProfiles": "ط²ظ…غŒظ†â€Œظ‡ط§غŒ ط«ط¨طھâ€Œط´ط¯ظ‡",
-    "carbonProjects": "ظ¾ط±ظˆعکظ‡â€Œظ‡ط§غŒ ط²غŒط³طھâ€Œظ…ط­غŒط·غŒ",
-    "pilotProvince": "ظ…ظ†ط§ط·ظ‚ ط¯ط± ط­ط§ظ„ ط¢ظ…ط§ط¯ظ‡â€Œط³ط§ط²غŒ",
-    "noData": "ط¨ظ‡â€Œط²ظˆط¯غŒ",
-    "realData": "ظˆط¶ط¹غŒطھ ط«ط¨طھâ€Œط´ط¯ظ‡ظ” ط³ط§ظ…ط§ظ†ظ‡",
-    "unavailable": "ظپط¹ظ„ط§ظ‹ ط¯ط± ط¯ط³طھط±ط³ ظ†غŒط³طھ"
+    "beneficiaries": "Produttori registrati",
+    "markets": "Bazar attivi",
+    "landProfiles": "Profili territoriali",
+    "carbonProjects": "Progetti di carbonio",
+    "pilotProvince": "La provincia pilota è in definizione",
+    "noData": "Non ancora",
+    "realData": "Dato reale dell'ecosistema",
+    "unavailable": "Non ancora disponibile"
   },
   "statusPage": {
-    "title": "ظˆط¶ط¹غŒطھ ط³ط§ظ…ط§ظ†ظ‡",
-    "subtitle": "ظ†ظ…ط§غŒط´غŒ ط³ط§ط¯ظ‡ ط§ط² ظˆط¶ط¹غŒطھ ط¹ظ…ظˆظ…غŒ ط³ط±ظˆغŒط³â€Œظ‡ط§ ظˆ ط§ط·ظ„ط§ط¹ط§طھ ط«ط¨طھâ€Œط´ط¯ظ‡ط› ط¨ط¯ظˆظ† ط¹ط¯ط¯ ظپط±ط¶غŒ.",
-    "service": "ط³ط±ظˆغŒط³",
-    "state": "ظˆط¶ط¹غŒطھ",
-    "science": "ط§ظ…ع©ط§ظ†ط§طھ ط¹ظ„ظ…غŒ",
-    "storage": "ط°ط®غŒط±ظ‡â€Œط³ط§ط²غŒ",
-    "landscapes": "ط²ظ…غŒظ†â€Œظ‡ط§غŒ ط«ط¨طھâ€Œط´ط¯ظ‡",
-    "projects": "ظ¾ط±ظˆعکظ‡â€Œظ‡ط§",
-    "activeProjects": "ظ¾ط±ظˆعکظ‡â€Œظ‡ط§غŒ ظپط¹ط§ظ„",
-    "label": "ط´ط§ط®طµ",
-    "rows": "ط±ط¯غŒظپ",
-    "landProfileList": "ط²ظ…غŒظ†â€Œظ‡ط§غŒ ط«ط¨طھâ€Œط´ط¯ظ‡",
-    "noLandProfiles": "ظ‡ظ†ظˆط² ط²ظ…غŒظ†غŒ ط«ط¨طھ ظ†ط´ط¯ظ‡ ط§ط³طھ.",
-    "operational": "ظپط¹ط§ظ„",
-    "available": "ط¯ط± ط¯ط³طھط±ط³",
-    "requestUnavailable": "ط¯ط±ط®ظˆط§ط³طھ ط¹ظ…ظˆظ…غŒ ظپط¹ظ„ط§ظ‹ ط¯ط± ط¯ط³طھط±ط³ ظ†غŒط³طھ.",
-    "emptyDbNote": "ط³ط§ظ…ط§ظ†ظ‡ ط¢ظ…ط§ط¯ظ‡ظ” ط«ط¨طھ ط§ط·ظ„ط§ط¹ط§طھ ط§ط³طھطŒ ط§ظ…ط§ ظ‡ظ†ظˆط² ط²ظ…غŒظ†غŒ ط«ط¨طھ ظ†ط´ط¯ظ‡ط› ط´ظ…ط§ط±ظ†ط¯ظ‡â€Œظ‡ط§ ط®ط§ظ„غŒ ظ…غŒâ€Œظ…ط§ظ†ظ†ط¯ ظˆ ظ‡غŒع† ظ…ظ‚ط¯ط§ط± ظپط±ط¶غŒ ظ†ظ…ط§غŒط´ ط¯ط§ط¯ظ‡ ظ†ظ…غŒâ€Œط´ظˆط¯."
+    "title": "Stato del sistema",
+    "subtitle": "Elenco degli ultimi risultati di salute dei servizi che alimentano le pagine pubbliche e il marketplace.",
+    "service": "Servizio",
+    "state": "Stato",
+    "science": "Servizi scientifici",
+    "storage": "Archiviazione",
+    "landscapes": "Profili territoriali",
+    "projects": "Progetti",
+    "activeProjects": "Progetti attivi",
+    "label": "Indicatore",
+    "rows": "righe",
+    "landProfileList": "Elenco dei profili territoriali",
+    "noLandProfiles": "Nessun profilo territoriale disponibile.",
+    "operational": "Operativo",
+    "available": "Disponibile",
+    "requestUnavailable": "Non è stato possibile completare la richiesta in questo momento.",
+    "emptyDbNote": "Il database è inizializzato ma non contiene ancora record del database reale. Nessun valore è inventato: la riga vuota è dichiarata, non simulata.",
+    "notFoundTitle": "Pagina non trovata"
   },
   "common": {
-    "error": "ط®ط·ط§",
-    "retry": "طھظ„ط§ط´ ط¯ظˆط¨ط§ط±ظ‡",
-    "machineTranslatedNotice": "ط§غŒظ† ط²ط¨ط§ظ† ظپط¹ظ„ط§ظ‹ ط¨ط§ طھط±ط¬ظ…ظ‡ظ” ظ…ط§ط´غŒظ†غŒ ظ†ظ…ط§غŒط´ ط¯ط§ط¯ظ‡ ظ…غŒâ€Œط´ظˆط¯.",
-    "whatLabel": "ع†ظ‡ ع†غŒط²غŒ ط§ط³طھطں",
-    "audienceLabel": "ط¨ط±ط§غŒ ع†ظ‡â€Œع©ط³غŒطں",
-    "evidenceLabel": "ط±ظˆط´ ظˆ ط´ظˆط§ظ‡ط¯",
-    "limitsLabel": "ظ…ط­ط¯ظˆط¯غŒطھâ€Œظ‡ط§",
-    "nextLabel": "ع¯ط§ظ… ط¨ط¹ط¯غŒ"
+    "error": "Errore",
+    "retry": "Riprova",
+    "machineTranslatedNotice": "Questa pagina è stata tradotta automaticamente e richiede revisione.",
+    "whatLabel": "Che cos'è",
+    "audienceLabel": "Per chi è",
+    "evidenceLabel": "Evidenze",
+    "limitsLabel": "Limiti",
+    "nextLabel": "Prossimo passo"
   },
   "a11y": {
-    "skipToContent": "ظ¾ط±ط´ ط¨ظ‡ ظ…ط­طھظˆط§غŒ ط§طµظ„غŒ"
+    "skipToContent": "Vai al contenuto principale"
   },
   "footer": {
-    "sitemap": "ظ†ظ‚ط´ظ‡ظ” ط³ط§غŒطھ",
-    "techStack": "ط³ط§ط®طھظ‡â€Œط´ط¯ظ‡ ط¨ط±ط§غŒ ط¯ط³طھط±ط³غŒ ع¯ط³طھط±ط¯ظ‡",
-    "navTitle": "ظ¾غŒظˆظ†ط¯ظ‡ط§غŒ ط¹ظ…ظˆظ…غŒ"
+    "sitemap": "Mappa del sito",
+    "techStack": "Tecnologia della piattaforma",
+    "navTitle": "Piattaforma"
   },
   "about": {
-    "title": "ط¯ط±ط¨ط§ط±ظ‡ظ” ظ‡غŒط¯ط±ظˆظ…ط§ ظ†ظˆعکغŒظ†",
-    "lead": "ط¨ط®ط´ ط¹ظ„ظ…غŒ ط§ع©ظˆ ظ†ظˆعکغŒظ† ط¨ط±ط§غŒ ظپظ‡ظ… ط¨ظ‡طھط± ط¢ط¨طŒ ط®ط§ع©طŒ ظ¾ظˆط´ط´ ع¯غŒط§ظ‡غŒ ظˆ ظ…ط¹غŒط´طھ ط±ظˆط³طھط§غŒغŒ.",
-    "what": "ظ‡غŒط¯ط±ظˆظ…ط§ ظ†ظˆعکغŒظ† ط§ط·ظ„ط§ط¹ط§طھ ظ…ط­غŒط·غŒ ظˆ طھط¬ط±ط¨ظ‡ظ” ظ…ط­ظ„غŒ ط±ط§ ع©ظ†ط§ط± ظ‡ظ… ظ…غŒâ€Œع¯ط°ط§ط±ط¯ طھط§ طھطµظ…غŒظ…â€Œظ‡ط§ ط¨ط±ط§غŒ ط¢ط¨طŒ ط®ط§ع© ظˆ ظ…ط¹غŒط´طھ ط¨ط§ ط²ظ…غŒظ†ظ‡ظ” ط±ظˆط´ظ†â€Œطھط±غŒ ع¯ط±ظپطھظ‡ ط´ظˆظ†ط¯.",
-    "audience": "طھظˆظ„غŒط¯ع©ظ†ظ†ط¯ع¯ط§ظ† ظˆ ط¬ظˆط§ظ…ط¹ ط±ظˆط³طھط§غŒغŒطŒ ظ†ظ‡ط§ط¯ظ‡ط§غŒ ظ†ط¸ط§ط±طھغŒ ظˆ ط§ط¬ط±ط§غŒغŒطŒ ظ¾عکظˆظ‡ط´ع¯ط±ط§ظ† ظˆ ظ‡ظ…ط±ط§ظ‡ط§ظ† ظپظ†غŒ.",
+    "title": "Informazioni su Hydroma Nojin",
+    "lead": "Un insieme di strumenti scientifici per proteggere acqua, suolo e mezzi di sussistenza nelle aree rurali.",
+    "what": "Hydroma Nojin è un insieme di strumenti di monitoraggio ambientale costruiti per operare dove internet è debole e gli strumenti di misura sono costosi.",
+    "audience": "Produttori, cooperative, agenzie governative, università, ricercatori e organizzazioni della società civile.",
     "evidence": [
-      "ط±ظˆط´â€Œظ‡ط§غŒ ط¹ظ„ظ…غŒ ط¨ط§ ع†ط§ط±ع†ظˆط¨â€Œظ‡ط§غŒ ظ…ط¹طھط¨ط± ط¨غŒظ†â€Œط§ظ„ظ…ظ„ظ„غŒ",
-      "ظ‡ط± ط¹ط¯ط¯ ط¨ط§ ط²ظ…ط§ظ† ظˆ ظˆط¶ط¹غŒطھ ط«ط¨طھâ€Œط´ط¯ظ‡ ظ†ظ…ط§غŒط´ ط¯ط§ط¯ظ‡ ظ…غŒâ€Œط´ظˆط¯",
-      "ط®ط±ظˆط¬غŒ ط¹ظ„ظ…غŒ ط¬ط§غŒ طھط¬ط±ط¨ظ‡ظ” ظ…ط­ظ„غŒ ظˆ ظ†ط¸ط± ع©ط§ط±ط´ظ†ط§ط³ ط±ط§ ظ†ظ…غŒâ€Œع¯غŒط±ط¯"
+      "I modelli scientifici si basano su metodi pubblicati e revisionati",
+      "Ogni valore numerico mostra la propria fonte e la propria data",
+      "Le decisioni agronomiche includono il motivo delle raccomandazioni"
     ],
     "limits": [
-      "ط¨ط±ظ†ط§ظ…ظ‡ظ” ط§ط³طھط§ظ†غŒ ظ‡ظ†ظˆط² ط¢ط؛ط§ط² ظ†ط´ط¯ظ‡ ط§ط³طھط› ط´ظ…ط§ط±ظ†ط¯ظ‡â€Œظ‡ط§ ظ¾ط³ ط§ط² ط¢ط؛ط§ط² ط¨ط±ظ†ط§ظ…ظ‡ ع©ط§ظ…ظ„ ظ…غŒâ€Œط´ظˆظ†ط¯",
-      "ط¨ط±ط®غŒ ط®ط¯ظ…ط§طھ ط¨ظ‡ ط´ط±ط§غŒط· ط¯ط³طھط±ط³غŒ ظˆ ظ¾غŒع©ط±ط¨ظ†ط¯غŒ ط¨غŒط±ظˆظ†غŒ ظˆط§ط¨ط³طھظ‡â€Œط§ظ†ط¯"
+      "Nessun sistema può sostituire la conoscenza locale dell'agricoltore",
+      "Le previsioni climatiche a lungo termine hanno un elevato margine di errore"
     ],
     "next": [
-      "طھع©ظ…غŒظ„ طµظپط­ط§طھ ط¹ظ…ظˆظ…غŒ ظˆ ظ…ط³غŒط±ظ‡ط§غŒ غŒط§ط¯ع¯غŒط±غŒ",
-      "ط¢ط؛ط§ط² ط¨ط±ظ†ط§ظ…ظ‡ظ” ط§ط³طھط§ظ†غŒ ظˆ ط§ظ†طھط´ط§ط± ط§ط·ظ„ط§ط¹ط§طھ ط«ط¨طھâ€Œط´ط¯ظ‡ظ” ظ‡ظ…ط±ط§ظ‡ط§ظ†"
+      "Registrati per consultare i tuoi profili territoriali",
+      "Richiedi una sessione di formazione per la tua comunità"
     ]
   },
   "statements": {
-    "title": "ط¨غŒط§ظ†غŒظ‡â€Œظ‡ط§ ظˆ ظ…طھظ†â€Œظ‡ط§غŒ ظ…طµظˆط¨",
-    "lead": "ظ…طھظ†â€Œظ‡ط§غŒ ط±ط³ظ…غŒ ظ¾ظ„طھظپط±ظ…طŒ ظ†ط³ط®ظ‡â€Œط¯ط§ط± ظˆ طھط§ط±غŒط®â€Œط¯ط§ط±ط› ظ‡ط± طھط؛غŒغŒط±طŒ ظ…ط³غŒط± طھط­ظˆظ„ ط±ط§ ط±ظˆط´ظ†â€Œطھط± ظ…غŒâ€Œع©ظ†ط¯.",
-    "missionTitle": "ط¨غŒط§ظ†غŒظ‡ظ” ظ…ط£ظ…ظˆط±غŒطھ",
-    "missionBody": "ط§ط­غŒط§غŒ ط¢ط¨طŒ ط®ط§ع© ظˆ ظ…ط¹غŒط´طھ ط¨ط§ ط¹ظ„ظ… ظ‚ط§ط¨ظ„â€Œط¨ط±ط±ط³غŒ ظˆ ط¨ط§ط²ط§ط± ط¹ط§ط¯ظ„ط§ظ†ظ‡ظ” ظ…ط­ظ„غŒط› ط¨ط±ط§غŒ ظ…ط±ط¯ظ…غŒ ع©ظ‡ طھط­ظ…ظ„ ع¯ط±ط³ظ†ع¯غŒ ظˆ ظپظ‚ط± ط±ط§ ظ†ط¯ط§ط±ظ†ط¯ ظˆ ط¨ط±ط§غŒ ط§ع©ظˆط³غŒط³طھظ…غŒ ع©ظ‡ ط¯غŒع¯ط± طھط­ظ…ظ„ ط³غŒظ„ط§ط¨ ظˆ ظپط±ط³ط§غŒط´ ط®ط§ع© ط±ط§ ظ†ط¯ط§ط±ط¯.",
-    "quoteLabel": "ظ…طھظ† ظ…طµظˆط¨",
-    "versionLabel": "ظ†ط³ط®ظ‡ظ” غ±ظ«غ°",
-    "transparencyTitle": "ط´ظپط§ظپغŒطھ ظ…ط³ط¦ظˆظ„ط§ظ†ظ‡",
-    "transparencyBody": "ظ‡ط± ط¹ط¯ط¯ ط¯ط± ط§غŒظ† ظ¾ظ„طھظپط±ظ… ظ¾غŒط´غŒظ†ظ‡ ظˆ طھط§ط±غŒط® ط¯ط§ط±ط¯ط› ط¯ط± ظ†ط¨ظˆط¯ ط§ط·ظ„ط§ط¹ط§طھطŒ طµط§ط¯ظ‚ط§ظ†ظ‡ آ«ط¨ظ‡â€Œط²ظˆط¯غŒآ» ظ†ظˆط´طھظ‡ ظ…غŒâ€Œط´ظˆط¯ â€” ظ‡غŒع† ظ…ظ‚ط¯ط§ط± ظپط±ط¶غŒ ط¬ط§غŒ ط§ط·ظ„ط§ط¹ط§طھ ط«ط¨طھâ€Œط´ط¯ظ‡ ط±ط§ ظ†ظ…غŒâ€Œع¯غŒط±ط¯."
+    "title": "Missione, visione e manifesto",
+    "lead": "Il manifesto del progetto definisce cosa costruiamo, chi ne beneficia e a quale scopo tecnico ed economico.",
+    "missionTitle": "La nostra missione",
+    "missionBody": "Proteggere acqua, suolo e mezzi di sussistenza con strumenti scientifici verificabili. Ogni decisione deve essere comprensibile, riproducibile e utile a chi lavora la terra.",
+    "quoteLabel": "Dichiarazione",
+    "versionLabel": "Revisione libera",
+    "transparencyTitle": "Trasparenza del progetto",
+    "transparencyBody": "Se qualcosa non funziona, lo diciamo: proponiamo «in lavorazione» anziché fingere il completamento. Ogni modifica permanente viene tracciata nel registro del progetto."
   },
   "platformOverview": {
-    "title": "ط§ط¬ط²ط§غŒ ظ¾ظ„طھظپط±ظ…",
-    "lead": "ع†ظ‡ط§ط± ط¯ط±ظˆط§ط²ظ‡ظ” ط¹ظ…ظˆظ…غŒط› ظ‡ط± ط¨ط®ط´ ظˆط¶ط¹غŒطھ ظˆ ظ…ط±ط² ط®ظˆط¯ ط±ط§ ط±ظˆط´ظ† ظ†ط´ط§ظ† ظ…غŒâ€Œط¯ظ‡ط¯.",
-    "itemHome": "ط®ط§ظ†ظ‡ظ” ط¹ظ…ظˆظ…غŒ",
-    "itemHomeDesc": "ط²ظ…غŒظ†â€Œظ‡ط§طŒ ظ¾ط±ظˆعکظ‡â€Œظ‡ط§ ظˆ ظ…ط­طµظˆظ„ط§طھ ط«ط¨طھâ€Œط´ط¯ظ‡ ط±ط§ ط¨ط¯ظˆظ† ظ…ظ‚ط¯ط§ط± ظپط±ط¶غŒ ط¨ط¨غŒظ†غŒط¯.",
-    "itemScience": "ط§ط¨ط²ط§ط±ظ‡ط§غŒ ط¹ظ„ظ…غŒ",
-    "itemScienceDesc": "ظپظ‡ظ… ط¨ظ‡طھط± ط¢ط¨طŒ ط®ط§ع©طŒ ظ¾ظˆط´ط´ ع¯غŒط§ظ‡غŒ ظˆ ط§ظ‚ظ„غŒظ… ط¨ط§ ظ…ط±ط²ظ‡ط§غŒ ط±ظˆط´ظ†.",
-    "itemMarket": "ط¨ط§ط²ط§ط±ع¯ط§ظ‡",
-    "itemMarketDesc": "ظ…ط­طµظˆظ„ط§طھ طھظˆظ„غŒط¯ع©ظ†ظ†ط¯ع¯ط§ظ† ط¨ط§ ظ‚غŒظ…طھ ظˆ ظ…ظˆط¬ظˆط¯غŒ ط«ط¨طھâ€Œط´ط¯ظ‡.",
-    "itemStatus": "ظˆط¶ط¹غŒطھ ط³ط§ظ…ط§ظ†ظ‡",
-    "itemStatusDesc": "ظˆط¶ط¹غŒطھ ط¹ظ…ظˆظ…غŒ ط³ط±ظˆغŒط³â€Œظ‡ط§ ظˆ ط§ط·ظ„ط§ط¹ط§طھ ط«ط¨طھâ€Œط´ط¯ظ‡طŒ ط¨ظ‡â€Œطµظˆط±طھ ط³ط§ط¯ظ‡ ظˆ ط²ظ…ط§ظ†â€Œظ…ظ†ط¯.",
-    "cta": "ظ…ط´ط§ظ‡ط¯ظ‡"
+    "title": "Panoramica della piattaforma",
+    "lead": "Ogni utente trova il proprio percorso: dal territorio all'acqua, dal terreno ai dati, senza perdersi.",
+    "itemHome": "Pagina principale",
+    "itemHomeDesc": "Profili territoriali, prodotti del mercato e attività del progetto in una sola vista.",
+    "itemScience": "Scienza applicata",
+    "itemScienceDesc": "Modelli di suolo, acqua, clima ed erosione con risultati verificabili.",
+    "itemMarket": "Mercato",
+    "itemMarketDesc": "Prodotti con origine tracciata e produttori verificati.",
+    "itemStatus": "Stato del sistema",
+    "itemStatusDesc": "Salute dei servizi e dei database in tempo reale, comprensibile e trasparente.",
+    "cta": "Scopri di più"
   },
   "services": {
-    "title": "ط®ط¯ظ…ط§طھ ظˆ ط±ط§ظ‡ع©ط§ط±ظ‡ط§",
-    "lead": "ط³ظ‡ ظ…ط³غŒط± ط®ط¯ظ…طھطŒ ط¨ط±ط§غŒ ط§ظ†ط³ط§ظ†â€Œظ‡ط§ ظˆ ط²ظ…غŒظ†ظ‡â€Œظ‡ط§غŒ ظ…طھظپط§ظˆطھ.",
-    "what": "طھظˆظ„غŒط¯ع©ظ†ظ†ط¯ظ‡طŒ ظ†ظ‡ط§ط¯ ظˆ ظ¾عکظˆظ‡ط´ع¯ط± ظ‡ط±ع©ط¯ط§ظ… ظ…ط³غŒط± ط®ظˆط¯ ط±ط§ ط¯ط§ط±ظ†ط¯ط› ظ‡ظ…ظ‡ظ” ظ…ط³غŒط±ظ‡ط§ ط¨ط§ ط´ظپط§ظپغŒطھ ظˆ ط§ط­طھط±ط§ظ… ط¨ظ‡ طھط¬ط±ط¨ظ‡ظ” ظ…ط­ظ„غŒ ظ¾غŒط´ ظ…غŒâ€Œط±ظˆظ†ط¯.",
-    "audience": "طھظˆظ„غŒط¯ع©ظ†ظ†ط¯ع¯ط§ظ† ط±ظˆط³طھط§غŒغŒطŒ ظ†ظ‡ط§ط¯ظ‡ط§غŒ ظ†ط¸ط§ط±طھغŒطŒ ظ¾عکظˆظ‡ط´ع¯ط±ط§ظ† ظˆ ط´ط±ع©ط§غŒ ظپظ†غŒ.",
-    "farmersTitle": "طھظˆظ„غŒط¯ع©ظ†ظ†ط¯ع¯ط§ظ† ظˆ ط±ظˆط³طھط§ظ‡ط§",
-    "farmersDesc": "ظ¾ط§غŒط´ ط²ظ…غŒظ†طŒ ظ¾غŒط´ظ†ظ‡ط§ط¯ ط¢ط¨غŒط§ط±غŒ ظˆ ع©ظˆط¯طŒ ظˆ ط§ظ…ع©ط§ظ† ط¹ط±ط¶ظ‡ظ” ظ…ط­طµظˆظ„ط› طھطµظ…غŒظ… ظ†ظ‡ط§غŒغŒ ط¨ط§ ع©ط§ط±ط´ظ†ط§ط³ ظˆ ط´ط±ط§غŒط· ظ…ط­ظ„غŒ.",
-    "institutionsTitle": "ظ†ظ‡ط§ط¯ظ‡ط§ ظˆ ظ†ط¸ط§ط±طھ",
-    "institutionsDesc": "ط¯ط§ط´ط¨ظˆط±ط¯ ظ¾ط§غŒط´ ط§ط«ط±طŒ ع¯ط²ط§ط±ط´â€Œظ‡ط§غŒ ط®ظˆط§ظ†ط§ ظˆ ظ…ط³غŒط± ظ¾ط§ط³ط®â€Œع¯ظˆغŒغŒط› ط¨ط¯ظˆظ† ط§ط¯ط¹ط§غŒ ظ†طھغŒط¬ظ‡ظ” ظ‚ط·ط¹غŒ.",
-    "researchersTitle": "ظ¾عکظˆظ‡ط´ع¯ط±ط§ظ† ظˆ ظ‡ظ…ط±ط§ظ‡ط§ظ† ظپظ†غŒ",
-    "researchersDesc": "ط§ط¨ط²ط§ط±ظ‡ط§غŒ ط¹ظ„ظ…غŒ ظˆ ظ…ط³طھظ†ط¯ط§طھ ط¹ظ…ظˆظ…غŒ ط¨ط±ط§غŒ ط¨ط±ط±ط³غŒ ط±ظˆط´طŒ ط²ظ…غŒظ†ظ‡ ظˆ ظ…ط­ط¯ظˆط¯غŒطھâ€Œظ‡ط§.",
-    "pilotCta": "ط¯ط±ط®ظˆط§ط³طھ ظ¾غŒظˆط³طھظ† ط¨ظ‡ ط¨ط±ظ†ط§ظ…ظ‡ظ” ط§ط³طھط§ظ†غŒ",
-    "pilotNote": "ط«ط¨طھâ€Œظ†ط§ظ… ط¨ط±ظ†ط§ظ…ظ‡ظ” ط§ط³طھط§ظ†غŒ ظ¾ط³ ط§ط² ط§ط¹ظ„ط§ظ… ط±ط³ظ…غŒ ط¢ط؛ط§ط² ظ…غŒâ€Œط´ظˆط¯.",
+    "title": "Servizi e soluzioni",
+    "lead": "Tre servizi distinti coprono terra, impresa e ricerca scientifica.",
+    "what": "Ogni servizio nasce da un problema reale e restituisce un risultato che il destinatario può usare.",
+    "audience": "Produttori, istituzioni, comunità scientifiche, università e privati.",
+    "farmersTitle": "Per i produttori agricoli",
+    "farmersDesc": "Pianificazione delle colture, irrigazione, fertilità del suolo e gestione delle risorse idriche con raccomandazioni motivate.",
+    "institutionsTitle": "Per le istituzioni",
+    "institutionsDesc": "Cartografia delle aree a rischio, pianificazione delle risorse idriche e report di conformità.",
+    "researchersTitle": "Per ricercatori e università",
+    "researchersDesc": "Modelli scientifici, set di dati aperti, ambiente di calcolo ed elaborazione riproducibile.",
+    "pilotCta": "Richiedi una sessione pilota",
+    "pilotNote": "I siti pilota sono limitati e selezionati sulla base dei dati.",
     "limits": [
-      "ط«ط¨طھâ€Œظ†ط§ظ… ط¨ط±ظ†ط§ظ…ظ‡ظ” ط§ط³طھط§ظ†غŒ ظ¾ط³ ط§ط² ط§ط¹ظ„ط§ظ… ط±ط³ظ…غŒ ط¢ط؛ط§ط² ظ…غŒâ€Œط´ظˆط¯",
-      "ط¨ط±ط®غŒ ط³ط±ظˆغŒط³â€Œظ‡ط§ ط¨ظ‡ ط´ط±ط§غŒط· ط¯ط³طھط±ط³غŒ ظˆ ظ¾غŒع©ط±ط¨ظ†ط¯غŒ ط¨غŒط±ظˆظ†غŒ ظˆط§ط¨ط³طھظ‡â€Œط§ظ†ط¯"
+      "I siti pilota sono limitati e selezionati sulla base dei dati",
+      "Servizi di intelligenza artificiale limitati a domini agronomici dichiarati"
     ],
     "next": [
-      "ط§ط¬ط±ط§غŒ ط¨ط±ظ†ط§ظ…ظ‡ظ” ط§ط³طھط§ظ†غŒ ط¨ط§ ظ†ظ‡ط§ط¯ظ‡ط§غŒ ظ…ط­ظ„غŒ",
-      "ط§ظ†طھط´ط§ط± ع¯ط²ط§ط±ط´ ظ†طھط§غŒط¬ ط¨ط±ظ†ط§ظ…ظ‡ظ” ط§ط³طھط§ظ†غŒ"
+      "Registrati per iniziare dal tuo profilo territoriale",
+      "Consulta l'elenco completo dei modelli scientifici"
     ]
   },
   "evidence": {
-    "title": "ط¹ظ„ظ… ظˆ ط´ظˆط§ظ‡ط¯",
-    "lead": "ظ‡ط± ظ¾ط§ط³ط® ط¹ظ„ظ…غŒ ط¨ط§غŒط¯ ط±ظˆط´طŒ ط²ظ…غŒظ†ظ‡ ظˆ ظ…ط±ط² ط®ظˆط¯ ط±ط§ ظ†ط´ط§ظ† ط¯ظ‡ط¯.",
-    "what": "ط®ط±ظˆط¬غŒâ€Œظ‡ط§ ط¨ط§ طھظˆط¶غŒط­ ط±ظˆط´طŒ ط²ظ…ط§ظ† ظˆ ظ…ط­ط¯ظˆط¯ظ‡ظ” ع©ط§ط±ط¨ط±ط¯ ط§ط±ط§ط¦ظ‡ ظ…غŒâ€Œط´ظˆظ†ط¯ط› ط¹ط¯ط¯ ط¨ظ‡â€Œطھظ†ظ‡ط§غŒغŒ ط­ع©ظ… ظ†ظ‡ط§غŒغŒ ظ†غŒط³طھ.",
-    "audience": "ظ¾عکظˆظ‡ط´ع¯ط±ط§ظ†طŒ ظ†ظ‡ط§ط¯ظ‡ط§غŒ ط¹ظ„ظ…غŒ ظˆ ع©ط§ط±ط´ظ†ط§ط³ط§ظ† ط§ط¹طھط¨ط§ط±ط³ظ†ط¬غŒ.",
-    "refsTitle": "ظ…ط±ط§ط¬ط¹ ط¹ظ…ظˆظ…غŒ",
+    "title": "Scienza ed evidenze",
+    "lead": "Ogni affermazione scientifica è collegata a una fonte, una data e un metodo di validazione.",
+    "what": "Ogni documento scientifico segue lo stesso flusso logico: metodo, dati, limiti dichiarati, esiti.",
+    "audience": "Ricercatori, revisori, autorità e chiunque valuti le affermazioni del progetto.",
+    "refsTitle": "Metodo e riferimenti",
     "refs": [
-      "ع†ط§ط±ع†ظˆط¨â€Œظ‡ط§غŒ ظ…ط¹طھط¨ط± ط¨ط±ط§غŒ ط¢ط¨ ظˆ ط®ط§ع©",
-      "ط±ط§ظ‡ظ†ظ…ط§ظ‡ط§غŒ ط¨غŒظ†â€Œط§ظ„ظ…ظ„ظ„غŒ ط¨ط±ط§غŒ ط§ظ‚ظ„غŒظ… ظˆ ع©ط±ط¨ظ†",
-      "ط§ط³طھط§ظ†ط¯ط§ط±ط¯ظ‡ط§غŒ ط¹ظ…ظˆظ…غŒ ط¨ط±ط§غŒ ط§ط·ظ„ط§ط¹ط§طھ ظ…ع©ط§ظ†غŒ"
+      "Metodi di modellazione del suolo e del bilancio idrico",
+      "Standard FAO-56 per l'evapotraspirazione",
+      "Protocolli di campionamento e di controllo qualità"
     ],
-    "limitsTitle": "ظ…ط­ط¯ظˆط¯غŒطھâ€Œظ‡ط§",
+    "limitsTitle": "Limiti dichiarati",
     "limits": [
-      "ط®ط±ظˆط¬غŒ ط¹ظ„ظ…غŒ ط¬ط§غŒ ط§ظ†ط¯ط§ط²ظ‡â€Œع¯غŒط±غŒ ظ…غŒط¯ط§ظ†غŒ ظˆ ظ†ط¸ط± ع©ط§ط±ط´ظ†ط§ط³ ط±ط§ ظ†ظ…غŒâ€Œع¯غŒط±ط¯",
-      "ط¨ط¯ظˆظ† ط²ظ…غŒظ†ظ‡ظ” ظ…ط­ظ„غŒطŒ ظ†طھغŒط¬ظ‡ ط¨ط§غŒط¯ ط¨ط§ ط§ط­طھغŒط§ط· ط®ظˆط§ظ†ط¯ظ‡ ط´ظˆط¯",
-      "ط¯ط³طھط±ط³غŒ ط¨ظ‡ ط§ط·ظ„ط§ط¹ط§طھ ظ…ط­غŒط·غŒ ظ…ظ…ع©ظ† ط§ط³طھ ظ‡ظ…غŒط´ظ‡ ط¨ط±ظ‚ط±ط§ط± ظ†ط¨ط§ط´ط¯"
+      "I modelli di bilancio idrico semplificati sovrastimano l'umidità in suoli sabbiosi",
+      "I dati satellitari possono essere offuscati dalla copertura nuvolosa",
+      "Le previsioni stagionali restano entro un intervallo ampio"
     ],
-    "nextTitle": "ع¯ط§ظ… ط¨ط¹ط¯غŒ",
+    "nextTitle": "Prossimo passo",
     "next": [
-      "ط§ظ†طھط´ط§ط± ع¯ط²ط§ط±ط´ ط¨ط±ط±ط³غŒ ظ‡ط± ط§ط¨ط²ط§ط± ط¯ط± ظپط§ط²ظ‡ط§غŒ ط¨ط¹ط¯",
-      "ط«ط¨طھ ط²ظ…ط§ظ† ظˆ ط²ظ…غŒظ†ظ‡ظ” ط§ط³طھظپط§ط¯ظ‡ ط¨ط±ط§غŒ ظ‡ط± ظ†ظ…ط§غŒط´ ط¹ظ…ظˆظ…غŒ"
+      "Leggere la metodologia completa e le assunzioni del modello",
+      "Consultare i dataset aperti e la guida alla riproducibilità"
     ]
   },
   "learn": {
-    "title": "ط¢ظ…ظˆط²ط´ ظˆ ظ…ط­طھظˆط§",
-    "lead": "ط¯ط§ظ†ط´ ط¨ط§غŒط¯ ط¨ظ‡ ط²ط¨ط§ظ† ظˆ ط´ط±ط§غŒط· ط²ظ†ط¯ع¯غŒ ظ…ط±ط¯ظ… ظ†ط²ط¯غŒع© ط´ظˆط¯.",
-    "emptyTitle": "ظ…ط­طھظˆط§غŒ ط¢ظ…ظˆط²ط´غŒ ظ‡ظ†ظˆط² ظ…ظ†طھط´ط± ظ†ط´ط¯ظ‡ ط§ط³طھ",
-    "emptyDesc": "ظ†ط®ط³طھغŒظ† ط¨ط³طھظ‡ظ” ط¢ظ…ظˆط²ط´غŒطŒ ط´ط§ظ…ظ„ ظˆط§عکظ‡â€Œظ†ط§ظ…ظ‡ظ” ط¯ظˆط²ط¨ط§ظ†ظ‡ ظˆ ظˆغŒط¯ط¦ظˆظ‡ط§غŒ ط²غŒط±ظ†ظˆغŒط³â€Œط¯ط§ط±طŒ ط¯ط± ظپط§ط² غ± طھع©ظ…غŒظ„ ظ…غŒâ€Œط´ظˆط¯."
+    "title": "Contenuti e formazione",
+    "lead": "Videolezioni, glossario bilingue e guide operative da usare sul campo.",
+    "emptyTitle": "Il contenuto formativo non è ancora disponibile per questa selezione",
+    "emptyDesc": "I materiali di formazione sono in fase di revisione. Nel frattempo puoi consultare il glossario e le guide metodologiche sul sito."
   },
   "legal": {
-    "title": "ط³غŒط§ط³طھâ€Œظ‡ط§ ظˆ ط­ظ‚ظˆظ‚غŒ",
-    "lead": "ظ†ط³ط®ظ‡ظ” ظ¾غŒط´â€Œظ†ظˆغŒط³ ط¨ط±ط§غŒ ط¨ط§ط²ط¨غŒظ†غŒ ط­ظ‚ظˆظ‚غŒط› ظ‡ط± ط³ظ†ط¯ ظ†ط³ط®ظ‡ ظˆ طھط§ط±غŒط® ط¯ط§ط±ط¯.",
-    "version": "vغ±ظ«غ° â€” ظ¾غŒط´â€Œظ†ظˆغŒط³",
-    "termsTitle": "ط´ط±ط§غŒط· ط§ط³طھظپط§ط¯ظ‡",
-    "termsBody": "ط§ط³طھظپط§ط¯ظ‡ظ” ط¹ظ…ظˆظ…غŒ ط§ط² طµظپط­ط§طھ ظˆ ط¨ط§ط²ط§ط±ع¯ط§ظ‡ ط¨ط¯ظˆظ† ط«ط¨طھâ€Œظ†ط§ظ… ظ…ط¬ط§ط² ط§ط³طھط› ظ‡ط± ع©ظ†ط´ ظ…ط§ظ„غŒ ظ†غŒط§ط²ظ…ظ†ط¯ ظ¾ط°غŒط±ط´ ظ‚ط±ط§ط±ط¯ط§ط¯ ظ†ط³ط®ظ‡â€Œط¯ط§ط± ط§ط³طھ.",
-    "privacyTitle": "ط­ط±غŒظ… ط®طµظˆطµغŒ",
-    "privacyBody": "ط¯ط§ط¯ظ‡ظ” ط´ط®طµغŒ ط­ط¯ط§ظ‚ظ„غŒ ط¬ظ…ط¹ ظ…غŒâ€Œط´ظˆط¯ط› ط­ظ‚ ط¯ط³طھط±ط³غŒ ظˆ ط­ط°ظپ ظ…ط­ظپظˆط¸ ط§ط³طھ ظˆ ط¯ط§ط¯ظ‡ظ” ظ¾عکظˆظ‡ط´غŒ ظ†ط§ط´ظ†ط§ط³â€Œط³ط§ط²غŒ ظ…غŒâ€Œط´ظˆظ†ط¯.",
-    "cookiesTitle": "ع©ظˆع©غŒâ€Œظ‡ط§ ظˆ ط²ط¨ط§ظ†",
-    "cookiesBody": "ط§ظ†طھط®ط§ط¨ ط²ط¨ط§ظ† ط¯ط± ع©ظˆع©غŒ ط°ط®غŒط±ظ‡ ظ…غŒâ€Œط´ظˆط¯ طھط§ ظ…ط³غŒط± ط²ط¨ط§ظ†غŒ ظ¾ط§غŒط¯ط§ط± ط¨ظ…ط§ظ†ط¯ط› ط±ط¯غŒط§ط¨غŒ طھط¨ظ„غŒط؛ط§طھغŒ ظˆط¬ظˆط¯ ظ†ط¯ط§ط±ط¯."
+    "title": "Termini e condizioni",
+    "lead": "I dati personali sono raccolti per un motivo preciso, conservati per il tempo necessario e protetti.",
+    "version": "v libera — bozza",
+    "termsTitle": "Condizioni d'uso",
+    "termsBody": "L'uso della piattaforma implica l'accettazione delle presenti condizioni. Il progetto non rivendica certificazioni esterne non verificate.",
+    "privacyTitle": "Dati personali",
+    "privacyBody": "Utilizziamo i dati personali per fornire il servizio richiesto. Non condividiamo i dati identificativi per finalità commerciali.",
+    "cookiesTitle": "Cookie e lingua",
+    "cookiesBody": "Utilizziamo un cookie tecnico per ricordare la lingua scelta; puoi modificarlo in qualsiasi momento dalle preferenze del browser."
   },
   "ai": {
-    "title": "ظ‡ظˆط´ ظ…طµظ†ظˆط¹غŒ ظ…ط³ط¦ظˆظ„",
-    "lead": "ظ¾ط§ط³ط® ط³ط±غŒط¹طŒ ظ‡ظ…ط±ط§ظ‡ ط¨ط§ ظ…ط±ط²ظ‡ط§غŒ ط±ظˆط´ظ† ظˆ ظ‚ط¶ط§ظˆطھ ط§ظ†ط³ط§ظ†غŒ.",
-    "what": "ط¯ط³طھغŒط§ط± ط¹ظ„ظ…غŒ ط¨ط±ط§غŒ غŒط§ظپطھظ† ظˆ ظ…ط±طھط¨â€Œع©ط±ط¯ظ† ط§ط·ظ„ط§ط¹ط§طھ ط·ط±ط§ط­غŒ ط´ط¯ظ‡ ط§ط³طھط› ظ‡ط± ط§ط¯ط¹ط§ ط¨ط§غŒط¯ ط¨ظ‡ ظ…ط·ط§ظ„ط¨ ظ…ظ†طھط´ط±ط´ط¯ظ‡ ط§ط±ط¬ط§ط¹ ط¯ظ‡ط¯ ظˆ ط¯ط± ظ…ظˆط¶ظˆط¹ط§طھ ط­ط³ط§ط³طŒ ع©ط§ط±ط¨ط± ط±ط§ ط¨ظ‡ ع©ط§ط±ط´ظ†ط§ط³ ظˆ ظ…ط´ط§ظ‡ط¯ظ‡ظ” ظ…غŒط¯ط§ظ†غŒ ط§ط±ط¬ط§ط¹ ظ…غŒâ€Œط¯ظ‡ط¯.",
-    "audience": "طھظˆظ„غŒط¯ع©ظ†ظ†ط¯ع¯ط§ظ†طŒ ع©ط§ط±ط´ظ†ط§ط³ط§ظ† ظˆ ظ¾عکظˆظ‡ط´ع¯ط±ط§ظ†غŒ ع©ظ‡ ط¨ظ‡ ظ¾ط§ط³ط® ط³ط±غŒط¹ ظˆ ظ…ط³طھظ†ط¯ ظ†غŒط§ط² ط¯ط§ط±ظ†ط¯.",
-    "sourceRule": "ظ¾ط§ط³ط® ط¨ط¯ظˆظ† ط§ط±ط¬ط§ط¹ ط¨ط§ ط¨ط±ع†ط³ط¨ آ«ظ¾غŒط´â€Œظ†ظˆغŒط³آ» ظ†ظ…ط§غŒط´ ط¯ط§ط¯ظ‡ ظ…غŒâ€Œط´ظˆط¯.",
-    "limitsTitle": "ظ…ط­ط¯ظˆط¯غŒطھâ€Œظ‡ط§",
+    "title": "Intelligenza artificiale responsabile",
+    "lead": "L'IA è un supporto, non un sostituto del metodo scientifico. Deve dichiarare i propri limiti.",
+    "what": "Gli strumenti di IA aiutano a formulare domande e a cercare nella base di conoscenze, ma non sostituiscono il parere di un agronomo né l'osservazione sul campo.",
+    "audience": "Produttori, tecnici, ricercatori e chiunque usi strumenti automatici nella pianificazione agricola.",
+    "sourceRule": "Ogni risposta deve riportare la fonte o essere etichettata come bozza del modello.",
+    "limitsTitle": "Limiti dichiarati",
     "limits": [
-      "طھظˆطµغŒظ‡ظ” ظ†ظ‡ط§غŒغŒ ع©ط´ط§ظˆط±ط²غŒ ط¬ط§غŒع¯ط²غŒظ† ع©ط§ط±ط´ظ†ط§ط³ ظ†غŒط³طھ",
-      "ظ¾ط§ط³ط®â€Œظ‡ط§ ظ…ظ…ع©ظ† ط§ط³طھ ظ†ط§ظ‚طµ ط¨ط§ط´ظ†ط¯ط› ط²ظ…غŒظ†ظ‡ظ” ظ…ط­ظ„غŒ ظˆ ظ…ط´ط§ظ‡ط¯ظ‡ظ” ظ…غŒط¯ط§ظ†غŒ ط§ظ‡ظ…غŒطھ ط¯ط§ط±ط¯",
-      "ظ†ط³ط®ظ‡ظ” طµظˆطھغŒ ط¯ط± ظ…ظˆط¬ ظ†ط®ط³طھ ع†ظ‡ط§ط±ط²ط¨ط§ظ†ظ‡ ط§ط³طھ (fa/en/ar/ur)"
+      "Le raccomandazioni non sostituiscono l'agronomo o il diritto locale",
+      "Il modello può consigliare pratiche non adatte alla regione specifica",
+      "Solo i domini dichiarati sono supportati (fa/en/ar/ur)"
     ],
-    "nextTitle": "ع¯ط§ظ… ط¨ط¹ط¯غŒ",
+    "nextTitle": "Prossimo passo",
     "next": [
-      "ط±ط§ظ‡â€Œط§ظ†ط¯ط§ط²غŒ ط¯ط³طھغŒط§ط± ط¨ط§ ط§ط±ط¬ط§ط¹ ط¯ط± ظپط§ط²ظ‡ط§غŒ ط¨ط¹ط¯",
-      "ط«ط¨طھ ط¨ط§ط²ط®ظˆط±ط¯ ط§ظ†ط³ط§ظ†غŒ ط¨ط±ط§غŒ ظ‡ط± ظ¾ط§ط³ط®"
+      "Segnala una risposta non corretta affinché venga verificata da un operatore umano",
+      "Consulta la procedura completa del sistema"
     ]
   },
   "trust": {
-    "title": "ط§ط¹طھظ…ط§ط¯ ظˆ ظ¾غŒط´غŒظ†ظ‡ظ” ط§ط·ظ„ط§ط¹ط§طھ",
-    "lead": "ط§ط¹طھظ…ط§ط¯ ط§ط² ط±ظپطھط§ط±ظ‡ط§غŒ ع©ظˆع†ع© ظˆ ظ‚ط§ط¨ظ„â€Œط¨ط±ط±ط³غŒ ط³ط§ط®طھظ‡ ظ…غŒâ€Œط´ظˆط¯.",
-    "what": "ظ¾غŒط´غŒظ†ظ‡ظ” ط§ط·ظ„ط§ط¹ط§طھطŒ ظ…ط³غŒط± ط«ط¨طھ ظˆ ظ†ظ…ط§غŒط´ ظ‡ط± ط¹ط¯ط¯ ط±ط§ ط¨ظ‡ ط²ط¨ط§ظ†غŒ ط³ط§ط¯ظ‡ ط±ظˆط´ظ† ظ…غŒâ€Œع©ظ†ط¯.",
-    "audience": "ظ†ظ‡ط§ط¯ظ‡ط§غŒ ظ†ط¸ط§ط±طھغŒطŒ ط®ط±غŒط¯ط§ط±ط§ظ† ظˆ ظ‡ط± ع©ط³غŒ ع©ظ‡ ط¨ظ‡ ط´ظپط§ظپغŒطھ ط§ظ‡ظ…غŒطھ ظ…غŒâ€Œط¯ظ‡ط¯.",
-    "provenanceTitle": "ع©ط§ظˆط´ع¯ط± ظ¾غŒط´غŒظ†ظ‡",
-    "provenanceDesc": "ط¨ط±ط§غŒ ظ‡ط± ط¹ط¯ط¯ ط¯ط± طµظپط­ط§طھطŒ ط¨ط±ع†ط³ط¨ ظ¾غŒط´غŒظ†ظ‡ظ” ط«ط¨طھ ط±ط§ ط¨ط¨غŒظ†غŒط¯ط› ظˆط¶ط¹غŒطھ ط¹ظ…ظˆظ…غŒ ط³ط±ظˆغŒط³â€Œظ‡ط§ ط¯ط± طµظپط­ظ‡ظ” ظˆط¶ط¹غŒطھ ط³ط§ظ…ط§ظ†ظ‡.",
-    "registryTitle": "ط«ط¨طھ ط§ط«ط± ط²غŒط³طھâ€Œظ…ط­غŒط·غŒ",
-    "registryDesc": "ط«ط¨طھ ظ¾ط±ظˆعکظ‡â€Œظ‡ط§غŒ ط§ط«ط± ط²غŒط³طھâ€Œظ…ط­غŒط·غŒ ظ¾ط³ ط§ط² ط±ط§ظ‡â€Œط§ظ†ط¯ط§ط²غŒ ظ¾ط§غŒط´ ط§ط«ط± ظپط¹ط§ظ„ ظ…غŒâ€Œط´ظˆط¯ط› ط§ع©ظ†ظˆظ† آ«ط¨ظ‡â€Œط²ظˆط¯غŒآ».",
-    "disclosureTitle": "ع¯ط²ط§ط±ط´ ظ…ط³ط¦ظˆظ„ط§ظ†ظ‡",
-    "disclosureDesc": "ع¯ط²ط§ط±ط´ ط¢ط³غŒط¨â€Œظ¾ط°غŒط±غŒ ط§ط² ع©ط§ظ†ط§ظ„ ط§ظ…ظ† ظ¾ط°غŒط±ظپطھظ‡ ظ…غŒâ€Œط´ظˆط¯ ظˆ ط¯ط± ط³ط§ط¨ظ‚ظ‡ظ” ظ¾غŒع¯غŒط±غŒ ط«ط¨طھ ظ…غŒâ€Œع¯ط±ط¯ط¯.",
-    "statusCta": "ظˆط¶ط¹غŒطھ ط¹ظ…ظˆظ…غŒ ط³ط±ظˆغŒط³â€Œظ‡ط§",
+    "title": "Provenienza e affidabilità del sistema",
+    "lead": "Provenienza è tracciare ogni dato fino alla sua fonte, non un sempliceadesivo.",
+    "what": "Ogni dato dichiarato porta un marchio di provenienza: origine, data e servizio che l'ha prodotto.",
+    "audience": "Partner istituzionali, revisori, ricercatori e organismi di controllo.",
+    "provenanceTitle": "Esploratore della provenienza",
+    "provenanceDesc": "Segui ogni dato fino al servizio, all'immagine del dato e alla data di acquisizione.",
+    "registryTitle": "Registro del carbonio",
+    "registryDesc": "I crediti di carbonio generati dal progetto sono accessibili e verificabili; per ora l'indirizzo della blockchain non è ancora disponibile.",
+    "disclosureTitle": "Divulgazione responsabile",
+    "disclosureDesc": "La divulgazione delle vulnerabilità avviene in modo riservato, senza esporre dati degli utenti.",
+    "statusCta": "Vedi lo stato dei servizi",
     "limits": [
-      "ط«ط¨طھ ط§ط«ط± ط²غŒط³طھâ€Œظ…ط­غŒط·غŒ ظ¾ط³ ط§ط² ط±ط§ظ‡â€Œط§ظ†ط¯ط§ط²غŒ ظ¾ط§غŒط´ ط§ط«ط± ظپط¹ط§ظ„ ظ…غŒâ€Œط´ظˆط¯",
-      "ع©ط§ظˆط´ع¯ط± ظ¾غŒط´غŒظ†ظ‡ ظپط¹ظ„ط§ظ‹ ظˆط¶ط¹غŒطھ ط¹ظ…ظˆظ…غŒ ط³ط±ظˆغŒط³ ظˆ ظ¾غŒط´غŒظ†ظ‡ظ” ظ‡ط± ظ†ظ…ط§غŒط´ ط±ط§ ظ†ط´ط§ظ† ظ…غŒâ€Œط¯ظ‡ط¯"
+      "L'indirizzo del registro del carbonio non è ancora disponibile",
+      "L'esploratore della provenienza non è ancora disponibile per alcuni dataset"
     ],
     "next": [
-      "ط§ظپط²ظˆط¯ظ† ط²ظ…ط§ظ† ظˆ ط²ظ…غŒظ†ظ‡ ط¨ظ‡ ظ‡ط± ط¹ط¯ط¯ ظ†ظ…ط§غŒط´â€Œط¯ط§ط¯ظ‡â€Œط´ط¯ظ‡",
-      "ط§ظ†طھط´ط§ط± ع¯ط²ط§ط±ط´ ط´ظپط§ظپغŒطھ ط³ط§ظ„ط§ظ†ظ‡"
+      "Esplora la provenienza di ogni dato del sistema",
+      "Consulta il rapporto annuale sulla trasparenza"
     ]
   },
   "developers": {
-    "title": "ظ‡ظ…ع©ط§ط±غŒ ظپظ†غŒ",
-    "lead": "ظ‡ظ…ع©ط§ط±غŒ ط²ظ…ط§ظ†غŒ ظ¾ط§غŒط¯ط§ط± ط§ط³طھ ع©ظ‡ ظ‚ط±ط§ط±ط¯ط§ط¯ظ‡ط§ ط±ظˆط´ظ† ظˆ طھط؛غŒغŒط±ط§طھ ظ‚ط§ط¨ظ„â€Œظ¾غŒع¯غŒط±غŒ ط¨ط§ط´ظ†ط¯.",
-    "what": "ظ…ط³طھظ†ط¯ط§طھ ط¹ظ…ظˆظ…غŒ ظˆ ظ†ط³ط®ظ‡ظ” ظ‚ط±ط§ط±ط¯ط§ط¯طŒ ظ‡ظ…ط§ظ‡ظ†ع¯غŒ ظ…غŒط§ظ† ط³ط§ظ…ط§ظ†ظ‡ ظˆ ط¨ط±ظ†ط§ظ…ظ‡â€Œظ‡ط§غŒ ط¨غŒط±ظˆظ†غŒ ط±ط§ ط±ظˆط´ظ† ظ…غŒâ€Œع©ظ†ط¯ط› ط¨ط¯ظˆظ† ظ†غŒط§ط² ط¨ظ‡ ط­ط¯ط³â€Œط²ط¯ظ† ط±ظپطھط§ط± ط³ط±ظˆغŒط³.",
-    "audience": "طھظˆط³ط¹ظ‡â€Œط¯ظ‡ظ†ط¯ع¯ط§ظ† غŒع©ظ¾ط§ط±ع†ظ‡â€Œط³ط§ط²طŒ طھغŒظ…â€Œظ‡ط§غŒ ط¯ط§ط¯ظ‡ ظˆ ط´ط±ع©ط§غŒ ظپظ†غŒ.",
-    "docsTitle": "ظ…ط³طھظ†ط¯ط§طھ ط¹ظ…ظˆظ…غŒ",
-    "docsDesc": "ط±ظپطھط§ط± ط³ط±ظˆغŒط³â€Œظ‡ط§طŒ ظ…ط­ط¯ظˆط¯غŒطھâ€Œظ‡ط§ ظˆ ظ…ط³غŒط± ع¯ط²ط§ط±ط´ ط®ط·ط§ ط¨ظ‡â€Œط²ط¨ط§ظ† ط³ط§ط¯ظ‡ طھظˆط¶غŒط­ ط¯ط§ط¯ظ‡ ظ…غŒâ€Œط´ظˆط¯.",
-    "toolsTitle": "ط§ط¨ط²ط§ط±ظ‡ط§غŒ غŒع©ظ¾ط§ط±ع†ظ‡â€Œط³ط§ط²غŒ",
-    "toolsDesc": "ط§ط¨ط²ط§ط±ظ‡ط§غŒ ظ‡ظ…ط§ظ‡ظ†ع¯â€Œط³ط§ط²غŒ ط¨ط±ط§غŒ ط³ط§ط®طھ ط¨ط±ظ†ط§ظ…ظ‡â€Œظ‡ط§غŒ ط³ط§ط²ع¯ط§ط± ظˆ ظ‚ط§ط¨ظ„â€Œظ†ع¯ظ‡ط¯ط§ط±غŒ.",
-    "changesTitle": "طھط؛غŒغŒط±ط§طھ ظ†ط³ط®ظ‡â€Œط¯ط§ط±",
-    "changesDesc": "ظ‡ط± طھط؛غŒغŒط± ظ…ظ‡ظ… ط¨ط§ ظ†ط³ط®ظ‡ ظˆ طھط§ط±غŒط® ط«ط¨طھ ظˆ ط¯ط± ظ‡ظ…غŒظ† طµظپط­ظ‡ ط§ط¹ظ„ط§ظ… ظ…غŒâ€Œط´ظˆط¯.",
-    "publicNote": "ظ‡ظ…ع©ط§ط±غŒ ظپظ†غŒ ط¨ط§ ظ…ط³طھظ†ط¯ط§طھ ط±ظˆط´ظ†طŒ ظ…ط­ط¯ظˆط¯غŒطھâ€Œظ‡ط§غŒ ظ…ط´ط®طµ ظˆ ظ…ط³غŒط± ع¯ط²ط§ط±ط´ ط®ط·ط§ ط¢ط؛ط§ط² ظ…غŒâ€Œط´ظˆط¯.",
+    "title": "Sviluppatori e API",
+    "lead": "Sviluppatori, integratori e partner tecnici: consultate i contratti, provate gli endpoint, collaborate.",
+    "what": "Ogni endpoint è documentato, ogni modifica API è tracciata e ogni richiesta porta un identificatore di correlazione.",
+    "audience": "Sviluppatori, integratori, università, team di ricerca e partner tecnici.",
+    "docsTitle": "Documentazione API",
+    "docsDesc": "Ogni endpoint è documentato con esempi di richiesta e risposta, limiti di frequenza e codici di errore.",
+    "toolsTitle": "Strumenti di sviluppo",
+    "toolsDesc": "Gli strumenti includono client generati, raccolte di test ed esempi di integrazione.",
+    "changesTitle": "Registro delle modifiche",
+    "changesDesc": "Ogni modifica API è associata a una versione e pubblicata nel registro delle modifiche.",
+    "publicNote": "L'ambiente pubblico è in sola lettura. I test e le scritture sono protetti da autenticazione e limitati alle operazioni consentite.",
     "limits": [
-      "ط¯ط³طھط±ط³غŒ ط¨ظ‡ ط³ط±ظˆغŒط³â€Œظ‡ط§ ط¨ط§ ط³غŒط§ط³طھ ظ†ط±ط® ظˆ ط§ط¬ط§ط²ظ‡ظ” ط¯ط³طھط±ط³غŒ ظ…ط­ط¯ظˆط¯ ظ…غŒâ€Œط´ظˆط¯",
-      "ط§ط¨ط²ط§ط±ظ‡ط§غŒ غŒع©ظ¾ط§ط±ع†ظ‡â€Œط³ط§ط²غŒ ط¯ط± ع¯ط§ظ… ظ†ط®ط³طھ ط¨ط±ط§غŒ ظˆط¨ ط§ط±ط§ط¦ظ‡ ظ…غŒâ€Œط´ظˆظ†ط¯"
+      "Le scritture sono consentite solo in ambienti autorizzati",
+      "Gli strumenti automatizzati non sono consentiti sulla superficie pubblica"
     ],
     "next": [
-      "ط§ظ†طھط´ط§ط± ظ…ط±ظˆط±ع¯ط± طھط¹ط§ظ…ظ„غŒ ظ…ط³طھظ†ط¯ط§طھ ط¨ط§ ط§ظ…ع©ط§ظ† ط¢ط²ظ…ط§غŒط´ ع©ظ†طھط±ظ„â€Œط´ط¯ظ‡",
-      "ط§ظپط²ظˆط¯ظ† ط±ط§ظ‡ظ†ظ…ط§غŒ غŒع©ظ¾ط§ط±ع†ظ‡â€Œط³ط§ط²غŒ ظˆ ط§ط¨ط²ط§ط±ظ‡ط§غŒ ط¨غŒط´طھط±"
+      "Consultare la guida di avvio rapido e gli esempi di integrazione",
+      "Richiedere una chiave API e un ambiente di prova"
     ]
   },
   "accessibility": {
-    "title": "ط¨غŒط§ظ†غŒظ‡ظ” ط¯ط³طھط±ط³â€Œظ¾ط°غŒط±غŒ",
-    "lead": "ط¯ط³طھط±ط³â€Œظ¾ط°غŒط±غŒطŒ ط§ظ…ع©ط§ظ† ظ…ط´ط§ط±ع©طھ ظˆط§ظ‚ط¹غŒ ظ‡ظ…ظ‡ظ” ع©ط§ط±ط¨ط±ط§ظ† ط§ط³طھ.",
-    "what": "ع©غŒط¨ظˆط±ط¯-ط§ظˆظ„طŒ طھظ…ط±ع©ط² ظ…ط±ط¦غŒطŒ ع©ظ†طھط±ط§ط³طھ ع©ط§ظپغŒ ظˆ ظ¾ط´طھغŒط¨ط§ظ†غŒ RTL/LTR ط¯ط± ظ‡ظ…ظ‡ظ” طµظپط­ط§طھ.",
-    "audience": "ظ‡ظ…ظ‡ظ” ع©ط§ط±ط¨ط±ط§ظ†طŒ ط§ط² ط¬ظ…ظ„ظ‡ ع©ط§ط±ط¨ط±ط§ظ† طµظپط­ظ‡â€Œط®ظˆط§ظ† ظˆ ط´ط¨ع©ظ‡ظ” ط¶ط¹غŒظپ.",
-    "standardTitle": "ط§ط³طھط§ظ†ط¯ط§ط±ط¯",
-    "standardDesc": "ظ‡ط¯ظپطŒ ط­ط±ع©طھ ط¨ظ‡â€Œط³ظˆغŒ WCAG 2.2 ط³ط·ط­ AA ظˆ طھط¬ط±ط¨ظ‡ظ” ظ‚ط§ط¨ظ„â€Œط§ط³طھظپط§ط¯ظ‡ ط¯ط± ط¯ط³طھع¯ط§ظ‡â€Œظ‡ط§ ظˆ ط´ط¨ع©ظ‡â€Œظ‡ط§غŒ ظ…ط®طھظ„ظپ ط§ط³طھ.",
-    "feedbackTitle": "ط¨ط§ط²ط®ظˆط±ط¯ ط¯ط³طھط±ط³â€Œظ¾ط°غŒط±غŒ",
-    "feedbackDesc": "ظ…ط´ع©ظ„ ط¯ط³طھط±ط³â€Œظ¾ط°غŒط±غŒ ط±ط§ ط§ط² ع©ط§ظ†ط§ظ„ ظ¾ط´طھغŒط¨ط§ظ†غŒ ط¨ط±ظ†ط§ظ…ظ‡ ع¯ط²ط§ط±ط´ ع©ظ†غŒط¯ط› ع¯ط²ط§ط±ط´â€Œظ‡ط§ ط¯ط± طµظپ ط¨ط±ط±ط³غŒ ظ‚ط±ط§ط± ظ…غŒâ€Œع¯غŒط±ظ†ط¯.",
+    "title": "Dichiarazione di accessibilità",
+    "lead": "L'accessibilità è un requisito funzionale: nessuna funzione deve dipendere esclusivamente dal colore o dal suono.",
+    "what": "Il sito è realizzato per essere navigabile da tastiera, con contrasto conforme, struttura semantica corretta e supporto completo per la modalità RTL/LTR.",
+    "audience": "Persone con disabilità, anziani, utenti con tecnologia assistenziale e chi naviga con tasteo o tastiera.",
+    "standardTitle": "Standard applicati",
+    "standardDesc": "Il sito mira alla conformità WCAG 2.2 livello AA. Le verifiche automatiche non sostituiscono la verifica manuale con le persone.",
+    "feedbackTitle": "Segnalazione dei problemi di accessibilità",
+    "feedbackDesc": "Se incontri una barriera, segnala la pagina interessata. Provvederemo a risolverla nel ciclo di aggiornamento successivo.",
     "limits": [
-      "ط¨ط±ط®غŒ طھط¬ط±ط¨ظ‡â€Œظ‡ط§غŒ ط¨طµط±غŒ ط³ظ†ع¯غŒظ† ط¨ظ‡ ظ…ط±ظˆط±ع¯ط±ظ‡ط§غŒ ط¬ط¯غŒط¯طھط± ظ†غŒط§ط² ط¯ط§ط±ظ†ط¯",
-      "ط¨ط§ط²ط¨غŒظ†غŒ ط¯ط³طھط±ط³â€Œظ¾ط°غŒط±غŒ ط¨ط§ ط§ط¨ط²ط§ط±ظ‡ط§ ظˆ ع©ط§ط±ط¨ط±ط§ظ† ظˆط§ظ‚ط¹غŒ ط§ط¯ط§ظ…ظ‡ ط¯ط§ط±ط¯"
+      "Alcune mappe interattive hanno un'alternativa testuale limitata",
+      "Alcuni documenti scientifici sono disponibili solo in formato testo"
     ],
     "next": [
-      "ط¨ط§ط²ط¨غŒظ†غŒ ع©ظ†طھط±ط§ط³طھ ط¯ط± ط­ط§ظ„طھ طھط§ط±غŒع© ظˆ ع†ط§ظ¾",
-      "ط³ظ†ط¬ط´ طھط¬ط±ط¨ظ‡ظ” ط´ط¨ع©ظ‡ظ” ط¶ط¹غŒظپ ظˆ ط§ط¨ط²ط§ط±ظ‡ط§غŒ ظ…ط®طھظ„ظپ"
+      "Segnala un problema di accessibilità con l'indirizzo della pagina",
+      "Consulta la guida all'uso della tastiera e del navigatore vocale"
     ]
   },
   "auth": {
     "meta": {
-      "title": "Account access",
-      "description": "Sign in or create an account for the HyDroMa Nojin platform; the session is kept in a same-origin HttpOnly cookie."
+      "title": "Accesso all'account",
+      "description": "Accedi o crea un account per la piattaforma Hydroma Nojin; la sessione è mantenuta in un cookie HttpOnly dello stesso origine."
     },
     "common": {
-      "signIn": "Sign in",
-      "signInLabel": "Sign in to your account",
-      "signOut": "Sign out",
-      "signingOut": "Signing out…",
-      "checkingSession": "Checking your session…",
-      "alreadySignedIn": "You are already signed in.",
-      "accountMenu": "Account menu",
-      "sessionDetails": "Session details",
-      "backToHome": "Back to home",
-      "email": "Email address",
+      "signIn": "Accedi",
+      "signInLabel": "Accedi al tuo account",
+      "signOut": "Esci",
+      "signingOut": "Accesso in corso…",
+      "checkingSession": "Controllo della sessione…",
+      "alreadySignedIn": "Hai già effettuato l'accesso.",
+      "accountMenu": "Menu account",
+      "sessionDetails": "Dettagli della sessione",
+      "backToHome": "Torna alla home",
+      "email": "Indirizzo email",
       "password": "Password",
-      "showPassword": "Show",
-      "hidePassword": "Hide",
-      "showPasswordFor": "Show password ({field})",
-      "hidePasswordFor": "Hide password ({field})",
-      "termsOfService": "Terms of service",
-      "privacyPolicy": "Privacy policy",
-      "errorHeading": "The request could not be completed",
-      "errorDetails": "Server detail",
-      "validationHeading": "Review the highlighted fields",
+      "showPassword": "Mostra",
+      "hidePassword": "Nascondi",
+      "showPasswordFor": "Mostra la password ({field})",
+      "hidePasswordFor": "Nascondi la password ({field})",
+      "termsOfService": "Condizioni d'uso",
+      "privacyPolicy": "Informativa sulla privacy",
+      "errorHeading": "Non è stato possibile completare la richiesta",
+      "errorDetails": "Dettaglio del server",
+      "validationHeading": "Controlla i campi evidenziati",
       "provenance": {
-        "heading": "Session provenance",
-        "source": "Source",
-        "method": "Method",
-        "verified": "Verified",
-        "unverified": "Not verified"
+        "heading": "Origine della sessione",
+        "source": "Origine",
+        "method": "Metodo",
+        "verified": "Verificato",
+        "unverified": "Non verificato"
       }
     },
     "roles": {
-      "regular": "Individual",
-      "tourist": "Visitor",
-      "farmer": "Farmer or producer",
-      "advisor": "Advisor",
-      "researcher": "Researcher",
-      "organization": "Organization",
-      "admin": "Administrator",
-      "security_admin": "Security administrator",
-      "content_admin": "Content administrator",
-      "user_admin": "User administrator"
+      "regular": "Persona fisica",
+      "tourist": "Visitatore",
+      "farmer": "Agricoltore o produttore",
+      "advisor": "Consulente",
+      "researcher": "Ricercatore",
+      "organization": "Organizzazione",
+      "admin": "Amministratore",
+      "security_admin": "Amministratore della sicurezza",
+      "content_admin": "Amministratore dei contenuti",
+      "user_admin": "Amministratore degli utenti"
     },
     "languages": {
-      "fa": "Persian",
-      "en": "English",
-      "ar": "Arabic"
+      "fa": "Persiano",
+      "en": "Inglese",
+      "ar": "Arabo",
+      "it": "Italiano",
+      "ru": "Russo",
+      "zh": "Cinese"
     },
     "errors": {
-      "forbidden": "The request was rejected by the session boundary. Reload the page and try again.",
-      "invalidPayload": "The submitted data was not accepted. Check the fields and try again.",
-      "unavailable": "The authentication service is unavailable. Try again shortly.",
-      "timeout": "The authentication service took too long to answer. Try again.",
-      "rejected": "The email address or password was not accepted, or this account already exists.",
-      "signOutFailed": "Sign-out did not complete. The local session was cleared anyway.",
-      "unknown": "An unexpected error occurred. Try again."
+      "forbidden": "La richiesta è stata rifiutata dal confine di sessione. Ricarica la pagina e riprova.",
+      "invalidPayload": "I dati inviati non sono stati accettati. Controlla i campi e riprova.",
+      "unavailable": "Il servizio di autenticazione non è disponibile. Riprova tra poco.",
+      "timeout": "Il servizio di autenticazione ha impiegato troppo tempo a rispondere. Riprova.",
+      "rejected": "L'indirizzo email o la password non sono stati accettati, oppure l'account esiste già.",
+      "signOutFailed": "L'uscita non è stata completata. La sessione locale è stata comunque cancellata.",
+      "unknown": "Si è verificato un errore imprevisto. Riprova."
     },
     "validation": {
-      "invalid": "Review this field.",
-      "emailInvalid": "Enter a valid email address.",
-      "passwordRequired": "Enter your password.",
-      "passwordMin": "Use at least 8 characters.",
-      "passwordMax": "Use at most 128 characters.",
-      "passwordMismatch": "The two passwords do not match.",
-      "fullNameRequired": "Enter your full name (2 to 100 characters).",
-      "roleRequired": "Choose an account type.",
-      "languageRequired": "Choose an interface language.",
-      "termsRequired": "Accept the terms of service to continue.",
-      "privacyRequired": "Accept the privacy policy to continue."
+      "invalid": "Controlla questo campo.",
+      "emailInvalid": "Inserisci un indirizzo email valido.",
+      "passwordRequired": "Inserisci la password.",
+      "passwordMin": "Usa almeno 8 caratteri.",
+      "passwordMax": "Usa al massimo 128 caratteri.",
+      "passwordMismatch": "Le due password non coincidono.",
+      "fullNameRequired": "Inserisci il tuo nome completo (da 2 a 100 caratteri).",
+      "roleRequired": "Scegli un tipo di account.",
+      "languageRequired": "Scegli la lingua dell'interfaccia.",
+      "termsRequired": "Accetta le condizioni d'uso per continuare.",
+      "privacyRequired": "Accetta l'informativa sulla privacy per continuare."
     },
     "login": {
-      "title": "Sign in",
-      "lead": "Sign in to reach your land profiles, marketplace, evidence and carbon records.",
-      "submit": "Sign in",
-      "pending": "Signing in…",
-      "noAccount": "No account yet?",
-      "createAccount": "Create an account",
-      "transport": "Credentials reach the same-origin BFF; the session stays in an HttpOnly cookie.",
+      "title": "Accedi",
+      "lead": "Accedi per raggiungere i tuoi profili territoriali, il mercato, le evidenze e i registri del carbonio.",
+      "submit": "Accedi",
+      "pending": "Accesso in corso…",
+      "noAccount": "Non hai ancora un account?",
+      "createAccount": "Crea un account",
+      "transport": "Le credenziali raggiungono il BFF della stessa origine; la sessione resta in un cookie HttpOnly.",
       "source": "bff:/api/auth/login",
-      "method": "same-origin POST"
+      "method": "POST della stessa origine"
     },
     "signup": {
-      "title": "Create an account",
-      "lead": "Create an account to save land profiles, track carbon and use the marketplace.",
-      "submit": "Create account",
-      "pending": "Creating your account…",
-      "hasAccount": "Already have an account?",
-      "signInInstead": "Sign in instead",
-      "fullName": "Full name",
-      "passwordConfirm": "Confirm password",
-      "accountType": "Account type",
-      "interfaceLanguage": "Interface language",
-      "consent": "Consent",
-      "acceptTerms": "I accept the terms of service",
-      "acceptPrivacy": "I accept the privacy policy",
+      "title": "Crea un account",
+      "lead": "Crea un account per salvare i profili territoriali, seguire il carbonio e usare il mercato.",
+      "submit": "Crea account",
+      "pending": "Creazione dell'account…",
+      "hasAccount": "Hai già un account?",
+      "signInInstead": "Accedi invece",
+      "fullName": "Nome completo",
+      "passwordConfirm": "Conferma la password",
+      "accountType": "Tipo di account",
+      "interfaceLanguage": "Lingua dell'interfaccia",
+      "consent": "Consenso",
+      "acceptTerms": "Accetto le condizioni d'uso",
+      "acceptPrivacy": "Accetto l'informativa sulla privacy",
       "source": "bff:/api/auth/signup",
-      "method": "same-origin POST"
+      "method": "POST della stessa origine"
     },
     "session": {
-      "title": "Session",
-      "lead": "The active session is resolved by the same-origin BFF from the HttpOnly session cookie.",
-      "loading": "Checking your session…",
-      "signedOut": "You are not signed in.",
-      "signedOutLead": "Sign in to see the account attached to this session.",
-      "signedIn": "Signed in",
+      "title": "Sessione",
+      "lead": "La sessione attiva è risolta dal BFF della stessa origine a partire dal cookie di sessione HttpOnly.",
+      "loading": "Controllo della sessione…",
+      "signedOut": "Non hai effettuato l'accesso.",
+      "signedOutLead": "Accedi per vedere l'account associato a questa sessione.",
+      "signedIn": "Accesso effettuato",
       "email": "Email",
-      "fullName": "Name",
-      "role": "Role",
-      "language": "Interface language",
-      "country": "Country",
-      "city": "City",
-      "phone": "Phone",
-      "emailVerified": "Email verified",
-      "emailNotVerified": "Email not verified",
-      "accountActive": "Account active",
-      "accountInactive": "Account inactive",
-      "memberSince": "Member since",
-      "unknown": "Not provided",
+      "fullName": "Nome",
+      "role": "Ruolo",
+      "language": "Lingua dell'interfaccia",
+      "country": "Paese",
+      "city": "Città",
+      "phone": "Telefono",
+      "emailVerified": "Email verificata",
+      "emailNotVerified": "Email non verificata",
+      "accountActive": "Account attivo",
+      "accountInactive": "Account inattivo",
+      "memberSince": "Membro dal",
+      "unknown": "Non fornito",
       "source": "bff:/api/auth/session",
-      "method": "HttpOnly session cookie"
+      "method": "Cookie di sessione HttpOnly"
     }
+  },
+  "pageMeta": {
+    "public-audiences-cooperatives": {
+      "title": "Cooperative",
+      "description": "Domande registrate e i contatori reali del mercato"
+    },
+    "public-audiences-farmers": {
+      "title": "Agricoltori",
+      "description": "Domande registrate e i profili di terreno presenti nel database"
+    },
+    "public-audiences-government": {
+      "title": "Governo",
+      "description": "Domande registrate e i contatori reali del database"
+    },
+    "public-audiences-investors": {
+      "title": "Investitori",
+      "description": "Domande registrate e contatori reali dei progetti; nessun rendimento è rivendicato"
+    },
+    "public-audiences-ngos": {
+      "title": "ONG",
+      "description": "Domande registrate e lo stato reale degli indicatori"
+    },
+    "public-audiences-researchers": {
+      "title": "Ricerca",
+      "description": "Il registro dei modelli e il riferimento scientifico dietro ogni modello"
+    },
+    "public-channels": {
+      "title": "Canali di accesso",
+      "description": "Lo stato reale dei canali USSD, voce e sincronizzazione"
+    },
+    "public-components-api-playground": {
+      "title": "Playground API",
+      "description": "Console interattiva per provare gli endpoint"
+    },
+    "public-components-dispute-resolution": {
+      "title": "Risoluzione delle controversie",
+      "description": "Nessun elenco di controversie è registrato nel gateway; non viene mostrato alcun caso o verdetto"
+    },
+    "public-components-ecowallet": {
+      "title": "EcoWallet",
+      "description": "Dimostrazione delle funzioni del portafoglio digitale"
+    },
+    "public-components-hydroma-engine": {
+      "title": "Motore HydroMa",
+      "description": "Dimostrazione dei moduli del motore scientifico"
+    },
+    "public-components-land-profiler": {
+      "title": "Profiler del territorio",
+      "description": "Scenari di analisi e gestione del territorio"
+    },
+    "public-components-marketplace": {
+      "title": "Mercato",
+      "description": "Dimostrazione delle funzioni del mercato"
+    },
+    "public-components-mrv-dashboard": {
+      "title": "Cruscotto MRV",
+      "description": "Dimostrazione di monitoraggio, reportistica e verifica"
+    },
+    "public-components-satellite-view": {
+      "title": "Vista satellitare",
+      "description": "Livelli di dati satellitari e visualizzazione"
+    },
+    "public-cta": {
+      "title": "Partecipa",
+      "description": "Percorsi disponibili come endpoint reali e un modulo che invia al gateway"
+    },
+    "public-education-advanced-search": {
+      "title": "Ricerca avanzata",
+      "description": "Ricerca multicriterio nella biblioteca educativa"
+    },
+    "public-education-certifications": {
+      "title": "Programmi di certificazione",
+      "description": "Nessun registro delle certificazioni è registrato nel gateway; non viene mostrato alcun certificato emesso"
+    },
+    "public-education-courses": {
+      "title": "Corsi",
+      "description": "Il servizio corsi non è registrato nel gateway; i contenuti pubblicati sono ricercabili nella biblioteca"
+    },
+    "public-education-glossary": {
+      "title": "Glossario bilingue",
+      "description": "Glossario tecnico bilingue ricercabile"
+    },
+    "public-education-library": {
+      "title": "Biblioteca educativa",
+      "description": "Cerca i contenuti formativi pubblicati"
+    },
+    "public-education-library-advanced": {
+      "title": "Biblioteca avanzata",
+      "description": "Ricerca ampia dei contenuti e i gruppi reali di termini scientifici"
+    },
+    "public-education-video-player": {
+      "title": "Lettore video",
+      "description": "Il servizio video non è registrato nel gateway; non viene caricato alcun lettore o sottotitolo"
+    },
+    "public-education-workshops": {
+      "title": "Workshop",
+      "description": "Nessun calendario dei workshop è registrato nel gateway; non vengono mostrate date o posti"
+    },
+    "public-goals-impact": {
+      "title": "Impatto",
+      "description": "I contatori reali delle domande registrate; nessuna metrica verificata è rivendicata"
+    },
+    "public-goals-manifesto": {
+      "title": "Manifesto",
+      "description": "Le fasi registrate e i vincoli che oggi condizionano il percorso"
+    },
+    "public-goals-mission": {
+      "title": "Missione",
+      "description": "La rete del registro e i contratti restituiti dal gateway"
+    },
+    "public-goals-roadmap": {
+      "title": "Roadmap",
+      "description": "I vincoli di fase e le fasi registrate nel registro degli strumenti"
+    },
+    "public-goals-values": {
+      "title": "Valori",
+      "description": "Lo stato reale dell’accesso da telefono semplice tramite le rotte USSD e vocali"
+    },
+    "public-goals-vision": {
+      "title": "Visione",
+      "description": "I domini registrati nel registro degli strumenti"
+    },
+    "public-home": {
+      "title": "Piattaforma di monitoraggio ecologico e supporto alle decisioni",
+      "description": "Monitoraggio di suolo, acqua, clima e carbonio su base scientifica"
+    },
+    "public-model-count": {
+      "title": "Numero di modelli",
+      "description": "Conteggio e stato dei modelli scientifici registrati"
+    },
+    "public-policy-accessibility": {
+      "title": "Dichiarazione di accessibilità",
+      "description": "In legal-texts non è registrato alcuno slug di accessibilità, quindi non viene mostrato uno stato di conformità"
+    },
+    "public-policy-cookies": {
+      "title": "Informativa sui cookie",
+      "description": "Il testo dell’informativa sui cookie è letto dal record legal-texts pubblicato."
+    },
+    "public-policy-governance": {
+      "title": "Struttura di governance",
+      "description": "In legal-texts non è registrato alcuno slug di governance, quindi non viene mostrata alcuna struttura"
+    },
+    "public-policy-licensing": {
+      "title": "Licenze open source",
+      "description": "In legal-texts non è registrato alcuno slug di licenze, quindi non viene mostrato alcun inventario di licenze"
+    },
+    "public-policy-privacy": {
+      "title": "Informativa sulla privacy",
+      "description": "Il testo dell’informativa sulla privacy è letto dal record legal-texts pubblicato."
+    },
+    "public-policy-terms": {
+      "title": "Condizioni d’uso",
+      "description": "Il testo delle condizioni e la sua cronologia delle versioni sono letti dal servizio legal-texts."
+    },
+    "public-science-benchmarks": {
+      "title": "Benchmark",
+      "description": "Risultati reali di verifica delle formule rispetto ai riferimenti pubblicati"
+    },
+    "public-science-case-studies": {
+      "title": "Casi di studio",
+      "description": "Riferimento scientifico registrato dietro ogni modello"
+    },
+    "public-science-data-sources": {
+      "title": "Fonti di dati",
+      "description": "Catalogo delle fonti di dati con stato e licenze"
+    },
+    "public-science-evidence-base": {
+      "title": "Base di evidenze scientifiche",
+      "description": "Evidenze scientifiche curate con DOI e stato di verifica"
+    },
+    "public-science-gap-analysis": {
+      "title": "Analisi delle lacune",
+      "description": "Dominio di validità registrato e limiti per ciascun modello"
+    },
+    "public-science-limitations": {
+      "title": "Limiti",
+      "description": "Limiti noti dei modelli e dei dati"
+    },
+    "public-science-methodology": {
+      "title": "Metodologia",
+      "description": "Standard e metodi di calcolo scientifico"
+    },
+    "public-science-peer-review": {
+      "title": "Revisione tra pari",
+      "description": "Riferimento scientifico registrato per ciascun modello; non esiste alcun rapporto di revisione pubblicato"
+    },
+    "public-science-reproducibility": {
+      "title": "Riproducibilità",
+      "description": "Esecuzioni condivise registrate e lo stato reale di emissione dei DOI"
+    },
+    "public-science-uncertainty": {
+      "title": "Incertezza",
+      "description": "Limiti dichiarati e lo stato reale della verifica delle formule"
+    },
+    "public-science-validation": {
+      "title": "Strumenti di validazione",
+      "description": "Controlli di qualità di dati e modelli"
+    },
+    "public-science-validation-methods": {
+      "title": "Metodi di validazione",
+      "description": "Metodologie scientifiche di validazione dei modelli"
+    },
+    "public-services-satellite-intelligence": {
+      "title": "Intelligence satellitare",
+      "description": "Prodotti di dati satellitari ed endpoint"
+    },
+    "public-visit": {
+      "title": "Visita in azienda",
+      "description": "La richiesta di visita viene inviata al gateway; non viene mostrata alcuna visita programmata"
+    },
+    "public-why": {
+      "title": "Perché questa piattaforma",
+      "description": "Il problema, la soluzione e le prove verificabili"
+    },
+    "marketplace-market-producers": {
+      "title": "Produttori",
+      "description": "I produttori che il mercato ha registrato, con lo stato di verifica registrato."
+    },
+    "marketplace-market-stats": {
+      "title": "Statistiche del mercato",
+      "description": "Contatori letti dall’endpoint delle statistiche, oppure la constatazione che il servizio non ha risposto."
+    },
+    "marketplace-market-admin-orders": {
+      "title": "Gestione ordini",
+      "description": "Il registro ordini esposto dal gateway, con il suo stato reale e senza righe fabbricate."
+    },
+    "marketplace-market-admin-stats": {
+      "title": "Statistiche del mercato",
+      "description": "Contatori letti dall’endpoint delle statistiche, oppure la constatazione esplicita che il servizio non è raggiungibile."
+    },
+    "marketplace-market-marketplaces": {
+      "title": "Mercati",
+      "description": "I mercati che il gateway ha registrato, così come sono effettivamente registrati."
+    },
+    "marketplace-market-marketplaces-marketplace_id": {
+      "title": "Scheda del mercato",
+      "description": "Un mercato per identificatore: lo stato che il gateway gli porta, non una descrizione di ciò che dovrebbe essere."
+    },
+    "marketplace-market-marketplaces-marketplace_id-shops": {
+      "title": "Negozi del mercato",
+      "description": "Negozi registrati su un mercato, così come il gateway li registra davvero."
+    },
+    "marketplace-market-orders-order_id": {
+      "title": "Scheda ordine",
+      "description": "Un ordine per identificatore, con l’ultima transizione di stato registrata."
+    },
+    "marketplace-market-orders-order_id-status": {
+      "title": "Stato dell’ordine",
+      "description": "Lo stato attuale di un ordine, letto dal gateway al momento della richiesta."
+    },
+    "marketplace-market-orders-order_id-timeline": {
+      "title": "Cronologia dell’ordine",
+      "description": "Lo storico degli stati registrato di un ordine, nell’ordine restituito dal gateway."
+    },
+    "marketplace-market-orders-order_id-track": {
+      "title": "Tracciamento ordine",
+      "description": "Il tracciamento che il gateway tiene per un ordine, con il suo stato attuale."
+    },
+    "marketplace-market-payments-payment_id-escrow": {
+      "title": "Scheda di deposito garanzia",
+      "description": "Lo stato di garanzia che il gateway tiene per un pagamento, con le transizioni registrate."
+    },
+    "marketplace-market-products": {
+      "title": "Prodotti",
+      "description": "I prodotti che il mercato ha registrato, con prezzo e quantità che il gateway riporta per ciascuno."
+    },
+    "marketplace-market-products-search": {
+      "title": "Ricerca prodotti",
+      "description": "Cerca nel catalogo registrato. I risultati sono quelli che il gateway trova, senza un ordinamento inventato qui."
+    },
+    "marketplace-market-products-product_id": {
+      "title": "Scheda prodotto",
+      "description": "Un prodotto per identificatore, con i campi che il gateway gli tiene."
+    },
+    "marketplace-market-products-product_id-carbon-credits": {
+      "title": "Crediti di carbonio del prodotto",
+      "description": "Crediti di carbonio attribuiti a un prodotto, con il metodo registrato dal gateway."
+    },
+    "marketplace-market-products-product_id-trace": {
+      "title": "Tracciabilità del prodotto",
+      "description": "La catena di custodia registrata di un prodotto, dagli elementi che il gateway tiene."
+    },
+    "marketplace-market-shops-shop_id": {
+      "title": "Scheda del negozio",
+      "description": "Un negozio per identificatore, con i campi che il gateway gli tiene davvero."
+    },
+    "marketplace-market-shops-shop_id-orders": {
+      "title": "Ordini del negozio",
+      "description": "Ordini registrati per un negozio, senza totali né stati fabbricati."
+    },
+    "marketplace-market-shops-shop_id-products": {
+      "title": "Prodotti del negozio",
+      "description": "I prodotti che un negozio ha registrato, con le quantità che il gateway riporta."
+    },
+    "marketplace-market-shops-shop_id-stats": {
+      "title": "Statistiche del negozio",
+      "description": "Contatori letti dall’endpoint delle statistiche per un singolo negozio."
+    },
+    "marketplace-market-transactions": {
+      "title": "Transazioni",
+      "description": "Il registro transazioni esposto dal gateway del mercato, così come registrato."
+    },
+    "marketplace-market-transactions-transaction_id": {
+      "title": "Scheda transazione",
+      "description": "Una transazione per identificatore, con il record proprio del gateway."
+    },
+    "marketplace-market-vendors-vendor_id": {
+      "title": "Scheda del fornitore",
+      "description": "Un fornitore per identificatore, con lo stato di verifica registrato dal gateway."
+    },
+    "marketplace-market-vendors-vendor_id-orders": {
+      "title": "Ordini del fornitore",
+      "description": "Ordini registrati per un fornitore, nello stato in cui si trovano davvero."
+    },
+    "marketplace-market-vendors-vendor_id-products": {
+      "title": "Prodotti del fornitore",
+      "description": "I prodotti che un fornitore ha registrato, con le quantità che il gateway riporta."
+    },
+    "marketplace-market-wallet": {
+      "title": "Portafoglio del mercato",
+      "description": "Il saldo che il gateway riporta, oppure la constatazione che non è stato possibile leggerlo."
+    },
+    "marketplace-market-wallet-balance": {
+      "title": "Saldo del portafoglio",
+      "description": "Il saldo così come il gateway lo registra al momento della richiesta."
+    },
+    "marketplace-market-wallet-history": {
+      "title": "Storico del portafoglio",
+      "description": "Lo storico dei movimenti registrato, nell’ordine restituito dal gateway."
+    },
+    "marketplace-market-wallet-methods": {
+      "title": "Metodi di pagamento",
+      "description": "I metodi di pagamento che il gateway ha abilitato, come configurati."
+    },
+    "marketplace-market-wallet-methods-method_id": {
+      "title": "Metodo di pagamento",
+      "description": "Un metodo di pagamento per identificatore, con il suo stato configurato."
+    },
+    "marketplace-market-wallet-payouts": {
+      "title": "Pagamenti in uscita",
+      "description": "Pagamenti registrati, con gli importi e gli stati che il gateway tiene."
+    },
+    "marketplace-market-wallet-payouts-payout_id": {
+      "title": "Scheda pagamento",
+      "description": "Un pagamento per identificatore e lo stato registrato per ultimo."
+    },
+    "marketplace-market-wallet-payouts-payout_id-status": {
+      "title": "Stato del pagamento",
+      "description": "Lo stato attuale di un pagamento, letto al momento della richiesta."
+    },
+    "marketplace-market-wallet-transactions": {
+      "title": "Movimenti del portafoglio",
+      "description": "Movimenti come li registra il gateway, senza saldi derivati."
+    },
+    "marketplace-market-wallet-transactions-tx_id": {
+      "title": "Movimento di portafoglio",
+      "description": "Un movimento per identificatore e lo stato registrato per esso."
+    },
+    "marketplace-market-wallet-verification": {
+      "title": "Verifica del portafoglio",
+      "description": "Lo stato di verifica che il gateway porta su un portafoglio, non un’affermazione sul titolare."
+    },
+    "marketplace-market-wallet-verification-methods": {
+      "title": "Metodi di verifica",
+      "description": "I metodi di verifica d’identità che il gateway ha configurato."
+    },
+    "marketplace-market-wallet-verification-methods-method_id": {
+      "title": "Metodo di verifica",
+      "description": "Un metodo di verifica per identificatore e il suo stato configurato."
+    }
+  },
+  "offline": {
+    "code": "Connessione non disponibile",
+    "title": "Modalità offline",
+    "description": "I dati in cache sono disponibili; riprova quando vuoi aggiornare.",
+    "retry": "Riprova"
   }
 }

@@ -38,7 +38,7 @@ async def create_job(
 
 @router.get("/stats", response_model=JobStatsResponse)
 async def get_job_stats(
-    service: ComputeJobService = Depends(get_compute_job_service),
+    service: ComputeJobService = Depends(get_job_service),
 ):
     """Get job queue statistics."""
     return await service.get_stats()
@@ -52,7 +52,7 @@ async def list_jobs(
     created_by: str | None = Query(None, description="Filter by creator"),
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Page size"),
-    service: ComputeJobService = Depends(get_compute_job_service),
+    service: ComputeJobService = Depends(get_job_service),
 ):
     """List compute jobs with filtering and pagination."""
     return await service.list_jobs(
@@ -68,7 +68,7 @@ async def list_jobs(
 @router.get("/{job_id}", response_model=JobResponse)
 async def get_job(
     job_id: str,
-    service: ComputeJobService = Depends(get_compute_job_service),
+    service: ComputeJobService = Depends(get_job_service),
 ):
     """Get a compute job by ID."""
     job = await service.get_job(job_id)
@@ -80,7 +80,7 @@ async def get_job(
 @router.get("/{job_id}/events", response_model=list[JobEventResponse])
 async def get_job_events(
     job_id: str,
-    service: ComputeJobService = Depends(get_compute_job_service),
+    service: ComputeJobService = Depends(get_job_service),
 ):
     """Get all events for a job."""
     job = await service.get_job(job_id)
@@ -92,7 +92,7 @@ async def get_job_events(
 @router.get("/{job_id}/queue-position")
 async def get_queue_position(
     job_id: str,
-    service: ComputeJobService = Depends(get_compute_job_service),
+    service: ComputeJobService = Depends(get_job_service),
 ):
     """Get current queue position for a pending/queued job."""
     job = await service.get_job(job_id)
@@ -109,7 +109,7 @@ async def get_queue_position(
 async def update_job_status(
     job_id: str,
     update: JobStatusUpdate,
-    service: ComputeJobService = Depends(get_compute_job_service),
+    service: ComputeJobService = Depends(get_job_service),
 ):
     """Update job status (called by workers)."""
     job = await service.update_job_status(job_id, update)
@@ -121,7 +121,7 @@ async def update_job_status(
 @router.post("/{job_id}/cancel", response_model=JobResponse)
 async def cancel_job(
     job_id: str,
-    service: ComputeJobService = Depends(get_compute_job_service),
+    service: ComputeJobService = Depends(get_job_service),
 ):
     """Cancel a pending/queued/running job."""
     success = await service.cancel_job(job_id)
@@ -134,7 +134,7 @@ async def cancel_job(
 @router.post("/{job_id}/retry", response_model=JobResponse)
 async def retry_job(
     job_id: str,
-    service: ComputeJobService = Depends(get_compute_job_service),
+    service: ComputeJobService = Depends(get_job_service),
 ):
     """Retry a failed/timeout/cancelled job."""
     try:
@@ -148,7 +148,7 @@ async def retry_job(
 
 @router.get("/stats/summary", response_model=JobStatsResponse)
 async def get_job_stats_summary(
-    service: ComputeJobService = Depends(get_compute_job_service),
+    service: ComputeJobService = Depends(get_job_service),
 ):
     """Get job queue statistics summary."""
     return await service.get_stats()

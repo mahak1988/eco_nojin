@@ -36,10 +36,43 @@ def project_root():
     return PROJECT_ROOT
 
 
+@pytest.fixture(autouse=True)
+def reset_auth_rate_limiters():
+    """Clear the auth endpoint rate limiters between tests.
+
+    ``routers/auth.py`` holds two process-wide ``RateLimitMiddleware`` singletons
+    keyed by client host. Under ``TestClient`` every request arrives from the same
+    host, so without this reset the (now working) 5/min registration limit trips
+    part-way through a session and unrelated tests start seeing HTTP 429.
+
+    The limiters previously did not fire at all -- ``_check_memory`` returns a
+    3-tuple, and ``if not allowed`` on a non-empty tuple is always False -- so
+    this isolation problem only became visible once the bug was fixed.
+    """
+    from services.api_gateway.routers import auth as auth_router
+
+    auth_router._register_limiter._hits.clear()
+    auth_router._forgot_limiter._hits.clear()
+    yield
+    auth_router._register_limiter._hits.clear()
+    auth_router._forgot_limiter._hits.clear()
+
+
 @pytest.fixture(scope="session")
 def datahub():
     """DataHub singleton instance."""
     return hub
+
+
+from tests.db_support import reset_database  # noqa: E402,F401
+
+
+@pytest.fixture
+def clean_db():
+    """Yield the hub engine after a full, order-independent schema reset."""
+    reset_database()
+    yield engine
+    reset_database()
 
 
 @pytest.fixture

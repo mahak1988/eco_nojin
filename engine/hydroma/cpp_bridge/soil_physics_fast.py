@@ -6,9 +6,15 @@ hydraulic conductivity functions.
 Reference: van Genuchten, M.Th. 1980. "A closed-form equation for
 predicting the hydraulic conductivity of unsaturated soils."
 Soil Science Society of America Journal 44:892-898.
+
+The parameter table is not local to this file. It is read from
+engine/data/soil_vg_table.csv, which every backend shares, and converted to
+cm/hr for the compiled kernel. See engine/hydroma/soil/parameters.py.
 """
 
 import numpy as np
+
+from engine.data.soil_table import load_table_ks_cm_per_hour
 
 try:
     from numba import njit, prange
@@ -29,15 +35,14 @@ except ImportError:
 
 
 # Typical van Genuchten parameters for common soil textures
-SOIL_PARAMETERS = {
-    "sand": {"theta_r": 0.045, "theta_s": 0.43, "alpha": 0.145, "n": 2.68, "Ks": 29.7},
-    "loamy_sand": {"theta_r": 0.057, "theta_s": 0.41, "alpha": 0.124, "n": 2.28, "Ks": 14.6},
-    "sandy_loam": {"theta_r": 0.065, "theta_s": 0.41, "alpha": 0.075, "n": 1.89, "Ks": 4.42},
-    "loam": {"theta_r": 0.078, "theta_s": 0.43, "alpha": 0.036, "n": 1.56, "Ks": 1.05},
-    "silt_loam": {"theta_r": 0.067, "theta_s": 0.45, "alpha": 0.020, "n": 1.41, "Ks": 0.45},
-    "clay_loam": {"theta_r": 0.095, "theta_s": 0.41, "alpha": 0.019, "n": 1.31, "Ks": 0.26},
-    "clay": {"theta_r": 0.068, "theta_s": 0.38, "alpha": 0.008, "n": 1.09, "Ks": 0.12},
-}
+# van Genuchten parameters, generated from the single source at
+# engine/data/soil_vg_table.csv. Ks is converted to cm/hr here because the
+# compiled kernel has always used that unit; every other value is carried
+# across unchanged. Before consolidation this was a hand-written seven-row table
+# that agreed with soil/physics.py on theta_r, theta_s, alpha and n, differed on
+# Ks by the unit factor of 24 for six rows, and disagreed on clay outright
+# (2.88 against 4.80 cm/day).
+SOIL_PARAMETERS: dict[str, dict[str, float]] = load_table_ks_cm_per_hour()
 
 
 @njit(cache=True)

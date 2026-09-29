@@ -1,9 +1,10 @@
 import { Metadata } from 'next';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
@@ -26,12 +27,6 @@ type ModelsIndex = {
   models: RegistryModel[];
 };
 
-const TITLES: Record<string, string> = { fa: 'روش‌شناسی', en: 'Methodology' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'استانداردها و روش‌های محاسبه علمی',
-  en: 'Standards and scientific computation methods',
-};
-
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
@@ -40,21 +35,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-science-methodology');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/science/methodology`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/science/methodology`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/science/methodology`,
-        en: `${BASE_URL}/en/public/science/methodology`,
-      },
+      canonical: canonicalFor(locale, '/public/science/methodology'),
+      languages: languageAlternates('/public/science/methodology'),
     },
   };
 }
@@ -62,8 +55,10 @@ export async function generateMetadata({
 export default async function MethodologyPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const title = TITLES[locale] ?? TITLES.en;
-  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+
+  const meta = await getTranslations('pageMeta.public-science-methodology');
+  const title = meta('title');
+  const description = meta('description');
 
   const registry = await apiGet<ModelsIndex>(MODELS_PATH);
   const models = registry.ok ? registry.data.models : [];
@@ -73,14 +68,15 @@ export default async function MethodologyPage({ params }: { params: Promise<{ lo
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp
-          source={MODELS_PATH}
-          label={title}
-          verified={registry.ok}
-          method={MODELS_PATH}
-        >
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-        </ProvenanceStamp>
+          <ProvenanceStamp
+            source={MODELS_PATH}
+            label={title}
+            verified={registry.ok}
+            method={MODELS_PATH}
+          />
+        </div>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
       </section>
 

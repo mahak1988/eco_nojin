@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
@@ -18,12 +19,6 @@ type LandProfile = {
   created_at: string | null;
 };
 
-const TITLES: Record<string, string> = { fa: 'نمایشگاه پروفایلر زمین', en: 'Land Profiler Demo' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'تحلیل زمین و سناریوهای مدیریتی',
-  en: 'Land analysis and management scenarios',
-};
-
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
@@ -32,21 +27,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-components-land-profiler');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/components/land-profiler`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/components/land-profiler`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/components/land-profiler`,
-        en: `${BASE_URL}/en/public/components/land-profiler`,
-      },
+      canonical: canonicalFor(locale, '/public/components/land-profiler'),
+      languages: languageAlternates('/public/components/land-profiler'),
     },
   };
 }
@@ -60,9 +53,11 @@ export default async function LandProfilerPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  const meta = await getTranslations('pageMeta.public-components-land-profiler');
   const statusPage = await getTranslations('statusPage');
-  const title = TITLES[locale] ?? TITLES.en;
-  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+  const title = meta('title');
+  const description = meta('description');
 
   const profiles = await apiGet<LandProfile[]>(PROFILES_PATH);
   const rows = profiles.ok ? profiles.data : [];
@@ -72,14 +67,15 @@ export default async function LandProfilerPage({
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp
-          source={PROFILES_PATH}
-          label={title}
-          verified={profiles.ok}
-          method={PROFILES_PATH}
-        >
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-        </ProvenanceStamp>
+          <ProvenanceStamp
+            source={PROFILES_PATH}
+            label={title}
+            verified={profiles.ok}
+            method={PROFILES_PATH}
+          />
+        </div>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
       </section>
 

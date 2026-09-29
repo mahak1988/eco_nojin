@@ -1,7 +1,7 @@
 """
-conftest.py — Fixtures جامع تست‌های بک‌اند eco_nojin
-تولید خودکار: 2026-09-03 00:51:07
-معماری: منطبق بر ساختار واقعی سرویس‌ها
+conftest.py â€” Fixtures ط¬ط§ظ…ط¹ طھط³طھâ€Œظ‡ط§غŒ ط¨ع©â€Œط§ظ†ط¯ eco_nojin
+طھظˆظ„غŒط¯ ط®ظˆط¯ع©ط§ط±: 2026-09-03 00:51:07
+ظ…ط¹ظ…ط§ط±غŒ: ظ…ظ†ط·ط¨ظ‚ ط¨ط± ط³ط§ط®طھط§ط± ظˆط§ظ‚ط¹غŒ ط³ط±ظˆغŒط³â€Œظ‡ط§
 """
 
 import importlib
@@ -18,35 +18,35 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.orm import sessionmaker
 
-# ── مسیر پروژه ──────────────────────────────────────────────────
+# â”€â”€ ظ…ط³غŒط± ظ¾ط±ظˆعکظ‡ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 PROJECT_ROOT = Path(__file__).parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-# ── Import Base ─────────────────────────────────────────────────
+# â”€â”€ Import Base â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 import contextlib
 
 from database.base import Base
 
 
-# ── Import خودکار همه مدل‌ها ────────────────────────────────────
+# â”€â”€ Import ط®ظˆط¯ع©ط§ط± ظ‡ظ…ظ‡ ظ…ط¯ظ„â€Œظ‡ط§ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 def _import_all_models():
     """
-    Import همه ماژول‌های models در services/ و database/
-    تا Base.metadata شامل همه جداول شود.
+    Import ظ‡ظ…ظ‡ ظ…ط§عکظˆظ„â€Œظ‡ط§غŒ models ط¯ط± services/ ظˆ database/
+    طھط§ Base.metadata ط´ط§ظ…ظ„ ظ‡ظ…ظ‡ ط¬ط¯ط§ظˆظ„ ط´ظˆط¯.
     """
     imported = []
 
-    # 1) services/*/models.py  و  services/*/models/__init__.py
+    # 1) services/*/models.py  ظˆ  services/*/models/__init__.py
     services_dir = PROJECT_ROOT / "services"
     if services_dir.exists():
         for child in sorted(services_dir.iterdir()):
             if not child.is_dir() or child.name.startswith((".", "_")):
                 continue
 
-            # ساختار models.py
+            # ط³ط§ط®طھط§ط± models.py
             models_py = child / "models.py"
-            # ساختار models/__init__.py
+            # ط³ط§ط®طھط§ط± models/__init__.py
             models_init = child / "models" / "__init__.py"
 
             target = None
@@ -60,7 +60,7 @@ def _import_all_models():
                 except Exception:
                     pass
 
-            # همچنین schema‌ها و repository‌ها ممکن است مدل تعریف کنند
+            # ظ‡ظ…ع†ظ†غŒظ† schemaâ€Œظ‡ط§ ظˆ repositoryâ€Œظ‡ط§ ظ…ظ…ع©ظ† ط§ط³طھ ظ…ط¯ظ„ طھط¹ط±غŒظپ ع©ظ†ظ†ط¯
             for extra in ("schemas", "repository", "service"):
                 extra_py = child / f"{extra}.py"
                 child / extra / "__init__.py"
@@ -68,7 +68,7 @@ def _import_all_models():
                     with contextlib.suppress(Exception):
                         importlib.import_module(f"services.{child.name}.{extra}")
 
-    # 2) database/models.py  یا  database/models/__init__.py
+    # 2) database/models.py  غŒط§  database/models/__init__.py
     db_dir = PROJECT_ROOT / "database"
     if db_dir.exists():
         for candidate in ("models", "models.base"):
@@ -83,7 +83,7 @@ def _import_all_models():
 
 _imported = _import_all_models()
 
-# ── Fixtures پایه ───────────────────────────────────────────────
+# â”€â”€ Fixtures ظ¾ط§غŒظ‡ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 
 @pytest.fixture(scope="session")
@@ -97,7 +97,7 @@ def event_loop():
 
 @pytest_asyncio.fixture(scope="function")
 async def async_engine():
-    """Engine دیتابیس SQLite در حافظه"""
+    """Engine ط¯غŒطھط§ط¨غŒط³ SQLite ط¯ط± ط­ط§ظپط¸ظ‡"""
     engine = create_async_engine(
         "sqlite+aiosqlite:///:memory:",
         echo=False,
@@ -113,7 +113,7 @@ async def async_engine():
 
 @pytest_asyncio.fixture(scope="function")
 async def db_session(async_engine):
-    """Session دیتابیس async"""
+    """Session ط¯غŒطھط§ط¨غŒط³ async"""
     session_factory = async_sessionmaker(async_engine, class_=AsyncSession, expire_on_commit=False)
     async with session_factory() as session:
         yield session
@@ -138,12 +138,12 @@ def sync_db_session(sync_engine):
     session.close()
 
 
-# ── Fixtures سرویس‌ها ──────────────────────────────────────────
+# â”€â”€ Fixtures ط³ط±ظˆغŒط³â€Œظ‡ط§ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 
 @pytest_asyncio.fixture
 async def admin_service(db_session):
-    """Fixture برای AdminService"""
+    """Fixture ط¨ط±ط§غŒ AdminService"""
     try:
         from services.admin.repository import AdminRepository
         from services.admin.service import AdminService
@@ -153,7 +153,7 @@ async def admin_service(db_session):
     except ImportError as e:
         pytest.skip(f"AdminService not available: {e}")
     except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
+        # fallback: ظ…ظ…ع©ظ† ط§ط³طھ constructor ظ…طھظپط§ظˆطھ ط¨ط§ط´ط¯
         try:
             from services.admin.service import AdminService
 
@@ -163,27 +163,8 @@ async def admin_service(db_session):
 
 
 @pytest_asyncio.fixture
-async def ai_service(db_session):
-    """Fixture برای AiService"""
-    try:
-        from services.ai.service import AiService
-
-        return AiService(db_session)
-    except ImportError as e:
-        pytest.skip(f"AiService not available: {e}")
-    except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
-        try:
-            from services.ai.service import AiService
-
-            return AiService(db_session)
-        except Exception as e2:
-            pytest.skip(f"AiService init failed: {e2}")
-
-
-@pytest_asyncio.fixture
 async def analytics_service(db_session):
-    """Fixture برای AnalyticsService"""
+    """Fixture ط¨ط±ط§غŒ AnalyticsService"""
     try:
         from services.analytics.repository import AnalyticsRepository
         from services.analytics.service import AnalyticsService
@@ -193,7 +174,7 @@ async def analytics_service(db_session):
     except ImportError as e:
         pytest.skip(f"AnalyticsService not available: {e}")
     except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
+        # fallback: ظ…ظ…ع©ظ† ط§ط³طھ constructor ظ…طھظپط§ظˆطھ ط¨ط§ط´ط¯
         try:
             from services.analytics.service import AnalyticsService
 
@@ -203,46 +184,8 @@ async def analytics_service(db_session):
 
 
 @pytest_asyncio.fixture
-async def api_gateway_service(db_session):
-    """Fixture برای Api_gatewayService"""
-    try:
-        from services.api_gateway.service import Api_gatewayService
-
-        return Api_gatewayService(db_session)
-    except ImportError as e:
-        pytest.skip(f"Api_gatewayService not available: {e}")
-    except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
-        try:
-            from services.api_gateway.service import Api_gatewayService
-
-            return Api_gatewayService(db_session)
-        except Exception as e2:
-            pytest.skip(f"Api_gatewayService init failed: {e2}")
-
-
-@pytest_asyncio.fixture
-async def audit_service(db_session):
-    """Fixture برای AuditService"""
-    try:
-        from services.audit.service import AuditService
-
-        return AuditService(db_session)
-    except ImportError as e:
-        pytest.skip(f"AuditService not available: {e}")
-    except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
-        try:
-            from services.audit.service import AuditService
-
-            return AuditService(db_session)
-        except Exception as e2:
-            pytest.skip(f"AuditService init failed: {e2}")
-
-
-@pytest_asyncio.fixture
 async def auth_service(db_session):
-    """Fixture برای AuthService"""
+    """Fixture ط¨ط±ط§غŒ AuthService"""
     try:
         from services.auth.repository import AuthRepository
         from services.auth.service import AuthService
@@ -252,7 +195,7 @@ async def auth_service(db_session):
     except ImportError as e:
         pytest.skip(f"AuthService not available: {e}")
     except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
+        # fallback: ظ…ظ…ع©ظ† ط§ط³طھ constructor ظ…طھظپط§ظˆطھ ط¨ط§ط´ط¯
         try:
             from services.auth.service import AuthService
 
@@ -262,46 +205,8 @@ async def auth_service(db_session):
 
 
 @pytest_asyncio.fixture
-async def bots_service(db_session):
-    """Fixture برای BotsService"""
-    try:
-        from services.bots.service import BotsService
-
-        return BotsService(db_session)
-    except ImportError as e:
-        pytest.skip(f"BotsService not available: {e}")
-    except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
-        try:
-            from services.bots.service import BotsService
-
-            return BotsService(db_session)
-        except Exception as e2:
-            pytest.skip(f"BotsService init failed: {e2}")
-
-
-@pytest_asyncio.fixture
-async def business_modules_service(db_session):
-    """Fixture برای Business_modulesService"""
-    try:
-        from services.business_modules.service import Business_modulesService
-
-        return Business_modulesService(db_session)
-    except ImportError as e:
-        pytest.skip(f"Business_modulesService not available: {e}")
-    except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
-        try:
-            from services.business_modules.service import Business_modulesService
-
-            return Business_modulesService(db_session)
-        except Exception as e2:
-            pytest.skip(f"Business_modulesService init failed: {e2}")
-
-
-@pytest_asyncio.fixture
 async def carbon_service(db_session):
-    """Fixture برای CarbonService"""
+    """Fixture ط¨ط±ط§غŒ CarbonService"""
     try:
         from services.carbon.service import CarbonService
 
@@ -309,7 +214,7 @@ async def carbon_service(db_session):
     except ImportError as e:
         pytest.skip(f"CarbonService not available: {e}")
     except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
+        # fallback: ظ…ظ…ع©ظ† ط§ط³طھ constructor ظ…طھظپط§ظˆطھ ط¨ط§ط´ط¯
         try:
             from services.carbon.service import CarbonService
 
@@ -319,122 +224,23 @@ async def carbon_service(db_session):
 
 
 @pytest_asyncio.fixture
-async def content_service(db_session):
-    """Fixture برای ContentService"""
-    try:
-        from services.content.service import ContentService
-
-        return ContentService(db_session)
-    except ImportError as e:
-        pytest.skip(f"ContentService not available: {e}")
-    except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
-        try:
-            from services.content.service import ContentService
-
-            return ContentService(db_session)
-        except Exception as e2:
-            pytest.skip(f"ContentService init failed: {e2}")
-
-
-@pytest_asyncio.fixture
-async def data_service(db_session):
-    """Fixture برای DataService"""
-    try:
-        from services.data.service import DataService
-
-        return DataService(db_session)
-    except ImportError as e:
-        pytest.skip(f"DataService not available: {e}")
-    except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
-        try:
-            from services.data.service import DataService
-
-            return DataService(db_session)
-        except Exception as e2:
-            pytest.skip(f"DataService init failed: {e2}")
-
-
-@pytest_asyncio.fixture
-async def data_manual_service(db_session):
-    """Fixture برای Data_manualService"""
-    try:
-        from services.data_manual.service import Data_manualService
-
-        return Data_manualService(db_session)
-    except ImportError as e:
-        pytest.skip(f"Data_manualService not available: {e}")
-    except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
-        try:
-            from services.data_manual.service import Data_manualService
-
-            return Data_manualService(db_session)
-        except Exception as e2:
-            pytest.skip(f"Data_manualService init failed: {e2}")
-
-
-@pytest_asyncio.fixture
-async def data_sources_service(db_session):
-    """Fixture برای Data_sourcesService"""
-    try:
-        from services.data_sources.service import Data_sourcesService
-
-        return Data_sourcesService(db_session)
-    except ImportError as e:
-        pytest.skip(f"Data_sourcesService not available: {e}")
-    except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
-        try:
-            from services.data_sources.service import Data_sourcesService
-
-            return Data_sourcesService(db_session)
-        except Exception as e2:
-            pytest.skip(f"Data_sourcesService init failed: {e2}")
-
-
-@pytest_asyncio.fixture
-async def design_engine_service(db_session):
-    """Fixture برای Design_engineService"""
-    try:
-        from services.design_engine.service import Design_engineService
-
-        return Design_engineService(db_session)
-    except ImportError as e:
-        pytest.skip(f"Design_engineService not available: {e}")
-    except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
-        try:
-            from services.design_engine.service import Design_engineService
-
-            return Design_engineService(db_session)
-        except Exception as e2:
-            pytest.skip(f"Design_engineService init failed: {e2}")
-
-
-@pytest_asyncio.fixture
 async def ecowallet_service(db_session):
-    """Fixture برای EcowalletService"""
-    try:
-        from services.ecowallet.service import EcowalletService
+    """Fixture returning the ecowallet module's callable API.
 
-        return EcowalletService(db_session)
-    except ImportError as e:
-        pytest.skip(f"EcowalletService not available: {e}")
-    except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
-        try:
-            from services.ecowallet.service import EcowalletService
+    This fixture imported ``EcowalletService``, a class that has never existed
+    in ``services/ecowallet/service.py`` -- the module exposes module-level
+    functions (``earn``, ``redeem``, ``wallet_state``, ``get_or_create_wallet``)
+    -- so the ImportError was caught and the fixture silently skipped on every
+    run. Found while consolidating the earning-rate tables in phase 4.
+    """
+    from services.ecowallet import service as ecowallet_module
 
-            return EcowalletService(db_session)
-        except Exception as e2:
-            pytest.skip(f"EcowalletService init failed: {e2}")
+    return ecowallet_module
 
 
 @pytest_asyncio.fixture
 async def field_monitoring_service(db_session):
-    """Fixture برای FieldMonitoringService"""
+    """Fixture ط¨ط±ط§غŒ FieldMonitoringService"""
     try:
         from services.field_monitoring.service import FieldMonitoringService
 
@@ -442,7 +248,7 @@ async def field_monitoring_service(db_session):
     except ImportError as e:
         pytest.skip(f"FieldMonitoringService not available: {e}")
     except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
+        # fallback: ظ…ظ…ع©ظ† ط§ط³طھ constructor ظ…طھظپط§ظˆطھ ط¨ط§ط´ط¯
         try:
             from services.field_monitoring.service import FieldMonitoringService
 
@@ -453,7 +259,7 @@ async def field_monitoring_service(db_session):
 
 @pytest_asyncio.fixture
 async def land_service(db_session):
-    """Fixture برای LandService"""
+    """Fixture ط¨ط±ط§غŒ LandService"""
     try:
         from services.land.service import LandService
 
@@ -461,7 +267,7 @@ async def land_service(db_session):
     except ImportError as e:
         pytest.skip(f"LandService not available: {e}")
     except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
+        # fallback: ظ…ظ…ع©ظ† ط§ط³طھ constructor ظ…طھظپط§ظˆطھ ط¨ط§ط´ط¯
         try:
             from services.land.service import LandService
 
@@ -472,7 +278,7 @@ async def land_service(db_session):
 
 @pytest_asyncio.fixture
 async def landscape_service(db_session):
-    """Fixture برای LandscapeService"""
+    """Fixture ط¨ط±ط§غŒ LandscapeService"""
     try:
         from services.landscape.service import LandscapeService
 
@@ -480,7 +286,7 @@ async def landscape_service(db_session):
     except ImportError as e:
         pytest.skip(f"LandscapeService not available: {e}")
     except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
+        # fallback: ظ…ظ…ع©ظ† ط§ط³طھ constructor ظ…طھظپط§ظˆطھ ط¨ط§ط´ط¯
         try:
             from services.landscape.service import LandscapeService
 
@@ -491,26 +297,26 @@ async def landscape_service(db_session):
 
 @pytest_asyncio.fixture
 async def ledger_service(db_session):
-    """Fixture برای LedgerService"""
+    """Fixture ط¨ط±ط§غŒ LedgerService"""
     try:
-        from services.ledger.service import LedgerService
+        from services.ledger.service import SingleEntryLedgerService
 
-        return LedgerService(db_session)
+        return SingleEntryLedgerService(db_session)
     except ImportError as e:
         pytest.skip(f"LedgerService not available: {e}")
     except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
+        # fallback: ظ…ظ…ع©ظ† ط§ط³طھ constructor ظ…طھظپط§ظˆطھ ط¨ط§ط´ط¯
         try:
-            from services.ledger.service import LedgerService
+            from services.ledger.service import SingleEntryLedgerService
 
-            return LedgerService(db_session)
+            return SingleEntryLedgerService(db_session)
         except Exception as e2:
             pytest.skip(f"LedgerService init failed: {e2}")
 
 
 @pytest_asyncio.fixture
 async def livestock_service(db_session):
-    """Fixture برای LivestockService"""
+    """Fixture ط¨ط±ط§غŒ LivestockService"""
     try:
         from services.livestock.service import LivestockService
 
@@ -518,7 +324,7 @@ async def livestock_service(db_session):
     except ImportError as e:
         pytest.skip(f"LivestockService not available: {e}")
     except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
+        # fallback: ظ…ظ…ع©ظ† ط§ط³طھ constructor ظ…طھظپط§ظˆطھ ط¨ط§ط´ط¯
         try:
             from services.livestock.service import LivestockService
 
@@ -528,27 +334,8 @@ async def livestock_service(db_session):
 
 
 @pytest_asyncio.fixture
-async def map_engine_service(db_session):
-    """Fixture برای Map_engineService"""
-    try:
-        from services.map_engine.service import Map_engineService
-
-        return Map_engineService(db_session)
-    except ImportError as e:
-        pytest.skip(f"Map_engineService not available: {e}")
-    except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
-        try:
-            from services.map_engine.service import Map_engineService
-
-            return Map_engineService(db_session)
-        except Exception as e2:
-            pytest.skip(f"Map_engineService init failed: {e2}")
-
-
-@pytest_asyncio.fixture
 async def marketplace_service(db_session):
-    """Fixture برای MarketplaceService"""
+    """Fixture ط¨ط±ط§غŒ MarketplaceService"""
     try:
         from services.marketplace.service import MarketplaceService
 
@@ -556,7 +343,7 @@ async def marketplace_service(db_session):
     except ImportError as e:
         pytest.skip(f"MarketplaceService not available: {e}")
     except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
+        # fallback: ظ…ظ…ع©ظ† ط§ط³طھ constructor ظ…طھظپط§ظˆطھ ط¨ط§ط´ط¯
         try:
             from services.marketplace.service import MarketplaceService
 
@@ -567,7 +354,7 @@ async def marketplace_service(db_session):
 
 @pytest_asyncio.fixture
 async def mobile_monitoring_service(db_session):
-    """Fixture برای MobileMonitoringService"""
+    """Fixture ط¨ط±ط§غŒ MobileMonitoringService"""
     try:
         from services.mobile_monitoring.service import MobileMonitoringService
 
@@ -575,7 +362,7 @@ async def mobile_monitoring_service(db_session):
     except ImportError as e:
         pytest.skip(f"MobileMonitoringService not available: {e}")
     except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
+        # fallback: ظ…ظ…ع©ظ† ط§ط³طھ constructor ظ…طھظپط§ظˆطھ ط¨ط§ط´ط¯
         try:
             from services.mobile_monitoring.service import MobileMonitoringService
 
@@ -585,46 +372,8 @@ async def mobile_monitoring_service(db_session):
 
 
 @pytest_asyncio.fixture
-async def models_service(db_session):
-    """Fixture برای ModelsService"""
-    try:
-        from services.models.service import ModelsService
-
-        return ModelsService(db_session)
-    except ImportError as e:
-        pytest.skip(f"ModelsService not available: {e}")
-    except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
-        try:
-            from services.models.service import ModelsService
-
-            return ModelsService(db_session)
-        except Exception as e2:
-            pytest.skip(f"ModelsService init failed: {e2}")
-
-
-@pytest_asyncio.fixture
-async def mrv_service(db_session):
-    """Fixture برای MrvService"""
-    try:
-        from services.mrv.service import MrvService
-
-        return MrvService(db_session)
-    except ImportError as e:
-        pytest.skip(f"MrvService not available: {e}")
-    except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
-        try:
-            from services.mrv.service import MrvService
-
-            return MrvService(db_session)
-        except Exception as e2:
-            pytest.skip(f"MrvService init failed: {e2}")
-
-
-@pytest_asyncio.fixture
 async def notification_service(db_session):
-    """Fixture برای NotificationService"""
+    """Fixture ط¨ط±ط§غŒ NotificationService"""
     try:
         from services.notification.service import NotificationService
 
@@ -632,7 +381,7 @@ async def notification_service(db_session):
     except ImportError as e:
         pytest.skip(f"NotificationService not available: {e}")
     except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
+        # fallback: ظ…ظ…ع©ظ† ط§ط³طھ constructor ظ…طھظپط§ظˆطھ ط¨ط§ط´ط¯
         try:
             from services.notification.service import NotificationService
 
@@ -642,46 +391,8 @@ async def notification_service(db_session):
 
 
 @pytest_asyncio.fixture
-async def ogc_service(db_session):
-    """Fixture برای OgcService"""
-    try:
-        from services.ogc.service import OgcService
-
-        return OgcService(db_session)
-    except ImportError as e:
-        pytest.skip(f"OgcService not available: {e}")
-    except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
-        try:
-            from services.ogc.service import OgcService
-
-            return OgcService(db_session)
-        except Exception as e2:
-            pytest.skip(f"OgcService init failed: {e2}")
-
-
-@pytest_asyncio.fixture
-async def quality_service(db_session):
-    """Fixture برای QualityService"""
-    try:
-        from services.quality.service import QualityService
-
-        return QualityService(db_session)
-    except ImportError as e:
-        pytest.skip(f"QualityService not available: {e}")
-    except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
-        try:
-            from services.quality.service import QualityService
-
-            return QualityService(db_session)
-        except Exception as e2:
-            pytest.skip(f"QualityService init failed: {e2}")
-
-
-@pytest_asyncio.fixture
 async def reporting_service(db_session):
-    """Fixture برای ReportingService"""
+    """Fixture ط¨ط±ط§غŒ ReportingService"""
     try:
         from services.reporting.repository import ReportingRepository
         from services.reporting.service import ReportingService
@@ -691,7 +402,7 @@ async def reporting_service(db_session):
     except ImportError as e:
         pytest.skip(f"ReportingService not available: {e}")
     except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
+        # fallback: ظ…ظ…ع©ظ† ط§ط³طھ constructor ظ…طھظپط§ظˆطھ ط¨ط§ط´ط¯
         try:
             from services.reporting.service import ReportingService
 
@@ -702,7 +413,7 @@ async def reporting_service(db_session):
 
 @pytest_asyncio.fixture
 async def satellite_service(db_session):
-    """Fixture برای SatelliteService"""
+    """Fixture ط¨ط±ط§غŒ SatelliteService"""
     try:
         from services.satellite.service import SatelliteService
 
@@ -710,7 +421,7 @@ async def satellite_service(db_session):
     except ImportError as e:
         pytest.skip(f"SatelliteService not available: {e}")
     except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
+        # fallback: ظ…ظ…ع©ظ† ط§ط³طھ constructor ظ…طھظپط§ظˆطھ ط¨ط§ط´ط¯
         try:
             from services.satellite.service import SatelliteService
 
@@ -720,65 +431,8 @@ async def satellite_service(db_session):
 
 
 @pytest_asyncio.fixture
-async def science_service(db_session):
-    """Fixture برای ScienceService"""
-    try:
-        from services.science.service import ScienceService
-
-        return ScienceService(db_session)
-    except ImportError as e:
-        pytest.skip(f"ScienceService not available: {e}")
-    except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
-        try:
-            from services.science.service import ScienceService
-
-            return ScienceService(db_session)
-        except Exception as e2:
-            pytest.skip(f"ScienceService init failed: {e2}")
-
-
-@pytest_asyncio.fixture
-async def scientific_motors_service(db_session):
-    """Fixture برای Scientific_motorsService"""
-    try:
-        from services.scientific_motors.service import Scientific_motorsService
-
-        return Scientific_motorsService(db_session)
-    except ImportError as e:
-        pytest.skip(f"Scientific_motorsService not available: {e}")
-    except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
-        try:
-            from services.scientific_motors.service import Scientific_motorsService
-
-            return Scientific_motorsService(db_session)
-        except Exception as e2:
-            pytest.skip(f"Scientific_motorsService init failed: {e2}")
-
-
-@pytest_asyncio.fixture
-async def security_service(db_session):
-    """Fixture برای SecurityService"""
-    try:
-        from services.security.service import SecurityService
-
-        return SecurityService(db_session)
-    except ImportError as e:
-        pytest.skip(f"SecurityService not available: {e}")
-    except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
-        try:
-            from services.security.service import SecurityService
-
-            return SecurityService(db_session)
-        except Exception as e2:
-            pytest.skip(f"SecurityService init failed: {e2}")
-
-
-@pytest_asyncio.fixture
 async def simulation_service(db_session):
-    """Fixture برای SimulationService"""
+    """Fixture ط¨ط±ط§غŒ SimulationService"""
     try:
         from services.simulation.service import SimulationService
 
@@ -786,7 +440,7 @@ async def simulation_service(db_session):
     except ImportError as e:
         pytest.skip(f"SimulationService not available: {e}")
     except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
+        # fallback: ظ…ظ…ع©ظ† ط§ط³طھ constructor ظ…طھظپط§ظˆطھ ط¨ط§ط´ط¯
         try:
             from services.simulation.service import SimulationService
 
@@ -796,46 +450,8 @@ async def simulation_service(db_session):
 
 
 @pytest_asyncio.fixture
-async def supabase_service(db_session):
-    """Fixture برای SupabaseService"""
-    try:
-        from services.supabase.service import SupabaseService
-
-        return SupabaseService(db_session)
-    except ImportError as e:
-        pytest.skip(f"SupabaseService not available: {e}")
-    except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
-        try:
-            from services.supabase.service import SupabaseService
-
-            return SupabaseService(db_session)
-        except Exception as e2:
-            pytest.skip(f"SupabaseService init failed: {e2}")
-
-
-@pytest_asyncio.fixture
-async def telegram_bot_service(db_session):
-    """Fixture برای Telegram_botService"""
-    try:
-        from services.telegram_bot.service import Telegram_botService
-
-        return Telegram_botService(db_session)
-    except ImportError as e:
-        pytest.skip(f"Telegram_botService not available: {e}")
-    except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
-        try:
-            from services.telegram_bot.service import Telegram_botService
-
-            return Telegram_botService(db_session)
-        except Exception as e2:
-            pytest.skip(f"Telegram_botService init failed: {e2}")
-
-
-@pytest_asyncio.fixture
 async def tourism_service(db_session):
-    """Fixture برای TourismService"""
+    """Fixture ط¨ط±ط§غŒ TourismService"""
     try:
         from services.tourism.service import TourismService
 
@@ -843,7 +459,7 @@ async def tourism_service(db_session):
     except ImportError as e:
         pytest.skip(f"TourismService not available: {e}")
     except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
+        # fallback: ظ…ظ…ع©ظ† ط§ط³طھ constructor ظ…طھظپط§ظˆطھ ط¨ط§ط´ط¯
         try:
             from services.tourism.service import TourismService
 
@@ -854,7 +470,7 @@ async def tourism_service(db_session):
 
 @pytest_asyncio.fixture
 async def workflow_service(db_session):
-    """Fixture برای WorkflowService"""
+    """Fixture ط¨ط±ط§غŒ WorkflowService"""
     try:
         from services.workflow.service import WorkflowService
 
@@ -862,7 +478,7 @@ async def workflow_service(db_session):
     except ImportError as e:
         pytest.skip(f"WorkflowService not available: {e}")
     except TypeError:
-        # fallback: ممکن است constructor متفاوت باشد
+        # fallback: ظ…ظ…ع©ظ† ط§ط³طھ constructor ظ…طھظپط§ظˆطھ ط¨ط§ط´ط¯
         try:
             from services.workflow.service import WorkflowService
 

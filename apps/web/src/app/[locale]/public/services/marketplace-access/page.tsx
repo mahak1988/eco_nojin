@@ -2,6 +2,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { OwnerFooter } from '@/components/OwnerFooter';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
+import { SponsorSlot } from '@/components/SponsorSlot';
 import { Card } from '@/components/ui/Card';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
@@ -53,14 +54,15 @@ export default async function MarketplaceAccessPage({
       <SiteNav locale={locale} />
 
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp
-          source={STATS_PATH}
-          label={services('title')}
-          verified={stats.ok}
-          method={STATS_PATH}
-        >
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="display text-4xl font-bold text-ink">{services('title')}</h1>
-        </ProvenanceStamp>
+          <ProvenanceStamp
+            source={STATS_PATH}
+            label={services('title')}
+            verified={stats.ok}
+            method={STATS_PATH}
+          />
+        </div>
         <p className="mt-3 max-w-2xl text-ink-soft">{services('lead')}</p>
         <p className="mt-3 max-w-2xl text-sm text-ink-soft">{services('what')}</p>
         <p className="mt-3 max-w-2xl text-sm text-ink-soft">{services('audience')}</p>
@@ -125,6 +127,13 @@ export default async function MarketplaceAccessPage({
         ) : null}
         <SourceFooter state={state} />
       </section>
+
+      {/* Sponsorship slot. This page describes a service, not a
+          recommendation to a farmer, so it is a permitted placement. The
+          component renders nothing at all when there is no sponsor, and the
+          placement guard in apps/web/tests/sponsor-placement.spec.ts fails
+          the build if a slot is ever added to a protected surface. */}
+      <SponsorSlot placement="public_services" className="mx-auto mb-6" />
 
       <OwnerFooter />
     </main>

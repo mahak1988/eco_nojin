@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { isRtl } from '@/i18n/routing';
 
 export const BAZAAR_MARKETPLACES_SOURCE = '/api/v1/marketplace/marketplaces';
 export const WIZARD_TOTAL_STEPS = 10;
@@ -33,7 +34,7 @@ export function BazaarEstablishmentWizard({ locale }: BazaarEstablishmentWizardP
     <div
       className="bazaar-wizard space-y-4"
       data-locale={locale}
-      dir={locale === 'fa' || locale === 'ar' ? 'rtl' : 'ltr'}
+      dir={isRtl(locale) ? 'rtl' : 'ltr'}
     >
       <div className="flex flex-wrap items-center gap-3">
         <h2 className="flex-1 text-xl font-bold text-ink">{t('title')}</h2>

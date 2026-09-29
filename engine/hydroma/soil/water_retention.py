@@ -17,7 +17,11 @@ References:
 
 import logging
 
-from .physics import SOIL_PARAMETERS_VG
+from .physics import (
+    SOIL_PARAMETERS_VG,
+    van_genuchten_k,
+    van_genuchten_theta,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -61,20 +65,15 @@ def van_genuchten_retention(
     if alpha <= 0 or n <= 1:
         raise ValueError("Invalid van Genuchten parameters")
 
-    # m parameter
-    m = 1 - 1 / n
-
-    # For saturated conditions (h >= 0)
-    if h >= 0:
-        return theta_s
-
-    # Calculate effective saturation
-    abs_h = abs(h)
-    denominator = (1 + (alpha * abs_h) ** n) ** m
-
-    theta = theta_r + (theta_s - theta_r) / denominator
-
-    return theta
+    # Single implementation. physics.van_genuchten_theta is the canonical
+    # van Genuchten retention; this function kept its own argument order because
+    # services/api_gateway/routers/hydroma_soil.py and services/validation/
+    # formula_checks.py call it positionally, and the two copies previously
+    # disagreed on the sign of the head: this one returned theta_s for h >= 0,
+    # physics.py treated a positive head as a suction of the same magnitude and
+    # returned 0.034 cm/day where this one returned Ks = 25 at +100 cm. The
+    # behaviour here was the correct one, so it moved to the canonical function.
+    return van_genuchten_theta(h, theta_r, theta_s, alpha, n)
 
 
 def van_genuchten_conductivity(
@@ -96,26 +95,8 @@ def van_genuchten_conductivity(
     Returns:
         float: Hydraulic conductivity (cm/day)
     """
-    # Get water content
-    theta = van_genuchten_retention(theta_r, theta_s, alpha, n, h)
-
-    # Effective saturation
-    se = (theta - theta_r) / (theta_s - theta_r)
-
-    # For saturated conditions
-    if se >= 1:
-        return k_s
-
-    # m parameter
-    m = 1 - 1 / n
-
-    # Calculate conductivity
-    term1 = se**0.5
-    term2 = (1 - (1 - se ** (1 / m)) ** m) ** 2
-
-    k = k_s * term1 * term2
-
-    return max(0, k)
+    # Single implementation, as for the retention function above.
+    return van_genuchten_k(h, theta_r, theta_s, alpha, n, k_s)
 
 
 def get_vg_parameters(texture: str) -> dict:

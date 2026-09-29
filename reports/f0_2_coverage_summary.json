@@ -1,0 +1,2727 @@
+{
+  "totals": {
+    "covered_lines": 9589,
+    "num_statements": 22508,
+    "percent_covered": 37.5637476322308,
+    "percent_covered_display": "38",
+    "missing_lines": 12919,
+    "excluded_lines": 18,
+    "percent_statements_covered": 42.60263017593744,
+    "percent_statements_covered_display": "43",
+    "num_branches": 4944,
+    "num_partial_branches": 117,
+    "covered_branches": 723,
+    "missing_branches": 4221,
+    "percent_branches_covered": 14.62378640776699,
+    "percent_branches_covered_display": "15"
+  },
+  "by_package": {
+    "engine/__init__.py": {
+      "statements": 7,
+      "covered": 7
+    },
+    "engine/baseline": {
+      "statements": 255,
+      "covered": 201
+    },
+    "engine/data": {
+      "statements": 257,
+      "covered": 198
+    },
+    "engine/data_connector.py": {
+      "statements": 148,
+      "covered": 28
+    },
+    "engine/hydroma/__init__.py": {
+      "statements": 2,
+      "covered": 2
+    },
+    "engine/hydroma/ai_assistant": {
+      "statements": 29,
+      "covered": 19
+    },
+    "engine/hydroma/alembic_graph.py": {
+      "statements": 97,
+      "covered": 83
+    },
+    "engine/hydroma/analyses": {
+      "statements": 86,
+      "covered": 37
+    },
+    "engine/hydroma/api": {
+      "statements": 0,
+      "covered": 0
+    },
+    "engine/hydroma/biofertilizer": {
+      "statements": 2169,
+      "covered": 682
+    },
+    "engine/hydroma/calculation": {
+      "statements": 165,
+      "covered": 28
+    },
+    "engine/hydroma/calculations": {
+      "statements": 39,
+      "covered": 38
+    },
+    "engine/hydroma/calibration": {
+      "statements": 271,
+      "covered": 66
+    },
+    "engine/hydroma/carbon": {
+      "statements": 94,
+      "covered": 82
+    },
+    "engine/hydroma/climate": {
+      "statements": 89,
+      "covered": 85
+    },
+    "engine/hydroma/climate_adaptation": {
+      "statements": 934,
+      "covered": 182
+    },
+    "engine/hydroma/config": {
+      "statements": 372,
+      "covered": 263
+    },
+    "engine/hydroma/core": {
+      "statements": 180,
+      "covered": 116
+    },
+    "engine/hydroma/cpp_bindings.py": {
+      "statements": 20,
+      "covered": 9
+    },
+    "engine/hydroma/cpp_bridge": {
+      "statements": 457,
+      "covered": 158
+    },
+    "engine/hydroma/crop": {
+      "statements": 22,
+      "covered": 12
+    },
+    "engine/hydroma/data": {
+      "statements": 9,
+      "covered": 5
+    },
+    "engine/hydroma/data_assimilation": {
+      "statements": 294,
+      "covered": 86
+    },
+    "engine/hydroma/data_pipeline": {
+      "statements": 961,
+      "covered": 169
+    },
+    "engine/hydroma/decision_support": {
+      "statements": 94,
+      "covered": 36
+    },
+    "engine/hydroma/distributed_ml": {
+      "statements": 245,
+      "covered": 57
+    },
+    "engine/hydroma/economics": {
+      "statements": 366,
+      "covered": 112
+    },
+    "engine/hydroma/examples": {
+      "statements": 23,
+      "covered": 10
+    },
+    "engine/hydroma/formulas": {
+      "statements": 93,
+      "covered": 64
+    },
+    "engine/hydroma/generative_ai": {
+      "statements": 20,
+      "covered": 20
+    },
+    "engine/hydroma/groundwater": {
+      "statements": 308,
+      "covered": 148
+    },
+    "engine/hydroma/hybrid_ml": {
+      "statements": 501,
+      "covered": 112
+    },
+    "engine/hydroma/infrastructure": {
+      "statements": 250,
+      "covered": 94
+    },
+    "engine/hydroma/irrigation": {
+      "statements": 17,
+      "covered": 17
+    },
+    "engine/hydroma/materials": {
+      "statements": 12,
+      "covered": 7
+    },
+    "engine/hydroma/models": {
+      "statements": 1935,
+      "covered": 811
+    },
+    "engine/hydroma/mrv": {
+      "statements": 434,
+      "covered": 195
+    },
+    "engine/hydroma/optimization": {
+      "statements": 95,
+      "covered": 14
+    },
+    "engine/hydroma/performance": {
+      "statements": 19,
+      "covered": 5
+    },
+    "engine/hydroma/phenology.py": {
+      "statements": 69,
+      "covered": 32
+    },
+    "engine/hydroma/plant_neuro": {
+      "statements": 347,
+      "covered": 116
+    },
+    "engine/hydroma/production": {
+      "statements": 93,
+      "covered": 55
+    },
+    "engine/hydroma/satellite": {
+      "statements": 327,
+      "covered": 121
+    },
+    "engine/hydroma/scenario": {
+      "statements": 0,
+      "covered": 0
+    },
+    "engine/hydroma/scenarios": {
+      "statements": 244,
+      "covered": 54
+    },
+    "engine/hydroma/simulation": {
+      "statements": 745,
+      "covered": 291
+    },
+    "engine/hydroma/simulation_env": {
+      "statements": 846,
+      "covered": 324
+    },
+    "engine/hydroma/soil": {
+      "statements": 950,
+      "covered": 221
+    },
+    "engine/hydroma/utils": {
+      "statements": 29,
+      "covered": 12
+    },
+    "engine/hydroma/visualization": {
+      "statements": 71,
+      "covered": 39
+    },
+    "engine/hydroma/water": {
+      "statements": 25,
+      "covered": 15
+    },
+    "engine/hydroma/watershed": {
+      "statements": 239,
+      "covered": 231
+    },
+    "engine/hydroma/wrapper.py": {
+      "statements": 134,
+      "covered": 22
+    },
+    "engine/land/__init__.py": {
+      "statements": 22,
+      "covered": 13
+    },
+    "engine/land/capability.py": {
+      "statements": 66,
+      "covered": 5
+    },
+    "engine/land/dem_processor.py": {
+      "statements": 51,
+      "covered": 16
+    },
+    "engine/land/drainage.py": {
+      "statements": 182,
+      "covered": 15
+    },
+    "engine/land/erosion_risk.py": {
+      "statements": 158,
+      "covered": 102
+    },
+    "engine/land/integration": {
+      "statements": 1925,
+      "covered": 426
+    },
+    "engine/land/models.py": {
+      "statements": 145,
+      "covered": 145
+    },
+    "engine/land/reference": {
+      "statements": 117,
+      "covered": 75
+    },
+    "engine/land/slope_aspect.py": {
+      "statements": 46,
+      "covered": 27
+    },
+    "engine/land/surface_water_analysis.py": {
+      "statements": 123,
+      "covered": 14
+    },
+    "engine/land/terrain_analysis.py": {
+      "statements": 268,
+      "covered": 22
+    },
+    "engine/land/tests": {
+      "statements": 580,
+      "covered": 0
+    },
+    "engine/memory_monitor.py": {
+      "statements": 84,
+      "covered": 26
+    },
+    "engine/resilience.py": {
+      "statements": 136,
+      "covered": 34
+    },
+    "engine/resource_manager.py": {
+      "statements": 49,
+      "covered": 11
+    },
+    "engine/safe_math.py": {
+      "statements": 117,
+      "covered": 19
+    },
+    "engine/strict_tests": {
+      "statements": 2913,
+      "covered": 2836
+    },
+    "engine/test_connector.py": {
+      "statements": 38,
+      "covered": 12
+    }
+  },
+  "files": [
+    {
+      "path": "engine/__init__.py",
+      "n": 7,
+      "c": 7,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/baseline/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/baseline/capture.py",
+      "n": 106,
+      "c": 53,
+      "m": 53,
+      "pct": 50.64935064935065,
+      "br": 48,
+      "brc": 25
+    },
+    {
+      "path": "engine/baseline/cases.py",
+      "n": 149,
+      "c": 148,
+      "m": 1,
+      "pct": 99.4535519125683,
+      "br": 34,
+      "brc": 34
+    },
+    {
+      "path": "engine/data/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/data/apply_published_table.py",
+      "n": 114,
+      "c": 75,
+      "m": 39,
+      "pct": 65.4320987654321,
+      "br": 48,
+      "brc": 31
+    },
+    {
+      "path": "engine/data/generate_cpp_table.py",
+      "n": 60,
+      "c": 47,
+      "m": 13,
+      "pct": 72.5,
+      "br": 20,
+      "brc": 11
+    },
+    {
+      "path": "engine/data/physics_guard.py",
+      "n": 20,
+      "c": 20,
+      "m": 0,
+      "pct": 100.0,
+      "br": 6,
+      "brc": 6
+    },
+    {
+      "path": "engine/data/soil_table.py",
+      "n": 63,
+      "c": 56,
+      "m": 7,
+      "pct": 84.41558441558442,
+      "br": 14,
+      "brc": 9
+    },
+    {
+      "path": "engine/data_connector.py",
+      "n": 148,
+      "c": 28,
+      "m": 120,
+      "pct": 18.354430379746834,
+      "br": 10,
+      "brc": 1
+    },
+    {
+      "path": "engine/hydroma/__init__.py",
+      "n": 2,
+      "c": 2,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/ai_assistant/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/ai_assistant/knowledge_base.py",
+      "n": 11,
+      "c": 11,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/ai_assistant/rag_service.py",
+      "n": 18,
+      "c": 8,
+      "m": 10,
+      "pct": 44.44444444444444,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/alembic_graph.py",
+      "n": 97,
+      "c": 83,
+      "m": 14,
+      "pct": 83.91608391608392,
+      "br": 46,
+      "brc": 37
+    },
+    {
+      "path": "engine/hydroma/analyses/topography_analysis.py",
+      "n": 86,
+      "c": 37,
+      "m": 49,
+      "pct": 36.27450980392157,
+      "br": 16,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/api/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/biofertilizer/__init__.py",
+      "n": 6,
+      "c": 6,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/biofertilizer/advanced_calculator.py",
+      "n": 544,
+      "c": 116,
+      "m": 428,
+      "pct": 14.795918367346939,
+      "br": 240,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/biofertilizer/calculator.py",
+      "n": 328,
+      "c": 108,
+      "m": 220,
+      "pct": 24.0,
+      "br": 122,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/biofertilizer/calibration.py",
+      "n": 53,
+      "c": 9,
+      "m": 44,
+      "pct": 13.432835820895523,
+      "br": 14,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/biofertilizer/data/__init__.py",
+      "n": 2,
+      "c": 2,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/biofertilizer/data/materials_data.py",
+      "n": 4,
+      "c": 4,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/biofertilizer/data/seed_data.py",
+      "n": 4,
+      "c": 4,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/biofertilizer/models.py",
+      "n": 290,
+      "c": 274,
+      "m": 16,
+      "pct": 94.48275862068965,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/biofertilizer/repositories.py",
+      "n": 394,
+      "c": 123,
+      "m": 271,
+      "pct": 26.059322033898304,
+      "br": 78,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/biofertilizer/services.py",
+      "n": 116,
+      "c": 26,
+      "m": 90,
+      "pct": 18.840579710144926,
+      "br": 22,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/biofertilizer/tests/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/biofertilizer/tests/conftest.py",
+      "n": 22,
+      "c": 0,
+      "m": 22,
+      "pct": 0.0,
+      "br": 6,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/biofertilizer/tests/test_nojin_calculator.py",
+      "n": 81,
+      "c": 0,
+      "m": 81,
+      "pct": 0.0,
+      "br": 4,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/biofertilizer/tests/test_nojin_comprehensive.py",
+      "n": 281,
+      "c": 0,
+      "m": 281,
+      "pct": 0.0,
+      "br": 24,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/biofertilizer/trials.py",
+      "n": 44,
+      "c": 10,
+      "m": 34,
+      "pct": 20.833333333333332,
+      "br": 4,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/calculation/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/calculation/calculation_engine.py",
+      "n": 41,
+      "c": 6,
+      "m": 35,
+      "pct": 10.909090909090908,
+      "br": 14,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/calculation/formula_evaluator.py",
+      "n": 124,
+      "c": 22,
+      "m": 102,
+      "pct": 11.956521739130435,
+      "br": 60,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/calculations/crop_water_req_calc.py",
+      "n": 39,
+      "c": 38,
+      "m": 1,
+      "pct": 95.34883720930233,
+      "br": 4,
+      "brc": 3
+    },
+    {
+      "path": "engine/hydroma/calibration/calibrator.py",
+      "n": 75,
+      "c": 16,
+      "m": 59,
+      "pct": 19.27710843373494,
+      "br": 8,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/calibration/model_calibrator.py",
+      "n": 63,
+      "c": 20,
+      "m": 43,
+      "pct": 25.974025974025974,
+      "br": 14,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/calibration/validator.py",
+      "n": 63,
+      "c": 14,
+      "m": 49,
+      "pct": 19.17808219178082,
+      "br": 10,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/calibration/version_manager.py",
+      "n": 70,
+      "c": 16,
+      "m": 54,
+      "pct": 20.512820512820515,
+      "br": 8,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/carbon/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/carbon/calculator.py",
+      "n": 94,
+      "c": 82,
+      "m": 12,
+      "pct": 85.45454545454545,
+      "br": 16,
+      "brc": 12
+    },
+    {
+      "path": "engine/hydroma/climate/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/climate/et_calculator.py",
+      "n": 89,
+      "c": 85,
+      "m": 4,
+      "pct": 92.66055045871559,
+      "br": 20,
+      "brc": 16
+    },
+    {
+      "path": "engine/hydroma/climate_adaptation/__init__.py",
+      "n": 5,
+      "c": 5,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/climate_adaptation/climate_adaptive_phenology.py",
+      "n": 124,
+      "c": 25,
+      "m": 99,
+      "pct": 14.204545454545455,
+      "br": 52,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/climate_adaptation/dynamic_stress_engine.py",
+      "n": 74,
+      "c": 32,
+      "m": 42,
+      "pct": 39.02439024390244,
+      "br": 8,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/climate_adaptation/input_validator.py",
+      "n": 38,
+      "c": 6,
+      "m": 32,
+      "pct": 11.11111111111111,
+      "br": 16,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/climate_adaptation/multi_stress_engine.py",
+      "n": 31,
+      "c": 5,
+      "m": 26,
+      "pct": 13.513513513513514,
+      "br": 6,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/climate_adaptation/scientific_data_validator.py",
+      "n": 64,
+      "c": 13,
+      "m": 51,
+      "pct": 13.26530612244898,
+      "br": 34,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/climate_adaptation/seed_optimization_engine.py",
+      "n": 236,
+      "c": 32,
+      "m": 204,
+      "pct": 9.090909090909092,
+      "br": 116,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/climate_adaptation/soil_degradation_model.py",
+      "n": 214,
+      "c": 39,
+      "m": 175,
+      "pct": 12.828947368421053,
+      "br": 90,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/climate_adaptation/uncertainty_knowledge_engine.py",
+      "n": 148,
+      "c": 25,
+      "m": 123,
+      "pct": 12.376237623762377,
+      "br": 54,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/config/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/config/settings.py",
+      "n": 372,
+      "c": 263,
+      "m": 109,
+      "pct": 60.045662100456624,
+      "br": 66,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/core/__init__.py",
+      "n": 2,
+      "c": 2,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/core/core.py",
+      "n": 106,
+      "c": 42,
+      "m": 64,
+      "pct": 30.434782608695652,
+      "br": 32,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/core/database.py",
+      "n": 3,
+      "c": 3,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/core/models.py",
+      "n": 31,
+      "c": 31,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/core/schemas.py",
+      "n": 38,
+      "c": 38,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/cpp_bindings.py",
+      "n": 20,
+      "c": 9,
+      "m": 11,
+      "pct": 37.5,
+      "br": 4,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/cpp_bridge/__init__.py",
+      "n": 227,
+      "c": 114,
+      "m": 113,
+      "pct": 46.666666666666664,
+      "br": 28,
+      "brc": 5
+    },
+    {
+      "path": "engine/hydroma/cpp_bridge/hydrology_fast.py",
+      "n": 61,
+      "c": 9,
+      "m": 52,
+      "pct": 12.67605633802817,
+      "br": 10,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/cpp_bridge/indices_fast.py",
+      "n": 112,
+      "c": 18,
+      "m": 94,
+      "pct": 11.39240506329114,
+      "br": 46,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/cpp_bridge/soil_physics_fast.py",
+      "n": 57,
+      "c": 17,
+      "m": 40,
+      "pct": 24.0,
+      "br": 18,
+      "brc": 1
+    },
+    {
+      "path": "engine/hydroma/crop/__init__.py",
+      "n": 3,
+      "c": 3,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/crop/ndvi_analysis.py",
+      "n": 19,
+      "c": 9,
+      "m": 10,
+      "pct": 39.130434782608695,
+      "br": 4,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/data/kc_lookup.py",
+      "n": 9,
+      "c": 5,
+      "m": 4,
+      "pct": 55.55555555555556,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/data_assimilation/__init__.py",
+      "n": 2,
+      "c": 2,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/data_assimilation/assimilation.py",
+      "n": 292,
+      "c": 84,
+      "m": 208,
+      "pct": 24.0,
+      "br": 58,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/data_pipeline/__init__.py",
+      "n": 2,
+      "c": 2,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/data_pipeline/pipeline.py",
+      "n": 853,
+      "c": 122,
+      "m": 731,
+      "pct": 11.391223155929039,
+      "br": 218,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/data_pipeline/provenance.py",
+      "n": 106,
+      "c": 45,
+      "m": 61,
+      "pct": 33.088235294117645,
+      "br": 30,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/decision_support/dss.py",
+      "n": 94,
+      "c": 36,
+      "m": 58,
+      "pct": 32.142857142857146,
+      "br": 18,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/distributed_ml/__init__.py",
+      "n": 2,
+      "c": 2,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/distributed_ml/trainer.py",
+      "n": 243,
+      "c": 55,
+      "m": 188,
+      "pct": 17.57188498402556,
+      "br": 70,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/economics/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/economics/analysis.py",
+      "n": 19,
+      "c": 12,
+      "m": 7,
+      "pct": 52.17391304347826,
+      "br": 4,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/economics/costing.py",
+      "n": 47,
+      "c": 14,
+      "m": 33,
+      "pct": 28.571428571428573,
+      "br": 2,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/economics/employment.py",
+      "n": 13,
+      "c": 4,
+      "m": 9,
+      "pct": 30.76923076923077,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/economics/integration.py",
+      "n": 46,
+      "c": 11,
+      "m": 35,
+      "pct": 23.91304347826087,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/economics/reference_basket.py",
+      "n": 140,
+      "c": 56,
+      "m": 84,
+      "pct": 29.78723404255319,
+      "br": 48,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/economics/revenue.py",
+      "n": 30,
+      "c": 5,
+      "m": 25,
+      "pct": 13.88888888888889,
+      "br": 6,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/economics/risk.py",
+      "n": 23,
+      "c": 6,
+      "m": 17,
+      "pct": 26.08695652173913,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/economics/roi.py",
+      "n": 48,
+      "c": 4,
+      "m": 44,
+      "pct": 6.25,
+      "br": 16,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/examples/calibrate_rusle_example.py",
+      "n": 23,
+      "c": 10,
+      "m": 13,
+      "pct": 44.0,
+      "br": 2,
+      "brc": 1
+    },
+    {
+      "path": "engine/hydroma/formulas/__init__.py",
+      "n": 5,
+      "c": 5,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/formulas/catalog.py",
+      "n": 4,
+      "c": 4,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/formulas/records.py",
+      "n": 34,
+      "c": 29,
+      "m": 5,
+      "pct": 78.57142857142857,
+      "br": 8,
+      "brc": 4
+    },
+    {
+      "path": "engine/hydroma/formulas/registry.py",
+      "n": 48,
+      "c": 26,
+      "m": 22,
+      "pct": 50.0,
+      "br": 10,
+      "brc": 3
+    },
+    {
+      "path": "engine/hydroma/formulas/research/__init__.py",
+      "n": 2,
+      "c": 0,
+      "m": 2,
+      "pct": 0.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/generative_ai/__init__.py",
+      "n": 20,
+      "c": 20,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/groundwater/__init__.py",
+      "n": 3,
+      "c": 3,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/groundwater/models.py",
+      "n": 92,
+      "c": 88,
+      "m": 4,
+      "pct": 95.37037037037037,
+      "br": 16,
+      "brc": 15
+    },
+    {
+      "path": "engine/hydroma/groundwater/service.py",
+      "n": 139,
+      "c": 57,
+      "m": 82,
+      "pct": 31.147540983606557,
+      "br": 44,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/groundwater/tests/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/groundwater/tests/test_service.py",
+      "n": 74,
+      "c": 0,
+      "m": 74,
+      "pct": 0.0,
+      "br": 2,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/hybrid_ml/__init__.py",
+      "n": 3,
+      "c": 3,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/hybrid_ml/gp_surrogate.py",
+      "n": 274,
+      "c": 50,
+      "m": 224,
+      "pct": 14.40677966101695,
+      "br": 80,
+      "brc": 1
+    },
+    {
+      "path": "engine/hydroma/hybrid_ml/pinn.py",
+      "n": 224,
+      "c": 59,
+      "m": 165,
+      "pct": 22.692307692307693,
+      "br": 36,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/infrastructure/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/infrastructure/channels.py",
+      "n": 57,
+      "c": 21,
+      "m": 36,
+      "pct": 32.30769230769231,
+      "br": 8,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/infrastructure/draining.py",
+      "n": 67,
+      "c": 29,
+      "m": 38,
+      "pct": 37.66233766233766,
+      "br": 10,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/infrastructure/earthwork.py",
+      "n": 43,
+      "c": 13,
+      "m": 30,
+      "pct": 25.49019607843137,
+      "br": 8,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/infrastructure/innovative_structures.py",
+      "n": 41,
+      "c": 11,
+      "m": 30,
+      "pct": 24.444444444444443,
+      "br": 4,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/infrastructure/water_structures.py",
+      "n": 42,
+      "c": 20,
+      "m": 22,
+      "pct": 43.47826086956522,
+      "br": 4,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/irrigation/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/irrigation/scheduler.py",
+      "n": 17,
+      "c": 17,
+      "m": 0,
+      "pct": 100.0,
+      "br": 2,
+      "brc": 2
+    },
+    {
+      "path": "engine/hydroma/materials/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/materials/compost_formulator.py",
+      "n": 12,
+      "c": 7,
+      "m": 5,
+      "pct": 50.0,
+      "br": 2,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/__init__.py",
+      "n": 11,
+      "c": 11,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/base.py",
+      "n": 118,
+      "c": 52,
+      "m": 66,
+      "pct": 38.23529411764706,
+      "br": 18,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/cache.py",
+      "n": 103,
+      "c": 23,
+      "m": 80,
+      "pct": 20.512820512820515,
+      "br": 14,
+      "brc": 1
+    },
+    {
+      "path": "engine/hydroma/models/ecsi.py",
+      "n": 78,
+      "c": 22,
+      "m": 56,
+      "pct": 22.448979591836736,
+      "br": 20,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/epia.py",
+      "n": 59,
+      "c": 18,
+      "m": 41,
+      "pct": 23.376623376623378,
+      "br": 18,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/esri.py",
+      "n": 52,
+      "c": 18,
+      "m": 34,
+      "pct": 28.125,
+      "br": 12,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/ewsi.py",
+      "n": 62,
+      "c": 27,
+      "m": 35,
+      "pct": 37.5,
+      "br": 10,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/expansion/__init__.py",
+      "n": 4,
+      "c": 4,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/expansion/modflow6.py",
+      "n": 168,
+      "c": 67,
+      "m": 101,
+      "pct": 29.910714285714285,
+      "br": 56,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/expansion/registry.py",
+      "n": 180,
+      "c": 112,
+      "m": 68,
+      "pct": 53.50877192982456,
+      "br": 48,
+      "brc": 10
+    },
+    {
+      "path": "engine/hydroma/models/expansion/swat_plus.py",
+      "n": 178,
+      "c": 71,
+      "m": 107,
+      "pct": 32.870370370370374,
+      "br": 38,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/global_watchdog/__init__.py",
+      "n": 8,
+      "c": 8,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/global_watchdog/climate_fetcher.py",
+      "n": 40,
+      "c": 9,
+      "m": 31,
+      "pct": 19.565217391304348,
+      "br": 6,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/global_watchdog/koppen.py",
+      "n": 102,
+      "c": 14,
+      "m": 88,
+      "pct": 9.45945945945946,
+      "br": 46,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/global_watchdog/reference_data.py",
+      "n": 5,
+      "c": 5,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/global_watchdog/watchdog.py",
+      "n": 32,
+      "c": 19,
+      "m": 13,
+      "pct": 52.77777777777778,
+      "br": 4,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/global_watchdog/wbi.py",
+      "n": 106,
+      "c": 38,
+      "m": 68,
+      "pct": 25.675675675675677,
+      "br": 42,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/groundwater_model.py",
+      "n": 40,
+      "c": 21,
+      "m": 19,
+      "pct": 47.72727272727273,
+      "br": 4,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/hdvi.py",
+      "n": 54,
+      "c": 20,
+      "m": 34,
+      "pct": 30.303030303030305,
+      "br": 12,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/hlhs.py",
+      "n": 58,
+      "c": 26,
+      "m": 32,
+      "pct": 34.21052631578947,
+      "br": 18,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/hpheno.py",
+      "n": 75,
+      "c": 19,
+      "m": 56,
+      "pct": 19.19191919191919,
+      "br": 24,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/hyrue.py",
+      "n": 67,
+      "c": 31,
+      "m": 36,
+      "pct": 38.27160493827161,
+      "br": 14,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/results.py",
+      "n": 20,
+      "c": 20,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/runoff_model.py",
+      "n": 110,
+      "c": 78,
+      "m": 32,
+      "pct": 69.04761904761905,
+      "br": 16,
+      "brc": 9
+    },
+    {
+      "path": "engine/hydroma/models/validation/__init__.py",
+      "n": 4,
+      "c": 4,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/validation/loader.py",
+      "n": 66,
+      "c": 36,
+      "m": 30,
+      "pct": 45.0,
+      "br": 14,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/validation/reference_data.py",
+      "n": 6,
+      "c": 6,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/models/validation/runner.py",
+      "n": 129,
+      "c": 32,
+      "m": 97,
+      "pct": 19.161676646706585,
+      "br": 38,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/mrv/__init__.py",
+      "n": 3,
+      "c": 3,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/mrv/iot_ingest.py",
+      "n": 97,
+      "c": 21,
+      "m": 76,
+      "pct": 17.647058823529413,
+      "br": 22,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/mrv/metrics.py",
+      "n": 63,
+      "c": 21,
+      "m": 42,
+      "pct": 26.582278481012658,
+      "br": 16,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/mrv/models.py",
+      "n": 13,
+      "c": 13,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/mrv/nojin_mrv.py",
+      "n": 98,
+      "c": 56,
+      "m": 42,
+      "pct": 53.84615384615385,
+      "br": 6,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/mrv/qa.py",
+      "n": 26,
+      "c": 10,
+      "m": 16,
+      "pct": 29.41176470588235,
+      "br": 8,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/mrv/satellite_cdse.py",
+      "n": 98,
+      "c": 36,
+      "m": 62,
+      "pct": 29.032258064516128,
+      "br": 26,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/mrv/schemas.py",
+      "n": 36,
+      "c": 35,
+      "m": 1,
+      "pct": 97.22222222222223,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/mrv/tests/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/optimization/optimizer.py",
+      "n": 95,
+      "c": 14,
+      "m": 81,
+      "pct": 11.764705882352942,
+      "br": 24,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/performance/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/performance/benchmarks.py",
+      "n": 19,
+      "c": 5,
+      "m": 14,
+      "pct": 21.73913043478261,
+      "br": 4,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/phenology.py",
+      "n": 69,
+      "c": 32,
+      "m": 37,
+      "pct": 37.64705882352941,
+      "br": 16,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/plant_neuro/__init__.py",
+      "n": 5,
+      "c": 5,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/plant_neuro/engine.py",
+      "n": 125,
+      "c": 48,
+      "m": 77,
+      "pct": 29.09090909090909,
+      "br": 40,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/plant_neuro/signals.py",
+      "n": 111,
+      "c": 33,
+      "m": 78,
+      "pct": 22.448979591836736,
+      "br": 36,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/plant_neuro/voc.py",
+      "n": 106,
+      "c": 30,
+      "m": 76,
+      "pct": 21.73913043478261,
+      "br": 32,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/production/__init__.py",
+      "n": 2,
+      "c": 2,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/production/deployment.py",
+      "n": 91,
+      "c": 53,
+      "m": 38,
+      "pct": 55.78947368421053,
+      "br": 4,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/satellite/__init__.py",
+      "n": 1,
+      "c": 1,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/satellite/analyzer.py",
+      "n": 84,
+      "c": 31,
+      "m": 53,
+      "pct": 28.703703703703702,
+      "br": 24,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/satellite/processors/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/satellite/processors/indices.py",
+      "n": 45,
+      "c": 19,
+      "m": 26,
+      "pct": 29.23076923076923,
+      "br": 20,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/satellite/providers/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/satellite/providers/base.py",
+      "n": 27,
+      "c": 24,
+      "m": 3,
+      "pct": 88.88888888888889,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/satellite/providers/earth_search.py",
+      "n": 135,
+      "c": 28,
+      "m": 107,
+      "pct": 17.177914110429448,
+      "br": 28,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/satellite/providers/nasa_power.py",
+      "n": 35,
+      "c": 18,
+      "m": 17,
+      "pct": 48.648648648648646,
+      "br": 2,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/scenario/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/scenarios/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/scenarios/climate_scenarios.py",
+      "n": 33,
+      "c": 14,
+      "m": 19,
+      "pct": 35.8974358974359,
+      "br": 6,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/scenarios/crop_scenarios.py",
+      "n": 50,
+      "c": 15,
+      "m": 35,
+      "pct": 24.193548387096776,
+      "br": 12,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/scenarios/monte_carlo.py",
+      "n": 33,
+      "c": 3,
+      "m": 30,
+      "pct": 6.976744186046512,
+      "br": 10,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/scenarios/scenario_manager.py",
+      "n": 95,
+      "c": 8,
+      "m": 87,
+      "pct": 7.619047619047619,
+      "br": 10,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/scenarios/whatif_engine.py",
+      "n": 33,
+      "c": 14,
+      "m": 19,
+      "pct": 37.83783783783784,
+      "br": 4,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/simulation/__init__.py",
+      "n": 4,
+      "c": 4,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/simulation/calibration.py",
+      "n": 48,
+      "c": 9,
+      "m": 39,
+      "pct": 16.071428571428573,
+      "br": 8,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/simulation/contracts.py",
+      "n": 174,
+      "c": 149,
+      "m": 25,
+      "pct": 75.25252525252525,
+      "br": 24,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/simulation/hecras.py",
+      "n": 18,
+      "c": 5,
+      "m": 13,
+      "pct": 25.0,
+      "br": 2,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/simulation/orchestrator.py",
+      "n": 109,
+      "c": 22,
+      "m": 87,
+      "pct": 17.05426356589147,
+      "br": 20,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/simulation/runners/__init__.py",
+      "n": 5,
+      "c": 5,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/simulation/runners/aquacrop_runner.py",
+      "n": 83,
+      "c": 17,
+      "m": 66,
+      "pct": 15.315315315315315,
+      "br": 28,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/simulation/runners/base.py",
+      "n": 8,
+      "c": 7,
+      "m": 1,
+      "pct": 87.5,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/simulation/runners/rothc_runner.py",
+      "n": 72,
+      "c": 23,
+      "m": 49,
+      "pct": 26.136363636363637,
+      "br": 16,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/simulation/runners/swat_runner.py",
+      "n": 91,
+      "c": 24,
+      "m": 67,
+      "pct": 19.51219512195122,
+      "br": 32,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/simulation/scenarios.py",
+      "n": 2,
+      "c": 2,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/simulation/weap.py",
+      "n": 11,
+      "c": 3,
+      "m": 8,
+      "pct": 27.272727272727273,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/simulation/weather_source.py",
+      "n": 120,
+      "c": 21,
+      "m": 99,
+      "pct": 14.583333333333334,
+      "br": 24,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/simulation_env/__init__.py",
+      "n": 3,
+      "c": 3,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/simulation_env/climate.py",
+      "n": 229,
+      "c": 68,
+      "m": 161,
+      "pct": 26.666666666666668,
+      "br": 26,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/simulation_env/contracts.py",
+      "n": 68,
+      "c": 66,
+      "m": 2,
+      "pct": 97.05882352941177,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/simulation_env/controller.py",
+      "n": 84,
+      "c": 26,
+      "m": 58,
+      "pct": 28.26086956521739,
+      "br": 8,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/simulation_env/disasters.py",
+      "n": 231,
+      "c": 95,
+      "m": 136,
+      "pct": 37.54940711462451,
+      "br": 22,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/simulation_env/stress.py",
+      "n": 160,
+      "c": 36,
+      "m": 124,
+      "pct": 18.94736842105263,
+      "br": 30,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/simulation_env/weather.py",
+      "n": 71,
+      "c": 30,
+      "m": 41,
+      "pct": 40.0,
+      "br": 4,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/soil/__init__.py",
+      "n": 9,
+      "c": 9,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/soil/chemistry.py",
+      "n": 76,
+      "c": 9,
+      "m": 67,
+      "pct": 7.894736842105263,
+      "br": 38,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/soil/health.py",
+      "n": 112,
+      "c": 12,
+      "m": 100,
+      "pct": 7.228915662650603,
+      "br": 54,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/soil/models.py",
+      "n": 14,
+      "c": 14,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/soil/pedotransfer.py",
+      "n": 20,
+      "c": 3,
+      "m": 17,
+      "pct": 15.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/soil/physics.py",
+      "n": 96,
+      "c": 51,
+      "m": 45,
+      "pct": 51.492537313432834,
+      "br": 38,
+      "brc": 18
+    },
+    {
+      "path": "engine/hydroma/soil/recommendations.py",
+      "n": 59,
+      "c": 7,
+      "m": 52,
+      "pct": 8.045977011494253,
+      "br": 28,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/soil/salinity.py",
+      "n": 47,
+      "c": 46,
+      "m": 1,
+      "pct": 94.20289855072464,
+      "br": 22,
+      "brc": 19
+    },
+    {
+      "path": "engine/hydroma/soil/taxonomy.py",
+      "n": 74,
+      "c": 16,
+      "m": 58,
+      "pct": 16.0,
+      "br": 26,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/soil/tests/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/soil/tests/test_soil.py",
+      "n": 344,
+      "c": 0,
+      "m": 344,
+      "pct": 0.0,
+      "br": 6,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/soil/texture.py",
+      "n": 49,
+      "c": 7,
+      "m": 42,
+      "pct": 8.235294117647058,
+      "br": 36,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/soil/water_retention.py",
+      "n": 50,
+      "c": 47,
+      "m": 3,
+      "pct": 91.89189189189189,
+      "br": 24,
+      "brc": 21
+    },
+    {
+      "path": "engine/hydroma/utils/topographic_calcs.py",
+      "n": 29,
+      "c": 12,
+      "m": 17,
+      "pct": 32.432432432432435,
+      "br": 8,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/visualization/nojin_visualization.py",
+      "n": 71,
+      "c": 39,
+      "m": 32,
+      "pct": 52.0,
+      "br": 4,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/water/__init__.py",
+      "n": 3,
+      "c": 3,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/water/quality.py",
+      "n": 22,
+      "c": 12,
+      "m": 10,
+      "pct": 55.55555555555556,
+      "br": 14,
+      "brc": 8
+    },
+    {
+      "path": "engine/hydroma/watershed/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/hydroma/watershed/calculator.py",
+      "n": 223,
+      "c": 216,
+      "m": 7,
+      "pct": 95.7095709570957,
+      "br": 80,
+      "brc": 74
+    },
+    {
+      "path": "engine/hydroma/watershed/watershed_calculator.py",
+      "n": 16,
+      "c": 15,
+      "m": 1,
+      "pct": 88.88888888888889,
+      "br": 2,
+      "brc": 1
+    },
+    {
+      "path": "engine/hydroma/wrapper.py",
+      "n": 134,
+      "c": 22,
+      "m": 112,
+      "pct": 12.5,
+      "br": 58,
+      "brc": 2
+    },
+    {
+      "path": "engine/land/__init__.py",
+      "n": 22,
+      "c": 13,
+      "m": 9,
+      "pct": 59.09090909090909,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/capability.py",
+      "n": 66,
+      "c": 5,
+      "m": 61,
+      "pct": 5.0,
+      "br": 34,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/dem_processor.py",
+      "n": 51,
+      "c": 16,
+      "m": 35,
+      "pct": 26.229508196721312,
+      "br": 10,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/drainage.py",
+      "n": 182,
+      "c": 15,
+      "m": 167,
+      "pct": 5.905511811023622,
+      "br": 72,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/erosion_risk.py",
+      "n": 158,
+      "c": 102,
+      "m": 56,
+      "pct": 59.73451327433628,
+      "br": 68,
+      "brc": 33
+    },
+    {
+      "path": "engine/land/integration/__init__.py",
+      "n": 28,
+      "c": 19,
+      "m": 9,
+      "pct": 67.85714285714286,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/integration/climate_integrator.py",
+      "n": 257,
+      "c": 21,
+      "m": 236,
+      "pct": 6.306306306306307,
+      "br": 76,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/integration/climate_models.py",
+      "n": 85,
+      "c": 84,
+      "m": 1,
+      "pct": 98.82352941176471,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/integration/comprehensive_analyzer.py",
+      "n": 242,
+      "c": 67,
+      "m": 175,
+      "pct": 19.82248520710059,
+      "br": 96,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/integration/models.py",
+      "n": 79,
+      "c": 76,
+      "m": 3,
+      "pct": 96.20253164556962,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/integration/motors_hub.py",
+      "n": 110,
+      "c": 40,
+      "m": 70,
+      "pct": 30.76923076923077,
+      "br": 20,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/integration/soil_integrator.py",
+      "n": 223,
+      "c": 34,
+      "m": 189,
+      "pct": 9.798270893371757,
+      "br": 124,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/integration/tests/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/integration/tests/test_climate_integrator.py",
+      "n": 228,
+      "c": 0,
+      "m": 228,
+      "pct": 0.0,
+      "br": 16,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/integration/tests/test_comprehensive_analyzer.py",
+      "n": 88,
+      "c": 0,
+      "m": 88,
+      "pct": 0.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/integration/tests/test_motors_hub.py",
+      "n": 65,
+      "c": 0,
+      "m": 65,
+      "pct": 0.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/integration/tests/test_soil_integrator.py",
+      "n": 138,
+      "c": 0,
+      "m": 138,
+      "pct": 0.0,
+      "br": 6,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/integration/tests/test_water_adapter.py",
+      "n": 164,
+      "c": 0,
+      "m": 164,
+      "pct": 0.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/integration/water_adapter.py",
+      "n": 218,
+      "c": 85,
+      "m": 133,
+      "pct": 32.196969696969695,
+      "br": 46,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/models.py",
+      "n": 145,
+      "c": 145,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/reference/__init__.py",
+      "n": 3,
+      "c": 3,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/reference/data.py",
+      "n": 56,
+      "c": 14,
+      "m": 42,
+      "pct": 17.5,
+      "br": 24,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/reference/models.py",
+      "n": 58,
+      "c": 58,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/slope_aspect.py",
+      "n": 46,
+      "c": 27,
+      "m": 19,
+      "pct": 51.92307692307692,
+      "br": 6,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/surface_water_analysis.py",
+      "n": 123,
+      "c": 14,
+      "m": 109,
+      "pct": 7.734806629834254,
+      "br": 58,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/terrain_analysis.py",
+      "n": 268,
+      "c": 22,
+      "m": 246,
+      "pct": 5.978260869565218,
+      "br": 100,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/tests/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/tests/test_capability.py",
+      "n": 36,
+      "c": 0,
+      "m": 36,
+      "pct": 0.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/tests/test_land_comprehensive.py",
+      "n": 203,
+      "c": 0,
+      "m": 203,
+      "pct": 0.0,
+      "br": 14,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/tests/test_land_improved.py",
+      "n": 159,
+      "c": 0,
+      "m": 159,
+      "pct": 0.0,
+      "br": 12,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/tests/test_models.py",
+      "n": 60,
+      "c": 0,
+      "m": 60,
+      "pct": 0.0,
+      "br": 4,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/tests/test_slope.py",
+      "n": 73,
+      "c": 0,
+      "m": 73,
+      "pct": 0.0,
+      "br": 6,
+      "brc": 0
+    },
+    {
+      "path": "engine/land/tests/test_terrain.py",
+      "n": 49,
+      "c": 0,
+      "m": 49,
+      "pct": 0.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/memory_monitor.py",
+      "n": 84,
+      "c": 26,
+      "m": 58,
+      "pct": 26.53061224489796,
+      "br": 14,
+      "brc": 0
+    },
+    {
+      "path": "engine/resilience.py",
+      "n": 136,
+      "c": 34,
+      "m": 102,
+      "pct": 20.481927710843372,
+      "br": 30,
+      "brc": 0
+    },
+    {
+      "path": "engine/resource_manager.py",
+      "n": 49,
+      "c": 11,
+      "m": 38,
+      "pct": 20.754716981132077,
+      "br": 4,
+      "brc": 0
+    },
+    {
+      "path": "engine/safe_math.py",
+      "n": 117,
+      "c": 19,
+      "m": 98,
+      "pct": 12.883435582822086,
+      "br": 46,
+      "brc": 2
+    },
+    {
+      "path": "engine/strict_tests/__init__.py",
+      "n": 0,
+      "c": 0,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/strict_tests/conftest.py",
+      "n": 64,
+      "c": 50,
+      "m": 14,
+      "pct": 71.62162162162163,
+      "br": 10,
+      "brc": 3
+    },
+    {
+      "path": "engine/strict_tests/test_s00_baseline.py",
+      "n": 74,
+      "c": 67,
+      "m": 7,
+      "pct": 86.25,
+      "br": 6,
+      "brc": 2
+    },
+    {
+      "path": "engine/strict_tests/test_s01_import_integrity.py",
+      "n": 158,
+      "c": 149,
+      "m": 9,
+      "pct": 92.38095238095238,
+      "br": 52,
+      "brc": 45
+    },
+    {
+      "path": "engine/strict_tests/test_s02_climate_et0.py",
+      "n": 269,
+      "c": 256,
+      "m": 13,
+      "pct": 94.11764705882354,
+      "br": 20,
+      "brc": 16
+    },
+    {
+      "path": "engine/strict_tests/test_s03_hydrology_runoff.py",
+      "n": 201,
+      "c": 199,
+      "m": 2,
+      "pct": 98.63013698630137,
+      "br": 18,
+      "brc": 17
+    },
+    {
+      "path": "engine/strict_tests/test_s04_groundwater.py",
+      "n": 158,
+      "c": 157,
+      "m": 1,
+      "pct": 99.4047619047619,
+      "br": 10,
+      "brc": 10
+    },
+    {
+      "path": "engine/strict_tests/test_s05_soil_retention.py",
+      "n": 250,
+      "c": 241,
+      "m": 9,
+      "pct": 94.82758620689656,
+      "br": 40,
+      "brc": 34
+    },
+    {
+      "path": "engine/strict_tests/test_s06_watershed_design.py",
+      "n": 403,
+      "c": 399,
+      "m": 4,
+      "pct": 98.45474613686534,
+      "br": 50,
+      "brc": 47
+    },
+    {
+      "path": "engine/strict_tests/test_s07_carbon.py",
+      "n": 202,
+      "c": 201,
+      "m": 1,
+      "pct": 99.52380952380952,
+      "br": 8,
+      "brc": 8
+    },
+    {
+      "path": "engine/strict_tests/test_s08_irrigation.py",
+      "n": 105,
+      "c": 105,
+      "m": 0,
+      "pct": 100.0,
+      "br": 4,
+      "brc": 4
+    },
+    {
+      "path": "engine/strict_tests/test_s09_dimensional_consistency.py",
+      "n": 99,
+      "c": 99,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/strict_tests/test_s10_property_invariants.py",
+      "n": 219,
+      "c": 219,
+      "m": 0,
+      "pct": 100.0,
+      "br": 12,
+      "brc": 12
+    },
+    {
+      "path": "engine/strict_tests/test_s11_parity_tripwires.py",
+      "n": 278,
+      "c": 273,
+      "m": 5,
+      "pct": 97.72727272727273,
+      "br": 30,
+      "brc": 28
+    },
+    {
+      "path": "engine/strict_tests/test_s12_table_registration.py",
+      "n": 130,
+      "c": 127,
+      "m": 3,
+      "pct": 96.95121951219512,
+      "br": 34,
+      "brc": 32
+    },
+    {
+      "path": "engine/strict_tests/test_s13_soil_table.py",
+      "n": 219,
+      "c": 213,
+      "m": 6,
+      "pct": 94.58483754512635,
+      "br": 58,
+      "brc": 49
+    },
+    {
+      "path": "engine/strict_tests/test_s14_published_table.py",
+      "n": 76,
+      "c": 76,
+      "m": 0,
+      "pct": 100.0,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/strict_tests/thresholds.py",
+      "n": 8,
+      "c": 5,
+      "m": 3,
+      "pct": 62.5,
+      "br": 0,
+      "brc": 0
+    },
+    {
+      "path": "engine/test_connector.py",
+      "n": 38,
+      "c": 12,
+      "m": 26,
+      "pct": 32.5,
+      "br": 2,
+      "brc": 1
+    }
+  ]
+}

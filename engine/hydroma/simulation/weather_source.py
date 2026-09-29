@@ -22,6 +22,10 @@ from datetime import date, datetime, timedelta
 
 import pandas as pd
 import requests
+from engine.hydroma.climate.et_calculator import (
+    ClimateData,
+    calc_et0_hargreaves,
+)
 
 ARCHIVE_URL = "https://archive-api.open-meteo.com/v1/archive"
 REQUEST_TIMEOUT = (10.0, 60.0)
@@ -52,10 +56,29 @@ def _solar_geometry(latitude_deg: float, day_of_year: int) -> float:
 
 
 def hargreaves_et0(tmin_c: float, tmax_c: float, latitude_deg: float, day_of_year: int) -> float:
-    """FAO-56 Hargreaves reference evapotranspiration (mm/day)."""
-    ra = _solar_geometry(latitude_deg, day_of_year)
-    tmean = (tmin_c + tmax_c) / 2.0
-    return max(0.0, 0.0023 * ra * (tmean + 17.8) * math.sqrt(max(tmax_c - tmin_c, 0.1)))
+    """FAO-56 eq. 52 reference evapotranspiration (mm/day).
+
+    Delegates to ``climate.et_calculator.calc_et0_hargreaves``, which is the
+    single implementation. This copy used to evaluate the formula itself with
+    ``math.sqrt`` — exponent 0.50 where FAO-56 publishes 0.48 — which overstated
+    ET0 by 3.3 to 6.6 %. Callers of this function are the simulation
+    orchestrator and ``services/api_gateway/routers/hydroma_climate.py``.
+
+    The 0.1 degC floor on the diurnal range is preserved from the original
+    expression; FAO-56 gives zero for a flat day and this module's callers have
+    always received a small positive number instead.
+
+    The core is given `data=` rather than a precomputed Ra so that it derives
+    the extraterrestrial radiation itself. The local `_solar_geometry` returns
+    the millimetre-equivalent, and passing that as `ra_mj` would apply the
+    0.408 conversion a second time and return a 2.45x underestimate.
+    """
+    return calc_et0_hargreaves(
+        data=ClimateData(
+            tmin=tmin_c, tmax=tmax_c, latitude=latitude_deg, doy=day_of_year
+        ),
+        dtr_floor=0.1,
+    )
 
 
 def fetch_daily_weather(

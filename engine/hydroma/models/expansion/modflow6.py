@@ -20,7 +20,10 @@ from typing import Any
 
 import numpy as np
 
-from engine.hydroma.models.base import ScientificModel
+from engine.hydroma.models.base import (ModelInput,
+    ModelOutput,
+    ScientificModel,
+)
 from engine.hydroma.models.expansion.registry import (
     ModelDomain,
     ModelFidelity,

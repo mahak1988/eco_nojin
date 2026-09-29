@@ -44,7 +44,7 @@ export default async function BazaarsPage({ params }: { params: Promise<{ locale
           </div>
           <Link
             href={`/${locale}/market/bazaars/create`}
-            className="rounded-md bg-forest px-4 py-2 text-sm font-semibold text-paper"
+            className="rounded-md bg-action px-4 py-2 text-sm font-semibold text-on-action"
           >
             {t('create')}
           </Link>

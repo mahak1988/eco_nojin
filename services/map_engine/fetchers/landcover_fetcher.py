@@ -14,7 +14,7 @@ import rioxarray
 import xarray as xr
 from shapely.geometry import Polygon
 
-from ..base import MapFetcher
+from ..base import DataOrigin, MapFetcher
 
 
 class LandCoverFetcher(MapFetcher):
@@ -33,6 +33,9 @@ class LandCoverFetcher(MapFetcher):
     90: Herbaceous wetland
     100: Moss and lichen
     """
+
+    DATA_ORIGIN = DataOrigin.SYNTHETIC
+    ORIGIN_DETAIL = "LandCoverFetcher returns a random land-cover class grid; no ESA WorldCover or MODIS data is read"
 
     CLASSES = {
         10: "Tree cover",

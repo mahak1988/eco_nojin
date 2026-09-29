@@ -4,6 +4,7 @@ import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
@@ -27,12 +28,6 @@ type WalletOption = {
 
 type OptionsPayload = { options: WalletOption[] };
 
-const TITLES: Record<string, string> = { fa: 'نمایشگاه اکومین', en: 'EcoWallet Demo' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'قابلیت‌های کیف پول دیجیتال',
-  en: 'Digital wallet features showcase',
-};
-
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
@@ -41,21 +36,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-components-ecowallet');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/components/ecowallet`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/components/ecowallet`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/components/ecowallet`,
-        en: `${BASE_URL}/en/public/components/ecowallet`,
-      },
+      canonical: canonicalFor(locale, '/public/components/ecowallet'),
+      languages: languageAlternates('/public/components/ecowallet'),
     },
   };
 }
@@ -63,9 +56,11 @@ export async function generateMetadata({
 export default async function EcoWalletPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  const meta = await getTranslations('pageMeta.public-components-ecowallet');
   const template = await getTranslations('market.template');
-  const title = TITLES[locale] ?? TITLES.en;
-  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+  const title = meta('title');
+  const description = meta('description');
 
   const [health, earning, redemption] = await Promise.all([
     apiGet<WalletHealth>(HEALTH_PATH),
@@ -98,14 +93,15 @@ export default async function EcoWalletPage({ params }: { params: Promise<{ loca
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp
-          source={HEALTH_PATH}
-          label={title}
-          verified={health.ok}
-          method={HEALTH_PATH}
-        >
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-        </ProvenanceStamp>
+          <ProvenanceStamp
+            source={HEALTH_PATH}
+            label={title}
+            verified={health.ok}
+            method={HEALTH_PATH}
+          />
+        </div>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
       </section>
 

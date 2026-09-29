@@ -1,9 +1,10 @@
 import { Metadata } from 'next';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
@@ -30,12 +31,6 @@ type ToolRegistryPhase = {
 
 type ToolRegistryPhases = { count: number; phases: ToolRegistryPhase[] };
 
-const TITLES: Record<string, string> = { fa: 'نقشه راه', en: 'Roadmap' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'دروازه‌های فاز و فازهای ثبت‌شده در رجیستری ابزار',
-  en: 'The registered phase gates and phases in the tool registry',
-};
-
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
@@ -44,21 +39,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-goals-roadmap');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/goals/roadmap`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/goals/roadmap`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/goals/roadmap`,
-        en: `${BASE_URL}/en/public/goals/roadmap`,
-      },
+      canonical: canonicalFor(locale, '/public/goals/roadmap'),
+      languages: languageAlternates('/public/goals/roadmap'),
     },
   };
 }
@@ -66,8 +59,10 @@ export async function generateMetadata({
 export default async function RoadmapPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const title = TITLES[locale] ?? TITLES.en;
-  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+
+  const meta = await getTranslations('pageMeta.public-goals-roadmap');
+  const title = meta('title');
+  const description = meta('description');
 
   const gates = await apiGet<PhaseGateStatus>('/api/v1/blockchain/phasegate/status');
   const gatesState = toDataState(
@@ -86,14 +81,15 @@ export default async function RoadmapPage({ params }: { params: Promise<{ locale
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <div className="mx-auto max-w-4xl px-6 pb-12 pt-8">
-        <ProvenanceStamp
-          source={'/api/v1/blockchain/phasegate/status'}
-          label={title}
-          verified={gates.ok}
-          method={'/api/v1/blockchain/phasegate/status'}
-        >
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-        </ProvenanceStamp>
+          <ProvenanceStamp
+            source={'/api/v1/blockchain/phasegate/status'}
+            label={title}
+            verified={gates.ok}
+            method={'/api/v1/blockchain/phasegate/status'}
+          />
+        </div>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
 
         <section className="mt-8">

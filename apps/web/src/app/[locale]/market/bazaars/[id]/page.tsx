@@ -108,7 +108,7 @@ export default async function BazaarDetailPage({
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 href={`/${locale}/market`}
-                className="rounded-md bg-forest px-4 py-2 text-sm font-semibold text-paper"
+                className="rounded-md bg-action px-4 py-2 text-sm font-semibold text-on-action"
               >
                 {t('browseProducts')}
               </Link>

@@ -1,26 +1,30 @@
 """Carbon tokenization API router.
 
 Endpoints for on-chain carbon credit management and Verra integration.
+
+Authorization model
+-------------------
+The write endpoints (mint, transfer, retire, Verra sync) were previously
+gated on ``require_user`` only, so any authenticated account could mint
+arbitrary credits for any ``project_id``, move credits out of any
+``from_address``, retire any ``token_id``, and import arbitrary Verra projects.
+None of them verify that the caller owns the project or the address, because
+no project-ownership table is wired into this router. Until one is, minting
+and settlement are admin-only. Read endpoints stay on ``require_user``: they
+expose public ledger state and carry no personal data.
 """
 
 import logging
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
-from sqlalchemy.orm import Session
 
-from database.hub import hub
 from database.models import User
-from services.api_gateway.auth import require_user
+from services.api_gateway.auth import require_admin, require_user
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/v1/carbon", tags=["Carbon Credits"])
-
-
-def get_db():
-    with hub.get_session() as session:
-        yield session
 
 
 class _LazyCarbonService:
@@ -73,13 +77,12 @@ class VerraSearchRequest(BaseModel):
     page: int = Field(default=1, ge=1)
 
 
-@router.post("/tokenize")
+@router.post("/tokenize", dependencies=[Depends(require_admin)])
 def tokenize_credits(
     payload: TokenizeRequest,
-    user: User = Depends(require_user),
-    db: Session = Depends(get_db),
+    user: User = Depends(require_admin),
 ):
-    """Mint carbon credits on-chain."""
+    """Mint carbon credits on-chain. Admin-only until projects carry an owner."""
     try:
         result = _carbon_service.issue_credits(
             project_id=payload.project_id,
@@ -88,8 +91,10 @@ def tokenize_credits(
             recipient_address=payload.recipient_address,
         )
     except Exception as exc:
-        logger.error("Tokenization failed: %s", exc)
-        raise HTTPException(status_code=400, detail=str(exc))
+        # The previous `detail=str(exc)` forwarded the raw driver/RPC error to
+        # the client, which can carry configuration and endpoint details.
+        logger.exception("Tokenization failed for project %s", payload.project_id)
+        raise HTTPException(status_code=400, detail="Tokenization failed") from exc
 
     return {
         **result,
@@ -98,13 +103,12 @@ def tokenize_credits(
     }
 
 
-@router.post("/credits/transfer")
+@router.post("/credits/transfer", dependencies=[Depends(require_admin)])
 def transfer_credits(
     payload: TransferRequest,
-    user: User = Depends(require_user),
-    db: Session = Depends(get_db),
+    user: User = Depends(require_admin),
 ):
-    """Transfer carbon credits."""
+    """Transfer carbon credits. Admin-only until addresses carry an owner."""
     try:
         result = _carbon_service.transfer_credits(
             from_address=payload.from_address,
@@ -112,28 +116,27 @@ def transfer_credits(
             token_id=payload.token_id,
         )
     except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc))
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
     except Exception as exc:
-        logger.error("Transfer failed: %s", exc)
-        raise HTTPException(status_code=400, detail=str(exc))
+        logger.exception("Transfer failed for token %s", payload.token_id)
+        raise HTTPException(status_code=400, detail="Transfer failed") from exc
 
     return {**result, "requested_by": user.id}
 
 
-@router.post("/credits/retire")
+@router.post("/credits/retire", dependencies=[Depends(require_admin)])
 def retire_credits(
     payload: RetireRequest,
-    user: User = Depends(require_user),
-    db: Session = Depends(get_db),
+    user: User = Depends(require_admin),
 ):
-    """Retire carbon credits."""
+    """Retire carbon credits. Admin-only until tokens carry an owner."""
     try:
         result = _carbon_service.retire_credits(
             token_id=payload.token_id,
             retirement_justification=payload.retirement_justification,
         )
     except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc))
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     return {**result, "retired_by": user.id}
 
@@ -157,7 +160,7 @@ def get_credit_history(
     try:
         history = _carbon_service.get_credit_history(token_id)
     except ValueError as exc:
-        raise HTTPException(status_code=404, detail=str(exc))
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
     return {"token_id": token_id, "history": history}
 
 
@@ -170,7 +173,7 @@ def verify_credit(
     try:
         result = _carbon_service.verify_on_chain(token_id)
     except ValueError as exc:
-        raise HTTPException(status_code=404, detail=str(exc))
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
     return result
 
 
@@ -194,17 +197,17 @@ async def search_verra(
     return {"results": results, "page": payload.page}
 
 
-@router.post("/verra/sync")
+@router.post("/verra/sync", dependencies=[Depends(require_admin)])
 async def sync_verra_project(
     registry_id: str = Query(..., min_length=1),
-    user: User = Depends(require_user),
+    user: User = Depends(require_admin),
 ):
-    """Sync a Verra project into Eco Nojin."""
+    """Sync a Verra project into Eco Nojin. Admin-only: writes platform state."""
     try:
         result = await _verra_service.sync_project_from_verra(registry_id)
     except Exception as exc:
-        logger.error("Verra sync failed: %s", exc)
-        raise HTTPException(status_code=400, detail=str(exc))
+        logger.exception("Verra sync failed for %s", registry_id)
+        raise HTTPException(status_code=400, detail="Verra sync failed") from exc
     return result
 
 
@@ -216,6 +219,9 @@ async def get_verra_project(
     """Get Verra project details."""
     try:
         result = await _verra_service.get_project(registry_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
     except Exception as exc:
-        raise HTTPException(status_code=400, detail=str(exc))
+        logger.exception("Verra lookup failed for %s", registry_id)
+        raise HTTPException(status_code=400, detail="Verra lookup failed") from exc
     return result

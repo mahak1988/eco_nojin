@@ -14,7 +14,7 @@ import rioxarray
 import xarray as xr
 from shapely.geometry import Polygon
 
-from ..base import MapFetcher
+from ..base import DataOrigin, MapFetcher
 
 
 class RunoffFetcher(MapFetcher):
@@ -27,6 +27,9 @@ class RunoffFetcher(MapFetcher):
     C: Moderately high (loam, silt loam)
     D: High runoff potential (clay, silty clay)
     """
+
+    DATA_ORIGIN = DataOrigin.SYNTHETIC
+    ORIGIN_DETAIL = "RunoffFetcher derives from the synthetic land-cover layer, so it is synthetic transitively"
 
     # CN values for AMC-II (normal conditions)
     # Source: USDA TR-55

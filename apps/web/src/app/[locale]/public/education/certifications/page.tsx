@@ -4,18 +4,13 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { UnavailableCapability } from '../../data-states';
 
 // No certification registry is served by the registered gateway routes.
 const MISSING_PATH = '/api/v1/public/education/certifications';
 const SEARCH_PATH = '/api/v1/content/search';
-
-const TITLES: Record<string, string> = { fa: 'برنامه‌های گواهی', en: 'Certification Programs' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'رجیستری گواهی در گیتوی ثبت نشده است؛ هیچ گواهی صادرشده‌ای نمایش داده نمی‌شود',
-  en: 'No certification registry is registered on the gateway; no issued certificate is shown',
-};
 
 export const dynamic = 'force-dynamic';
 
@@ -25,21 +20,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-education-certifications');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/education/certifications`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/education/certifications`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/education/certifications`,
-        en: `${BASE_URL}/en/public/education/certifications`,
-      },
+      canonical: canonicalFor(locale, '/public/education/certifications'),
+      languages: languageAlternates('/public/education/certifications'),
     },
   };
 }
@@ -51,18 +44,24 @@ export default async function CertificationsPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  const meta = await getTranslations('pageMeta.public-education-certifications');
   const learn = await getTranslations('learn');
   const common = await getTranslations('common');
-  const title = TITLES[locale] ?? TITLES.en;
-  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+  const title = meta('title');
+  const description = meta('description');
 
   return (
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp source={MISSING_PATH} label={title} verified={false} method={MISSING_PATH}>
-          <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-        </ProvenanceStamp>
+        <ProvenanceStamp
+          source={MISSING_PATH}
+          label={title}
+          verified={false}
+          method={MISSING_PATH}
+        />
+        <h1 className="display text-4xl font-bold text-ink">{title}</h1>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
       </section>
 

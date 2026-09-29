@@ -5,6 +5,7 @@ import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { Link } from '@/i18n/navigation';
 import { apiGet } from '@/lib/api/client';
@@ -31,11 +32,8 @@ export async function generateMetadata({
       title: t('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/${ROUTE}`,
-      languages: {
-        fa: `${BASE_URL}/fa/${ROUTE}`,
-        en: `${BASE_URL}/en/${ROUTE}`,
-      },
+      canonical: canonicalFor(locale, '/developers/cookbooks'),
+      languages: languageAlternates('/developers/cookbooks'),
     },
   };
 }

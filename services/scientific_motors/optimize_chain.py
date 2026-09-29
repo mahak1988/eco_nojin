@@ -87,7 +87,7 @@ class MultiObjectiveOptimizer(AbstractScientificMotor):
 
     @property
     def motor_type(self) -> MotorType:
-        return MotorType.WHAT_IF
+        return MotorType.OPTIMIZER
 
     @property
     def display_name(self) -> str:

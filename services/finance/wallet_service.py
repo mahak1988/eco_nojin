@@ -11,8 +11,10 @@ from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database.models import DailyEarnings, EcoWallet, FinAccount, FinJournalBatch, FinJournalEntry
+from database.models import DailyEarnings, EcoWallet, FinAccount
 from services.api_gateway.exceptions import EcoNojinException
+from services.finance import earning_rates
+from services.finance.ledger_service import LedgerService as FinanceLedgerService
 
 
 class TransactionType(Enum):
@@ -44,35 +46,25 @@ class WalletService:
     EcoCoin wallet service with atomic operations, audit trail, and phase-gated transfers.
     """
 
-    # Earning rates (ECO per unit)
-    EARNING_RATES = {
-        "tree_planting": Decimal("50.0"),
-        "soil_restoration": Decimal("30.0"),
-        "water_conservation": Decimal("25.0"),
-        "biodiversity": Decimal("40.0"),
-        "cleanup": Decimal("15.0"),
-        "regenerative_farming": Decimal("35.0"),
-        "carbon_verification": Decimal("100.0"),
-        "education": Decimal("10.0"),
-        "community": Decimal("5.0"),
-        "satellite_verification": Decimal("30.0"),
-        "mrv_submission": Decimal("20.0"),
-    }
-
-    REDEMPTION_RATES = {
-        "consultation": Decimal("20.0"),
-        "satellite_report": Decimal("30.0"),
-        "marketplace_discount": Decimal("10.0"),
-        "training": Decimal("15.0"),
-        "certification": Decimal("50.0"),
-    }
-
-    DAILY_EARN_CAP = Decimal("200.0")
-    TRANSFER_MIN_BALANCE = Decimal("10.0")
+    # Earning/redemption rates live in services/finance/earning_rates.py, the
+    # single source of truth. They used to be declared here *and* in
+    # services/ecowallet/service.py, with three categories carrying the same
+    # values under different names, so an event emitted under one name was
+    # invisible to a system keyed on the other.
+    EARNING_RATES = earning_rates.EARNING_RATES
+    REDEMPTION_RATES = earning_rates.REDEMPTION_RATES
+    DAILY_EARN_CAP = earning_rates.DAILY_EARN_CAP
+    TRANSFER_MIN_BALANCE = earning_rates.TRANSFER_MIN_BALANCE
 
     def __init__(self, db: AsyncSession):
         self.db = db
-        self.ledger = LedgerService(db)
+        # The canonical, validating ledger. This class used to define its own
+        # LedgerService with no batch-balance check, no amount check and no
+        # asset allowlist, and a balance computed as debits-minus-credits â€” the
+        # exact negation of the canonical sign convention. That made unbalanced
+        # journals creatable through the wallet path and made
+        # reconcile_wallet_ledger compare a balance against its own inverse.
+        self.ledger = FinanceLedgerService(db)
 
     async def _get_or_create_wallet(self, user_id: str) -> EcoWallet:
         result = await self.db.execute(select(EcoWallet).where(EcoWallet.user_id == user_id))
@@ -348,14 +340,18 @@ class WalletService:
 
         entries = [
             {
-                "account_id": eco_asset.id,
+                # The canonical reference is the account CODE. See
+                # services/finance/account_ref.py: this column previously held
+                # the integer id while the commerce path held codes, and the
+                # reconciliation join could not satisfy both.
+                "account_id": eco_asset.code,
                 "entry_type": "debit",
                 "asset": "ECO",
                 "amount": str(amount),
                 "description": f"ECO earned: {category}",
             },
             {
-                "account_id": reward_liability.id,
+                "account_id": reward_liability.code,
                 "entry_type": "credit",
                 "asset": "ECO",
                 "amount": str(amount),
@@ -378,14 +374,14 @@ class WalletService:
 
         entries = [
             {
-                "account_id": eco_asset.id,
+                "account_id": eco_asset.code,
                 "entry_type": "credit",
                 "asset": "ECO",
                 "amount": str(amount),
                 "description": f"ECO redeemed: {category}",
             },
             {
-                "account_id": reward_liability.id,
+                "account_id": reward_liability.code,
                 "entry_type": "debit",
                 "asset": "ECO",
                 "amount": str(amount),
@@ -409,7 +405,7 @@ class WalletService:
             {
                 "account_id": (
                     await self._get_or_create_account(f"ECO_USER_{from_user}", "ECO", "asset")
-                ).id,
+                ).code,
                 "entry_type": "credit",
                 "asset": "ECO",
                 "amount": str(amount),
@@ -418,11 +414,11 @@ class WalletService:
             {
                 "account_id": (
                     await self._get_or_create_account(f"ECO_USER_{to_user}", "ECO", "asset")
-                ).id,
+                ).code,
                 "entry_type": "debit",
                 "asset": "ECO",
                 "amount": str(amount),
-                "description": f"Transfer from {from_user}",
+                "description": f"Transfer from {to_user}",
             },
         ]
         return await self.ledger.create_journal_batch(
@@ -448,63 +444,3 @@ class WalletService:
             result = await self.db.execute(select(FinAccount).where(FinAccount.code == code))
             return result.scalar_one()
         return account
-
-
-class LedgerService:
-    """Double-entry ledger for ECO token movements"""
-
-    def __init__(self, db: AsyncSession):
-        self.db = db
-
-    async def create_journal_batch(
-        self,
-        reference_type: str,
-        reference_id: str,
-        entries: list,
-        description: str,
-        created_by: str,
-    ):
-        batch = FinJournalBatch(
-            batch_number=f"JB-{__import__('uuid').uuid4().hex[:8].upper()}",
-            batch_date=datetime.now(UTC).date(),
-            reference_type=reference_type,
-            reference_id=reference_id,
-            description=description,
-            created_by=created_by,
-        )
-        self.db.add(batch)
-        await self.db.flush()
-
-        for entry in entries:
-            self.db.add(
-                FinJournalEntry(
-                    batch_id=batch.id,
-                    account_id=entry["account_id"],
-                    entry_type=entry["entry_type"],
-                    asset=entry["asset"],
-                    amount=entry["amount"],
-                    description=entry["description"],
-                )
-            )
-
-        await self.db.commit()
-        return batch
-
-    async def get_account_balance(self, account_id: int) -> Decimal:
-        result = await self.db.execute(
-            select(func.coalesce(func.sum(FinJournalEntry.amount), Decimal("0"))).where(
-                FinJournalEntry.account_id == account_id,
-                FinJournalEntry.entry_type == "debit",
-            )
-        )
-        debits = result.scalar() or Decimal("0")
-
-        result = await self.db.execute(
-            select(func.coalesce(func.sum(FinJournalEntry.amount), Decimal("0"))).where(
-                FinJournalEntry.account_id == account_id,
-                FinJournalEntry.entry_type == "credit",
-            )
-        )
-        credits = result.scalar() or Decimal("0")
-
-        return debits - credits

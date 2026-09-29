@@ -1,5 +1,8 @@
 {
-  "meta": { "machineTranslated": true, "fallbackLocale": "fa" },
+  "meta": {
+    "machineTranslated": true,
+    "fallbackLocale": "fa"
+  },
   "brand": {
     "name": "ہائیڈروما نوجین",
     "description": "ایکو نوجین کا سائنسی حصہ؛ پانی، مٹی، پودوں اور موسلم کے بہتر سمجھ کے لیے ساتھ دینا۔"
@@ -402,5 +405,577 @@
       "source": "bff:/api/auth/session",
       "method": "HttpOnly session cookie"
     }
+  },
+  "pageMeta": {
+    "public-audiences-cooperatives": {
+      "title": "تعاونیات",
+      "description": "رجسٹرڈ درخواستیں اور مارکیٹ کے اصل اعداد"
+    },
+    "public-audiences-farmers": {
+      "title": "کسان",
+      "description": "رجسٹرڈ درخواستیں اور ڈیٹابیس میں موجود زمین کے پروفائل"
+    },
+    "public-audiences-government": {
+      "title": "سرکار",
+      "description": "رجسٹرڈ درخواستیں اور ڈیٹابیس کے اصل اعداد"
+    },
+    "public-audiences-investors": {
+      "title": "سرمایہ کار",
+      "description": "رجسٹرڈ درخواستیں اور منصوبوں کے اصل اعداد؛ کوئی منافع کا دعویٰ نہیں"
+    },
+    "public-audiences-ngos": {
+      "title": "تنظیمیں",
+      "description": "رجسٹرڈ درخواستیں اور اشارے کی اصل حالت"
+    },
+    "public-audiences-researchers": {
+      "title": "تحقیق",
+      "description": "ماڈل رجسٹری اور ہر ماڈل کے پیچھے کا سائنسی حوالہ"
+    },
+    "public-channels": {
+      "title": "رسائی کے ذرائع",
+      "description": "USSD، آواز اور ہمگامی کے ذرائع کی اصل حالت"
+    },
+    "public-components-api-playground": {
+      "title": "API پلے گراؤنڈ",
+      "description": "نقاطِ اختتام آزمے کے لیے انٹرایکٹو کنسول"
+    },
+    "public-components-dispute-resolution": {
+      "title": "تنازعات کی حل",
+      "description": "گیٹ وے پر کوئی تنازعاتی فہرست درج نہیں؛ نہ کوئی کیس دکھایا جاتا ہے نہ فیصلہ"
+    },
+    "public-components-ecowallet": {
+      "title": "EcoWallet",
+      "description": "ڈیجیٹل بٹوے کی خصوصیات کا تعارف"
+    },
+    "public-components-hydroma-engine": {
+      "title": "HydroMa انجن",
+      "description": "سائنسی انجن کے ماڈیولز کا تعارف"
+    },
+    "public-components-land-profiler": {
+      "title": "زمین کا تحلیل کار",
+      "description": "زمین کے تجزیے اور انتظام کے منظرنامے"
+    },
+    "public-components-marketplace": {
+      "title": "مارکیٹ",
+      "description": "مارکیٹ کی خصوصیات کا عملی تعارف"
+    },
+    "public-components-mrv-dashboard": {
+      "title": "MRV ڈیش بورڈ",
+      "description": "نگرانی، رپورٹنگ اور تصدیق کا تعارف"
+    },
+    "public-components-satellite-view": {
+      "title": "سیٹلائٹ منظر",
+      "description": "سیٹلائٹ ڈیٹا کی تہوں اور可视化"
+    },
+    "public-cta": {
+      "title": "شامل ہوں",
+      "description": "دستیاب راستے بطور اصل نقاطِ اختتام اور ایک فارم جو گیٹ وے پر بھیجتا ہے"
+    },
+    "public-education-advanced-search": {
+      "title": "اعلیٰ معیاری تلاش",
+      "description": "شিক्षا لائبریری میں کئی معیار پر مبنی تلاش"
+    },
+    "public-education-certifications": {
+      "title": "سرٹیفکیشن پروگرام",
+      "description": "گیٹ وے پر کوئی سرٹیفکیشن رجسٹری درج نہیں؛ کوئی جاری کردہ سرٹیفکیٹ دکھایا نہیں جاتا"
+    },
+    "public-education-courses": {
+      "title": "کورسز",
+      "description": "کورس کی خدمت گیٹ وے پر درج نہیں؛ شائع شدہ مواد لائبریری میں تلاش کیا جا سکتا ہے"
+    },
+    "public-education-glossary": {
+      "title": "دو زبانی لغت",
+      "description": "تلاش کے قابل دوسری زبانی تخصصی لغت"
+    },
+    "public-education-library": {
+      "title": "تعلیمی لائبریری",
+      "description": "شائع شدہ تعلیمی مواد تلاش کریں"
+    },
+    "public-education-library-advanced": {
+      "title": "اعلیٰ لائبریری",
+      "description": "وسیع مواد تلاش اور سائنسی اصطلاحات کے اصل گروپ"
+    },
+    "public-education-video-player": {
+      "title": "ویڈیو پلیئر",
+      "description": "ویڈیو خدمت گیٹ وے پر درج نہیں؛ نہ پلیئر لوڈ ہوتا ہے نہ سب ٹائٹل"
+    },
+    "public-education-workshops": {
+      "title": "ورکشاپس",
+      "description": "گیٹ وے پر کوئی ورکشاپ کیلنڈر درج نہیں؛ نہ تاریخ دکھائی جاتی ہے نہ جگہ"
+    },
+    "public-goals-impact": {
+      "title": "اثر",
+      "description": "رجسٹرڈ درخواستوں کے اصل اعداد؛ کوئی تصدیق‌شده پیمائش کا دعویٰ نہیں"
+    },
+    "public-goals-manifesto": {
+      "title": "منیفیسٹو",
+      "description": "رجسٹرڈ مراحل اور وہ رکاوٹیں جو آج راستے کو محدود کرتی ہیں"
+    },
+    "public-goals-mission": {
+      "title": "مشن",
+      "description": "لیجر نیٹ ورک اور معاہدے جو گیٹ وے واپس کرتا ہے"
+    },
+    "public-goals-roadmap": {
+      "title": "روڈ میپ",
+      "description": "مرحلہ رکاوٹیں اور مراحل جو ٹول رجسٹری میں درج ہیں"
+    },
+    "public-goals-values": {
+      "title": "قدریں",
+      "description": "سادہ فون تک رسائی کی اصل حالت، USSD اور آوازی راستوں سے"
+    },
+    "public-goals-vision": {
+      "title": "بین",
+      "description": "وہ ڈومین جو ٹول رجسٹری میں درج ہیں"
+    },
+    "public-home": {
+      "title": "ماحولیاتی نگرانی اور فیصلہ سازی کا پلیٹ فارم",
+      "description": "ماحولیاتی نگرانی اور فیصلہ سازی کا پلیٹ فارم — مٹی، پانی، آب و ہوا اور کاربن کی نگرانی"
+    },
+    "public-model-count": {
+      "title": "ماڈلز کی تعداد",
+      "description": "رجسٹرڈ سائنسی ماڈلز کی تعداد اور حالت"
+    },
+    "public-policy-accessibility": {
+      "title": "رسائی کا اعلان",
+      "description": "legal-texts میں رسائی کا کوئی slug درج نہیں، اس لیے کوئی مطابقت کی حالت نہیں دکھائی جاتی"
+    },
+    "public-policy-cookies": {
+      "title": "کوکیز کی پالیسی",
+      "description": "کوکیز کی پالیسی کا متن شائع شدہ legal-texts ریکارڈ سے پڑھا جاتا ہے۔"
+    },
+    "public-policy-governance": {
+      "title": "حکمرانی کا ڈھانچہ",
+      "description": "legal-texts میں حکمرانی کا کوئی slug درج نہیں، اس لیے کوئی ڈھانچہ نہیں دکھایا جاتا"
+    },
+    "public-policy-licensing": {
+      "title": "اوپن سورس لائسنس",
+      "description": "legal-texts میں لائسنس کا کوئی slug درج نہیں، اس لیے لائسنس کی فہرست نہیں دکھائی جاتی"
+    },
+    "public-policy-privacy": {
+      "title": "رازداری کی پالیسی",
+      "description": "رازداری کی پالیسی کا متن شائع شدہ legal-texts ریکارڈ سے پڑھا جاتا ہے۔"
+    },
+    "public-policy-terms": {
+      "title": "خدمت کی شرائط",
+      "description": "شرائط کا متن اور اس کا ورژن تاریخ legal-texts خدمت سے پڑھا جاتا ہے۔"
+    },
+    "public-science-benchmarks": {
+      "title": "پیمائش",
+      "description": "شائع شدہ حوالوں کے مقابلے میں فارمولہ کی حقیقی تصدیق کے نتائج"
+    },
+    "public-science-case-studies": {
+      "title": "کیس اسٹڈیز",
+      "description": "ہر ماڈل کے پیچھے رجسٹرڈ سائنسی حوالہ"
+    },
+    "public-science-data-sources": {
+      "title": "ڈیٹا ذرائع",
+      "description": "حالت اور لائسنس کے ساتھ ڈیٹا ذرائع کا اشاریہ"
+    },
+    "public-science-evidence-base": {
+      "title": "سائنسی ثبوتی بنیاد",
+      "description": "DOI اور تصدیقی حالت کے ساتھ چنے ہوئے سائنسی ثبوت"
+    },
+    "public-science-gap-analysis": {
+      "title": "خلا کا تجزیہ",
+      "description": "ہر ماڈل کے لیے رجسٹرڈ درستگی کا دائرہ اور حدود"
+    },
+    "public-science-limitations": {
+      "title": "حدود",
+      "description": "ماڈلز اور ڈیٹا کی معلوم حدود"
+    },
+    "public-science-methodology": {
+      "title": "طریقۂ کار",
+      "description": "معیارات اور سائنسی حساب کے طریقے"
+    },
+    "public-science-peer-review": {
+      "title": "ہمpeer جائزہ",
+      "description": "ہر ماڈل کے لیے رجسٹرڈ سائنسی حوالہ؛ کوئی شائع شدہ جائزہ رپورٹ موجود نہیں"
+    },
+    "public-science-reproducibility": {
+      "title": "دوبارہ پیدا کرنے کی قابلیت",
+      "description": "رجسٹرڈ مشترکہ چلتے اور DOI اجرا کی اصل حالت"
+    },
+    "public-science-uncertainty": {
+      "title": "عدم یقینیت",
+      "description": "بیان شدہ حدود اور فارمولہ تصدیق کی اصل حالت"
+    },
+    "public-science-validation": {
+      "title": "تصدیقی اوزار",
+      "description": "ڈیٹا اور ماڈل کے معیار کی جانچ"
+    },
+    "public-science-validation-methods": {
+      "title": "تصدیقی طریقے",
+      "description": "ماڈل تصدیق کے سائنسی طریقے"
+    },
+    "public-services-satellite-intelligence": {
+      "title": "سیٹلائٹ انٹیلی جنس",
+      "description": "سیٹلائٹ ڈیٹا مصنوعات اور اینڈپوائنٹ"
+    },
+    "public-visit": {
+      "title": "فارم کا دورہ",
+      "description": "دورے کی درخواست گیٹ وے پر بھیجی جاتی ہے؛ کوئی شیڈول شدہ دورہ نہیں دکھایا جاتا"
+    },
+    "public-why": {
+      "title": "یہ پلیٹ فارم کیوں",
+      "description": "مسئلہ، حل اور قابل تصدیق ثبوت"
+    },
+    "marketplace-market-producers": {
+      "title": "پیدا کنندگان",
+      "description": "وہ پیدا کنندگان جو مارکیٹ نے رجسٹر کیے ہیں، ریکارڈ شدہ تصدیقی حالت کے ساتھ۔"
+    },
+    "marketplace-market-stats": {
+      "title": "مارکیٹ کے اعداد",
+      "description": "اعداد جو اعداد و شمار کے اینڈ پوائنٹ سے پڑھے گئے، یا یہ کہا جاتا ہے کہ سروس نے جواب نہیں دیا۔"
+    },
+    "marketplace-market-admin-orders": {
+      "title": "آرڈر کا انتظام",
+      "description": "آرڈر کی ڈییج جو گیٹ وے دکھاتا ہے، اس کی اصل حالت کے ساتھ اور بغیر کسی جعلی قطار کے۔"
+    },
+    "marketplace-market-admin-stats": {
+      "title": "مارکیٹ کے اعداد و شمار",
+      "description": "اعداد جو اعداد و شمار کے اینڈ پوائنٹ سے پڑھے جاتے ہیں، یا یہ کہا جاتا ہے کہ سروس دستیاب نہیں۔"
+    },
+    "marketplace-market-marketplaces": {
+      "title": "مارکیٹ",
+      "description": "وہ مارکیٹیں جو گیٹ وے نے رجسٹر کیے ہیں، جیسے وہ واقعاً درج ہیں۔"
+    },
+    "marketplace-market-marketplaces-marketplace_id": {
+      "title": "مارکیٹ کا ریکارڈ",
+      "description": "ایک مارکیٹ، شناخت کے مطابق: وہ حالت جو گیٹ وے رکھتا ہے، نہ کہ اس کی وضاحت کہ وہ ہونا چاہیے۔"
+    },
+    "marketplace-market-marketplaces-marketplace_id-shops": {
+      "title": "مارکیٹ کی دکانیں",
+      "description": "ایک مارکیٹ کے لیے رجسٹر شدہ دکانیں، جیسے گیٹ وے انہیں درج کرتا ہے۔"
+    },
+    "marketplace-market-orders-order_id": {
+      "title": "آرڈر کا ریکارڈ",
+      "description": "ایک آرڈر، شناخت کے مطابق، آخرین ریکارڈ شدہ حالت کی تبدیلی کے ساتھ۔"
+    },
+    "marketplace-market-orders-order_id-status": {
+      "title": "آرڈر کی حالت",
+      "description": "کسی آرڈر کی موجودہ حالت، درخواست کے وقت گیٹ وے سے پڑھی گئی۔"
+    },
+    "marketplace-market-orders-order_id-timeline": {
+      "title": "آرڈر کی تاریخ",
+      "description": "کسی آرڈر کا ریکارڈ شدہ حالتوں کا سلسلہ، گیٹ وے کی دی گئی ترتیب میں۔"
+    },
+    "marketplace-market-orders-order_id-track": {
+      "title": "آ",
+      "description": "ر"
+    },
+    "marketplace-market-payments-payment_id-escrow": {
+      "title": "ایسکرو ریکارڈ",
+      "description": "کسی ادائیگی کا ایسکرو حالت جو گیٹ وے رکھتا ہے، ریکارڈ شدہ تبدیلیوں کے ساتھ۔"
+    },
+    "marketplace-market-products": {
+      "title": "مصنوعات",
+      "description": "وہ مصنوعات جو مارکیٹ نے رجسٹر کی ہیں، ہر ایک کی قیمت اور مقدار کے ساتھ۔"
+    },
+    "marketplace-market-products-search": {
+      "title": "مصنوعات کی تلاش",
+      "description": "رجسٹر شدہ فہرست میں تلاش کریں۔ نتائج وہی ہیں جو گیٹ وے ملتا ہے۔"
+    },
+    "marketplace-market-products-product_id": {
+      "title": "مصنوع کا ریکارڈ",
+      "description": "ایک مصنوع، شناخت کے مطابق، ان میدانوں کے ساتھ جو گیٹ وے رکھتا ہے۔"
+    },
+    "marketplace-market-products-product_id-carbon-credits": {
+      "title": "مصنوع کے کربن کریڈٹ",
+      "description": "کسی مصصول سے منسلک کربن کریڈٹ، گیٹ وے کے ریکارڈ کردہ طریقے کے ساتھ۔"
+    },
+    "marketplace-market-products-product_id-trace": {
+      "title": "مصنوع کا ماخذ",
+      "description": "کسی مصصول کی ریکارڈ شدہ ملکیت، ان اندراجات سے جو گیٹ وے رکھتا ہے۔"
+    },
+    "marketplace-market-shops-shop_id": {
+      "title": "دکان کا ریکارڈ",
+      "description": "ایک دکان، شناخت کے مطابق، ان میدانوں کے ساتھ جو گیٹ وے واقعاً رکھتا ہے۔"
+    },
+    "marketplace-market-shops-shop_id-orders": {
+      "title": "دکان کے آرڈر",
+      "description": "کسی دکان کے ریکارڈ شدہ آرڈر، بغیر کسی جعلی رقم یا حالت کے۔"
+    },
+    "marketplace-market-shops-shop_id-products": {
+      "title": "دکان کی مصنوعات",
+      "description": "وہ مصنوعات جو دکان نے رجسٹر کی ہیں، گیٹ وے کی بتائی ہوئی مقدار کے ساتھ۔"
+    },
+    "marketplace-market-shops-shop_id-stats": {
+      "title": "دکان کے اعداد",
+      "description": "ایک دکان کے لیے اعداد و شمار کے اینڈ پوائنٹ سے پڑھے گئے اعداد۔"
+    },
+    "marketplace-market-transactions": {
+      "title": "لین دین",
+      "description": "ٹرانزیکشن کا لیجر جو مارکیٹ گیٹ وے دکھاتا ہے، جیسے ریکارڈ میں ہے۔"
+    },
+    "marketplace-market-transactions-transaction_id": {
+      "title": "ٹرانزیکشن ریکارڈ",
+      "description": "ایک ٹرانزیکشن، شناخت کے مطابق، گیٹ وے کے اپنے ریکارڈ کے ساتھ۔"
+    },
+    "marketplace-market-vendors-vendor_id": {
+      "title": "وینڈر کا ریکارڈ",
+      "description": "ایک وینڈر، شناخت کے مطابق، گیٹ وے کے ریکارڈ کردہ تصدیقی حالت کے ساتھ۔"
+    },
+    "marketplace-market-vendors-vendor_id-orders": {
+      "title": "وینڈر کے آرڈر",
+      "description": "کسی وینڈر کے ریکارڈ شدہ آرڈر، اُسی حالت میں جہاں وہ واقعی ہیں۔"
+    },
+    "marketplace-market-vendors-vendor_id-products": {
+      "title": "وینڈر کی مصنوعات",
+      "description": "وہ مصنوعات جو وینڈر نے رجسٹر کی ہیں، گیٹ وے کی بتائی ہوئی مقدار کے ساتھ۔"
+    },
+    "marketplace-market-wallet": {
+      "title": "مارکیٹ والیٹ",
+      "description": "وہ بیلنس جو گیٹ وے بتاتا ہے، یا یہ کہا جاتا ہے کہ پڑھا نہ جا سکا۔"
+    },
+    "marketplace-market-wallet-balance": {
+      "title": "بیلنس",
+      "description": "بیلنس اسی وقت، جیسے گیٹ وے درخواست کے وقت ریکارڈ کرتا ہے۔"
+    },
+    "marketplace-market-wallet-history": {
+      "title": "والیٹ کی تاریخ",
+      "description": "حرکات کا ریکارڈ شدہ سلسلہ، گیٹ وے کی دی گئی ترتیب میں۔"
+    },
+    "marketplace-market-wallet-methods": {
+      "title": "ادائیگی کے طریقے",
+      "description": "وہ ادائیگی کے طریقے جو گیٹ وے نے فعال کیے ہیں، جیسے ترتیب دیا گیا ہے۔"
+    },
+    "marketplace-market-wallet-methods-method_id": {
+      "title": "ادائیگی کا طریقہ",
+      "description": "ایک ادائیگی کا طریقہ، شناخت کے مطابق، اپنی طور پردہ حالت کے ساتھ۔"
+    },
+    "marketplace-market-wallet-payouts": {
+      "title": "ادائیگیاں",
+      "description": "ریکارڈ شدہ ادائیگیاں، ان مبالغ اور حالات کے ساتھ جو گیٹ وے رکھتا ہے۔"
+    },
+    "marketplace-market-wallet-payouts-payout_id": {
+      "title": "ادائیگی کا ریکارڈ",
+      "description": "ایک ادائیگی، شناخت کے مطابق، آخری ریکارڈ شدہ حالت کے ساتھ۔"
+    },
+    "marketplace-market-wallet-payouts-payout_id-status": {
+      "title": "ادائیگی کی حالت",
+      "description": "کسی ادائیگی کی موجودہ حالت، درخواست کے وقت پڑھی گئی۔"
+    },
+    "marketplace-market-wallet-transactions": {
+      "title": "والیٹ کی لین دین",
+      "description": "حرکتیں جیسے گیٹ وے ریکارڈ کرتا ہے، بغیر کسی مشتق بیلنس کے۔"
+    },
+    "marketplace-market-wallet-transactions-tx_id": {
+      "title": "والیٹ کی حرکت",
+      "description": "ایک حرکت، شناخت کے مطابق، اور اس کے لیے ریکارڈ شدہ حالت۔"
+    },
+    "marketplace-market-wallet-verification": {
+      "title": "والیٹ کی تصدیق",
+      "description": "وہ تصدیقی حالت جو گیٹ وے کسی والیٹ کے لیے رکھتا ہے، اس کے مالک کے بارے میں کوئی دعویٰ نہیں۔"
+    },
+    "marketplace-market-wallet-verification-methods": {
+      "title": "تصدیقی طریقے",
+      "description": "شناخت کی تصدیق کے وہ طریقے جو گیٹ وے نے ترتیب دیے ہیں۔"
+    },
+    "marketplace-market-wallet-verification-methods-method_id": {
+      "title": "تصدیق کا طریقہ",
+      "description": "ایک تصدیقی طریقہ، شناخت کے مطابق، اور اس کی ترتیب شدہ حالت۔"
+    },
+    "hydroma-hydroma-carbon-credits-token_id-history": {
+      "title": "کریڈٹ کی تاریخ",
+      "description": "ایک کاربن کریڈٹ کی حرکات کی تاریخ، اسی ترتیب میں جو بذریف کرتا ہے۔"
+    },
+    "hydroma-hydroma-carbon-verra-registry_id": {
+      "title": "رجسٹری کا ریکارڈ",
+      "description": "شناخت کے مطابق ایک رجسٹری ریکارڈ، انجن جو حالت بتاتا ہے اس کے ساتھ۔"
+    },
+    "hydroma-hydroma-carbon-verra-standards": {
+      "title": "رجسٹری کے معیارات",
+      "description": "وہ رجسٹری معیارات جو انجن نے نافذ کیے، ہر ایک کے بتائے گئے ورژن کے ساتھ۔"
+    },
+    "hydroma-hydroma-climate-model_id-run": {
+      "title": "موسمیہ چلن",
+      "description": "ایک موسمیہ چلن اور وہ اندراجات جو انجن نے اس کے لیے درج کیے۔"
+    },
+    "hydroma-hydroma-climate-scenarios": {
+      "title": "موسمیہ منظرنامے",
+      "description": "وہ منظرنامے جو انجن چلا سکتا ہے، ہر ایک کے دستاویزی مفروضات کے ساتھ۔"
+    },
+    "hydroma-hydroma-economics-model_id-run": {
+      "title": "اقتصادی چلن",
+      "description": "ایک اقتصادی نتیجہ اور وہ مفروضات جو انجن نے اس کے لیے درج کیے۔"
+    },
+    "hydroma-hydroma-elevation-grid-site_id": {
+      "title": "بلندی کا جال",
+      "description": "کسی مقام کی بلندی کا ڈیٹا، اس ماخذ اور درجہ بندی کے ساتھ جو انجن درج کرتا ہے۔"
+    },
+    "hydroma-hydroma-hydrology-model_id-run": {
+      "title": "ہائیڈرالوجی چلن",
+      "description": "ایک ہائیڈرالوجی نتیجہ اور وہ اندراجات جو انجن نے اس کے لیے درج کیے۔"
+    },
+    "hydroma-hydroma-soil-model_id-run": {
+      "title": "مٹی کا چلن",
+      "description": "ایک مٹی کا نتیجہ اور وہ اندراجات جو انجن نے اس کے لیے درج کیے۔"
+    },
+    "hydroma-hydroma-analyses-crop-water-req": {
+      "title": "فصل کی پانی کی ضرورت",
+      "description": "فصل کی پانی کی ضرورت کا تخمینہ، اُس طریقے اور اندراجات کے ساتھ جو ماڈل درج کرتا ہے۔"
+    },
+    "hydroma-hydroma-analyses-groundwater": {
+      "title": "زمین کے پانی کا تجزیہ",
+      "description": "زمین کے پانی کے نتائج، ماڈل کے ورژن اور عدم یقین کے ساتھ جو انجن بتاتا ہے۔"
+    },
+    "hydroma-hydroma-analyses-irrigation-design": {
+      "title": "آبپاشی کا ڈیزائن",
+      "description": "آبپاشی ڈیزائن کا نتیجہ، اُن مفروضات کے ساتھ جو انجن نے درج کیے۔"
+    },
+    "hydroma-hydroma-analyses-runoff": {
+      "title": "بہا کا تجزیہ",
+      "description": "بہا کا تخمینہ، ماڈل کے ورژن اور اندراجات کے ساتھ جو انجن رکھتا ہے۔"
+    },
+    "hydroma-hydroma-analyses-structure-design": {
+      "title": "ڈھانچے کا ڈیزائن",
+      "description": "ڈھانچے کے ڈیزائن کا نتیجہ اور وہ حفاظتی گھاٹ جو انجن نے لاگو کیے۔"
+    },
+    "hydroma-hydroma-analyses-topography": {
+      "title": "زمینی شکل کا تجزیہ",
+      "description": "زمینی شکل کے نتائج جیسے انجن انہیں حساب کرتا ہے، درجہ بندی کے ساتھ۔"
+    },
+    "hydroma-hydroma-carbon": {
+      "title": "کاربن کا حساب",
+      "description": "انجن سے کاربن کے تخمینے، طریقے کے ورژن اور عدم یقین کے ساتھ۔"
+    },
+    "hydroma-hydroma-carbon-credits-balance": {
+      "title": "کاربن کریڈٹ کا بیلنس",
+      "description": "وہ بیلنس جو انجن بتاتا ہے، ان منصوبوں کے ساتھ جس میں اسے شمار کیا گیا ہے۔"
+    },
+    "hydroma-hydroma-carbon-credits-retire": {
+      "title": "کریڈٹ کی منسوخی",
+      "description": "انجن کے ریکارڈ کردہ منسوخی ریکارڈ، ہر ایک کی مقدار کے ساتھ۔"
+    },
+    "hydroma-hydroma-carbon-credits-token_id-verify": {
+      "title": "کریڈٹ کی تصدیق",
+      "description": "کریڈٹ کے لیے انجن جو تصدیقی حالت درج کرتا ہے، استعمال کردہ طریقے کے ساتھ۔"
+    },
+    "hydroma-hydroma-carbon-credits-transfer": {
+      "title": "کریڈٹ کی منتقلی",
+      "description": "رجسٹر شدہ اکاؤنٹس کے درمیان منتقلی کے ریکارڈ، جیسے انجن نے درج کیے۔"
+    },
+    "hydroma-hydroma-carbon-methods": {
+      "title": "کاربن کے طریقے",
+      "description": "وہ کارbon حساب کے طریقے جو انجانرتا ہے، ان کے ورژن اور دستاویزی حوالے کے ساتھ۔"
+    },
+    "hydroma-hydroma-climate": {
+      "title": "موسمیہ ماڈلز",
+      "description": "موسمیہ ماڈلز جو انجن نے نافذ کیے، ہر ایک کے دستاویزی ورژن اور دائرے کے ساتھ۔"
+    },
+    "hydroma-hydroma-climate-model_id": {
+      "title": "موسمیہ ماڈل",
+      "description": "شناخت کے مطابق ایک موسمیہ ماڈل، اس کے ورژن اور دستاویزی دائرے کے ساتھ۔"
+    },
+    "hydroma-hydroma-db-stats": {
+      "title": "انجن ڈیٹابیس",
+      "description": "انجن اپنے ذخیرے کے بارے میں کیا بتاتا ہے: میڈیم، رسائی اور ریکارڈ کی تعداد۔"
+    },
+    "hydroma-hydroma-economics": {
+      "title": "اقتصادی ماڈلز",
+      "description": "اقتصادی ماڈلز جو انجن نے نافذ کیے، ہر ایک کی فرض کردہ لاگت کے ساتھ۔"
+    },
+    "hydroma-hydroma-economics-model_id": {
+      "title": "اقتصادی ماڈل",
+      "description": "شناخت کے مطابق ایک اقتصادی ماڈل، اس کی فرض کردہ لاگت کے ساتھ۔"
+    },
+    "hydroma-hydroma-elevation-model_id": {
+      "title": "بلندی کا ماڈل",
+      "description": "شناخت کے مطابق ایک بلندی کا ماڈل، اس کی درجہ بندی اور پھیلاؤ کے ساتھ۔"
+    },
+    "hydroma-hydroma-farms": {
+      "title": "کھیتیں",
+      "description": "وہ کھیتیں جن کو انجن نے رجسٹر کیا، ہر ایک کے رقبے اور مقام کے ساتھ۔"
+    },
+    "hydroma-hydroma-hydrology-model_id": {
+      "title": "ہائیڈرالوجی ماڈل",
+      "description": "شناخت کے مطابق ایک ہائیڈرالوجی ماڈل، ورژن اور کیلیبریشن کے ساتھ۔"
+    },
+    "hydroma-hydroma-provenance-dataset_id": {
+      "title": "ڈیٹا کا ماخذ",
+      "description": "ڈیٹا کہاں سے آیا، کب حاصل کیا گیا، اور کس سروس نے اسے بنایا۔"
+    },
+    "hydroma-hydroma-soil-model_id": {
+      "title": "مٹی کا ماڈل",
+      "description": "شناخت کے مطابق ایک مٹی کا ماڈل، اس کے پیمانوں اور کیلیبریشن کے ساتھ۔"
+    },
+    "system-system-analytics-activity-timeline": {
+      "title": "سرگرمی کا ٹائم لائن",
+      "description": "وہ سرگرمی جو گیٹ وے نے درج کی، جس ترتیب سے ہوئی۔"
+    },
+    "system-system-analytics-carbon-summary": {
+      "title": "کاربن خلاصہ",
+      "description": "تجزیہی سروس کے حساب کردہ کاربن کے اعداد، اس کی مدت بتاتے ہوئے۔"
+    },
+    "system-system-analytics-ndvi-trends": {
+      "title": "NDVI کی رفتار",
+      "description": "وہاں کا شاخص رفتار جیسا تجزیہی سروس رکھتی ہے، ہر ایک کی مدت کے ساتھ۔"
+    },
+    "system-system-analytics-overview": {
+      "title": "تجزیے کا جائزہ",
+      "description": "تجزیہی سروس کے بتائے گئے اعداد، اور وہ مدت جسے وہ ڈھانپتے ہیں۔"
+    },
+    "system-system-analytics-performance-metrics": {
+      "title": "کارکردگی کے پیمائش",
+      "description": "سروس کی پیمائش کردہ تاخیر اور گزرش، نمونے کے حجم کے ساتھ۔"
+    },
+    "system-system-analytics-scenario-impact": {
+      "title": "منظرنامے کا اثر",
+      "description": "ایک منظرنامے پر تجزیہی سروس نے جو کیا، استعمال کردہ مفروضات کے ساتھ۔"
+    },
+    "system-system-analytics-soil-trends": {
+      "title": "مٹی کی رفتار",
+      "description": "وقت کے ساتھ مٹی کے پیمائش، جیسا تجزیہی سروس رکھتی ہے۔"
+    },
+    "system-system-automation-agent-run": {
+      "title": "ایجنٹ چلن",
+      "description": "ایک ایجنٹ چلن اور اس نے جو درج کیا، ناکام چلن سمیت۔"
+    },
+    "system-system-automation-health": {
+      "title": "خودکاری کی حالت",
+      "description": "کیا خودکاری کی سروسیں دستیاب ہیں، درخواست کے وقت پڑھا گیا۔"
+    },
+    "system-system-dashboard-data": {
+      "title": "سسٹم ڈیش بورڈ ڈیٹا",
+      "description": "ڈیش بورڈ کے دکھائے گئے اعداد، ہر ایک اُس سروس تک پہنچا جا سکتا ہے جس نے بنایا۔"
+    },
+    "system-system-dashboard-recommendations-farm_id": {
+      "title": "کھیت کی سفارشات",
+      "description": "انجن کے کسی کھیت کے لیے کیا حساب، ہر ایک کے استعمال کردہ مفروضات کے ساتھ۔"
+    },
+    "system-system-events": {
+      "title": "سسٹم کے واقعات",
+      "description": "وہ واقعات جو گیٹ وے نے درج کیے، ان کی قسم اور وقت کے ساتھ۔"
+    },
+    "system-system-iot-devices": {
+      "title": "مندرجہ ڈیوائس",
+      "description": "وہ ڈیوائس جن کو گیٹ وے نے رجسٹر کیا، ہر ایک کے لیے رکھی گئی آخری پڑھائی کے وقت کے ساتھ۔"
+    },
+    "system-system-iot-devices-device_id": {
+      "title": "ڈیوائس کا ریکارڈ",
+      "description": "شناخت کے مطابق ایک ڈیوائس، گیٹ وے جو حالت درج کرتا ہے اس کے ساتھ۔"
+    },
+    "system-system-iot-devices-device_id-readings": {
+      "title": "ڈیوائس کی پڑھائیاں",
+      "description": "کسی ڈیوائس کی رپورٹ کردہ پڑھائیاں، گیٹ وے کی رکھنے والی ترتیب میں، ان کی اکائیوں کے ساتھ۔"
+    },
+    "system-system-jobs": {
+      "title": "پسBackground کام",
+      "description": "وہ پس‌زمینی کام جو گیٹ وے نے چلائے، ہر ایک جس حالت میں مکمل ہوا۔"
+    },
+    "system-system-jobs-job_id": {
+      "title": "پس‌زمینی کام",
+      "description": "شناخت کے مطابق ایک کام، اس کا درج شدہ نتیجہ یا درج شدہ ناکامی کے ساتھ۔"
+    },
+    "system-system-logs": {
+      "title": "سسٹم کے لاگ",
+      "description": "گیٹ وے کے لاگ ریکارڈ، ہر ایک کی شدت اور رُوٹ کے ساتھ۔"
+    }
+  },
+  "offline": {
+    "code": "کنکشن دستیاب نہیں",
+    "title": "آف لائن موڈ",
+    "description": "کیش شدہ ڈیٹا دستیاب ہے؛ تازہ کرنے کے لیے دوبارہ کوشش کریں۔",
+    "retry": "دوبارہ کوشش کریں"
   }
 }

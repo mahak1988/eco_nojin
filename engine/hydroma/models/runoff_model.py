@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+import hashlib
 import logging
 from enum import StrEnum
-from pathlib import Path
-from typing import Literal
+from pathlib import Path, PurePath
+from typing import Annotated, Literal
 
 import numpy as np
 import xarray as xr
@@ -32,11 +33,24 @@ class RunoffInput(BaseModel):
     precipitation_mm: float = Field(
         ..., gt=0, description="Total precipitation depth in millimeters"
     )
-    curve_number: float | CurveNumberType = Field(
+    # The NRCS curve-number table is defined for 30 <= CN <= 100 (TR-55, Chapter 4).
+    # The bounds sit on the numeric branch only, so a CurveNumberType member keeps
+    # its own type instead of being coerced to a float and then compared.
+    curve_number: Annotated[float, Field(ge=30.0, le=100.0)] | CurveNumberType = Field(
         70, description="Curve Number (CN) or predefined type"
     )
     area_ha: float = Field(..., gt=0, description="Area of the watershed in hectares")
     method: MethodType = Field("SCS-CN", description="Method to use for calculation")
+    storm_duration_h: float | None = Field(
+        None,
+        ge=0.01,
+        description=(
+            "Design storm duration in hours. The rational method is valid for "
+            "storms at least as long as the time of concentration, and an SCS-CN "
+            "peak flow is an event mean rate over the storm, so both need it. "
+            "Defaults to 1 hour when unset."
+        ),
+    )
     rational_coefficient: float = Field(
         0.6, description="Rational coefficient (for Rational method)"
     )
@@ -90,10 +104,19 @@ class RunoffCalculator:
         """
         c = input_data.rational_coefficient
         area_ha = input_data.area_ha
-        duration_hr = 1.0
+        # The rational method is Q = C i A, valid for storms whose duration is at
+        # least the time of concentration. A design intensity therefore needs the
+        # storm duration, which the previous code did not take: it hard-coded
+        # 1 hour and treated the whole rainfall depth as that hour's intensity, so
+        # a 50 mm daily total was routed as a 50 mm/hr burst.
+        duration_hr = input_data.storm_duration_h or 1.0
         intensity_mm_hr = input_data.precipitation_mm / duration_hr
         peak_flow = c * intensity_mm_hr * area_ha * 10 / 3600
-        volume_m3 = input_data.precipitation_mm * area_ha * 10.0
+        # Runoff VOLUME carries the coefficient: C x P x A. The previous line
+        # returned P x A, the full rainfall volume, while the peak flow on the
+        # line above used C, so one call reported an internally inconsistent pair
+        # and the volume was too large by 1/C.
+        volume_m3 = c * input_data.precipitation_mm * area_ha * 10.0
         return RunoffOutput(
             volume_m3=volume_m3,
             peak_flow_m3s=peak_flow,
@@ -108,6 +131,14 @@ class RunoffCalculator:
             cn = cn_val
         else:
             cn = 70
+        # S = 25400/CN - 254 divides by CN, so CN = 0 raises ZeroDivisionError: not
+        # a ValueError, not in the signature, and the API layer turns it into a 500
+        # instead of a 400. The NRCS table admits 30 <= CN <= 100.
+        if cn <= 0:
+            raise ValueError(
+                f"Curve number must be positive for the SCS-CN method (got {cn}); "
+                "the NRCS table is defined for 30 <= CN <= 100"
+            )
         area_ha = input_data.area_ha
 
         # SCS-CN potential maximum retention in MILLIMETRES.
@@ -128,7 +159,13 @@ class RunoffCalculator:
             )
             volume_m3 = max(0.0, runoff_depth_mm * area_ha * 10.0)
 
-        peak_flow_m3s = volume_m3 / (10 * 3600) if volume_m3 > 0 else 0.0
+        # A discharge is a volume per unit time. The previous expression divided
+        # the volume in m3 by 36000, which is dimensionless, so the result carried
+        # no time unit at all: it was a volume, reported as a rate, and the stray
+        # factor 10 (a leftover hectare conversion) made it exactly 10x too small
+        # even under the 1-hour assumption it never stated.
+        duration_hr = input_data.storm_duration_h or 1.0
+        peak_flow_m3s = volume_m3 / (duration_hr * 3600.0) if volume_m3 > 0 else 0.0
 
         return RunoffOutput(
             volume_m3=volume_m3,
@@ -228,11 +265,18 @@ class SpatialRunoffCalculator:
             # Clip negative values
             runoff_depth = xr.where(runoff_depth < 0, 0.0, runoff_depth)
 
-            # Save the resulting runoff depth map
+            # Save the resulting runoff depth map. Python randomises str hashing per
+            # process unless PYTHONHASHSEED is pinned, so hash(dem_path) gave the same
+            # DEM a different filename on every run: the rasters could not be found
+            # again, deduplicated, or cached, and rerunning a scenario silently
+            # produced a new artefact. SHA-256 of the normalised path is stable.
             output_dir = Path("data/spatial_runoff")
             output_dir.mkdir(parents=True, exist_ok=True)
+            site_digest = hashlib.sha256(
+                str(PurePath(input_data.dem_path)).encode("utf-8")
+            ).hexdigest()[:16]
             runoff_map_path = str(
-                output_dir / f"runoff_cn_{input_data.method}_site_{hash(input_data.dem_path)}.tif"
+                output_dir / f"runoff_cn_{input_data.method}_site_{site_digest}.tif"
             )
 
             runoff_depth.rio.write_crs(target_crs, inplace=True)

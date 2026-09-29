@@ -21,7 +21,11 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from engine.hydroma.models.base import ScientificModel
+from engine.hydroma.models.base import (
+    ModelInput,
+    ModelOutput,
+    ScientificModel,
+)
 from engine.hydroma.models.expansion.registry import (
     ModelDomain,
     ModelFidelity,
@@ -406,8 +410,6 @@ class RichardsEquationPINN(PINNModel):
         def pde_fn(x, u):
             # x = [z, t], u = pressure head h
             h = u
-            x[:, 0:1]
-            x[:, 1:2]
 
             # Hydraulic conductivity K(h) - van Genuchten
             alpha = self.soil_params.get("alpha", 0.036)
@@ -418,11 +420,22 @@ class RichardsEquationPINN(PINNModel):
 
             m = 1 - 1 / n
             Se = torch.where(h >= 0, torch.ones_like(h), (1 + (alpha * (-h)) ** n) ** (-m))
-            theta_r + (theta_s - theta_r) * Se
             K = Ks * Se**0.5 * (1 - (1 - Se ** (1 / m)) ** m) ** 2
 
-            # dtheta/dt
-            dh_dt = self.model.gradient(x, h)[:, 1:2]
+            # dtheta/dt, in closed form.
+            #
+            # Two expressions used to sit here and discard their results:
+            #     x[:, 0:1]                                  # intended: z = x[:, 0:1]
+            #     x[:, 1:2]                                  # intended: t = x[:, 1:2]
+            # and, after Se,
+            #     theta = theta_r + (theta_s - theta_r) * Se
+            # None of them was bound to a name, so the water content was never
+            # computed and the coordinates were never unpacked. The residual was
+            # still correct, because dtheta/dt is written out analytically below
+            # rather than obtained by differentiating theta, which is the right
+            # choice for a physics-informed network: it keeps the time term out
+            # of the autograd graph. So this was a leftover, not a wrong
+            # equation, and the three dead expressions are removed here.
             dtheta_dt = (
                 (theta_s - theta_r)
                 * m
@@ -430,7 +443,7 @@ class RichardsEquationPINN(PINNModel):
                 * alpha
                 * (alpha * (-h)) ** (n - 1)
                 * (1 + (alpha * (-h)) ** n) ** (-m - 1)
-                * (-dh_dt)
+                * (-self.model.gradient(x, h)[:, 1:2])
             )
             dtheta_dt = torch.where(h >= 0, torch.zeros_like(dtheta_dt), dtheta_dt)
 

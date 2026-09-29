@@ -2,6 +2,7 @@
 
 from fastapi.testclient import TestClient
 
+from tests.db_support import reset_database
 from database.base import Base
 from database.config import engine
 from services.api_gateway.main import app
@@ -10,8 +11,7 @@ client = TestClient(app)
 
 
 def setup_function():
-    Base.metadata.drop_all(bind=engine)
-    Base.metadata.create_all(bind=engine)
+    reset_database()
 
 
 def _register():

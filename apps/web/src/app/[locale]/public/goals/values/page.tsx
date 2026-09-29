@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
@@ -17,12 +18,6 @@ type UssdStatus = {
 
 type VoiceStatus = { status: string; requires_gateway: boolean; available_languages: number };
 
-const TITLES: Record<string, string> = { fa: 'ارزش‌ها', en: 'Values' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'وضعیت واقعی دسترسی بدون گوشی هوشمند از مسیر USSD و صوت',
-  en: 'The real feature-phone access status from the USSD and voice routes',
-};
-
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
@@ -31,21 +26,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-goals-values');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/goals/values`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/goals/values`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/goals/values`,
-        en: `${BASE_URL}/en/public/goals/values`,
-      },
+      canonical: canonicalFor(locale, '/public/goals/values'),
+      languages: languageAlternates('/public/goals/values'),
     },
   };
 }
@@ -53,10 +46,12 @@ export async function generateMetadata({
 export default async function ValuesPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  const meta = await getTranslations('pageMeta.public-goals-values');
   const status = await getTranslations('statusLine');
   const common = await getTranslations('common');
-  const title = TITLES[locale] ?? TITLES.en;
-  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+  const title = meta('title');
+  const description = meta('description');
 
   const [ussd, voice] = await Promise.all([
     apiGet<UssdStatus>('/api/v1/ussd/status'),
@@ -67,14 +62,15 @@ export default async function ValuesPage({ params }: { params: Promise<{ locale:
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <div className="mx-auto max-w-4xl px-6 pb-12 pt-8">
-        <ProvenanceStamp
-          source={'/api/v1/ussd/status'}
-          label={title}
-          verified={ussd.ok}
-          method={'/api/v1/ussd/status'}
-        >
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-        </ProvenanceStamp>
+          <ProvenanceStamp
+            source={'/api/v1/ussd/status'}
+            label={title}
+            verified={ussd.ok}
+            method={'/api/v1/ussd/status'}
+          />
+        </div>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
 
         <section className="mt-8">

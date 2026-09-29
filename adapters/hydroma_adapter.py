@@ -16,7 +16,7 @@ from interfaces.hydroma_engine_interface import IHydromaEngine
 try:
     from engine.hydroma.climate.et_calculator import calc_et0_hargreaves
     from engine.hydroma.soil.salinity import classify_salinity as hydroma_classify_salinity
-    from engine.hydroma.watershed.watershed_calculator import (
+    from engine.hydroma.watershed.calculator import (
         design_check_dam as hydroma_design_check_dam,
     )
 except ImportError as e:
@@ -34,7 +34,14 @@ except ImportError as e:
         return 0.0
 
     def hydroma_design_check_dam(slope_pct, area_m2, rainfall_mm):
-        return {"type": "not_implemented"}
+        # Raised rather than returned as a payload. The previous stub returned
+        # {"type": "not_implemented"} with no flag, so a caller could not tell
+        # an absent engine from a computed design, and the result was shaped like
+        # a successful answer.
+        raise RuntimeError(
+            "engine.hydroma.watershed.calculator could not be imported; no check-dam "
+            "design is available"
+        )
 
 
 class HydromaAdapter(IHydromaEngine):

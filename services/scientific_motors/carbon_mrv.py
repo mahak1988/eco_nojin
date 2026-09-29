@@ -15,7 +15,14 @@ Verra/Gold Standard registration requires their full methodology docs.
 import time
 from typing import Any
 
-from services.scientific_motors.base import MotorParameters, MotorResult, MotorStatus
+from services.scientific_motors.base import (
+    MotorInput,
+    MotorOutput,
+    MotorParameters,
+    MotorResult,
+    MotorStatus,
+    MotorType,
+)
 
 C_TO_CO2E = 3.667  # t C -> t CO2e (IPCC)
 
@@ -28,9 +35,31 @@ GS_MONITORING = {
 
 
 class CarbonMrvMotor:
-    """Carbon budget (SOC stock change) with honest data provenance."""
+    """Carbon budget (SOC stock change) with honest data provenance.
 
-    motor_type = "carbon_mrv"
+    Registered with :mod:`services.scientific_motors.base` during the phase 4
+    S-SCI consolidation. It previously was not an
+    ``AbstractScientificMotor`` at all, so no consumer could introspect it
+    through the common interface, and it reported ``motor_type`` as a bare
+    string rather than a ``MotorType`` member.
+    """
+
+    motor_type = MotorType.CARBON_MRV
+    display_name = "Carbon MRV (IPCC 2019 Vol.4 Ch.2 stock-change)"
+
+    def get_input_requirements(self) -> list[MotorInput]:
+        return [
+            MotorInput("soc_initial_t_ha", "scalar", True, "Initial soil organic carbon stock, tC/ha"),
+            MotorInput("soc_final_t_ha", "scalar", True, "Final soil organic carbon stock, tC/ha"),
+            MotorInput("area_ha", "scalar", True, "Project area, hectares"),
+            MotorInput("practice", "scalar", False, "Management practice identifier"),
+        ]
+
+    def get_outputs(self) -> list[MotorOutput]:
+        return [
+            MotorOutput("net_co2e_t", "scalar", "tCO2e", "Net sequestration over the monitoring period"),
+            MotorOutput("permanence_factor", "scalar", "ratio", "Permanence deduction factor"),
+        ]
 
     def execute(
         self,

@@ -4,6 +4,7 @@ import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
@@ -25,12 +26,6 @@ type ContentSearch = {
   results: ContentHit[];
 };
 
-const TITLES: Record<string, string> = { fa: 'جستجوی پیشرفته', en: 'Advanced Search' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'جستجوی چندمعیاره در کتابخانه آموزشی',
-  en: 'Multi-criteria search in education library',
-};
-
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
@@ -39,21 +34,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-education-advanced-search');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/education/advanced-search`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/education/advanced-search`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/education/advanced-search`,
-        en: `${BASE_URL}/en/public/education/advanced-search`,
-      },
+      canonical: canonicalFor(locale, '/public/education/advanced-search'),
+      languages: languageAlternates('/public/education/advanced-search'),
     },
   };
 }
@@ -68,9 +61,11 @@ export default async function AdvancedSearchPage({
   const { locale } = await params;
   const query = await searchParams;
   setRequestLocale(locale);
+
+  const meta = await getTranslations('pageMeta.public-education-advanced-search');
   const learn = await getTranslations('learn');
-  const title = TITLES[locale] ?? TITLES.en;
-  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+  const title = meta('title');
+  const description = meta('description');
 
   const raw = query.q;
   const term = (Array.isArray(raw) ? raw[0] : raw)?.trim() ?? '';
@@ -90,9 +85,8 @@ export default async function AdvancedSearchPage({
           label={title}
           verified={search ? search.ok : false}
           method={CONTENT_SEARCH_PATH}
-        >
-          <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-        </ProvenanceStamp>
+        />
+        <h1 className="display text-4xl font-bold text-ink">{title}</h1>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
       </section>
 

@@ -13,6 +13,8 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Any
 
+from .retry import RetryPolicy, retry_or_term
+
 # NATS is an optional dependency (eventbus extra). The gateway must import
 # cleanly without it; the failure is raised at connection time, never at import
 # time.
@@ -21,7 +23,6 @@ try:
     from nats.aio.client import Client as NATSClient
     from nats.js import JetStreamContext
     from nats.js.api import ConsumerConfig, StreamConfig
-    from nats.js.errors import NotFoundError
 
     NATS_AVAILABLE = True
     _NATS_IMPORT_ERROR: str | None = None
@@ -32,7 +33,6 @@ except ImportError as exc:  # pragma: no cover - environment dependent
     NATSClient = Any  # type: ignore[misc,assignment]
     JetStreamContext = Any  # type: ignore[misc,assignment]
     ConsumerConfig = StreamConfig = Any  # type: ignore[misc,assignment]
-    NotFoundError = Exception  # type: ignore[misc,assignment]
 
 
 def _require_nats() -> Any:
@@ -68,6 +68,7 @@ class NATSConfig:
     max_retries: int
     retry_base_delay: float
     retry_max_delay: float
+    max_deliver: int
     connect_timeout: float
 
     @classmethod
@@ -86,8 +87,25 @@ class NATSConfig:
             max_retries=settings.nats_max_retries,
             retry_base_delay=settings.nats_retry_base_delay,
             retry_max_delay=settings.nats_retry_max_delay,
+            # Separate knob: how many times JetStream redelivers before giving
+            # up. Previously reused nats_max_retries, which is about publish
+            # resilience, so the consumer ceiling moved with publisher tuning.
+            max_deliver=getattr(settings, "nats_max_deliver", settings.nats_max_retries),
             connect_timeout=settings.nats_connect_timeout,
         )
+
+    def subject_for(self, event_type: str) -> str:
+        """Return the fully-qualified JetStream subject for an event type.
+
+        Single source of truth for subject naming. ``publish``, ``subscribe``
+        and ``request`` all used to inline ``f"{prefix}.{subject}"``, and
+        ``services/event_bus/config.py`` had a *different* implementation of
+        the same rule, so the same logical event could land on two subjects
+        depending on which stack published it.
+        """
+        if not event_type or any(character in event_type for character in (" ", ">", "*")):
+            raise ValueError(f"event_type must be a non-empty NATS subject segment: {event_type!r}")
+        return f"{self.subject_prefix.rstrip('.')}.{event_type.lstrip('.')}"
 
 
 class NATSManager:
@@ -112,6 +130,10 @@ class NATSManager:
     @property
     def is_connected(self) -> bool:
         return self._connected and self._nc is not None and not self._nc.is_closed
+
+    def subject_for(self, event_type: str) -> str:
+        """Fully-qualified JetStream subject. Delegates to the config rule."""
+        return self.config.subject_for(event_type)
 
     async def connect(self) -> None:
         """Establish NATS connection with JetStream."""
@@ -152,72 +174,53 @@ class NATSManager:
             raise
 
     async def _ensure_stream(self) -> None:
-        """Create or update the JetStream stream."""
-        try:
-            await self._js.add_stream(
-                StreamConfig(
-                    name=self.config.stream,
-                    subjects=[f"{self.config.subject_prefix}.>"],
-                    retention="limits",
-                    max_age=86400 * 7,  # 7 days
-                    max_msgs=10_000_000,
-                    max_bytes=10 * 1024 * 1024 * 1024,  # 10 GB
-                    storage="file",
-                    replicas=1,
-                )
+        """Create the JetStream stream.
+
+        ``add_stream`` is idempotent, so the previous try/except NotFoundError
+        pair — whose two bodies were byte-identical — was dead code. A genuine
+        failure now raises instead of being logged and swallowed, because a
+        missing stream makes every later publish fail for a reason that is
+        invisible at the call site.
+        """
+        await self._js.add_stream(
+            StreamConfig(
+                name=self.config.stream,
+                subjects=[f"{self.config.subject_prefix}.>"],
+                retention="limits",
+                max_age=86400 * 7,  # 7 days
+                max_msgs=10_000_000,
+                max_bytes=10 * 1024 * 1024 * 1024,  # 10 GB
+                storage="file",
+                replicas=1,
             )
-            logger.info(f"✅ JetStream stream '{self.config.stream}' ready")
-        except NotFoundError:
-            # Stream doesn't exist, create it
-            await self._js.add_stream(
-                StreamConfig(
-                    name=self.config.stream,
-                    subjects=[f"{self.config.subject_prefix}.>"],
-                    retention="limits",
-                    max_age=86400 * 7,
-                    max_msgs=10_000_000,
-                    max_bytes=10 * 1024 * 1024 * 1024,
-                    storage="file",
-                    replicas=1,
-                )
-            )
-            logger.info(f"✅ JetStream stream '{self.config.stream}' created")
-        except Exception as e:
-            # Stream might already exist with different config
-            logger.warning(f"Stream config check: {e}")
+        )
+        logger.info(f"✅ JetStream stream '{self.config.stream}' ready")
 
     async def _ensure_consumer(self) -> None:
-        """Create or update the durable consumer."""
-        try:
-            await self._js.add_consumer(
-                self.config.stream,
-                ConsumerConfig(
-                    durable_name=self.config.durable_consumer,
-                    filter_subject=f"{self.config.subject_prefix}.>",
-                    ack_policy="explicit",
-                    ack_wait=30,
-                    max_deliver=self.config.max_retries,
-                    replay_policy="instant",
-                    deliver_policy="all",
-                ),
-            )
-            logger.info(f"✅ Durable consumer '{self.config.durable_consumer}' ready")
-        except NotFoundError:
-            await self._js.add_consumer(
-                self.config.stream,
-                ConsumerConfig(
-                    durable_name=self.config.durable_consumer,
-                    filter_subject=f"{self.config.subject_prefix}.>",
-                    ack_policy="explicit",
-                    ack_wait=30,
-                    max_deliver=self.config.max_retries,
-                    replay_policy="instant",
-                    deliver_policy="all",
-                ),
-            )
-            logger.info(f"✅ Durable consumer '{self.config.durable_consumer}' created")
-        except Exception as e:
-            logger.warning(f"Consumer config check: {e}")
+        """Create the durable consumer.
+
+        Two corrections while consolidating:
+
+        * ``max_deliver`` was wired to ``max_retries``, a *publish* retry
+          setting. Redelivery attempts and publish attempts are unrelated
+          knobs; conflating them meant the consumer's ceiling moved whenever
+          someone tuned publisher resilience.
+        * A failure now raises, for the same reason as the stream.
+        """
+        await self._js.add_consumer(
+            self.config.stream,
+            ConsumerConfig(
+                durable_name=self.config.durable_consumer,
+                filter_subject=f"{self.config.subject_prefix}.>",
+                ack_policy="explicit",
+                ack_wait=30,
+                # Redelivery ceiling, independent of publish retries.
+                max_deliver=self.config.max_deliver,
+                replay_policy="instant",
+                deliver_policy="all",
+            ),
+        )
+        logger.info(f"✅ Durable consumer '{self.config.durable_consumer}' ready")
 
     async def disconnect(self) -> None:
         """Gracefully disconnect from NATS."""
@@ -248,7 +251,7 @@ class NATSManager:
             logger.warning("NATS not connected, cannot publish")
             return False
 
-        full_subject = f"{self.config.subject_prefix}.{subject}"
+        full_subject = self.subject_for(subject)
 
         message_headers = {
             "content-type": "application/json",
@@ -303,12 +306,20 @@ class NATSManager:
         callback: Callable[[dict[str, Any], dict[str, str]], None],
         durable_name: str | None = None,
         queue: str | None = None,
+        retry_policy: RetryPolicy | None = None,
     ) -> None:
-        """Subscribe to a subject with a callback."""
+        """Subscribe to a subject with a callback.
+
+        A failing callback is retried with backoff and dead-lettered once the
+        attempts run out. It used to call a bare ``nak()``, which redelivered a
+        poison message at full speed until the consumer's max_deliver was hit,
+        and nothing was ever written to the dead-letter subject.
+        """
         if not self.is_connected:
             raise RuntimeError("NATS not connected")
 
-        full_subject = f"{self.config.subject_prefix}.{subject}"
+        full_subject = self.subject_for(subject)
+        policy = retry_policy or RetryPolicy.from_config(self.config)
 
         async def message_handler(msg):
             try:
@@ -316,9 +327,8 @@ class NATSManager:
                 headers = dict(msg.headers) if msg.headers else {}
                 await callback(payload, headers)
                 await msg.ack()
-            except Exception as e:
-                logger.error(f"Message handler error: {e}")
-                await msg.nak()
+            except Exception as exc:
+                await retry_or_term(msg, exc, policy=policy, publish_dead_letter=self._dead_letter)
 
         try:
             if durable_name:
@@ -340,6 +350,14 @@ class NATSManager:
             logger.error(f"Failed to subscribe to {full_subject}: {e}")
             raise
 
+    async def _dead_letter(self, subject_suffix: str, payload: dict[str, Any]) -> bool:
+        """Publish to the dead-letter subject. Best effort."""
+        try:
+            return await self.publish(subject_suffix, payload)
+        except Exception:
+            logger.exception("Dead-letter publish to %s failed", subject_suffix)
+            return False
+
     async def request(
         self,
         subject: str,
@@ -350,7 +368,7 @@ class NATSManager:
         if not self.is_connected:
             raise RuntimeError("NATS not connected")
 
-        full_subject = f"{self.config.subject_prefix}.{subject}"
+        full_subject = self.subject_for(subject)
 
         try:
             msg = await self._nc.request(
@@ -364,8 +382,11 @@ class NATSManager:
             return None
 
 
-# Global NATS manager instance
+# Global NATS manager instance.
 _nats_manager: NATSManager | None = None
+# Check-then-act on _nats_manager was unsynchronised, so two concurrent first
+# callers could each construct a manager and one connection would be orphaned.
+_nats_manager_lock = asyncio.Lock()
 
 
 def get_nats_manager() -> NATSManager:
@@ -376,9 +397,20 @@ def get_nats_manager() -> NATSManager:
     return _nats_manager
 
 
+async def get_or_create_nats_manager() -> NATSManager:
+    """Race-free variant of :func:`get_nats_manager` for async callers."""
+    global _nats_manager
+    if _nats_manager is not None:
+        return _nats_manager
+    async with _nats_manager_lock:
+        if _nats_manager is None:
+            _nats_manager = NATSManager()
+        return _nats_manager
+
+
 async def init_nats() -> NATSManager:
     """Initialize NATS connection (call during app startup)."""
-    manager = get_nats_manager()
+    manager = await get_or_create_nats_manager()
     await manager.connect()
     return manager
 

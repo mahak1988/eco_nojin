@@ -7,7 +7,8 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from services.finance.wallet_service import LedgerService, WalletService
+from services.finance.ledger_service import LedgerService
+from services.finance.wallet_service import WalletService
 
 
 class TestWalletService:

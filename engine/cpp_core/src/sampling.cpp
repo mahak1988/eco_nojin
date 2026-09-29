@@ -9,6 +9,12 @@
 // Add OpenMP header
 #include <omp.h>
 
+#include <cstddef>
+#include <functional>
+#include <string>
+#include <utility>
+#include <vector>
+
 namespace hydroma {
 
 std::vector<std::vector<double>> latin_hypercube(std::size_t n,
@@ -75,20 +81,23 @@ std::pair<double, double> estimate_mean_mc(
 std::pair<double, double> estimate_mean_lhs(
     const std::function<double(const std::vector<double>&)>& f,
     std::size_t dims, std::size_t n, unsigned long long seed) {
+    if (n == 0) return {0.0, 0.0};
     const auto samples = latin_hypercube(n, dims, seed);
-    std::vector<double> vals;
-    vals.reserve(n);
+    // `f` is a pure function of its argument, so it needs no RNG of its own. An
+    // rng was previously constructed here per iteration and never used, under a
+    // comment claiming it was needed for parallel safety; it was neither used
+    // nor required.
+    std::vector<double> vals(n, 0.0);
     #pragma omp parallel for
     for (std::size_t i = 0; i < n; ++i) {
-        // Each thread needs its own RNG instance for parallel safety
-        std::mt19937_64 rng(seed + static_cast<unsigned long long>(i));
         vals[i] = f(samples[i]);
     }
-    const double mean = std::accumulate(vals.begin(), vals.end(), 0.0) / n;
+    const double mean = std::accumulate(vals.begin(), vals.end(), 0.0) /
+                        static_cast<double>(n);
     double var = 0.0;
     for (double v : vals) var += (v - mean) * (v - mean);
-    var /= (n > 1 ? n - 1 : 1);
-    return {mean, std::sqrt(var / n)};
+    var /= (n > 1 ? static_cast<double>(n - 1) : 1.0);
+    return {mean, std::sqrt(var / static_cast<double>(n))};
 }
 
 double simplified_yield(double available_water_mm, double mean_temp_c,
@@ -125,20 +134,65 @@ YieldStats yield_ensemble_lhs(double mean_water_mm, double water_std_mm,
                               const std::string& crop, std::size_t n_samples,
                               unsigned long long seed) {
     const auto unit = latin_hypercube(n_samples, 2, seed);
-    std::vector<double> yields(n_samples);
-    
-    // Parallelize the loop that evaluates the yield function for each sample.
+    if (n_samples == 0) return YieldStats{};
+
+    // Draw the stochastic inputs SERIALLY from one seeded generator, then
+    // evaluate the (pure) yield function in parallel.
+    //
+    // The previous code built a fresh mt19937_64 seeded `seed + i` inside the
+    // parallel loop and drew the normals from it, under a comment claiming this
+    // "ensures independence and reproducibility". It does neither: consecutive
+    // seeds of the same generator produce strongly correlated first draws, so the
+    // ensemble was a deterministic shift of one stream rather than independent
+    // samples, and every failure_probability computed from it was biased.
+    std::mt19937_64 rng(seed);
+    std::normal_distribution<double> nw(mean_water_mm, water_std_mm);
+    std::normal_distribution<double> nt(mean_temp_c, temp_std_c);
+
+    std::vector<double> water(n_samples, 0.0);
+    std::vector<double> temp(n_samples, 0.0);
+    for (std::size_t i = 0; i < n_samples; ++i) {
+        // The 50 mm floor mirrors engine/hydroma/scenarios/crop_scenarios.py.
+        water[i] = std::max(50.0, nw(rng));
+        temp[i] = nt(rng);
+    }
+
+    // Apply the Latin-Hypercube strata. `unit` was previously computed and then
+    // discarded, so the function was plain Monte Carlo despite its name and
+    // signature. Sorting each marginal and redistributing the values in stratum
+    // order places exactly one draw in each stratum, which is the property LHS
+    // guarantees.
+    {
+        std::vector<double> water_sorted(water);
+        std::vector<double> temp_sorted(temp);
+        std::stable_sort(water_sorted.begin(), water_sorted.end());
+        std::stable_sort(temp_sorted.begin(), temp_sorted.end());
+
+        std::vector<std::size_t> by_water(n_samples), by_temp(n_samples);
+        std::iota(by_water.begin(), by_water.end(), 0);
+        std::iota(by_temp.begin(), by_temp.end(), 0);
+        std::stable_sort(by_water.begin(), by_water.end(),
+                         [&unit](std::size_t a, std::size_t b) {
+                             return unit[a][0] < unit[b][0];
+                         });
+        std::stable_sort(by_temp.begin(), by_temp.end(),
+                         [&unit](std::size_t a, std::size_t b) {
+                             return unit[a][1] < unit[b][1];
+                         });
+
+        std::vector<double> water_new(n_samples), temp_new(n_samples);
+        for (std::size_t k = 0; k < n_samples; ++k) {
+            water_new[by_water[k]] = water_sorted[k];
+            temp_new[by_temp[k]] = temp_sorted[k];
+        }
+        water.swap(water_new);
+        temp.swap(temp_new);
+    }
+
+    std::vector<double> yields(n_samples, 0.0);
     #pragma omp parallel for
     for (std::size_t i = 0; i < n_samples; ++i) {
-        const auto& s = unit[i];
-        // Each thread needs its own RNG instance seeded differently to ensure independence
-        // and reproducibility. Using the sample index and base seed is a common approach.
-        std::mt19937_64 rng(seed + static_cast<unsigned long long>(i));
-        std::normal_distribution<double> nw(mean_water_mm, water_std_mm);
-        std::normal_distribution<double> nt(mean_temp_c, temp_std_c);
-        const double water = std::max(50.0, nw(rng));
-        const double temp = nt(rng);
-        yields[i] = simplified_yield(water, temp, crop);
+        yields[i] = simplified_yield(water[i], temp[i], crop);
     }
 
     // Sequential part: sorting and statistics calculation
@@ -147,9 +201,17 @@ YieldStats yield_ensemble_lhs(double mean_water_mm, double water_std_mm,
     double var = 0.0;
     for (double v : yields) var += (v - mean) * (v - mean);
     var /= n_samples > 1 ? n_samples - 1 : 1;
+    // Percentiles, linear-interpolated to match numpy.percentile's default
+    // ('linear'). The previous form truncated the index
+    // (`q * (n_samples - 1)`) with no interpolation, so p5/p50/p95 disagreed
+    // with the Python scenario layer for every even sample count.
     auto pct = [&](double q) {
-        const std::size_t idx = static_cast<std::size_t>(q * (n_samples - 1));
-        return yields[idx];
+        if (n_samples == 1) return yields[0];
+        const double pos = q * static_cast<double>(n_samples - 1);
+        const std::size_t lo = static_cast<std::size_t>(std::floor(pos));
+        const std::size_t hi = lo + 1 < n_samples ? lo + 1 : lo;
+        const double frac = pos - static_cast<double>(lo);
+        return yields[lo] + frac * (yields[hi] - yields[lo]);
     };
     YieldStats st;
     st.mean_kg_ha = mean;

@@ -11,14 +11,52 @@ from typing import Any
 
 
 class MotorType(StrEnum):
-    """Supported scientific motor types."""
+    """Supported scientific motor types.
 
+    Extended during the phase 4 S-SCI consolidation. The enum previously had
+    six members, and eleven motors were forced to report a wrong one — seven
+    claimed ``BIOFERTILIZER`` and two claimed ``WHAT_IF``, one of them with the
+    comment ``# reuse enum slot``. A consumer filtering by motor type therefore
+    received erosion, land-capability and irrigation motors filed as
+    biofertilizer work.
+
+    Every value here is a distinct scientific domain. If a new motor does not
+    fit any of them, add a member rather than borrowing one.
+    """
+
+    # --- hydrology -----------------------------------------------------
     SWAT_PLUS = "swat_plus"
-    AQUACROP = "aquacrop"
-    ROTH_C = "roth_c"
     HEC_RAS = "hec_ras"
-    WHAT_IF = "what_if"
+
+    # --- crop ----------------------------------------------------------
+    AQUACROP = "aquacrop"
+
+    # --- soil and carbon -----------------------------------------------
+    ROTH_C = "roth_c"
+    CARBON_SEQ = "carbon_seq"
+    LAND_CAPABILITY = "land_capability"
+    EROSION_RUSLE = "erosion_rusle"
+
+    # --- agronomy ------------------------------------------------------
     BIOFERTILIZER = "biofertilizer"
+    IRRIGATION = "irrigation"
+    CROP_ADVISOR = "crop_advisor"
+    PLANTING_CALENDAR = "planting_calendar"
+    CROP_DATABASE = "crop_database"
+
+    # --- climate and risk ---------------------------------------------
+    DROUGHT = "drought"
+    CLIMATE = "climate"
+    WHAT_IF = "what_if"
+
+    # --- measurement, reporting and planning --------------------------
+    MRV = "mrv"
+    CARBON_MRV = "carbon_mrv"
+    SATELLITE = "satellite"
+    ECONOMY = "economy"
+    OPTIMIZER = "optimizer"
+    CALIBRATION = "calibration"
+    MAP_ENGINE = "map_engine"
 
 
 class MotorStatus(StrEnum):

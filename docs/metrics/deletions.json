@@ -1,0 +1,212 @@
+{
+  "version": 1,
+  "recorded": "2026-09-28",
+  "purpose": "Audit trail for every file removed during the phase 4/5 consolidation. The integration plan's biggest execution risk is deleting code that looked dead and was not. This log makes each deletion auditable, and tests/contract/test_deletion_log.py makes the log itself enforced: an entry without a reason or a verification fails the build, and a deleted path that reappears fails it too.",
+  "policy": [
+    "A path may only be deleted after its importers have been checked with a whole-repository search, not a guess.",
+    "Verification records what was actually run, so a reviewer can repeat it rather than trust it.",
+    "Anything not listed here is not an approved deletion. If it vanishes, that is a finding.",
+    "A deletion that turns out to have been live is restored with `git checkout HEAD -- <path>`; every entry in this log is a tracked file, so no deletion here is irreversible."
+  ],
+  "excluded": {
+    "git submodules": "lib/forge-std and lib/openzeppelin-contracts are gitmodules. Their directories are populated; only the index entry differs. They are not part of this log and must not be touched by consolidation work."
+  },
+  "deletions": [
+    {
+      "path": "services/event_bus/config.py",
+      "reason": "Duplicate NATS configuration. EventBusConfig duplicated NATSConfig field for field but implemented subject naming differently, so the same logical event could land on two subjects depending on which stack published it.",
+      "phase": 4,
+      "verified_by": "G1 import smoke over 613 modules; no remaining importer after workers/event_worker.py was rewired to services/api_gateway/eventbus.",
+      "supersedes": "api_gateway/eventbus",
+      "owner_domain": "D-6"
+    },
+    {
+      "path": "services/event_bus/publisher.py",
+      "reason": "Second publisher implementation over the same JetStream stream. The surviving publisher in api_gateway/eventbus is the one the gateway lifespan connects.",
+      "phase": 4,
+      "verified_by": "G1 import smoke; no remaining importer.",
+      "owner_domain": "D-6"
+    },
+    {
+      "path": "services/event_bus/consumer.py",
+      "reason": "Second consumer implementation whose _message_positional_count/_invoke_handler were verbatim copies of worker.py. Its jetstream_error path did not exist in the surviving code.",
+      "phase": 4,
+      "verified_by": "G1 import smoke; no remaining importer.",
+      "owner_domain": "D-6"
+    },
+    {
+      "path": "services/event_bus/worker.py",
+      "reason": "Second worker implementation. Its handler registry was ported to api_gateway/eventbus/worker.py first, and the one behaviour worth keeping - nak instead of ack for an unhandled event - was corrected during the port.",
+      "phase": 4,
+      "verified_by": "tests/contract/test_s_event.py asserts the corrected behaviour; G1 import smoke.",
+      "owner_domain": "D-6"
+    },
+    {
+      "path": "services/event_bus/retry.py",
+      "reason": "Held the only working backoff and dead-letter implementation. Ported rather than deleted: it is now api_gateway/eventbus/retry.py, and NATSManager.subscribe uses it instead of a bare nak().",
+      "phase": 4,
+      "verified_by": "tests/contract/test_s_event.py::TestRedeliveryIsNotBareNak.",
+      "moved_to": "services/api_gateway/eventbus/retry.py",
+      "owner_domain": "D-6"
+    },
+    {
+      "path": "services/event_bus/__init__.py",
+      "reason": "Package marker for the deleted NATS stack. It re-exported JetStreamPublisher, JetStreamConsumer and EventBusWorker, all of which were aliases of the second implementation the consolidation removed, so keeping the marker would leave a package that only re-exported code that no longer exists.",
+      "phase": 4,
+      "verified_by": "G1 import smoke.",
+      "owner_domain": "D-6"
+    },
+    {
+      "path": "services/api_gateway/eventbus/dlq.py",
+      "reason": "Implemented a full dead-letter store that nothing called: the failure path used a bare nak() with no delay and no attempt cap. Dead-lettering is now inline in retry.retry_or_term, which back off, publishes to the dead-letter subject, then terminates the message.",
+      "phase": 4,
+      "verified_by": "tests/contract/test_s_event.py::test_the_dead_dlq_module_is_gone plus the redelivery tests.",
+      "owner_domain": "D-6"
+    },
+    {
+      "path": "services/api_gateway/resilience/circuit_breaker.py",
+      "reason": "Duplicate of engine/resilience.py, which has the registry lock this one lacked, so two callers could each get their own breaker and half the traffic would bypass it.",
+      "phase": 4,
+      "verified_by": "G1 import smoke; zero importers outside the package itself.",
+      "supersedes": "engine/resilience.py",
+      "owner_domain": "D-6"
+    },
+    {
+      "path": "services/api_gateway/resilience/retry.py",
+      "reason": "Its RetryPolicy.retrying() was an async context manager that re-yielded after an exception, which contextlib turns into RuntimeError('generator didn't stop after athrow()'). engine/resilience.py has a working with_retry decorator.",
+      "phase": 4,
+      "verified_by": "G1 import smoke.",
+      "owner_domain": "D-6"
+    },
+    {
+      "path": "services/api_gateway/resilience/timeout.py",
+      "reason": "call_with_timeout checked the deadline immediately after setting it, so it never fired; the wrapped call was unbounded.",
+      "phase": 4,
+      "verified_by": "G1 import smoke.",
+      "owner_domain": "D-6"
+    },
+    {
+      "path": "services/api_gateway/resilience/__init__.py",
+      "reason": "Package marker. Its with_resilience() also defaulted retry off, so the advertised 'circuit breaker + retry + timeout' was in fact circuit breaker alone.",
+      "phase": 4,
+      "verified_by": "G1 import smoke.",
+      "owner_domain": "D-6"
+    },
+    {
+      "path": "services/api_gateway/cache/redis_cache.py",
+      "reason": "Unreferenced. No consumer outside the package, and four substantive defects if it had been wired: fail-hard rather than fail-open on a Redis outage, an inc-free hit counter that made cache keys immortal by rewriting setex as set, no client lock, and a set() that silently ignored the caller's ttl.",
+      "phase": 4,
+      "verified_by": "Whole-repo importer search returned only the package itself; G1 import smoke.",
+      "owner_domain": "D-6"
+    },
+    {
+      "path": "services/api_gateway/cache/cache_invalidator.py",
+      "reason": "Part of the unreferenced cache package. Its invalidation channel key ({prefix}invalidation) never matched the cache's own ({prefix}tags), so even the tag invalidation was two systems that could not see each other.",
+      "phase": 4,
+      "verified_by": "Whole-repo importer search.",
+      "owner_domain": "D-6"
+    },
+    {
+      "path": "services/api_gateway/cache/__init__.py",
+      "reason": "Package marker for the unreferenced cache package.",
+      "phase": 4,
+      "verified_by": "Whole-repo importer search.",
+      "owner_domain": "D-6"
+    },
+    {
+      "path": "services/map_engine/api/__init__.py",
+      "reason": "A /maps router exposing only SmartMapService, a mock returning np.full((8,8), 2.8). It was mounted nowhere, so it hid the fact that the real pipelines are fed by synthetic fetchers, and the only tests in map_engine covered this mock.",
+      "phase": 5,
+      "verified_by": "tests/contract/test_phase4_group5.py::TestTheMockIsGone; the replacement tests cover the orchestrator and every fetcher's declared origin.",
+      "owner_domain": "D-5"
+    },
+    {
+      "path": "services/map_engine/smart_service.py",
+      "reason": "The mock behind the unmounted router. No production consumer.",
+      "phase": 5,
+      "verified_by": "tests/contract/test_phase4_group5.py::test_nothing_imports_the_mock_anymore.",
+      "owner_domain": "D-5"
+    },
+    {
+      "path": "services/models/cpp_bridge.py",
+      "reason": "A ctypes loader keyed on hydroma_core.dll, which is never built; the real extension is a .pyd. It logged 'cpp bridge unavailable: hydroma_core.dll not found' while a working compiled module sat next to it. tests/unit/test_cpp_status_endpoint.py asserts it must be gone.",
+      "phase": 5,
+      "verified_by": "Zero importers outside the test that asserts its absence; 8/8 in test_cpp_status_endpoint.py pass with it removed.",
+      "owner_domain": "D-4"
+    },
+    {
+      "path": "engine/cpp_core/bindings/c_api.cpp",
+      "reason": "Removed in a prior cleanup and never deleted; CMakeLists.txt no longer references it. tests/unit/test_cpp_status_endpoint.py asserts both.",
+      "phase": 5,
+      "verified_by": "test_c_api_source_is_not_in_the_cmake_build passes; CMakeLists confirmed free of c_api.",
+      "owner_domain": "D-4"
+    },
+    {
+      "path": "engine/hydroma/core.py",
+      "reason": "Shadowed dead file: engine/hydroma/core/ is a package, so `import engine.hydroma.core` resolves to the package and this file could never run. It carried a RUSLE calibration of 0.10 that the repo's own honesty tests grep for, which failed because the file was still on disk.",
+      "phase": 5,
+      "verified_by": "Tracked and unmodified before deletion, so `git checkout HEAD --` restores it. tests/unit/test_rusle_uncorrelated.py and test_no_altered_standards.py both pass with it gone.",
+      "name_collision_with_live_package": {
+        "package": "engine/hydroma/core/__init__.py",
+        "note": "The deleted file was a module named engine.hydroma.core, and a package of the same name sits beside it. Python always resolves the package, so no import statement can distinguish them and every \from engine.hydroma.core import X in the tree is satisfied by the package. Tests that grep for the file by name must not be read as live importers."
+      },
+      "owner_domain": "D-4"
+    },
+    {
+      "path": "database/models/database_models.py",
+      "reason": "Shadowed dead directory: database/models.py is a module, and this file did `from database.models import Base`, importing the name it shadows. Unimportable by construction, with no importer and no __init__.py. It declared seven tables that already exist in database/models.py, which is what test_s12_table_registration.py was failing on.",
+      "phase": 5,
+      "verified_by": "Tracked and unmodified before deletion. test_s12_table_registration.py passes with it gone.",
+      "owner_domain": "D-6"
+    },
+    {
+      "path": "services/map_engine/test_hydroma_motors.py",
+      "reason": "A __main__ smoke script inside a production package. Its two pytest-collectable test functions contained zero assertions, so pytest recorded vacuous passes from shipping code. It also ran sys.path.insert(0, '.') on import. Replaced by 19 real tests in tests/unit/test_map_engine_fetchers.py.",
+      "phase": 5,
+      "verified_by": "62 assertions now cover what 0 did; `pytest services --collect-only -q` collects no tests from non-tests/ modules.",
+      "owner_domain": "D-5"
+    },
+    {
+      "path": "services/scientific_motors/test_lcc.py",
+      "reason": "Same shape: a __main__ smoke script in a production package with one assertion-free test function. Replaced by 10 real tests in tests/unit/test_lcc_motor.py.",
+      "phase": 5,
+      "verified_by": "tests/unit/test_lcc_motor.py, 10 passed.",
+      "owner_domain": "D-4"
+    },
+    {
+      "path": "services/security/ssrf.py",
+      "phase": 5,
+      "owner_domain": "D-7",
+      "reason": "Zero importers. validate_url() itself is sound - four real checks - so the module is not a stub, it is simply never called: no outbound request in the codebase passes through it, which means the SSRF guard has never protected anything. Its replacement belongs on the httpx transport, per the S-SEC standard.",
+      "verified_by": "AST importer scan over the whole repository: 0 sites, including importlib string arguments. G1 import smoke; tests/contract/test_phase4_group5.py unaffected."
+    },
+    {
+      "path": "services/security/headers.py",
+      "phase": 5,
+      "owner_domain": "D-7",
+      "reason": "Zero importers. Held the only Content-Security-Policy in the repository, for a middleware that was never mounted - so the gateway sent no CSP while the repository appeared to have one. That is the gap now registered as no-content-security-policy in the toleration ledger, with the security status endpoint reporting it live.",
+      "verified_by": "AST importer scan: 0 sites. The mounted SecurityHeadersMiddleware in services/api_gateway/security.py is unaffected."
+    },
+    {
+      "path": "services/security/redis_rate_limit.py",
+      "phase": 5,
+      "owner_domain": "D-7",
+      "reason": "Zero importers, and weaker than the live services/api_gateway/security.py: it bucketed by ip:path, which lets a caller multiply its budget by rotating the path. The live limiter buckets by subject so key_by_subject actually works.",
+      "verified_by": "AST importer scan: 0 sites."
+    },
+    {
+      "path": "services/security/slowloris.py",
+      "phase": 5,
+      "owner_domain": "D-7",
+      "reason": "Zero importers. Its own logic was also unsound: it trusted X-Forwarded-For for the client address, and raised UnboundLocalError on a request that produced no time delta. The staged edit at deletion time had begun removing dead branches from it, which confirms nobody was maintaining it.",
+      "verified_by": "AST importer scan: 0 sites. NOTE: the working copy carried a staged edit (10+/8-) at deletion; git checkout HEAD -- <path> restores the committed version, not that edit."
+    },
+    {
+      "path": "services/session_manager.py",
+      "phase": 5,
+      "owner_domain": "D-7",
+      "reason": "Zero importers. ADR 0002 calls for an opaque server-side session cookie with server-held state, and this was the module meant to provide it, but it was never wired to the auth router. It also used the KEYS \"session:*\" pattern, which is O(N) over the keyspace and wrong on a shared Redis.",
+      "verified_by": "AST importer scan: 0 sites. The 2FA gap it duplicated is closed: services/two_factor.py is now consumed by passkey_router."
+    }
+  ]
+}

@@ -19,7 +19,7 @@ class LocaleMiddleware(BaseHTTPMiddleware):
 
     def __init__(self, app):
         super().__init__(app)
-        self._rtl_languages_cache: Optional[list[str]] = None
+        self._rtl_languages_cache: list[str] | None = None
 
     def _get_settings(self):
         """Get current settings (allows for testing with overridden settings)."""

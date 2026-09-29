@@ -125,24 +125,53 @@
   /* Ink (text) */
   --ink: light-dark(oklch(0.26 0.015 210), oklch(0.93 0.012 120));
   --ink-soft: light-dark(oklch(0.36 0.02 210), oklch(0.78 0.02 180));
-  --ink-faint: light-dark(oklch(0.4 0.02 210), oklch(0.72 0.02 180));
+  --ink-faint: light-dark(oklch(0.4 0.02 210), oklch(0.768 0.02 180));
 
   /* Lines */
   --line: light-dark(oklch(0.9 0.01 210), oklch(0.32 0.02 200));
-  --line-strong: light-dark(oklch(0.8 0.015 210), oklch(0.42 0.025 190));
+  --line-strong: light-dark(oklch(0.799 0.015 210), oklch(0.705 0.025 190));
 
   /* Contextual — water / life / earth */
   --water: light-dark(oklch(0.4 0.12 235), oklch(0.72 0.12 220));
-  --forest: light-dark(oklch(0.36 0.11 152), oklch(0.7 0.15 155));
+  --forest: light-dark(oklch(0.36 0.11 152), oklch(0.742 0.11 152));
   --moss: light-dark(oklch(0.4 0.09 130), oklch(0.62 0.1 130));
   --soil: light-dark(oklch(0.38 0.06 70), oklch(0.66 0.09 75));
   --copper: light-dark(oklch(0.42 0.13 45), oklch(0.72 0.14 55));
-  --clay: light-dark(oklch(0.55 0.12 35), oklch(0.68 0.13 35));
+  /* `--clay` is the error-text colour in roughly sixty components, and at
+     oklch(0.68 0.13 35) it measured 3.40:1 on `--surface` in dark mode. 0.735 is
+     the solved value, with a margin over the floor so a later hue nudge does not
+     land immediately under it again. `check-contrast.mjs` re-measures it. */
+  --clay: light-dark(oklch(0.55 0.12 35), oklch(0.735 0.13 35));
   --sky: light-dark(oklch(0.6 0.09 235), oklch(0.78 0.09 235));
   --canopy: light-dark(oklch(0.28 0.05 160), oklch(0.26 0.04 160));
   --focus: light-dark(oklch(0.55 0.14 90), oklch(0.82 0.14 90));
   --action: oklch(0.25 0.05 160);
   --on-action: oklch(0.99 0.005 120);
+  /* Master plan §4.1 "کاغذ/زمینهٔ روشن" and `tokens/dtcg.json` `color.paper`.
+     The value is the DTCG one; the dark counterpart is the same warm hue at a
+     lightness that keeps `text-paper` readable on `--forest`, which is light in
+     dark mode (oklch 0.7 0.15 155) and would need dark text. */
+  --paper: light-dark(oklch(0.97 0.005 90), oklch(0.22 0.012 90));
+
+  /* Muted surface. `Input`/`Select`/`Textarea` and the four `loading.tsx`
+     skeletons ask for `--color-muted`, which was never declared, so every one
+     of them resolved to nothing. Aliased rather than invented: a muted field
+     background is the second surface step. */
+  --muted: var(--surface-2);
+
+  /*
+   * Danger — the semantic name the `error` state of master plan §4.5 needs.
+   *
+   * `Input`, `Select` and `Textarea` have always written `border-error` and
+   * `text-error`, and neither name was ever a token, so a field in an error
+   * state was drawn exactly like a field in a normal one.
+   *
+   * It aliases `--clay` rather than introducing a red. The codebase had already
+   * settled on `text-clay` for error copy in about sixty places, so a second red
+   * would be a second value to keep in step, and this token exists to give the
+   * role a name — not to add a colour.
+   */
+  --danger: var(--clay);
 
   /* Chart palette — colorblind-safe 8-color (Design System §2.3) */
   --chart-1: oklch(0.62 0.11 235);
@@ -159,6 +188,40 @@
   --duration-240: 240ms;
   --duration-480: 480ms;
   --easing-ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+
+  /* Spacing — 4px grid, master plan §4.1 "شبکهٔ 4px".
+     Declared here rather than left to the Tailwind scale because the UI kit sets
+     its own metrics through `var(--space-N)` in inline styles, and every one of
+     those references was invalid until this block existed: `var()` with no
+     fallback is dropped at computed-value time, so `Button`, `Card`, `Dialog`,
+     `DataTable`, `Accordion`, `Badge`, `CommandPalette`, `Skeleton`, `StateSlot`
+     and `Toast` all rendered with no padding and no gap while reading as though
+     they were padded. The step names are the ones the components already ask
+     for, so this is a declaration, not a rename. */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 1.75rem;
+  --space-8: 2rem;
+
+  /* Radius — master plan §4.1 names three steps, 2/8/16. The components had been
+     written against those names since before this stylesheet, and the four
+     `--radius-s/m/l/xl` steps below were a different, undeclared-by-the-plan
+     scale; both are provided so neither vocabulary is left dangling. */
+  --radius-2: 2px;
+  --radius-8: 8px;
+  --radius-12: 12px;
+  --radius-16: 16px;
+  --radius-card: var(--radius-16);
+  --radius-pill: 999px;
+  --radius-sm: var(--radius-8);
+
+  /* Shorthand used by `Accordion` and `Progress`. The plan's curve is
+     `ease-out-quart`; this is the same curve under the shorter name. */
+  --easing-ease-out: var(--easing-ease-out-quart);
 
   /* Elevation */
   --shadow-card: light-dark(
@@ -194,10 +257,57 @@
   --color-canopy: var(--canopy);
   --color-focus: var(--focus);
   --color-on-action: var(--on-action);
+  --color-action: var(--action);
+  --color-paper: var(--paper);
+  --color-muted: var(--muted);
+  --color-danger: var(--danger);
 
+  /*
+   * The colourblind-safe data palette (master plan §4.1, "پالت دادهٔ کورکور-امن
+   * ۸تایی"). The eight `--chart-N` primitives existed in `:root` and in
+   * `tokens/dtcg.json` the whole time, but were never exposed here, so no chart
+   * series could be coloured from a class and every chart fell back to its own
+   * hard-coded hex list.
+   */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6);
+  --color-chart-7: var(--chart-7);
+  --color-chart-8: var(--chart-8);
+
+  /*
+   * Script-scoped font stacks.
+   *
+   * Only three families are bundled: Vazirmatn and Markazi Text for Arabic, and
+   * JetBrains Mono for Latin. Four of the fourteen official languages write in
+   * scripts none of them covers — Devanagari (`hi`), Bengali (`bn`), CJK (`zh`)
+   * and Nastaliq (`ur`) — so those pages were falling through to whatever
+   * `ui-sans-serif` the reader's operating system happened to pick, with no
+   * control over weight, line height or digit form.
+   *
+   * These stacks name a deliberate family per script rather than leaving the
+   * choice to the platform. They resolve against fonts already installed on the
+   * reader's machine, so this costs no network request and no bundle weight; the
+   * trade-off, stated plainly, is that the exact face is the reader's rather than
+   * ours. Bundling Noto Sans Devanagari, Noto Sans Bengali, Noto Sans SC and
+   * Noto Nastaliq UI is tracked as R-13 in FRONTEND_COMPLETION_PLAN_FA_2026-09-26.md
+   * and `scripts/check-font-coverage.mjs` reports the gap rather than hiding it.
+   */
   --font-sans: "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Markazi Text", "Vazirmatn", ui-serif, serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Nastaliq needs more vertical room than naskh: a taller default line height
+     prevents the descenders of اردو from colliding with the next line. */
+  --lh-script: 1.7;
+  --font-sans-deva: "Noto Sans Devanagari", "Nirmala UI", "Mangal", var(--font-sans);
+  --font-sans-beng: "Noto Sans Bengali", "Vrinda", "Bangla", var(--font-sans);
+  --font-sans-cjk:
+    "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", var(--font-sans);
+  --font-sans-nastaliq: "Noto Nastaliq UI", "Jameel Noori Nastaleeq", var(--font-sans);
 
   --radius-s: 0.375rem;
   --radius-m: 0.625rem;
@@ -220,9 +330,39 @@ body {
   background: var(--canvas);
   color: var(--ink);
   font-family: var(--font-sans);
-  line-height: 1.8;
+  line-height: var(--lh-script);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/*
+ * Per-locale typography.
+ *
+ * The default body line height is already 1.8, which is generous for Arabic and
+ * Latin; Nastaliq needs more because its descenders and diagonals overlap the
+ * following line, and CJK needs slightly less leading per character because the
+ * glyphs are square and full-width. These selectors key off `lang` on the
+ * document element, which the root layout always sets, so a locale is never left
+ * on the wrong script's metrics.
+ */
+html[lang="ur"] body {
+  font-family: var(--font-sans-nastaliq);
+  line-height: 2;
+}
+
+html[lang="hi"] body {
+  font-family: var(--font-sans-deva);
+  line-height: 1.85;
+}
+
+html[lang="bn"] body {
+  font-family: var(--font-sans-beng);
+  line-height: 1.8;
+}
+
+html[lang="zh"] body {
+  font-family: var(--font-sans-cjk);
+  line-height: 1.75;
 }
 
 ::selection {
@@ -259,8 +399,19 @@ body {
 
 .skip-link {
   position: absolute;
-  inset-inline-start: 50%;
-  translate: -50% 0;
+  /*
+   * Centred with both inline edges pinned and auto margins, not with
+   * `inset-inline-start: 50%` plus a compensating translate.
+   *
+   * In RTL the inline start is the *right* edge, so the half-translate pushed
+   * the link off the left of the viewport: 45px of horizontal overflow at 320px
+   * wide, which the RTL reflow test caught. Auto margins centre in both
+   * directions and cannot overflow, whatever the link's width.
+   */
+  inset-inline: var(--space-4);
+  margin-inline: auto;
+  inline-size: fit-content;
+  max-inline-size: calc(100% - var(--space-8));
   top: 0.5rem;
   z-index: 100;
   padding: 0.5rem 1rem;
@@ -268,11 +419,25 @@ body {
   background: var(--canopy);
   color: var(--on-action);
   font-size: 0.8125rem;
-  transform: translateY(-300%);
-  transition: transform 0.2s ease;
+  text-align: center;
+  /*
+   * Hidden with opacity rather than moved out of the viewport.
+   *
+   * The usual technique is `transform: translateY(-300%)` until focus. WebKit will
+   * not move focus onto an element lying entirely outside the viewport, so the
+   * skip link stayed unreachable in Safari and the test reporting
+   * `unexpected value "inactive"` was right about the page, not wrong about the
+   * expectation. Opacity keeps the element in the layout and therefore focusable;
+   * `pointer-events: none` stops it intercepting clicks while it is invisible.
+   */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
 }
-.skip-link:focus {
-  transform: translateY(0);
+.skip-link:focus,
+.skip-link:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 /* ---------- Typography helpers ---------- */
@@ -383,7 +548,11 @@ body {
   border: 1px solid var(--line);
   background: var(--surface-2);
   font-size: 0.6875rem;
-  color: var(--ink-soft);
+  /* The chip label is 11px, so WCAG AA needs the full 4.5:1 rather than the
+     3:1 large-text allowance. `--ink-soft` measured 4.18:1 against
+     `--surface-2` in an axe scan of the `ar` and `ur` routes; `--ink` clears
+     the threshold without darkening the token everywhere else. */
+  color: var(--ink);
   line-height: 1.6;
 }
 

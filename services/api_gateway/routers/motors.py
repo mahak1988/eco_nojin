@@ -100,11 +100,15 @@ async def _run_motor_background(
 ):
     """Background task to run motor and store results."""
     map_orch = MapOrchestrator()
+    # Captured after the first fetch; the orchestrator records the provenance of
+    # whatever it last fetched, and several branches fetch more than once.
+    provenance: dict = {"status": "ok", "reason": None, "layers": [], "synthetic_layers": []}
 
     try:
         # 1. Fetch required layers
         if motor_type == "swat_plus":
             layers = await map_orch._fetch_layers(["dem", "soil", "landcover", "rainfall"], region)
+            provenance = map_orch.provenance_summary()
             motor = SWATPlusMotor()
             result = await motor.execute(layers, params)
 
@@ -112,6 +116,7 @@ async def _run_motor_background(
             swat_layers = await map_orch._fetch_layers(
                 ["dem", "soil", "landcover", "rainfall"], region
             )
+            provenance = map_orch.provenance_summary()
             swat = SWATPlusMotor()
             swat_result = await swat.execute(swat_layers, params)
 
@@ -127,6 +132,7 @@ async def _run_motor_background(
             swat_layers = await map_orch._fetch_layers(
                 ["dem", "soil", "landcover", "rainfall"], region
             )
+            provenance = map_orch.provenance_summary()
             swat = SWATPlusMotor()
             swat_result = await swat.execute(swat_layers, params)
 
@@ -158,6 +164,7 @@ async def _run_motor_background(
             swat_layers = await map_orch._fetch_layers(
                 ["dem", "soil", "landcover", "rainfall"], region
             )
+            provenance = map_orch.provenance_summary()
             swat = SWATPlusMotor()
             swat_params = MotorParameters(
                 start_date=params.start_date,
@@ -180,6 +187,7 @@ async def _run_motor_background(
             swat_layers = await map_orch._fetch_layers(
                 ["dem", "soil", "landcover", "rainfall"], region
             )
+            provenance = map_orch.provenance_summary()
             swat = SWATPlusMotor()
             swat_result = await swat.execute(swat_layers, params)
 
@@ -221,6 +229,12 @@ async def _run_motor_background(
             "error_message": result.error_message,
             "execution_time": result.execution_time_seconds,
             "outputs_keys": list(result.outputs.keys()) if result.outputs else [],
+            # Phase 4 group 5: every map_engine fetcher currently fabricates its
+            # data, and that was invisible here — the caller got a
+            # `completed` result computed from an invented terrain. The
+            # orchestrator now reports the input provenance, and the run is
+            # marked `degraded` with a reason when any input was synthetic.
+            "data_provenance": provenance,
         }
 
     except Exception as e:

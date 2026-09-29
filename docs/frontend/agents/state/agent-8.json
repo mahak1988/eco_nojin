@@ -1,0 +1,91 @@
+{
+  "agent": "pages-admin",
+  "done": [
+    "/admin/bots"
+  ],
+  "lastRun": "2026-09-29T02:48:11+03:30",
+  "queueRemaining": 27,
+  "lastUnit": {
+    "path": "/admin/bots",
+    "status": "already-present",
+    "detail": "Page exists (written by scripts/generate-resource-pages.mjs; regenerated with the og:url fix). Binds GET /api/v1/admin/bots via fetchResource + ResourcePage; the contract returns BotStatusResponse[] (a bare array), which readRows renders directly. States: loading via admin/loading.tsx; empty/error/partial/offline via StateSlot. Title+description exist in fa+en under pageMeta.admin-admin-bots. Zero fabricated data. Role guard (admin/layout.tsx + lib/auth/require-role.ts pattern) untouched. No files were changed in this run."
+  },
+  "note": "Queue raw text still reports 28 'planned' entries because page-catalog.ts is a generated snapshot whose status/routeFile fields have not been re-derived since the admin pages were written, so all 28 keep listing. Breakdown of the 28: 14 already have generated pages (matches the generator dry-run's \"admin 14\"), 13 are action/API surfaces the generator skips by design, 1 (/admin/content/{item_id}) is refused by the shadowing rule. The remaining queue items are verifications, not builds. pageMeta title+description: 21/21 admin slugs complete in fa+en. type-check exit 0; check-page-meta exit 0; check-message-usage exit 0.",
+  "gaps": [
+    {
+      "path": "/admin/bots/{key}/restart",
+      "method": "POST",
+      "blocker": "action surface (not page-shaped); generator skips it by design"
+    },
+    {
+      "path": "/admin/bots/{key}/toggle",
+      "method": "POST",
+      "blocker": "action surface (not page-shaped); generator skips it by design"
+    },
+    {
+      "path": "/admin/content/{item_id}",
+      "method": "GET",
+      "blocker": "refused: a dynamic page here would swallow /admin/content/generate-draft; only the catalogue catch-all serves it"
+    },
+    {
+      "path": "/admin/content/{item_id}/cancel-schedule",
+      "method": "POST",
+      "blocker": "action surface (not page-shaped); generator skips it by design"
+    },
+    {
+      "path": "/admin/content/{item_id}/publish",
+      "method": "POST",
+      "blocker": "action surface (not page-shaped); generator skips it by design"
+    },
+    {
+      "path": "/admin/content/{item_id}/schedule",
+      "method": "POST",
+      "blocker": "action surface (not page-shaped); generator skips it by design"
+    },
+    {
+      "path": "/admin/content/{item_id}/translate",
+      "method": "POST",
+      "blocker": "action surface (not page-shaped); generator skips it by design"
+    },
+    {
+      "path": "/admin/content/generate-draft",
+      "method": "POST",
+      "blocker": "action surface (not page-shaped); generator skips it by design"
+    },
+    {
+      "path": "/admin/errors/{error_id}/ack",
+      "method": "POST",
+      "blocker": "action surface (not page-shaped); generator skips it by design"
+    },
+    {
+      "path": "/admin/errors/{error_id}/resolve",
+      "method": "POST",
+      "blocker": "action surface (not page-shaped); generator skips it by design"
+    },
+    {
+      "path": "/admin/errors/{error_id}/suppress",
+      "method": "POST",
+      "blocker": "action surface (not page-shaped); generator skips it by design"
+    },
+    {
+      "path": "/admin/models/{name}/load",
+      "method": "POST",
+      "blocker": "action surface (not page-shaped); generator skips it by design"
+    },
+    {
+      "path": "/admin/models/{name}/pull",
+      "method": "POST",
+      "blocker": "action surface (not page-shaped); generator skips it by design"
+    },
+    {
+      "path": "/admin/models/{name}/stop",
+      "method": "POST",
+      "blocker": "action surface (not page-shaped); generator skips it by design"
+    }
+  ],
+  "observations": [
+    "The instruction's `pages.admin.*` namespace is not read by any code or gate in this repository; every page title resolves via `pageMeta.<slug>`, and the fa+en keys for this unit already exist. No `pages.admin.*` keys were added for this unit; owner decision requested if that namespace is genuinely required (adding unreachable keys would contradict the repo's own \"unreachable keys are defects\" rule in check-locale-depth).",
+    "og:url fix confirmed present in the admin generated pages (static form `${BASE_URL}/${locale}${ROUTE}`; dynamic form `.replace(/{[a-z_]+}/g, '·')`).",
+    "Generator artifact (cross-domain; recorded for the owner, outside agent-8 file scope): 14 of the 128 generated pages carry a placeholder rowsKey (`{param}s`) — in admin: /admin/errors/{error_id} (contract returns an ErrorResponse object) and /admin/models/{name} (ModelResponse object). With mode \"rows\" and a field name that can never match, these detail pages render the honest empty state even when the gateway returns the record. Fix belongs at the generator (treat parameter-leaf detail routes as mode \"record\")."
+  ]
+}

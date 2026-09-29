@@ -1,0 +1,24 @@
+{
+  "agent": "pages-system",
+  "done": ["/system/analytics/activity-timeline"],
+  "lastRun": "2026-09-29T00:39:29+03:30",
+  "queueRemaining": 27,
+  "lastUnit": {
+    "path": "/system/analytics/activity-timeline",
+    "status": "already-present",
+    "detail": "Page exists (written by scripts/generate-resource-pages.mjs); binds GET /api/v1/analytics/activity-timeline via fetchResource + ResourcePage (loading/empty/error/partial/offline states); title+description exist in fa+en under pageMeta.system-system-analytics-activity-timeline; zero fabricated data; no files were changed in this run."
+  },
+  "note": "Queue raw text still reports 28 'planned' entries, but 23 of 28 already have generated pages (derived status live/capability per page-catalog rule). pageMeta title keys exist for all 29 system slugs in fa+en. The remaining queue items are verifications, not builds.",
+  "gaps": [
+    { "path": "/system/automation/agent-run", "method": "POST", "blocker": "action surface (not page-shaped); generator skips it by design" },
+    { "path": "/system/dashboard/refresh-data", "method": "POST", "blocker": "action surface (not page-shaped)" },
+    { "path": "/system/iot/devices/provision-qr", "method": "POST", "blocker": "action surface (not page-shaped)" },
+    { "path": "/system/iot/devices/{device_id}/status", "method": "PUT", "blocker": "action surface (not page-shaped)" },
+    { "path": "/system/iot/devices/{device_id}", "method": "GET", "blocker": "refused: a dynamic page here would swallow /system/iot/devices/provision-qr; only the catalog catch-all serves it" }
+  ],
+  "observations": [
+    "The instruction's `pages.system.*` namespace is not read by any code or gate in this repository; page titles are read from `pageMeta.<slug>`. No `pages.system.*` keys were added for this unit; owner decision requested if that namespace is genuinely required.",
+    "openGraph url bug in all 128 generator-written pages: `url: `${BASE_URL}/${locale}ROUTE`` emits og:url like .../faROUTE. The fix belongs in scripts/generate-resource-pages.mjs (outside this agent's write scope); system pages are among the 128.",
+    "Pre-existing (not caused by this run): 3 failing tests in apps/web/src/lib/domains/page-catalog.test.ts (duplicate out-of-catalogue declaration for design-system/components; stale expectation for 3 engine fallback modules that now exist). Out of agent-7 scope. type-check, check-message-usage and check-page-meta are green."
+  ]
+}

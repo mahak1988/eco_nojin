@@ -11,6 +11,7 @@
 import secrets
 from datetime import UTC, datetime
 from decimal import Decimal
+from typing import Any
 
 from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -181,12 +182,45 @@ class MarketplaceService:
         if not items:
             raise ValueError("سبد خرید نمی‌تواند خالی باشد")
 
+        # Phase 4 group 4: the unit price used to be read straight out of the
+        # request body, so a buyer could post `price: 1` for a 350,000 IRR
+        # product and the order total, the platform fee and the landscape fee
+        # were all computed from the attacker's number. The catalogue is now
+        # the only pricing authority; a `price` in the payload is ignored, and
+        # a mismatch is refused rather than silently overridden so a client with
+        # a stale cart learns why.
         subtotal = Decimal("0")
+        priced_items: list[dict[str, Any]] = []
         for item in items:
-            if "price" not in item or "quantity" not in item:
-                raise ValueError("هر آیتم باید price و quantity داشته باشد")
+            if "product_id" not in item or "quantity" not in item:
+                raise ValueError("هر آیتم باید product_id و quantity داشته باشد")
 
-            subtotal += Decimal(str(item["price"])) * item["quantity"]
+            quantity = Decimal(str(item["quantity"]))
+            if quantity <= 0:
+                raise ValueError("quantity must be positive")
+
+            product = await self._get_product_for_pricing(item["product_id"])
+            catalogue_price = Decimal(str(product.price))
+
+            claimed = item.get("price")
+            if claimed is not None and Decimal(str(claimed)) != catalogue_price:
+                raise ValueError(
+                    f"price for product {item['product_id']} is {catalogue_price} "
+                    f"in the catalogue, not {claimed}; refresh the cart"
+                )
+
+            subtotal += catalogue_price * quantity
+            priced_items.append(
+                {
+                    "product_id": product.id,
+                    # Stock is an Integer column, and an aiosqlite binding
+                    # rejects Decimal. Convert once, here, rather than letting a
+                    # Decimal reach the driver.
+                    "quantity": int(quantity) if quantity == quantity.to_integral_value() else quantity,
+                    "unit_price": catalogue_price,
+                    "currency": getattr(product, "currency", None) or "IRR",
+                }
+            )
 
         commission_rule = await self._get_commission_rule(village_id)
 
@@ -213,10 +247,23 @@ class MarketplaceService:
         await self.db.commit()
         await self.db.refresh(order)
 
-        for item in items:
+        for item in priced_items:
             await self._decrease_stock(item["product_id"], item["quantity"])
 
         return order
+
+    async def _get_product_for_pricing(self, product_id: str) -> MarketplaceProduct:
+        """Load the catalogue row that governs an item's price.
+
+        Raises rather than defaulting: a product the server cannot price is not
+        an order it should accept.
+        """
+        product = await self.db.get(MarketplaceProduct, str(product_id))
+        if product is None:
+            raise ValueError(f"product not found: {product_id}")
+        if product.price is None:
+            raise ValueError(f"product {product_id} has no catalogue price")
+        return product
 
     async def confirm_payment(self, order_id: str, payment_tx_hash: str) -> MarketplaceOrder:
         """تأیید پرداخت سفارش."""
@@ -428,8 +475,12 @@ class MarketplaceService:
 
         return rule
 
-    async def _decrease_stock(self, product_id: str, quantity: int):
+    async def _decrease_stock(self, product_id: str, quantity: int | Decimal):
         """کاهش موجودی محصول."""
+        # Coerce at the boundary: stock is an Integer column, and passing a
+        # Decimal through to the driver raises a binding error.
+        if isinstance(quantity, Decimal):
+            quantity = int(quantity) if quantity == quantity.to_integral_value() else quantity
         result = await self.db.execute(
             select(MarketplaceProduct).where(MarketplaceProduct.id == product_id)
         )

@@ -57,7 +57,7 @@ class LandCapabilityMotor(AbstractScientificMotor):
 
     @property
     def motor_type(self) -> MotorType:
-        return MotorType.BIOFERTILIZER  # Reuse until we add LCC enum
+        return MotorType.LAND_CAPABILITY
 
     @property
     def display_name(self) -> str:

@@ -5,6 +5,7 @@ import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { Link } from '@/i18n/navigation';
 import { apiGet } from '@/lib/api/client';
@@ -31,11 +32,8 @@ export async function generateMetadata({
       title: t('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/${ROUTE}`,
-      languages: {
-        fa: `${BASE_URL}/fa/${ROUTE}`,
-        en: `${BASE_URL}/en/${ROUTE}`,
-      },
+      canonical: canonicalFor(locale, '/developers/sdks'),
+      languages: languageAlternates('/developers/sdks'),
     },
   };
 }
@@ -77,7 +75,7 @@ export default async function SdksPage({ params }: { params: Promise<{ locale: s
           <div className="mt-4 flex items-center justify-between gap-3 text-sm">
             <span className="font-mono text-xs text-ink-soft">/api/v1/tool-registry</span>
             <span className={registry.ok ? 'text-forest' : 'text-copper'}>
-              {registry.ok ? `${common('total')}: ${count ?? 'â€”'}` : status('unavailable')}
+              {registry.ok ? `${common('total')}: ${count ?? '—'}` : status('unavailable')}
             </span>
           </div>
         </Card>

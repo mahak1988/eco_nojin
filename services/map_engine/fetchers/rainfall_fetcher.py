@@ -14,11 +14,14 @@ import rioxarray
 import xarray as xr
 from shapely.geometry import Polygon
 
-from ..base import MapFetcher
+from ..base import DataOrigin, MapFetcher
 
 
 class RainfallFetcher(MapFetcher):
     """Fetches rainfall erosivity (R-factor) data."""
+
+    DATA_ORIGIN = DataOrigin.SYNTHETIC
+    ORIGIN_DETAIL = "RainfallFetcher returns a uniform random field; no gauge or reanalysis data is read"
 
     def __init__(self, cache_dir: Path = Path("data/maps/rainfall_cache")):
         self.cache_dir = Path(cache_dir)

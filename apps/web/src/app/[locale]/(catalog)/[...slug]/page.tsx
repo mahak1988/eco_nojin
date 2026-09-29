@@ -3,35 +3,31 @@ import { notFound } from 'next/navigation';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { CatalogPage } from '@/components/catalog/CatalogPage';
 import { SITE_URL as BASE_URL } from '@/config/site';
-import {
-  catalogFallbackParams,
-  getCatalogEntryForSlug,
-  resolveRobots,
-} from '@/lib/domains/page-catalog';
+import { getCatalogEntryForSlug, resolveRobots } from '@/lib/domains/page-catalog';
 
 export const dynamic = 'force-dynamic';
 
 /**
- * Static params for the catalog catch-all.
+ * Catalog catch-all.
  *
- * `catalogFallbackParams()` returns one param per registry surface that has no
- * page of its own, and it drops two classes of path on purpose:
+ * `catalogFallbackPaths()` lists every registry surface that has no page of its
+ * own, and it drops two classes of path on purpose:
  *
  *   - every path already served by a real `page.tsx`, so this route can never
  *     claim a second route for one URL;
  *   - every path under `/market`, which the existing marketplace catch-all owns
- *     together with the 444 pages declared in `lib/marketplace-routes.ts`.
+ *     together with the address space declared in `lib/marketplace-routes.ts`.
  *
- * Next still prefers a concrete or dynamic sibling over a catch-all, so the two
- * filters are a correctness guard rather than a routing workaround: without them
- * a param could match two route files, which is what produces a duplicate static
- * param report. `dynamicParams` is left at its default because the locale layout
- * renders dynamically; an unknown slug is rejected by the page itself.
+ * This route is deliberately on demand and declares no `generateStaticParams`.
+ * Every path it can answer is `planned` or `unavailable`, so it is noindex by
+ * rule (`resolveRobots`), and prerendering the whole set would cost build time
+ * and output for pages that must never enter a search index. The list is kept as
+ * a test inventory instead: the colocated test uses it to prove no fallback path
+ * is shadowed by a real page.
+ *
+ * `dynamicParams` stays at its default because the locale layout renders
+ * dynamically; an unknown slug is rejected by the page itself.
  */
-export function generateStaticParams(): { slug: string[] }[] {
-  return catalogFallbackParams();
-}
-
 export async function generateMetadata({
   params,
 }: {

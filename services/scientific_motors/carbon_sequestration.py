@@ -172,7 +172,7 @@ class CarbonSequestrationMotor(AbstractScientificMotor):
 
     @property
     def motor_type(self) -> MotorType:
-        return MotorType.BIOFERTILIZER
+        return MotorType.CARBON_SEQ
 
     @property
     def display_name(self) -> str:

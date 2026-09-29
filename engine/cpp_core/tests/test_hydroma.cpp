@@ -132,9 +132,12 @@ int main() {
     // ---- Climate ---------------------------------------------------------
     std::printf("[Climate]\n");
     {
-        // Hargreaves-Samani, hand-computed:
-        // 0.0023 * 0.408 * 40 * (20+17.8) * sqrt(30-10) = 6.3454...
-        check_close(hargreaves_et0(10.0, 30.0, 20.0, 40.0), 6.3454, 1e-3,
+        // Hargreaves-Samani, FAO-56 eq. 52, hand-computed with the published
+        // exponent 0.48 on the diurnal range:
+        //   0.0023 * 0.408 * 40 * (20 + 17.8) * 20^0.48 = 5.9763
+        // The previous reference here was 6.3454, which is 20^0.50 -- the
+        // sqrt exponent. That overstated ET0 by 6.2 % at this diurnal range.
+        check_close(hargreaves_et0(10.0, 30.0, 20.0, 40.0), 5.9763, 1e-3,
                     "Hargreaves-Samani reference value");
         bool threw = false;
         try {

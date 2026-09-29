@@ -14,6 +14,67 @@ from engine.land.integration.climate_integrator import (
 )
 
 
+# This module used to make thirteen live calls to
+# https://archive-api.open-meteo.com, each pulling 30 years of daily records,
+# and then asserted the whole integration finished in under 5000 ms. That is
+# three problems at once: it breaks the project's own offline-first rule, it
+# makes the suite fail on a slow network rather than on a code change, and it
+# means a passing run may have exercised the network path or the synthetic
+# fallback without the assertions noticing which.
+#
+# The stub below is a Mediterranean calendar -- dry summers, wet winters -- whose
+# annual total and seasonal amplitude both follow latitude, so a test comparing
+# two locations still has something to compare. A location-independent stub would
+# make test_integration_different_locations pass or fail for a reason that has
+# nothing to do with the integrator.
+#
+# Mark a test with `@pytest.mark.network` to exercise the real endpoint.
+def _synthetic_fetch(self, lat, lon):
+    """Stand-in for _fetch_open_meteo, returning a 12-month record.
+
+    Shape, not accuracy: a Mediterranean regime whose wet season is winter and
+    whose annual rainfall rises away from the subtropical dry belt near 25 deg,
+    then falls again toward the pole. Enough structure that the integrator's
+    Köppen, aridity and growing-season branches all see different inputs at
+    32.65 N and 48 N.
+    """
+    from engine.land.integration.climate_models import MonthlyClimate
+
+    # 200 mm at the subtropical dry belt, rising to ~800 mm at 50 deg, tapering
+    # poleward of that. Two humps would be more faithful; one is enough to order
+    # the two latitudes this module compares.
+    dryness = abs(lat - 25.0) / 25.0
+    annual_precip = 200.0 + 600.0 * min(dryness, 1.0) * (1.0 if lat >= 25 else 0.8)
+    annual_et0 = 1400.0 + 300.0 * min(dryness, 1.0)
+
+    out = []
+    for month in range(1, 13):
+        # Peaks in July, troughs in January.
+        seasonal = ((month - 7) % 12) / 11.0
+        t_mean = 4.0 + 16.0 * (1.0 - seasonal)
+        winter_share = 0.25 + 0.5 * seasonal
+        out.append(
+            MonthlyClimate(
+                month=month,
+                t_min_c=t_mean - 6.0,
+                t_max_c=t_mean + 6.0,
+                t_mean_c=t_mean,
+                precipitation_mm=annual_precip * winter_share / 12.0 * 2.0,
+                et0_mm=annual_et0 * (1.0 - seasonal) / 12.0 * 2.0,
+            )
+        )
+    return out
+
+
+@pytest.fixture(autouse=True)
+def _no_live_network(monkeypatch):
+    """Block the outbound call for every test in this module."""
+    monkeypatch.setattr(
+        "engine.land.integration.climate_integrator.ClimateIntegrator._fetch_open_meteo",
+        _synthetic_fetch,
+    )
+
+
 class TestLatitudeBands:
     """Test latitude-based climate band assignment"""
 

@@ -52,17 +52,28 @@ const locales = readdirSync(MESSAGES_DIR)
   .filter((f) => f.endsWith('.json'))
   .map((f) => f.replace('.json', ''));
 
-const reference = new Set(flatten(read('fa')).filter((k) => !k.startsWith('meta')));
-
 /**
  * Replicates the runtime fallback chain (src/lib/i18n/messages.ts):
- * effective catalogue = { ...fa, ...en, ...<locale> } — so a skeleton locale
- * is valid as long as the *merged* view the app serves has every fa key.
+ * effective catalogue = deepMerge(en, <locale>).
+ *
+ * The previous version of this file documented `deepMerge(fa, en, locale)`, which
+ * put `fa` above `en` and therefore gave `fa` precedence over the runtime base.
+ * The runtime never reads `fa` for any other locale, so a key present in `en`
+ * but absent from `fa` was served at runtime yet never checked here, while a key
+ * present in `fa` but absent from `en` was checked but unreachable. The three
+ * gates also disagreed on the reference: this file used `fa`,
+ * `check-message-usage.mjs` used `fa`, and `check-locale-depth.mjs` used `en`.
+ * All three now use `en`, the catalog the runtime actually falls back to.
  */
+const REFERENCE_LOCALE = 'en';
+const reference = new Set(
+  flatten(read(REFERENCE_LOCALE)).filter((k) => !k.startsWith('meta')),
+);
+
 let failed = false;
 
 for (const locale of locales) {
-  const merged = deepMerge(read('fa'), read('en'), read(locale));
+  const merged = deepMerge(read(REFERENCE_LOCALE), read(locale));
   const keys = new Set(flatten(merged).filter((k) => !k.startsWith('meta')));
   const missing = [...reference].filter((k) => !keys.has(k));
   if (missing.length) {

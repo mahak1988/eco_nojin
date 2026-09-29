@@ -206,7 +206,7 @@ export default function SignupPage() {
                   <span>{t(field.labelKey)}</span>
                 </label>
                 {consentError ? (
-                  <p id={field.errorId} className="mt-1 ps-6 text-sm text-error">
+                  <p id={field.errorId} className="mt-1 ps-6 text-sm text-danger">
                     {t(consentError)}
                   </p>
                 ) : null}

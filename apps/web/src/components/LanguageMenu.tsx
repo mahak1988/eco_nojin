@@ -1,8 +1,9 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from '@/i18n/navigation';
-import { type AppLocale, locales } from '@/i18n/routing';
+import { type AppLocale, isRtl, locales } from '@/i18n/routing';
 
 const NATIVE: Record<AppLocale, string> = {
   fa: 'فارسی',
@@ -50,6 +51,7 @@ export function LanguageMenu({
   const ref = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
+  const t = useTranslations('cover');
 
   useEffect(() => {
     if (!open) return;
@@ -70,14 +72,16 @@ export function LanguageMenu({
   const active = current as AppLocale;
 
   return (
-    <div ref={ref} className="relative">
+    // The switcher is navigation, so it is a landmark. It was a bare div with a
+    // labelled button, which meant a screen-reader user could not jump to it and
+    // the cover's own test for a named language landmark had nothing to find.
+    <nav ref={ref} aria-label={label} className="relative">
       <button
         type="button"
-        aria-label={label}
         aria-haspopup="listbox"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface)] px-3 py-1.5 text-sm text-[var(--ink)] transition-colors hover:border-[var(--forest)] hover:bg-[var(--surface-2)]"
+        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface)] px-3 py-1 text-sm text-[var(--ink)] transition-colors hover:border-[var(--forest)] hover:bg-[var(--surface-2)]"
       >
         <svg
           aria-hidden="true"
@@ -92,7 +96,7 @@ export function LanguageMenu({
         </svg>
         <span
           className="sr-only sm:not-sr-only sm:max-w-[8rem] sm:truncate"
-          dir={active === 'fa' || active === 'ar' || active === 'ur' ? 'rtl' : 'ltr'}
+          dir={isRtl(active) ? 'rtl' : 'ltr'}
         >
           {NATIVE[active] ?? current}
         </span>
@@ -149,15 +153,13 @@ export function LanguageMenu({
                     ) : (
                       <span aria-hidden="true" className="h-1.5 w-1.5" />
                     )}
-                    <span
-                      dir={locale === 'fa' || locale === 'ar' || locale === 'ur' ? 'rtl' : 'ltr'}
-                    >
-                      {NATIVE[locale as AppLocale]}
-                    </span>
+                    <span dir={isRtl(locale) ? 'rtl' : 'ltr'}>{NATIVE[locale as AppLocale]}</span>
                   </span>
                   <span className="num text-[10px] text-[var(--ink-faint)]">
                     {locale.toUpperCase()}
-                    {WAVE[locale as AppLocale] ? ` · موج ${WAVE[locale as AppLocale]}` : ''}
+                    {WAVE[locale as AppLocale]
+                      ? ` · ${t('waveLabel')} ${WAVE[locale as AppLocale]}`
+                      : ''}
                   </span>
                 </button>
               </li>
@@ -165,6 +167,6 @@ export function LanguageMenu({
           })}
         </ul>
       </div>
-    </div>
+    </nav>
   );
 }

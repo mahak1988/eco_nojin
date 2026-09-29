@@ -69,14 +69,15 @@ export default async function ServicesOverviewPage({
       <SiteNav locale={locale} />
 
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp
-          source={HEALTH_ENDPOINTS[0].path}
-          label={servicesText('title')}
-          verified={reachable.length > 0}
-          method={HEALTH_ENDPOINTS[0].path}
-        >
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="display text-4xl font-bold text-ink">{servicesText('title')}</h1>
-        </ProvenanceStamp>
+          <ProvenanceStamp
+            source={HEALTH_ENDPOINTS[0].path}
+            label={servicesText('title')}
+            verified={reachable.length > 0}
+            method={HEALTH_ENDPOINTS[0].path}
+          />
+        </div>
         <p className="mt-3 max-w-2xl text-ink-soft">{servicesText('lead')}</p>
         <p className="mt-3 max-w-2xl text-sm text-ink-soft">{servicesText('what')}</p>
         <p className="mt-3 max-w-2xl text-sm text-ink-soft">{servicesText('audience')}</p>

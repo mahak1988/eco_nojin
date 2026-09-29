@@ -2,11 +2,28 @@
 
 These scripts manage the Eco Nojin API Gateway as a Windows Service.
 
+## Local development (no Docker required)
+
+The default development profile uses SQLite and a native Python environment.
+From the repository root:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt -r requirements-local-api.txt
+Copy-Item .env.example .env
+.\.venv\Scripts\python.exe -m uvicorn services.api_gateway.main:app --reload --port 8000
+```
+
+Set `DATABASE_URL`, `REDIS_URL`, or `NATS_URL` to managed endpoints only when
+testing integrations. Install `requirements-optional.txt` before enabling Redis
+or other optional integrations. To run the optional PostgreSQL/Redis/n8n stack locally,
+install Podman Desktop and run `podman compose -f deploy/docker-compose.yml up -d`.
+
 ## Prerequisites
 
 - Python 3.12 installed at `C:\Users\hp\AppData\Local\Programs\Python\Python312\python.exe`
 - Project venv activated: `.\.venv\Scripts\Activate.ps1`
-- Dependencies installed: `pip install -r requirements.txt`
+- Dependencies installed: `.\.venv\Scripts\python.exe -m pip install -r requirements.txt -r requirements-local-api.txt`
 
 ## Quick Start
 

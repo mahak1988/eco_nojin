@@ -17,6 +17,8 @@ from starlette.responses import JSONResponse
 from database.hub import hub
 from database.models import FinIdempotencyKey
 
+from .identity import anonymous_scope
+
 logger = logging.getLogger(__name__)
 
 IDEMPOTENCY_TTL_HOURS = 24
@@ -69,8 +71,19 @@ class IdempotencyMiddleware(BaseHTTPMiddleware):
         return hashlib.sha256(body).hexdigest()
 
     def _user_id(self, request: Request) -> str:
-        """Extract user_id from request state."""
-        return getattr(request.state, "user_id", "anonymous")
+        """Return the scope that idempotency rows are keyed by.
+
+        Populated by ``IdentityMiddleware``, which sits outside this
+        middleware. When there is no authenticated subject the caller is
+        scoped by a salted digest of the peer address instead of the literal
+        ``"anonymous"``: the unique index is on ``(user_id, key)``, so a
+        shared literal would let unrelated clients read each other's cached
+        responses and poison each other's keys.
+        """
+        user_id = getattr(request.state, "user_id", None)
+        if user_id:
+            return str(user_id)
+        return anonymous_scope(request)
 
     def _requires_idempotency(self, path: str, method: str) -> bool:
         """Check if the route requires idempotency."""
@@ -135,10 +148,10 @@ class IdempotencyMiddleware(BaseHTTPMiddleware):
                     },
                 )
 
-        request_hash = hashlib.sha256(body).hexdigest()
+        request_hash = self._body_hash(body)
 
-        # Get user_id from request state (set by auth middleware)
-        user_id = getattr(request.state, "user_id", None) or "anonymous"
+        # Scope the key by subject (set by IdentityMiddleware).
+        user_id = self._user_id(request)
 
         # Check idempotency key in database
         async with hub.get_async_session() as db:
@@ -175,7 +188,7 @@ class IdempotencyMiddleware(BaseHTTPMiddleware):
             # Create new idempotency key record
 
             new_key = FinIdempotencyKey(
-                user_id=getattr(request.state, "user_id", "anonymous"),
+                user_id=user_id,
                 key=idempotency_key,
                 route=str(request.url.path),
                 request_hash=request_hash,

@@ -267,7 +267,7 @@ class PlantingCalendarMotor(AbstractScientificMotor):
 
     @property
     def motor_type(self) -> MotorType:
-        return MotorType.BIOFERTILIZER
+        return MotorType.PLANTING_CALENDAR
 
     @property
     def display_name(self) -> str:

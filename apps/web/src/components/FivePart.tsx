@@ -11,6 +11,14 @@ type FivePartProps = {
   evidenceLabel?: string;
   limitsLabel?: string;
   nextLabel?: string;
+  /**
+   * Heading level for this block's own title. Defaults to `1` because most
+   * pages let the template supply the page heading. A page that already renders
+   * its own `<h1>` passes `2` — otherwise the document ends up with two level-one
+   * headings, which is what `/public/why` and `/public/science/evidence-base`
+   * did while every other template page had exactly one.
+   */
+  headingLevel?: 1 | 2;
 };
 
 /**
@@ -29,12 +37,16 @@ export async function FivePart({
   evidenceLabel,
   limitsLabel,
   nextLabel,
+  headingLevel = 1,
 }: FivePartProps) {
   const t = await getTranslations();
+  const Heading = (headingLevel === 1 ? 'h1' : 'h2') as 'h1' | 'h2';
   return (
     <div className="space-y-8">
       <header>
-        <h1 className="display text-balance text-4xl font-bold text-ink sm:text-5xl">{title}</h1>
+        <Heading className="display text-balance text-4xl font-bold text-ink sm:text-5xl">
+          {title}
+        </Heading>
         <p className="mt-3 max-w-2xl text-ink-soft">{lead}</p>
       </header>
 

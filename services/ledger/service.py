@@ -1,10 +1,30 @@
-"""Ledger Service — immutable double-entry accounting for carbon credits and marketplace transactions.
+"""Ledger Service â€” double-entry accounting for carbon credits and marketplace transactions.
 
 Tracks:
 - Carbon credit issuance and retirement
 - Marketplace order fills and settlements
 - Wallet balances and transfers
-- Full audit trail with hash-chained entries
+
+Scope note
+----------
+This module does **not** provide hash-chained immutability, and no longer
+claims to. ``LedgerEntry`` (``database/models.py``) has no ``hash`` or
+``prev_hash`` column, so ``verify_chain`` could only ever return ``False``:
+it read those attributes, hit ``AttributeError``, and the bare ``except
+Exception`` converted that into a plausible-looking answer. The digest that
+``post_entry`` used to compute was never persisted, and the process-local
+``_last_hash`` was reset on every request because ``get_ledger_service``
+constructs a new instance per call, so no chain ever formed across entries.
+
+This is the single-entry posting service, one of the ledger implementations. ``finance/
+ledger_service.py`` is the designated source of truth (it is the only one that
+validates batch balance, amount sign and the asset allowlist) and this module
+is scheduled for consolidation onto it. Building a hash chain here would mean
+a schema migration against the copy that is about to be retired.
+
+Failures now raise. Returning ``{"status": "memory_only"}`` for a lost
+accounting write, or ``Decimal("0")`` for a failed query, turned a database
+error into a balance that reads as a real one.
 """
 
 from __future__ import annotations
@@ -15,7 +35,7 @@ from decimal import Decimal
 from typing import Any
 
 from pydantic import BaseModel
-from sqlalchemy import func, select
+from sqlalchemy import case, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.hub.hub import hub
@@ -23,116 +43,155 @@ from database.models import EscrowRecord, EscrowState, LedgerEntry
 
 logger = logging.getLogger(__name__)
 
+#: ISO 4217. The module previously defaulted to "fiat" and, in one path, to
+#: "IRT" â€” which is not a currency code. The correct code is IRR.
+DEFAULT_ASSET = "IRR"
+
+#: Only these assets may be posted. Kept aligned with
+#: ``finance/ledger_service.ALLOWED_ASSETS``.
+ALLOWED_ASSETS = frozenset({"IRR", "ECO", "CARBON_tCO2e", "USD"})
+
+VALID_ENTRY_TYPES = frozenset({"debit", "credit"})
+
 
 class EntryCreate(BaseModel):
     account_id: str
     entry_type: str  # debit | credit
-    asset: str = "fiat"  # carbon_credit | eco_token | fiat
+    asset: str = DEFAULT_ASSET
     amount: Decimal
     reference_type: str | None = None  # escrow_lock | escrow_release | escrow_reverse
     reference_id: str | None = None
     description: str | None = None
 
 
-class LedgerService:
-    """Double-entry ledger with hash-chained immutability."""
+class SingleEntryLedgerService:
+    """Single-entry posting API for the standalone ledger app.
+
+    Renamed during the phase 4 S-MONEY consolidation. There were four classes
+    named ``LedgerService`` in the repository, which is what made it hard to
+    say which one any call site meant:
+
+    * ``finance/ledger_service.py`` â€” the canonical **batch** service, the
+      only one that validates balance, amount sign and the asset allowlist.
+      This is the source of truth.
+    * ``finance/wallet_service.py`` â€” a duplicate with no validation and the
+      *opposite* sign convention. Removed.
+    * ``ecowallet/ledger.py`` â€” an in-memory ``float`` ledger. Converted to
+      ``Decimal``.
+    * this one.
+
+    Kept separate from the canonical service because the two have different
+    shapes: the canonical one posts a *balanced batch* and is what the gateway
+    and wallet use; this one posts a single entry and is what
+    ``services/ledger/main.py`` exposes. The batch service is deliberately not
+    reachable from an unauthenticated standalone app, because a single-entry
+    post cannot assert double-entry on its own.
+
+    Sign convention: ``credit`` is positive, ``debit`` is negative — the same
+    one every other balance query in the codebase uses.
+    """
 
     def __init__(self, db: Any = None, session: AsyncSession | None = None) -> None:
         self.db = db
         self.session = session
-        self._last_hash: str | None = None
 
     async def _get_session(self) -> AsyncSession:
         if self.session is not None:
             return self.session
         return hub.get_async_session()
 
+    def _validate(self, entry: EntryCreate) -> None:
+        if entry.entry_type not in VALID_ENTRY_TYPES:
+            raise ValueError(
+                f"entry_type must be one of {sorted(VALID_ENTRY_TYPES)}, got {entry.entry_type!r}"
+            )
+        if entry.amount <= 0:
+            raise ValueError(f"amount must be positive, got {entry.amount}")
+        if entry.asset not in ALLOWED_ASSETS:
+            raise ValueError(f"asset must be one of {sorted(ALLOWED_ASSETS)}, got {entry.asset!r}")
+        if not entry.account_id:
+            raise ValueError("account_id is required")
+
     async def post_entry(self, entry: EntryCreate) -> dict[str, Any]:
-        """Post a new ledger entry."""
-        import hashlib
+        """Post a new ledger entry.
 
-        entry_data = f"{entry.account_id}{entry.entry_type}{entry.amount}{entry.reference_type}{entry.reference_id}{datetime.now(UTC).isoformat()}"
-        prev_hash = self._last_hash or "0" * 64
-        entry_hash = hashlib.sha256((prev_hash + entry_data).encode()).hexdigest()
-        self._last_hash = entry_hash
+        Raises on validation failure and on persistence failure. The previous
+        implementation logged and returned ``{"hash": ..., "status":
+        "memory_only"}``, which the escrow paths treated as a successful post.
+        """
+        self._validate(entry)
 
-        try:
-            async with await self._get_session() as session:
-                record = LedgerEntry(
-                    account_id=entry.account_id,
-                    entry_type=entry.entry_type,
-                    asset=entry.asset,
-                    amount=entry.amount,
-                    reference_type=entry.reference_type,
-                    reference_id=entry.reference_id,
-                    description=entry.description,
-                    created_at=datetime.now(UTC).replace(tzinfo=None),
-                )
-                session.add(record)
-                await session.commit()
-                await session.refresh(record)
-                return {
-                    "id": record.id,
-                    "hash": entry_hash,
-                    "amount": str(record.amount),
-                    "created_at": record.created_at.isoformat() if record.created_at else None,
-                }
-        except Exception:
-            logger.warning("Failed to persist ledger entry", exc_info=True)
-            return {"hash": entry_hash, "status": "memory_only"}
+        async with await self._get_session() as session:
+            record = LedgerEntry(
+                account_id=entry.account_id,
+                entry_type=entry.entry_type,
+                asset=entry.asset,
+                amount=entry.amount,
+                reference_type=entry.reference_type,
+                reference_id=entry.reference_id,
+                description=entry.description,
+                created_at=datetime.now(UTC).replace(tzinfo=None),
+            )
+            session.add(record)
+            await session.commit()
+            await session.refresh(record)
+            return {
+                "id": record.id,
+                "amount": str(record.amount),
+                "entry_type": record.entry_type,
+                "asset": record.asset,
+                "created_at": record.created_at.isoformat() if record.created_at else None,
+            }
 
-    async def get_balance(self, account_id: str) -> Decimal:
-        """Compute current balance for an account."""
-        try:
-            async with await self._get_session() as session:
-                result = await session.execute(
-                    select(func.sum(LedgerEntry.amount).where(LedgerEntry.account_id == account_id))
-                )
-                total = result.scalar()
-                return total or Decimal("0")
-        except Exception:
-            logger.warning("Failed to compute balance for %s", account_id, exc_info=True)
-            return Decimal("0")
+    async def get_balance(self, account_id: str, asset: str | None = None) -> Decimal:
+        """Balance for an account: credits positive, debits negative.
+
+        Raises if the query fails. The previous version returned
+        ``Decimal("0")`` on any exception, which is indistinguishable from a
+        genuinely empty account.
+        """
+        signed_amount = case(
+            (LedgerEntry.entry_type == "credit", LedgerEntry.amount),
+            else_=-LedgerEntry.amount,
+        )
+        query = select(func.sum(signed_amount)).where(LedgerEntry.account_id == account_id)
+        if asset is not None:
+            query = query.where(LedgerEntry.asset == asset)
+
+        async with await self._get_session() as session:
+            result = await session.execute(query)
+            return result.scalar() or Decimal("0")
 
     async def verify_chain(self) -> bool:
-        """Verify hash-chain integrity across all entries."""
-        import hashlib
+        """Always raises.
 
-        try:
-            async with await self._get_session() as session:
-                result = await session.execute(select(LedgerEntry).order_by(LedgerEntry.created_at))
-                entries = result.scalars().all()
-                prev = "0" * 64
-                for entry in entries:
-                    expected = hashlib.sha256(
-                        (
-                            prev
-                            + f"{entry.account_id}{entry.entry_type}{entry.amount}{entry.reference_type}{entry.reference_id}"
-                        ).encode()
-                    ).hexdigest()
-                    if entry.hash != expected or entry.prev_hash != prev:
-                        return False
-                    prev = entry.hash
-                return True
-        except Exception:
-            logger.warning("Chain verification failed", exc_info=True)
-            return False
+        ``LedgerEntry`` has no ``hash``/``prev_hash`` columns, so there is no
+        chain to verify. This method used to catch the resulting
+        ``AttributeError`` and return ``False``, which read as "the ledger was
+        tampered with" rather than "this ledger does not have that property".
+        See the module docstring for the consolidation plan.
+        """
+        raise NotImplementedError(
+            "verify_chain requires LedgerEntry.hash / LedgerEntry.prev_hash, which do not exist. "
+            "Add the columns and a persisted chain, or rely on database-level append-only "
+            "permissions. Until then, no integrity verification is performed."
+        )
 
     async def health(self) -> str:
         return "ok"
 
 
 class EscrowService:
-    """Escrow state machine: created → locked → released | reversed.
+    """Escrow state machine: created â†’ locked â†’ released | reversed.
 
-    Integrates with the hash-chained LedgerService to post debit/credit entries
+    Integrates with SingleEntryLedgerService to post debit/credit entries
     on each state transition, maintaining double-entry integrity.
     """
 
     DISPUTE_WINDOW_HOURS = 48
 
     def __init__(self, db: Any = None, session: AsyncSession | None = None) -> None:
-        self._ledger = LedgerService(db=db, session=session)
+        self._ledger = SingleEntryLedgerService(db=db, session=session)
         self._session_override = session
 
     async def _get_session(self) -> AsyncSession:
@@ -146,10 +205,16 @@ class EscrowService:
         buyer_id: str,
         seller_id: str,
         amount: Decimal,
-        asset: str = "IRT",
+        asset: str = DEFAULT_ASSET,
         payment_id: str | None = None,
     ) -> EscrowRecord:
-        """Step 1: Create escrow record in 'created' state."""
+        """Step 1: Create escrow record in 'created' state.
+
+        The default asset was "IRT", which is not a currency code. The correct
+        ISO 4217 code is IRR, now the module-wide ``DEFAULT_ASSET``.
+        """
+        if asset not in ALLOWED_ASSETS:
+            raise ValueError(f"asset must be one of {sorted(ALLOWED_ASSETS)}, got {asset!r}")
         async with await self._get_session() as session:
             record = EscrowRecord(
                 order_id=order_id,
@@ -181,7 +246,7 @@ class EscrowService:
         order_id: str,
         payment_id: str | None = None,
     ) -> EscrowRecord:
-        """Step 2: Transition created → locked (funds verified and held).
+        """Step 2: Transition created â†’ locked (funds verified and held).
 
         Posts a debit entry to buyer's escrow account and a credit to the
         escrow liability account. Starts the dispute window deadline.
@@ -222,7 +287,7 @@ class EscrowService:
             return record
 
     async def release(self, order_id: str, actor_id: str | None = None) -> EscrowRecord:
-        """Step 3: Transition locked → released (funds to seller)."""
+        """Step 3: Transition locked â†’ released (funds to seller)."""
         async with await self._get_session() as session:
             record = await self._get_active(record_id=order_id, session=session)
             if record is None:
@@ -256,7 +321,7 @@ class EscrowService:
             return record
 
     async def reverse(self, order_id: str, actor_id: str | None = None) -> EscrowRecord:
-        """Step 3 alt: Transition locked → reversed (funds back to buyer)."""
+        """Step 3 alt: Transition locked â†’ reversed (funds back to buyer)."""
         async with await self._get_session() as session:
             record = await self._get_active(record_id=order_id, session=session)
             if record is None:
@@ -292,7 +357,7 @@ class EscrowService:
     async def complete(self, order_id: str) -> EscrowRecord:
         """Step 5/6: Mark escrow as fully settled (post-dispute window close).
 
-        Only valid after released or reversed — final settlement step.
+        Only valid after released or reversed â€” final settlement step.
         """
         async with await self._get_session() as session:
             result = await session.execute(
@@ -370,8 +435,8 @@ class EscrowService:
         return result.scalar_one_or_none()
 
 
-async def get_ledger_service() -> LedgerService:
-    return LedgerService()
+async def get_ledger_service() -> SingleEntryLedgerService:
+    return SingleEntryLedgerService()
 
 
 async def get_escrow_service() -> EscrowService:
@@ -388,17 +453,32 @@ def main() -> None:
     @router.post("/entries")
     async def post_entry(
         body: EntryCreate,
-        service: LedgerService = Depends(get_ledger_service),
+        service: SingleEntryLedgerService = Depends(get_ledger_service),
     ):
         return await service.post_entry(body)
 
     @router.get("/balance/{account_id}")
-    async def get_balance(account_id: str, service: LedgerService = Depends(get_ledger_service)):
+    async def get_balance(
+        account_id: str, service: SingleEntryLedgerService = Depends(get_ledger_service)
+    ):
         return {"account_id": account_id, "balance": str(await service.get_balance(account_id))}
 
     @router.get("/verify")
-    async def verify(service: LedgerService = Depends(get_ledger_service)):
-        return {"valid": await service.verify_chain()}
+    async def verify(service: SingleEntryLedgerService = Depends(get_ledger_service)):
+        """Integrity verification status.
+
+        Not implemented: ``LedgerEntry`` has no hash columns. The endpoint
+        reports the capability as unavailable rather than answering
+        ``{"valid": false}``, which used to be what every caller received.
+        """
+        return {
+            "verified": False,
+            "status": "not_implemented",
+            "reason": (
+                "LedgerEntry has no hash/prev_hash columns, so there is no chain to verify. "
+                "A 'valid: false' answer would be indistinguishable from tampering."
+            ),
+        }
 
     @router.get("/health")
     async def health():

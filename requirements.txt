@@ -1,5 +1,5 @@
-# Eco Nojin / HyDroMa — Cloud-Native Requirements
-# All services: free tier, cloud-only, no local models
+# Eco Nojin / HyDroMa — core API and scientific engine dependencies
+# Local development uses SQLite; Redis/NATS/PostGIS integrations are optional.
 
 # === Core API ===
 fastapi==0.115.0
@@ -30,17 +30,23 @@ langdetect==1.0.9
 tenacity==9.0.0
 structlog==24.4.0
 
-# === Database (PostgreSQL via Supabase) ===
-sqlalchemy==2.0.36
+# === Database (SQLite locally; PostgreSQL integrations) ===
+sqlalchemy[asyncio]==2.0.52
+aiosqlite==0.22.1
 psycopg[binary]==3.2.5
 alembic==1.14.0
 
 # === Auth & Security ===
 python-jose[cryptography]==3.4.0
 passlib[bcrypt]==1.7.4
+# Passkeys / FIDO2 (WebAuthn). Serves the registration and authentication
+# ceremonies, including COSE/CBOR parsing of the attestation object.
+# cryptography is already present as a transitive dependency and is used
+# directly for the ES256 verification in the step-up hybrid combiner.
+webauthn==3.0.1
 
-# === Event Bus (NATS) ===
-nats-py==2.10.0
+# === Optional integrations ===
+# NATS, Redis, and other integrations are in requirements-optional.txt
 
 # === Testing ===
 pytest==8.3.3

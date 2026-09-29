@@ -4,6 +4,7 @@ import { FivePart } from '@/components/FivePart';
 import { ListBlock } from '@/components/ListBlock';
 import { SiteNav } from '@/components/SiteNav';
 import { type DotState, StatusDot } from '@/components/StatusDot';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 
@@ -50,11 +51,8 @@ export async function generateMetadata({
       title: t('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/validation`,
-      languages: {
-        fa: `${BASE_URL}/fa/validation`,
-        en: `${BASE_URL}/en/validation`,
-      },
+      canonical: canonicalFor(locale, '/validation'),
+      languages: languageAlternates('/validation'),
     },
   };
 }

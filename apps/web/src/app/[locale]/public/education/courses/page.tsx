@@ -4,18 +4,13 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { UnavailableCapability } from '../../data-states';
 
 // The LMS router is not registered on the gateway, so no course catalogue is served.
 const LMS_PATH = '/api/v1/lms/courses';
 const SEARCH_PATH = '/api/v1/content/search';
-
-const TITLES: Record<string, string> = { fa: 'دوره‌های آموزشی', en: 'Courses' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'سرویس دوره در گیتوی ثبت نشده است؛ محتوای منتشرشده از کتابخانه قابل جستجوست',
-  en: 'The course service is not registered on the gateway; published content is searchable in the library',
-};
 
 export const dynamic = 'force-dynamic';
 
@@ -25,21 +20,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-education-courses');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/education/courses`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/education/courses`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/education/courses`,
-        en: `${BASE_URL}/en/public/education/courses`,
-      },
+      canonical: canonicalFor(locale, '/public/education/courses'),
+      languages: languageAlternates('/public/education/courses'),
     },
   };
 }
@@ -47,18 +40,19 @@ export async function generateMetadata({
 export default async function CoursesPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  const meta = await getTranslations('pageMeta.public-education-courses');
   const learn = await getTranslations('learn');
   const common = await getTranslations('common');
-  const title = TITLES[locale] ?? TITLES.en;
-  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+  const title = meta('title');
+  const description = meta('description');
 
   return (
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp source={LMS_PATH} label={title} verified={false} method={LMS_PATH}>
-          <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-        </ProvenanceStamp>
+        <ProvenanceStamp source={LMS_PATH} label={title} verified={false} method={LMS_PATH} />
+        <h1 className="display text-4xl font-bold text-ink">{title}</h1>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
       </section>
 

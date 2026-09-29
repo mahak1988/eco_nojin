@@ -14,11 +14,16 @@ import rioxarray
 import xarray as xr
 from shapely.geometry import Polygon
 
-from ..base import MapFetcher
+from services._contracts.formula import k_factor_epic
+
+from ..base import DataOrigin, MapFetcher
 
 
 class SoilErodibilityFetcher(MapFetcher):
-    """Computes K-factor using Williams (1995) EPIC equation."""
+    """Computes K-factor using the EPIC erodibility relation in the formula registry."""
+
+    DATA_ORIGIN = DataOrigin.SYNTHETIC
+    ORIGIN_DETAIL = "SoilFetcher returns a random K-factor texture; no SoilGrids or laboratory data is read"
 
     def __init__(self, cache_dir: Path = Path("data/maps/soil_cache")):
         self.cache_dir = Path(cache_dir)
@@ -89,17 +94,17 @@ class SoilErodibilityFetcher(MapFetcher):
 
     @staticmethod
     def _compute_k_epic(sand, silt, clay, oc) -> np.ndarray:
-        """Compute K-factor using Williams (1995) EPIC equation."""
-        eps = 1e-6
-        sn1 = 1.0 - sand / 100.0
-        silt_frac = silt / 100.0
-        clay_silt = (clay + silt) / 100.0 + eps
-        oc_frac = oc / 100.0
+        """Compute K-factor using the EPIC erodibility relation in the registry.
 
-        term1 = 0.2 + 0.3 * np.exp(-0.0256 * sand * (1 - silt_frac))
-        term2 = np.power(silt_frac / clay_silt, 0.3)
-        term3 = 1.0 - 0.25 * oc_frac / (oc_frac + np.exp(3.72 - 2.95 * oc_frac) + eps)
-        term4 = 1.0 - 0.7 * sn1 / (sn1 + np.exp(-5.51 + 22.9 * sn1) + eps)
+        Replaces the local Williams (1995) multiplicative form, which had no
+        citation in the code and returned 0.25-0.39 for the textures this
+        generator produces -- 3.6x the registry's value for a loam.
 
-        k = term1 * term2 * term3 * term4
-        return np.clip(k, 0.005, 0.8)
+        ``oc`` is a percentage here and g/kg in the registry, so it is
+        multiplied by 10 on the way in (1 % organic carbon == 10 g/kg). ``sand``
+        is not an argument of the reference form, but the texture term is
+        (clay + silt), which is 100 - sand once the texture is normalised, so
+        the sand dependence is carried by the complement rather than lost.
+        """
+        k = np.vectorize(k_factor_epic, otypes=[float])(np.asarray(oc) * 10.0, clay, silt)
+        return k

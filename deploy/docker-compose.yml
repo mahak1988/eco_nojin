@@ -1,28 +1,43 @@
-# Eco Nojin — production path: Postgres + n8n (queue-ready)
-# Usage:  docker compose up -d
-# Then:   import deploy/n8n/*.json into n8n, set ECONOJIN_AGENT_TOKEN + credentials.
+# Eco Nojin — optional infrastructure path: PostGIS + Redis + NATS + n8n
+# Local default: run the app with SQLite and no container runtime.
+# Optional Podman usage: podman compose -f deploy/docker-compose.yml up -d
+# Then: import deploy/n8n/*.json into n8n, set AGENT_TOKEN + credentials.
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgis/postgis:16-3.4
     restart: unless-stopped
     environment:
-      POSTGRES_USER: econojin
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
-      POSTGRES_DB: econojin
+      POSTGRES_USER: ${POSTGRES_USER:-eco_nojin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}
+      POSTGRES_DB: ${POSTGRES_DB:-eco_nojin}
+    ports:
+      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U econojin"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 10s
       retries: 5
 
   redis:
     image: redis:7-alpine
     restart: unless-stopped
+    ports:
+      - "6379:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       retries: 5
+
+  nats:
+    image: nats:2.10-alpine
+    restart: unless-stopped
+    command: ["-js", "-m", "8222"]
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    volumes:
+      - natsdata:/data
 
   n8n:
     image: n8nio/n8n:latest
@@ -36,10 +51,11 @@ services:
       # queue-mode ready: swap EXECUTIONS_MODE=queue + add Redis/worker when scaling
       DB_TYPE: postgresdb
       DB_POSTGRESDB_HOST: postgres
-      DB_POSTGRESDB_DATABASE: econojin
-      DB_POSTGRESDB_USER: econojin
-      DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
-      ECONOJIN_AGENT_TOKEN: ${ECONOJIN_AGENT_TOKEN:-dev-agent-token}
+      DB_POSTGRESDB_DATABASE: ${POSTGRES_DB:-eco_nojin}
+      DB_POSTGRESDB_USER: ${POSTGRES_USER:-eco_nojin}
+      DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}
+      AGENT_TOKEN: ${AGENT_TOKEN:-dev-agent-token}
+      ECONOJIN_AGENT_TOKEN: ${AGENT_TOKEN:-dev-agent-token}
       ECONOJIN_TELEGRAM_CHAT_ID: ${ECONOJIN_TELEGRAM_CHAT_ID:-}
       GENERIC_TIMEZONE: Asia/Tehran
     volumes:
@@ -47,4 +63,5 @@ services:
 
 volumes:
   pgdata:
+  natsdata:
   n8ndata:

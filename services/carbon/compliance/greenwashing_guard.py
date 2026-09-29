@@ -499,3 +499,33 @@ class _FlagDictAdapter:
 
 
 GreenwashingFlag.to_dict = _FlagDictAdapter.to_dict  # type: ignore[assignment]
+
+
+_guard: GreenwashingGuard | None = None
+
+
+def get_greenwashing_guard(kyc_service: KYCService | None = None) -> GreenwashingGuard:
+    """Return the process-wide guard.
+
+    The router used to build ``GreenwashingGuard()`` per request, so
+    ``self._flags`` and ``self._disclosures`` were empty on every call:
+    ``get_flags`` always returned ``[]``, ``public_disclosure`` always reported
+    ``CLEAR`` and ``resolve_flag`` always reported failure. It also created a
+    private ``KYCService``, distinct from the ``get_kyc_service()`` singleton
+    that ``/kyc/register`` writes to, so ``verify_project_owner`` returned
+    ``NO_RECORD`` for every user.
+
+    Pass the KYC singleton explicitly so both subsystems share one store.
+    """
+    global _guard
+    if _guard is None:
+        _guard = GreenwashingGuard(kyc_service=kyc_service)
+    elif kyc_service is not None and _guard._kyc is not kyc_service:
+        _guard._kyc = kyc_service
+    return _guard
+
+
+def reset_greenwashing_guard() -> None:
+    """Drop the cached guard. For tests only."""
+    global _guard
+    _guard = None

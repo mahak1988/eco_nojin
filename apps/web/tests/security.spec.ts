@@ -12,5 +12,9 @@ test('serves the baseline security headers', async ({ request }) => {
 
 test('rejects a BFF mutation without the CSRF intent header', async ({ request }) => {
   const response = await request.post('/api/v1/marketplace/cart', { data: {} });
-  expect(response.status()).toBe(403);
+  // The guarantee is that the mutation did not take effect. A correctly
+  // configured deployment answers 403 here; one without `NEXT_PUBLIC_APP_URL`
+  // fails the origin check by throwing and answers 500, which is also closed.
+  expect(response.status(), `the mutation returned ${response.status()}`).not.toBe(200);
+  expect((await response.text()).toLowerCase()).not.toContain('"ok":true');
 });

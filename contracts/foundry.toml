@@ -1,0 +1,35 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["node_modules"]
+test = "test"
+solc = "0.8.24"
+optimizer = true
+optimizer_runs = 200
+via_ir = true
+remappings = [
+    "@openzeppelin/contracts/=node_modules/@openzeppelin/contracts/",
+    "forge-std/=node_modules/forge-std/src/",
+]
+
+# Dependencies are installed from the registry, never vendored.
+# 2026-09-26: this file did not exist at all, so `forge test` could not run
+# even with the libraries present on disk.
+#
+# Setup:
+#   cd contracts && npm install
+#   npx hardhat compile
+#   forge test
+#
+# Known remaining compile blockers, in the order they should be fixed:
+#   1. EcoGovernance.sol references the type EcoWalletBridge without importing
+#      it, and calls ecoCoin.MAX_BURN_RATE_BPS(), which does not exist.
+#   2. EcoGovernance.sol calls impactCertificate._grantRole(...), which is
+#      internal in OpenZeppelin AccessControl and not callable cross-contract.
+#   3. scripts/deploy.js redeclares four const bindings in one function scope
+#      and is a parse-time SyntaxError.
+# Resolved by this change:
+#   - the vendored OpenZeppelin 5.7.0 was removed; the pinned 4.9.6 matches
+#     the import layout in contracts/src and Ownable's no-arg constructor
+#   - remappings.txt pointed at a non-existent path and hardcoded a Windows
+#     absolute path

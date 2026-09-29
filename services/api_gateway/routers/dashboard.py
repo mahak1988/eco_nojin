@@ -89,13 +89,53 @@ class CarbonData(BaseModel):
 
 
 class AnalyticsData(BaseModel):
-    """Platform analytics overview."""
+    """Platform analytics overview.
+
+    Only measured values live here. An earlier revision carried
+    `active_motors: 166`, `total_services: 216` and `api_endpoints: 248` as
+    schema defaults, which published stored constants as if they were
+    observations. No query produces the first two, so they were removed rather
+    than estimated; `api_endpoints` is counted from the running app's own OpenAPI
+    document instead of being asserted.
+    """
 
     total_projects: int = 0
     total_area_hectares: float = 0.0
-    active_motors: int = 166
-    total_services: int = 216
-    api_endpoints: int = 248
+    api_endpoints: int | None = Field(
+        default=None,
+        description="Paths published by this app's OpenAPI document at request time.",
+    )
+
+
+class PublicDashboardResponse(BaseModel):
+    """Envelope shared by every `/dashboard/public/*` route.
+
+    `data` stays a free-form object because each route aggregates a different set
+    of DuckDB tables. Declaring the envelope is still worth doing: without a
+    response model the published contract is `{}`, so a client cannot type the
+    status, the auth flag or the observation time.
+    """
+
+    status: str
+    auth_required: bool
+    data: dict[str, Any] = Field(default_factory=dict)
+    timestamp: str
+
+
+class PublicRouterCheckResponse(BaseModel):
+    """Reachability report from `/dashboard/public/test`.
+
+    This route answers whether the router serves, not a platform claim, which is
+    why `schema_verified` states that the response shape was checked rather than
+    that any value in it was measured.
+    """
+
+    status: str
+    message: str
+    auth_required: bool
+    version: str
+    schema_verified: bool
+    available_endpoints: list[str] = Field(default_factory=list)
 
 
 class DashboardData(BaseModel):
@@ -113,6 +153,21 @@ class DashboardData(BaseModel):
 # ============================================================================
 # Query Helpers
 # ============================================================================
+
+
+def _published_path_count(request: Request) -> int | None:
+    """Number of paths this app actually publishes.
+
+    Read from the running application's own OpenAPI document, so the figure moves
+    with the routes instead of drifting from a stored constant. Returns `None`
+    when the app cannot be resolved — an unknown count is reported as unknown
+    rather than replaced by a guess.
+    """
+    try:
+        return len(request.app.openapi().get("paths", {}))
+    except Exception as exc:  # pragma: no cover - defensive
+        logger.warning("could not count published paths: %s", exc)
+        return None
 
 
 def _execute_parameterized(conn, query: str, params: tuple = ()) -> Any:
@@ -512,7 +567,7 @@ def _get_tourism_data() -> dict:
 # ============================================================================
 
 
-@router.get("/public/full")
+@router.get("/public/full", response_model=PublicDashboardResponse)
 async def public_full_dashboard(
     farm_id: str | None = Query(None, description="Filter by farm/project ID"),
 ):
@@ -554,7 +609,7 @@ async def public_full_dashboard(
         }
 
 
-@router.get("/public/projects")
+@router.get("/public/projects", response_model=PublicDashboardResponse)
 async def public_projects(
     limit: int = Query(50, ge=1, le=200, description="Maximum number of projects to return"),
 ):
@@ -591,7 +646,7 @@ async def public_projects(
         return {"status": "error", "message": str(e), "auth_required": False}
 
 
-@router.get("/public/carbon")
+@router.get("/public/carbon", response_model=PublicDashboardResponse)
 async def public_carbon_dashboard():
     """Carbon dashboard - NO AUTH."""
     return {
@@ -602,8 +657,8 @@ async def public_carbon_dashboard():
     }
 
 
-@router.get("/public/analytics")
-async def public_analytics():
+@router.get("/public/analytics", response_model=PublicDashboardResponse)
+async def public_analytics(request: Request):
     """Platform analytics - NO AUTH."""
     projects = _get_projects_data()
     return {
@@ -612,15 +667,15 @@ async def public_analytics():
         "data": {
             "total_projects": projects.get("total", 0),
             "total_area_hectares": projects.get("total_area_hectares", 0.0),
-            "active_motors": 166,
-            "total_services": 216,
-            "api_endpoints": 248,
+            # Counted from the running application rather than asserted, the same
+            # way `security_router` reports `len(TRAP_PATHS)`.
+            "api_endpoints": _published_path_count(request),
         },
         "timestamp": datetime.now(UTC).isoformat(),
     }
 
 
-@router.get("/public/weather")
+@router.get("/public/weather", response_model=PublicDashboardResponse)
 async def public_weather(
     farm_id: str | None = Query(None, description="Filter by farm/project ID"),
 ):
@@ -637,7 +692,7 @@ async def public_weather(
     }
 
 
-@router.get("/public/satellite")
+@router.get("/public/satellite", response_model=PublicDashboardResponse)
 async def public_satellite(
     farm_id: str | None = Query(None, description="Filter by farm/project ID"),
 ):
@@ -654,7 +709,7 @@ async def public_satellite(
     }
 
 
-@router.get("/public/soil")
+@router.get("/public/soil", response_model=PublicDashboardResponse)
 async def public_soil(farm_id: str | None = Query(None, description="Filter by farm/project ID")):
     """Soil profiles - NO AUTH.
 
@@ -669,7 +724,7 @@ async def public_soil(farm_id: str | None = Query(None, description="Filter by f
     }
 
 
-@router.get("/public/mrv")
+@router.get("/public/mrv", response_model=PublicDashboardResponse)
 async def public_mrv(farm_id: str | None = Query(None, description="Filter by farm/project ID")):
     """MRV observations - NO AUTH.
 
@@ -684,7 +739,7 @@ async def public_mrv(farm_id: str | None = Query(None, description="Filter by fa
     }
 
 
-@router.get("/public/simulations")
+@router.get("/public/simulations", response_model=PublicDashboardResponse)
 async def public_simulations(
     farm_id: str | None = Query(None, description="Filter by farm/project ID"),
 ):
@@ -701,7 +756,7 @@ async def public_simulations(
     }
 
 
-@router.get("/public/tourism")
+@router.get("/public/tourism", response_model=PublicDashboardResponse)
 async def public_tourism():
     """Tourism bookings - NO AUTH."""
     return {
@@ -712,7 +767,7 @@ async def public_tourism():
     }
 
 
-@router.get("/public/test")
+@router.get("/public/test", response_model=PublicRouterCheckResponse)
 async def public_test():
     """Quick connectivity test - NO AUTH."""
     return {

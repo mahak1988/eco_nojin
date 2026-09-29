@@ -11,7 +11,7 @@
           "platform"
         ],
         "summary": "Platform Health",
-        "description": "Health check for platform router \u2014 reports the REAL database reachability.",
+        "description": "Health check for platform router — reports the REAL database reachability.",
         "operationId": "platform_health_api_v1_platform_health_get",
         "responses": {
           "200": {
@@ -2360,6 +2360,324 @@
         }
       }
     },
+    "/api/v1/security/passkeys/register/options": {
+      "post": {
+        "tags": [
+          "passkeys",
+          "step-up"
+        ],
+        "summary": "Passkey Registration Options",
+        "operationId": "passkey_registration_options_api_v1_security_passkeys_register_options_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegistrationOptionsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/security/passkeys/register": {
+      "post": {
+        "tags": [
+          "passkeys",
+          "step-up"
+        ],
+        "summary": "Finish Passkey Registration",
+        "operationId": "finish_passkey_registration_api_v1_security_passkeys_register_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FinishRegistrationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasskeyResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/security/passkeys/authenticate/options": {
+      "post": {
+        "tags": [
+          "passkeys",
+          "step-up"
+        ],
+        "summary": "Passkey Authentication Options",
+        "operationId": "passkey_authentication_options_api_v1_security_passkeys_authenticate_options_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationOptionsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/security/passkeys/authenticate": {
+      "post": {
+        "tags": [
+          "passkeys",
+          "step-up"
+        ],
+        "summary": "Finish Passkey Authentication",
+        "operationId": "finish_passkey_authentication_api_v1_security_passkeys_authenticate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FinishAuthenticationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/security/passkeys": {
+      "get": {
+        "tags": [
+          "passkeys",
+          "step-up"
+        ],
+        "summary": "List Passkeys",
+        "operationId": "list_passkeys_api_v1_security_passkeys_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response List Passkeys Api V1 Security Passkeys Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/security/passkeys/{credential_id}": {
+      "delete": {
+        "tags": [
+          "passkeys",
+          "step-up"
+        ],
+        "summary": "Delete Passkey",
+        "operationId": "delete_passkey_api_v1_security_passkeys__credential_id__delete",
+        "parameters": [
+          {
+            "name": "credential_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Credential Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Delete Passkey Api V1 Security Passkeys  Credential Id  Delete"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/security/step-up/purposes": {
+      "get": {
+        "tags": [
+          "passkeys",
+          "step-up"
+        ],
+        "summary": "List Purposes",
+        "operationId": "list_purposes_api_v1_security_step_up_purposes_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response List Purposes Api V1 Security Step Up Purposes Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/security/step-up": {
+      "post": {
+        "tags": [
+          "passkeys",
+          "step-up"
+        ],
+        "summary": "Create Step Up",
+        "description": "Mint a step-up proof.\n\nThe caller must have completed a strong authentication already; the\n``amr`` of their current session is not re-verified here, which is why the\nissuing endpoint is expected to sit behind the 2FA/TOTP check it is paired\nwith. This endpoint issues proofs; it does not grant them.",
+        "operationId": "create_step_up_api_v1_security_step_up_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StepUpRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StepUpResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/security/step-up/verify": {
+      "get": {
+        "tags": [
+          "passkeys",
+          "step-up"
+        ],
+        "summary": "Check Step Up",
+        "operationId": "check_step_up_api_v1_security_step_up_verify_get",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Token"
+            }
+          },
+          {
+            "name": "purpose",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Purpose"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Check Step Up Api V1 Security Step Up Verify Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/auth/register": {
       "post": {
         "tags": [
@@ -4115,7 +4433,7 @@
           "auth-supabase"
         ],
         "summary": "Login",
-        "description": "Real GoTrue password login \u2014 returns access_token + refresh_token.\n\nFALLBACK: when Supabase is unreachable the request is served by the\nlocal SQLite auth router so login keeps working offline.",
+        "description": "Real GoTrue password login — returns access_token + refresh_token.\n\nFALLBACK: when Supabase is unreachable the request is served by the\nlocal SQLite auth router so login keeps working offline.",
         "operationId": "login_api_v1_auth_supabase_login_post",
         "requestBody": {
           "content": {
@@ -4204,7 +4522,7 @@
           "auth-supabase"
         ],
         "summary": "Update Profile",
-        "description": "Update the current user's profile via the admin users endpoint.\nRequires SUPABASE_SERVICE_ROLE_KEY (server-side only \u2014 never exposed\nto the frontend).\n\nFALLBACK: when Supabase is unreachable the request is served by the\nlocal SQLite auth router so profile updates keep working offline.",
+        "description": "Update the current user's profile via the admin users endpoint.\nRequires SUPABASE_SERVICE_ROLE_KEY (server-side only — never exposed\nto the frontend).\n\nFALLBACK: when Supabase is unreachable the request is served by the\nlocal SQLite auth router so profile updates keep working offline.",
         "operationId": "update_profile_api_v1_auth_supabase_profile_put",
         "parameters": [
           {
@@ -4366,7 +4684,7 @@
           "auth-supabase"
         ],
         "summary": "Oauth Callback",
-        "description": "Handle the OAuth callback \u2014 exchange the authorization code for a\nsession, then create or look up the user in the local SQLite auth\nrouter and return a local JWT.\n\nREAL FLOW: when Supabase is reachable and `mock=false`, the code is\nexchanged with GoTrue via PKCE.\n\nMOCK FLOW: when `mock=true` or Supabase is unreachable, we create a\nlocal user account with a provider-prefixed email (e.g.\n`user_google@example.com`) so OAuth login works offline.",
+        "description": "Handle the OAuth callback — exchange the authorization code for a\nsession, then create or look up the user in the local SQLite auth\nrouter and return a local JWT.\n\nREAL FLOW: when Supabase is reachable and `mock=false`, the code is\nexchanged with GoTrue via PKCE.\n\nMOCK FLOW: when `mock=true` or Supabase is unreachable, we create a\nlocal user account with a provider-prefixed email (e.g.\n`user_google@example.com`) so OAuth login works offline.",
         "operationId": "oauth_callback_api_v1_auth_supabase_oauth_callback_get",
         "parameters": [
           {
@@ -4736,7 +5054,7 @@
           "land"
         ],
         "summary": "List Profiles",
-        "description": "\u0644\u06cc\u0633\u062a \u062a\u0645\u0627\u0645 \u067e\u0631\u0648\u0641\u0627\u06cc\u0644\u200c\u0647\u0627\u06cc \u0632\u0645\u06cc\u0646\n\nReturns all land profiles.",
+        "description": "لیست تمام پروفایل‌های زمین\n\nReturns all land profiles.",
         "operationId": "list_land_profiles",
         "responses": {
           "200": {
@@ -4760,7 +5078,7 @@
           "land"
         ],
         "summary": "Create Profile",
-        "description": "\u0627\u06cc\u062c\u0627\u062f \u067e\u0631\u0648\u0641\u0627\u06cc\u0644 \u0632\u0645\u06cc\u0646 \u062c\u062f\u06cc\u062f\n\nCreates a new land profile with basic information.",
+        "description": "ایجاد پروفایل زمین جدید\n\nCreates a new land profile with basic information.",
         "operationId": "create_land_profile",
         "requestBody": {
           "content": {
@@ -4802,7 +5120,7 @@
           "land"
         ],
         "summary": "Get Profile",
-        "description": "\u062f\u0631\u06cc\u0627\u0641\u062a \u067e\u0631\u0648\u0641\u0627\u06cc\u0644 \u0632\u0645\u06cc\u0646\n\nReturns a specific land profile by ID.",
+        "description": "دریافت پروفایل زمین\n\nReturns a specific land profile by ID.",
         "operationId": "get_land_profile",
         "parameters": [
           {
@@ -4843,7 +5161,7 @@
           "land"
         ],
         "summary": "Delete Profile",
-        "description": "\u062d\u0630\u0641 \u067e\u0631\u0648\u0641\u0627\u06cc\u0644 \u0632\u0645\u06cc\u0646\n\nDeletes a land profile by ID.",
+        "description": "حذف پروفایل زمین\n\nDeletes a land profile by ID.",
         "operationId": "delete_land_profile",
         "parameters": [
           {
@@ -4879,7 +5197,7 @@
           "land"
         ],
         "summary": "Analyze Terrain",
-        "description": "\u062a\u062d\u0644\u06cc\u0644 \u062a\u0648\u067e\u0648\u06af\u0631\u0627\u0641\u06cc\n\nPerforms comprehensive terrain analysis on DEM data.",
+        "description": "تحلیل توپوگرافی\n\nPerforms comprehensive terrain analysis on DEM data.",
         "operationId": "analyze_land_terrain",
         "parameters": [
           {
@@ -4932,7 +5250,7 @@
           "land"
         ],
         "summary": "Analyze Drainage",
-        "description": "\u062a\u062d\u0644\u06cc\u0644 \u0632\u0647\u06a9\u0634\u06cc\n\nPerforms drainage pattern and flow accumulation analysis.",
+        "description": "تحلیل زهکشی\n\nPerforms drainage pattern and flow accumulation analysis.",
         "operationId": "analyze_land_drainage",
         "parameters": [
           {
@@ -4985,7 +5303,7 @@
           "land"
         ],
         "summary": "Assess Capability",
-        "description": "\u0627\u0631\u0632\u06cc\u0627\u0628\u06cc \u0642\u0627\u0628\u0644\u06cc\u062a \u0632\u0645\u06cc\u0646\n\nEvaluates land capability for various uses based on physical characteristics.",
+        "description": "ارزیابی قابلیت زمین\n\nEvaluates land capability for various uses based on physical characteristics.",
         "operationId": "assess_land_capability",
         "parameters": [
           {
@@ -5038,7 +5356,7 @@
           "land"
         ],
         "summary": "Health Check",
-        "description": "\u0628\u0631\u0631\u0633\u06cc \u0633\u0644\u0627\u0645\u062a \u0633\u0631\u0648\u06cc\u0633\n\nReturns health status of the land service.",
+        "description": "بررسی سلامت سرویس\n\nReturns health status of the land service.",
         "operationId": "health_check_api_v1_land_health_get",
         "responses": {
           "200": {
@@ -5400,7 +5718,7 @@
           "satellite"
         ],
         "summary": "Stores Status",
-        "description": "All Copernicus data stores (CDS/EWDS/ADS) + SEPAL \u2014 honest status.",
+        "description": "All Copernicus data stores (CDS/EWDS/ADS) + SEPAL — honest status.",
         "operationId": "stores_status_api_v1_satellite_stores_status_get",
         "responses": {
           "200": {
@@ -5512,7 +5830,7 @@
           "satellite"
         ],
         "summary": "Real Land Analysis",
-        "description": "REAL land intelligence for a point (all sources free):\n\n- satellite: Sentinel-2 L2A (NDVI/EVI/SAVI/LAI/C-factor + NDVI grid),\n  Landsat 8/9 LST, Sentinel-1 VV/VH proxy \u2014 via Copernicus CDSE.\n- climate: ERA5 daily series + FAO-56 ET0 via Open-Meteo (no key).\n- soil: SoilGrids v2.0 REST profile (texture, SOC, pH, CEC, BD, K).\n\nHonesty (W-001): no simulated fallback. Without CDSE credentials the\nsatellite block reports ``credentials_required`` with free sign-up\ninstructions (climate + soil still return real values).",
+        "description": "REAL land intelligence for a point (all sources free):\n\n- satellite: Sentinel-2 L2A (NDVI/EVI/SAVI/LAI/C-factor + NDVI grid),\n  Landsat 8/9 LST, Sentinel-1 VV/VH proxy — via Copernicus CDSE.\n- climate: ERA5 daily series + FAO-56 ET0 via Open-Meteo (no key).\n- soil: SoilGrids v2.0 REST profile (texture, SOC, pH, CEC, BD, K).\n\nHonesty (W-001): no simulated fallback. Without CDSE credentials the\nsatellite block reports ``credentials_required`` with free sign-up\ninstructions (climate + soil still return real values).",
         "operationId": "real_land_analysis_api_v1_satellite_real_land_post",
         "requestBody": {
           "content": {
@@ -8590,7 +8908,7 @@
           "Marketplace"
         ],
         "summary": "Create Marketplace",
-        "description": "Create a new marketplace (\u0628\u0627\u0632\u0627\u0631\u0686\u0647). Requires village council approval.",
+        "description": "Create a new marketplace (بازارچه). Requires village council approval.",
         "operationId": "create_marketplace_api_v1_marketplace_marketplaces_post",
         "security": [
           {
@@ -9281,7 +9599,7 @@
           "Marketplace"
         ],
         "summary": "Settle Order",
-        "description": "Step 5b: Settle the order \u2014 auto-release escrow after dispute window closes.\n\nCalled when the dispute window has closed without a challenge: funds are\nautomatically released to the seller.",
+        "description": "Step 5b: Settle the order — auto-release escrow after dispute window closes.\n\nCalled when the dispute window has closed without a challenge: funds are\nautomatically released to the seller.",
         "operationId": "settle_order_api_v1_marketplace_orders__order_id__settle_post",
         "security": [
           {
@@ -9327,7 +9645,7 @@
           "Marketplace"
         ],
         "summary": "Complete Order",
-        "description": "Step 6: Complete the purchase \u2014 final settlement confirmation.\n\nMarks escrow as fully settled after the dispute window has closed and\nfunds have been released or reversed.",
+        "description": "Step 6: Complete the purchase — final settlement confirmation.\n\nMarks escrow as fully settled after the dispute window has closed and\nfunds have been released or reversed.",
         "operationId": "complete_order_api_v1_marketplace_orders__order_id__complete_post",
         "security": [
           {
@@ -9373,7 +9691,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Get Village Profile",
-        "description": "\u062f\u0631\u06cc\u0627\u0641\u062a \u067e\u0631\u0648\u0641\u0627\u06cc\u0644 \u06a9\u0627\u0645\u0644 \u0631\u0648\u0633\u062a\u0627 \u0628\u0627 \u062a\u0645\u0627\u0645 \u0645\u0627\u0698\u0648\u0644\u200c\u0647\u0627.",
+        "description": "دریافت پروفایل کامل روستا با تمام ماژول‌ها.",
         "operationId": "get_village_profile_api_v1_marketplace_villages__village_id__get",
         "parameters": [
           {
@@ -9418,7 +9736,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Get Village Dashboard",
-        "description": "\u062f\u0631\u06cc\u0627\u0641\u062a \u062f\u0627\u0634\u0628\u0648\u0631\u062f \u062a\u0648\u0633\u0639\u0647\u0654 \u0631\u0648\u0633\u062a\u0627.",
+        "description": "دریافت داشبورد توسعهٔ روستا.",
         "operationId": "get_village_dashboard_api_v1_marketplace_villages__village_id__dashboard_get",
         "parameters": [
           {
@@ -9463,7 +9781,7 @@
           "marketplace-village-hub"
         ],
         "summary": "List Capabilities",
-        "description": "\u0644\u06cc\u0633\u062a \u0638\u0631\u0641\u06cc\u062a\u200c\u0647\u0627\u06cc \u0627\u0642\u062a\u0635\u0627\u062f\u06cc/\u06af\u0631\u062f\u0634\u06af\u064a\u0631\u06cc \u0631\u0648\u0633\u062a\u0627.",
+        "description": "لیست ظرفیت‌های اقتصادی/گردشگيری روستا.",
         "operationId": "list_capabilities_api_v1_marketplace_villages__village_id__capabilities_get",
         "parameters": [
           {
@@ -9522,7 +9840,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Create Capability",
-        "description": "\u0627\u06cc\u062c\u0627\u062f \u06cc\u0627 \u0628\u0631\u0648\u0632\u0631\u0633\u0627\u0646\u06cc \u06cc\u06a9 \u0638\u0631\u0641\u06cc\u062a \u0631\u0648\u0633\u062a\u0627.",
+        "description": "ایجاد یا بروزرسانی یک ظرفیت روستا.",
         "operationId": "create_capability_api_v1_marketplace_villages__village_id__capabilities_post",
         "security": [
           {
@@ -9582,7 +9900,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Get Capability",
-        "description": "\u062c\u0632\u0626\u06cc\u0627\u062a \u06cc\u06a9 \u0638\u0631\u0641\u06cc\u062a.",
+        "description": "جزئیات یک ظرفیت.",
         "operationId": "get_capability_api_v1_marketplace_villages__village_id__capabilities__capability_id__get",
         "parameters": [
           {
@@ -9634,7 +9952,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Update Capability",
-        "description": "\u0628\u0631\u0648\u0632\u0631\u0633\u0627\u0646\u06cc \u0638\u0631\u0641\u06cc\u062a \u2014 \u0646\u06cc\u0627\u0632 \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc \u062d\u06a9\u0645\u0631\u0627\u0646\u06cc.",
+        "description": "بروزرسانی ظرفیت — نیاز به دسترسی حکمرانی.",
         "operationId": "update_capability_api_v1_marketplace_villages__village_id__capabilities__capability_id__put",
         "security": [
           {
@@ -9701,7 +10019,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Delete Capability",
-        "description": "\u062d\u0630\u0641 \u0638\u0631\u0641\u06cc\u062a.",
+        "description": "حذف ظرفیت.",
         "operationId": "delete_capability_api_v1_marketplace_villages__village_id__capabilities__capability_id__delete",
         "security": [
           {
@@ -9751,7 +10069,7 @@
           "marketplace-village-hub"
         ],
         "summary": "List Opportunities",
-        "description": "\u0644\u06cc\u0633\u062a \u0641\u0631\u0635\u062a\u200c\u0647\u0627\u06cc \u062a\u0648\u0633\u0639\u0647\u0654 \u0631\u0648\u0633\u062a\u0627.",
+        "description": "لیست فرصت‌های توسعهٔ روستا.",
         "operationId": "list_opportunities_api_v1_marketplace_villages__village_id__opportunities_get",
         "parameters": [
           {
@@ -9826,7 +10144,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Create Opportunity",
-        "description": "\u0627\u06cc\u062c\u0627\u062f \u0641\u0631\u0635\u062a \u062a\u0648\u0633\u0639\u0647 \u062c\u062f\u06cc\u062f.",
+        "description": "ایجاد فرصت توسعه جدید.",
         "operationId": "create_opportunity_api_v1_marketplace_villages__village_id__opportunities_post",
         "security": [
           {
@@ -9886,7 +10204,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Get Opportunity",
-        "description": "\u062c\u0632\u0626\u06cc\u0627\u062a \u06cc\u06a9 \u0641\u0631\u0635\u062a.",
+        "description": "جزئیات یک فرصت.",
         "operationId": "get_opportunity_api_v1_marketplace_villages__village_id__opportunities__opportunity_id__get",
         "parameters": [
           {
@@ -9938,7 +10256,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Update Opportunity",
-        "description": "\u0628\u0631\u0648\u0632\u0631\u0633\u0627\u0646\u06cc \u0641\u0631\u0635\u062a \u062a\u0648\u0633\u0639\u0647.",
+        "description": "بروزرسانی فرصت توسعه.",
         "operationId": "update_opportunity_api_v1_marketplace_villages__village_id__opportunities__opportunity_id__put",
         "security": [
           {
@@ -10007,7 +10325,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Express Interest",
-        "description": "\u06cc\u06a9 \u06a9\u0627\u0631\u0622\u0641\u0631\u06cc\u0646 \u0639\u0644\u0627\u0642\u0647 \u062e\u0648\u062f \u0631\u0627 \u0628\u0647 \u06cc\u06a9 \u0641\u0631\u0635\u062a \u0627\u0639\u0644\u0627\u0645 \u0645\u06cc\u200c\u06a9\u0646\u062f.",
+        "description": "یک کارآفرین علاقه خود را به یک فرصت اعلام می‌کند.",
         "operationId": "express_interest_api_v1_marketplace_villages_opportunities__opportunity_id__interest_post",
         "security": [
           {
@@ -10074,7 +10392,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Search Opportunities",
-        "description": "\u062c\u0633\u062a\u062c\u0648 \u062f\u0631 \u062a\u0645\u0627\u0645 \u0641\u0631\u0635\u062a\u200c\u0647\u0627\u06cc \u062a\u0648\u0633\u0639\u0647\u0654 \u0647\u0645\u0647 \u0631\u0648\u0633\u062a\u0627\u0647\u0627.",
+        "description": "جستجو در تمام فرصت‌های توسعهٔ همه روستاها.",
         "operationId": "search_opportunities_api_v1_marketplace_villages_opportunities_get",
         "parameters": [
           {
@@ -10170,7 +10488,7 @@
           "marketplace-village-hub"
         ],
         "summary": "List Projects",
-        "description": "\u0644\u06cc\u0633\u062a \u067e\u0631\u0648\u0698\u0647\u200c\u0647\u0627\u06cc \u062f\u0631 \u062d\u0627\u0644 \u0627\u062c\u0631\u0627 \u062f\u0631 \u0631\u0648\u0633\u062a\u0627.",
+        "description": "لیست پروژه‌های در حال اجرا در روستا.",
         "operationId": "list_projects_api_v1_marketplace_villages__village_id__projects_get",
         "parameters": [
           {
@@ -10229,7 +10547,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Create Project",
-        "description": "\u0627\u06cc\u062c\u0627\u062f \u06cc\u0627 \u0628\u0631\u0648\u0632\u0631\u0633\u0627\u0646\u06cc \u06cc\u06a9 \u067e\u0631\u0648\u0698\u0647 \u062a\u0648\u0633\u0639\u0647.",
+        "description": "ایجاد یا بروزرسانی یک پروژه توسعه.",
         "operationId": "create_project_api_v1_marketplace_villages__village_id__projects_post",
         "security": [
           {
@@ -10289,7 +10607,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Update Project Progress",
-        "description": "\u0628\u0631\u0648\u0632\u0631\u0633\u0627\u0646\u06cc \u062f\u0631\u0635\u062f \u067e\u06cc\u0634\u0631\u0641\u062a \u06cc\u06a9 \u067e\u0631\u0648\u0698\u0647.",
+        "description": "بروزرسانی درصد پیشرفت یک پروژه.",
         "operationId": "update_project_progress_api_v1_marketplace_villages__village_id__projects__project_id__progress_put",
         "security": [
           {
@@ -10358,7 +10676,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Get Project Investors",
-        "description": "\u062f\u0631\u06cc\u0627\u0641\u062a \u0644\u06cc\u0633\u062a \u0633\u0631\u0645\u0627\u06cc\u0647\u200c\u06af\u0630\u0627\u0631\u0627\u0646 \u06cc\u06a9 \u067e\u0631\u0648\u0698\u0647.",
+        "description": "دریافت لیست سرمایه‌گذاران یک پروژه.",
         "operationId": "get_project_investors_api_v1_marketplace_villages__village_id__projects__project_id__investors_get",
         "parameters": [
           {
@@ -10412,7 +10730,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Get My Entrepreneur Profile",
-        "description": "\u062f\u0631\u06cc\u0627\u0641\u062a \u067e\u0631\u0648\u0641\u0627\u06cc\u0644 \u06a9\u0627\u0631\u0622\u0641\u0631\u06cc\u0646 \u062c\u0627\u0631\u06cc.",
+        "description": "دریافت پروفایل کارآفرین جاری.",
         "operationId": "get_my_entrepreneur_profile_api_v1_marketplace_villages_entrepreneurs_me_get",
         "responses": {
           "200": {
@@ -10439,7 +10757,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Upsert My Entrepreneur Profile",
-        "description": "\u0627\u06cc\u062c\u0627\u062f \u06cc\u0627 \u0628\u0631\u0648\u0632\u0631\u0633\u0627\u0646\u06cc \u067e\u0631\u0648\u0641\u0627\u06cc\u0644 \u06a9\u0627\u0631\u0622\u0641\u0631\u06cc\u0646 \u062c\u0627\u0631\u06cc.",
+        "description": "ایجاد یا بروزرسانی پروفایل کارآفرین جاری.",
         "operationId": "upsert_my_entrepreneur_profile_api_v1_marketplace_villages_entrepreneurs_me_put",
         "requestBody": {
           "content": {
@@ -10488,7 +10806,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Search Entrepreneurs",
-        "description": "\u062c\u0633\u062a\u062c\u0648\u06cc \u06a9\u0627\u0631\u0622\u0641\u0631\u06cc\u0646\u0627\u0646 \u0628\u0631 \u0627\u0633\u0627\u0633 \u0645\u0647\u0627\u0631\u062a \u06cc\u0627 \u0631\u0648\u0633\u062a\u0627.",
+        "description": "جستجوی کارآفرینان بر اساس مهارت یا روستا.",
         "operationId": "search_entrepreneurs_api_v1_marketplace_villages_entrepreneurs_get",
         "parameters": [
           {
@@ -10587,7 +10905,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Get My Investments",
-        "description": "\u062f\u0631\u06cc\u0627\u0641\u062a \u0633\u0631\u0645\u0627\u06cc\u0647\u200c\u06af\u0630\u0627\u0631\u06cc\u200c\u0647\u0627\u06cc \u0641\u0639\u0644\u06cc \u06a9\u0627\u0631\u0628\u0631.",
+        "description": "دریافت سرمایه‌گذاری‌های فعلی کاربر.",
         "operationId": "get_my_investments_api_v1_marketplace_villages_investments_get",
         "responses": {
           "200": {
@@ -10614,7 +10932,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Create Investment",
-        "description": "\u062b\u0628\u062a \u0633\u0631\u0645\u0627\u06cc\u0647\u200c\u06af\u0630\u0627\u0631\u06cc \u062f\u0631 \u06cc\u06a9 \u067e\u0631\u0648\u0698\u0647.",
+        "description": "ثبت سرمایه‌گذاری در یک پروژه.",
         "operationId": "create_investment_api_v1_marketplace_villages_investments_post",
         "requestBody": {
           "content": {
@@ -10663,7 +10981,7 @@
           "marketplace-village-hub"
         ],
         "summary": "List Tourism Services",
-        "description": "\u0644\u06cc\u0633\u062a \u0633\u0631\u0648\u06cc\u0633\u200c\u0647\u0627\u06cc \u06af\u0631\u062f\u0634\u06af\u064a\u0631\u06cc \u0631\u0648\u0633\u062a\u0627.",
+        "description": "لیست سرویس‌های گردشگيری روستا.",
         "operationId": "list_tourism_services_api_v1_marketplace_villages__village_id__tourism_get",
         "parameters": [
           {
@@ -10706,7 +11024,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Create Tourism Service",
-        "description": "\u062b\u0628\u062a \u0633\u0631\u0648\u06cc\u0633 \u06af\u0631\u062f\u0634\u06af\u064a\u0631\u06cc \u062c\u062f\u06cc\u062f.",
+        "description": "ثبت سرویس گردشگيری جدید.",
         "operationId": "create_tourism_service_api_v1_marketplace_villages__village_id__tourism_post",
         "security": [
           {
@@ -10766,7 +11084,7 @@
           "marketplace-village-hub"
         ],
         "summary": "List Events",
-        "description": "\u0644\u06cc\u0633\u062a \u0631\u0648\u06cc\u062f\u0627\u062f\u0647\u0627\u06cc \u0641\u0631\u0647\u0646\u06af\u06cc \u0648 \u06af\u0631\u062f\u0634\u06af\u064a\u0631\u06cc \u0631\u0648\u0633\u062a\u0627.",
+        "description": "لیست رویدادهای فرهنگی و گردشگيری روستا.",
         "operationId": "list_events_api_v1_marketplace_villages__village_id__events_get",
         "parameters": [
           {
@@ -10809,7 +11127,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Create Event",
-        "description": "\u0627\u06cc\u062c\u0627\u062f \u0631\u0648\u06cc\u062f\u0627\u062f \u062c\u062f\u06cc\u062f \u0628\u0631\u0627\u06cc \u0631\u0648\u0633\u062a\u0627.",
+        "description": "ایجاد رویداد جدید برای روستا.",
         "operationId": "create_event_api_v1_marketplace_villages__village_id__events_post",
         "security": [
           {
@@ -10869,7 +11187,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Register For Event",
-        "description": "\u062b\u0628\u062a\u200c\u0646\u0627\u0645 \u06a9\u0627\u0631\u0628\u0631 \u062f\u0631 \u06cc\u06a9 \u0631\u0648\u06cc\u062f\u0627\u062f.",
+        "description": "ثبت‌نام کاربر در یک رویداد.",
         "operationId": "register_for_event_api_v1_marketplace_villages_events__event_id__register_post",
         "security": [
           {
@@ -10919,7 +11237,7 @@
           "marketplace-village-hub"
         ],
         "summary": "List Needs",
-        "description": "\u0644\u06cc\u0633\u062a \u0646\u06cc\u0627\u0632\u0647\u0627\u06cc \u0634\u0646\u0627\u0633\u0627\u06cc\u06cc \u0634\u062f\u0647\u0654 \u0631\u0648\u0633\u062a\u0627.",
+        "description": "لیست نیازهای شناسایی شدهٔ روستا.",
         "operationId": "list_needs_api_v1_marketplace_villages__village_id__needs_get",
         "parameters": [
           {
@@ -10978,7 +11296,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Create Need",
-        "description": "\u062b\u0628\u062a \u0646\u06cc\u0627\u0632 \u062c\u062f\u06cc\u062f \u0628\u0631\u0627\u06cc \u0631\u0648\u0633\u062a\u0627.",
+        "description": "ثبت نیاز جدید برای روستا.",
         "operationId": "create_need_api_v1_marketplace_villages__village_id__needs_post",
         "security": [
           {
@@ -11038,7 +11356,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Get Brand",
-        "description": "\u062f\u0631\u06cc\u0627\u0641\u062a \u0627\u0637\u0644\u0627\u0639\u0627\u062a \u0628\u0631\u0646\u062f \u0631\u0648\u0633\u062a\u0627.",
+        "description": "دریافت اطلاعات برند روستا.",
         "operationId": "get_brand_api_v1_marketplace_villages__village_id__brand_get",
         "parameters": [
           {
@@ -11081,7 +11399,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Update Brand",
-        "description": "\u0628\u0631\u0648\u0632\u0631\u0633\u0627\u0646\u06cc \u0628\u0631\u0646\u062f \u0631\u0648\u0633\u062a\u0627.",
+        "description": "بروزرسانی برند روستا.",
         "operationId": "update_brand_api_v1_marketplace_villages__village_id__brand_put",
         "security": [
           {
@@ -11141,7 +11459,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Get Ai Recommendations",
-        "description": "\u062a\u062d\u0644\u06cc\u0644 \u0647\u0648\u0634\u0645\u0646\u062f \u0638\u0631\u0641\u06cc\u062a \u0631\u0648\u0633\u062a\u0627 \u0648 \u067e\u06cc\u0634\u0646\u0647\u0627\u062f \u0641\u0631\u0648\u0631.",
+        "description": "تحلیل هوشمند ظرفیت روستا و پیشنهاد فرور.",
         "operationId": "get_ai_recommendations_api_v1_marketplace_villages__village_id__ai_recommendations_post",
         "parameters": [
           {
@@ -11186,7 +11504,7 @@
           "marketplace-village-hub"
         ],
         "summary": "List Experiences",
-        "description": "\u0644\u06cc\u0633\u062a \u062a\u062c\u0631\u0628\u06cc\u0627\u062a \u06af\u0631\u062f\u0634\u06af\u064a\u0631\u06cc \u0631\u0648\u0633\u062a\u0627.",
+        "description": "لیست تجربیات گردشگيری روستا.",
         "operationId": "list_experiences_api_v1_marketplace_villages__village_id__experiences_get",
         "parameters": [
           {
@@ -11245,7 +11563,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Create Experience",
-        "description": "\u062b\u0628\u062a \u06cc\u06a9 \u062a\u062c\u0631\u0628\u0647\u0654 \u06af\u0631\u062f\u0634\u06af\u064a\u0631\u06cc \u062c\u062f\u06cc\u062f.",
+        "description": "ثبت یک تجربهٔ گردشگيری جدید.",
         "operationId": "create_experience_api_v1_marketplace_villages__village_id__experiences_post",
         "security": [
           {
@@ -11305,7 +11623,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Get Destination",
-        "description": "\u062f\u0631\u06cc\u0627\u0641\u062a \u0635\u0641\u062d\u0647\u0654 \u0645\u0642\u0635\u062f \u06af\u0631\u062f\u0634\u06af\u0631\u06cc \u0631\u0648\u0633\u062a\u0627.",
+        "description": "دریافت صفحهٔ مقصد گردشگری روستا.",
         "operationId": "get_destination_api_v1_marketplace_villages__village_id__destination_get",
         "parameters": [
           {
@@ -11348,7 +11666,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Update Destination",
-        "description": "\u0628\u0631\u0648\u0632\u0631\u0633\u0627\u0646\u06cc \u0635\u0641\u062d\u0647\u0654 \u0645\u0642\u0635\u062f \u06af\u0631\u062f\u0634\u06af\u0631\u06cc \u0631\u0648\u0633\u062a\u0627.",
+        "description": "بروزرسانی صفحهٔ مقصد گردشگری روستا.",
         "operationId": "update_destination_api_v1_marketplace_villages__village_id__destination_put",
         "security": [
           {
@@ -11408,7 +11726,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Create B2B Demand",
-        "description": "\u062b\u0628\u062a \u062f\u0631\u062e\u0648\u0627\u0633\u062a \u062e\u0631\u06cc\u062f B2B \u0627\u0632 \u06cc\u06a9 \u0634\u0631\u06a9\u062a/\u0641\u0631\u0648\u0634\u06af\u0627\u0647.",
+        "description": "ثبت درخواست خرید B2B از یک شرکت/فروشگاه.",
         "operationId": "create_b2b_demand_api_v1_marketplace_villages_b2b_demands_post",
         "requestBody": {
           "content": {
@@ -11457,7 +11775,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Get My B2B Demands",
-        "description": "\u062f\u0631\u06cc\u0627\u0641\u062a \u062f\u0631\u062e\u0648\u0627\u0633\u062a\u200c\u0647\u0627\u06cc B2B \u062b\u0628\u062a\u200c\u0634\u062f\u0647 \u062a\u0648\u0633\u0637 \u06a9\u0627\u0631\u0628\u0631.",
+        "description": "دریافت درخواست‌های B2B ثبت‌شده توسط کاربر.",
         "operationId": "get_my_b2b_demands_api_v1_marketplace_villages_b2b_demands_my_get",
         "responses": {
           "200": {
@@ -11486,7 +11804,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Get B2B Matches",
-        "description": "\u06cc\u0627\u0641\u062a\u0646 \u062f\u0631\u062e\u0648\u0627\u0633\u062a\u200c\u0647\u0627\u06cc B2B \u0645\u0646\u0627\u0633\u0628 \u06cc\u06a9 \u0631\u0648\u0633\u062a\u0627.",
+        "description": "یافتن درخواست‌های B2B مناسب یک روستا.",
         "operationId": "get_b2b_matches_api_v1_marketplace_villages_b2b_matches__village_id__get",
         "parameters": [
           {
@@ -11531,7 +11849,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Create Engagement",
-        "description": "\u062b\u0628\u062a \u0639\u0644\u0627\u0642\u0647 \u06cc\u0627 \u0634\u0631\u06a9\u062a \u062f\u0631 \u06cc\u06a9 \u0641\u0631\u0635\u062a/\u067e\u0631\u0648\u0698\u0647.",
+        "description": "ثبت علاقه یا شرکت در یک فرصت/پروژه.",
         "operationId": "create_engagement_api_v1_marketplace_villages_engagements_post",
         "requestBody": {
           "content": {
@@ -11580,7 +11898,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Get Opportunity Team",
-        "description": "\u062f\u0631\u06cc\u0627\u0641\u062a \u0644\u06cc\u0633\u062a \u062a\u06cc\u0645 \u06cc\u06a9 \u0641\u0631\u0635\u062a (\u062a\u06cc\u0645 \u0642\u0628\u0648\u0644\u200c\u0634\u062f\u0647\u200c\u0647\u0627).",
+        "description": "دریافت لیست تیم یک فرصت (تیم قبول‌شده‌ها).",
         "operationId": "get_opportunity_team_api_v1_marketplace_villages_opportunities__opportunity_id__team_get",
         "parameters": [
           {
@@ -11625,7 +11943,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Get Project Engagements",
-        "description": "\u062f\u0631\u06cc\u0627\u0641\u062a \u0644\u06cc\u0633\u062a \u0645\u0634\u0627\u0631\u06a9\u062a\u200c\u06a9\u0646\u0646\u062f\u06af\u0627\u0646 \u062f\u0631 \u06cc\u06a9 \u067e\u0631\u0648\u0698\u0647.",
+        "description": "دریافت لیست مشارکت‌کنندگان در یک پروژه.",
         "operationId": "get_project_engagements_api_v1_marketplace_villages_projects__project_id__engaged_get",
         "parameters": [
           {
@@ -11670,7 +11988,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Create Development Gap",
-        "description": "\u062b\u0628\u062a \u06cc\u06a9 \u0634\u06a9\u0627\u0641 \u062a\u0648\u0633\u0639\u0647 \u0628\u0631\u0627\u06cc \u0631\u0648\u0633\u062a\u0627.",
+        "description": "ثبت یک شکاف توسعه برای روستا.",
         "operationId": "create_development_gap_api_v1_marketplace_villages__village_id__gaps_post",
         "security": [
           {
@@ -11728,7 +12046,7 @@
           "marketplace-village-hub"
         ],
         "summary": "List Gaps",
-        "description": "\u062f\u0631\u06cc\u0627\u0641\u062a \u0634\u06a9\u0627\u0641\u200c\u0647\u0627\u06cc \u062a\u0648\u0633\u0639\u0647\u0654 \u0631\u0648\u0633\u062a\u0627.",
+        "description": "دریافت شکاف‌های توسعهٔ روستا.",
         "operationId": "list_gaps_api_v1_marketplace_villages__village_id__gaps_get",
         "parameters": [
           {
@@ -11789,7 +12107,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Get Village Festivals",
-        "description": "\u062f\u0631\u06cc\u0627\u0641\u062a \u062c\u0634\u0646\u0648\u0627\u0631\u0647\u200c\u0647\u0627\u06cc \u0645\u0631\u062a\u0628\u0637 \u0628\u0627 \u0631\u0648\u0633\u062a\u0627.",
+        "description": "دریافت جشنواره‌های مرتبط با روستا.",
         "operationId": "get_village_festivals_api_v1_marketplace_villages__village_id__festivals_get",
         "parameters": [
           {
@@ -11834,7 +12152,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Create Festival",
-        "description": "\u0627\u06cc\u062c\u0627\u062f \u062c\u0634\u0646\u0648\u0627\u0631\u0647 \u06cc\u0627 \u0646\u0645\u0627\u06cc\u0634\u06af\u0627\u0647.",
+        "description": "ایجاد جشنواره یا نمایشگاه.",
         "operationId": "create_festival_api_v1_marketplace_villages_festivals_post",
         "requestBody": {
           "content": {
@@ -11883,7 +12201,7 @@
           "marketplace-village-hub"
         ],
         "summary": "List Nomadic Communities",
-        "description": "\u0644\u06cc\u0633\u062a \u062c\u0648\u0627\u0645\u0639 \u0639\u0634\u0627\u06cc\u0631\u06cc.",
+        "description": "لیست جوامع عشایری.",
         "operationId": "list_nomadic_communities_api_v1_marketplace_villages_nomadic_communities_get",
         "parameters": [
           {
@@ -11927,7 +12245,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Create Nomadic Community",
-        "description": "\u062b\u0628\u062a \u06cc\u0627 \u0628\u0631\u0648\u0632\u0631\u0633\u0627\u0646\u06cc \u06cc\u06a9 \u062c\u0627\u0645\u0639\u0647 \u0639\u0634\u0627\u06cc\u0631\u06cc.",
+        "description": "ثبت یا بروزرسانی یک جامعه عشایری.",
         "operationId": "create_nomadic_community_api_v1_marketplace_villages_nomadic_communities_post",
         "security": [
           {
@@ -11976,7 +12294,7 @@
           "marketplace-village-hub"
         ],
         "summary": "Get Village Dossier",
-        "description": "\u062f\u0631\u06cc\u0627\u0641\u062a \u067e\u0631\u0648\u0646\u062f\u0647\u0654 \u062a\u0648\u0633\u0639\u0647\u0654 \u06a9\u0627\u0645\u0644 \u0631\u0648\u0633\u062a\u0627.",
+        "description": "دریافت پروندهٔ توسعهٔ کامل روستا.",
         "operationId": "get_village_dossier_api_v1_marketplace_villages__village_id__dossier_get",
         "parameters": [
           {
@@ -12778,6 +13096,7 @@
           "Blockchain Ledger"
         ],
         "summary": "Ecocoin Health",
+        "description": "Honest capability report for the EcoCoin module.\n\nShares its source of truth with /health so the two cannot diverge.",
         "operationId": "ecocoin_health_api_v1_blockchain_ecocoin_health_get",
         "responses": {
           "200": {
@@ -12915,6 +13234,7 @@
           "Blockchain Ledger"
         ],
         "summary": "Phase Gate Status",
+        "description": "Phase-gate status, in the shape the frontend actually reads.\n\n2026-09-26 correction. Three separate defects were resolved here:\n\n1. This route was registered twice with two same-named handlers. The second\n   shadowed the first in the module namespace while FastAPI served the\n   first, so the duplicate was unreachable in every sense.\n2. Neither version matched `PhaseGateStatus` in the frontend\n   (`{ phase, gates, all_passed }`), which is what\n   public/goals/manifesto and public/goals/roadmap destructure. Both\n   public pages were reading keys the API never returned.\n3. The previous payload asserted that phases 0 and 1 were *completed* for\n   a protocol that has never compiled. That claim is removed.",
         "operationId": "phase_gate_status_api_v1_blockchain_phasegate_status_get",
         "responses": {
           "200": {
@@ -12934,6 +13254,7 @@
           "Blockchain Ledger"
         ],
         "summary": "Activate Phase",
+        "description": "Phase activation is not available: there is no deployed PhaseGate.\n\nPreviously this returned a hardcoded `status: activated`, which implied\nthe transition had occurred.",
         "operationId": "activate_phase_api_v1_blockchain_phasegate_activate__phase__post",
         "parameters": [
           {
@@ -16336,9 +16657,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Search Content Api V1 Content Search Get"
+                  "$ref": "#/components/schemas/ContentSearchResponse"
                 }
               }
             }
@@ -16413,7 +16732,7 @@
           "models"
         ],
         "summary": "Cpp Status",
-        "description": "C++20 parity bridge status (hot kernels).",
+        "description": "C++20 native-core capability (single source of truth).\n\nThis used to read a second, ctypes-based loader\n(``services/models/cpp_bridge.py``) that probed for a ``hydroma_core.dll``.\nThat loader had no build path -- its source ``bindings/c_api.cpp`` is in no\nCMake target -- so it always reported ``available: false`` while ``/health``\nreported ``cpp_core: \"ok\"`` for the pybind11 module. Two endpoints answered\nthe same question about the same capability with different numbers.\n\nBoth now read ``engine.hydroma.cpp_bridge.backend_status()``, so the numbers\ncannot disagree.",
         "operationId": "cpp_status_api_v1_models_cpp_status_get",
         "responses": {
           "200": {
@@ -16541,7 +16860,7 @@
           "elevation"
         ],
         "summary": "Elevation Grid",
-        "description": "Real DEM grid (meters, size\u00d7size) centered on the site. Cached on disk.",
+        "description": "Real DEM grid (meters, size×size) centered on the site. Cached on disk.",
         "operationId": "elevation_grid_api_v1_elevation_grid__site_id__get",
         "parameters": [
           {
@@ -16621,7 +16940,7 @@
           "elevation"
         ],
         "summary": "Erosion Effect",
-        "description": "RUSLE before/after for an engineering op \u00e2\u20ac\u201d real rainfall, soil and DEM slope.\n\nA = R \u0623\u2014 K \u0623\u2014 LS \u0623\u2014 C \u0623\u2014 P  (t/ha/yr). Terrace/gabion/checkdam reduce the\nsupport-practice factor P; well/pond report groundwater effects instead.",
+        "description": "RUSLE before/after for an engineering op â€” real rainfall, soil and DEM slope.\n\nA = R أ— K أ— LS أ— C أ— P  (t/ha/yr). Terrace/gabion/checkdam reduce the\nsupport-practice factor P; well/pond report groundwater effects instead.",
         "operationId": "erosion_effect_api_v1_elevation_erosion_effect__site_id__post",
         "parameters": [
           {
@@ -16778,9 +17097,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "additionalProperties": true,
-                  "type": "object",
-                  "title": "Response Manual Status Api V1 Manual Status Get"
+                  "$ref": "#/components/schemas/ManualStatusResponse"
                 }
               }
             }
@@ -16822,9 +17139,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Manual Sites Api V1 Manual Sites Get"
+                  "$ref": "#/components/schemas/ManualSitesResponse"
                 }
               }
             }
@@ -16867,9 +17182,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Manual Site Api V1 Manual Sites  Site Id  Get"
+                  "$ref": "#/components/schemas/ManualSite"
                 }
               }
             }
@@ -16956,9 +17269,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Manual Weather Daily Api V1 Manual Weather Daily  Site Id  Get"
+                  "$ref": "#/components/schemas/ManualRowsResponse"
                 }
               }
             }
@@ -17001,9 +17312,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Manual Normals Api V1 Manual Climate Normals  Site Id  Get"
+                  "$ref": "#/components/schemas/ManualMonthsResponse"
                 }
               }
             }
@@ -17053,9 +17362,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Manual Crop Params Api V1 Manual Crop Params Get"
+                  "$ref": "#/components/schemas/ManualCropsResponse"
                 }
               }
             }
@@ -17105,9 +17412,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Manual Soil Api V1 Manual Soil Regions Get"
+                  "$ref": "#/components/schemas/ManualRegionsResponse"
                 }
               }
             }
@@ -17173,9 +17478,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Manual Calendar Api V1 Manual Crop Calendar Get"
+                  "$ref": "#/components/schemas/ManualRowsResponse"
                 }
               }
             }
@@ -17226,7 +17529,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/PublicDashboardResponse"
+                }
               }
             }
           },
@@ -17275,7 +17580,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/PublicDashboardResponse"
+                }
               }
             }
           },
@@ -17308,7 +17615,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/PublicDashboardResponse"
+                }
               }
             }
           },
@@ -17331,7 +17640,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/PublicDashboardResponse"
+                }
               }
             }
           },
@@ -17374,7 +17685,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/PublicDashboardResponse"
+                }
               }
             }
           },
@@ -17427,7 +17740,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/PublicDashboardResponse"
+                }
               }
             }
           },
@@ -17480,7 +17795,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/PublicDashboardResponse"
+                }
               }
             }
           },
@@ -17533,7 +17850,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/PublicDashboardResponse"
+                }
               }
             }
           },
@@ -17586,7 +17905,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/PublicDashboardResponse"
+                }
               }
             }
           },
@@ -17619,7 +17940,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/PublicDashboardResponse"
+                }
               }
             }
           },
@@ -17642,7 +17965,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/PublicRouterCheckResponse"
+                }
               }
             }
           },
@@ -18504,9 +18829,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response List Tools Api V1 Tool Registry Get"
+                  "$ref": "#/components/schemas/ToolListResponse"
                 }
               }
             }
@@ -18551,9 +18874,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Create Tool Api V1 Tool Registry Post"
+                  "$ref": "#/components/schemas/ToolResponse"
                 }
               }
             }
@@ -18674,9 +18995,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Get Tool Api V1 Tool Registry  Tool Id  Get"
+                  "$ref": "#/components/schemas/ToolResponse"
                 }
               }
             }
@@ -18732,9 +19051,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Update Tool Api V1 Tool Registry  Tool Id  Patch"
+                  "$ref": "#/components/schemas/ToolResponse"
                 }
               }
             }
@@ -18780,9 +19097,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Delete Tool Api V1 Tool Registry  Tool Id  Delete"
+                  "$ref": "#/components/schemas/ToolResponse"
                 }
               }
             }
@@ -18825,9 +19140,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Get Tool By Service Api V1 Tool Registry By Service  Service Slug  Get"
+                  "$ref": "#/components/schemas/ToolListResponse"
                 }
               }
             }
@@ -21725,7 +22038,7 @@
           "finance"
         ],
         "summary": "Get Trial Balance",
-        "description": "\u062a\u0631\u0627\u0632 \u0622\u0632\u0645\u0627\u06cc\u0634\u06cc \u062d\u0633\u0627\u0628\u062f\u0627\u0631\u06cc (\u0641\u0642\u0637 \u0627\u062f\u0645\u06cc\u0646): \u0641\u0642\u0637 \u0627\u0633\u0646\u0627\u062f posted\u061b \u062a\u0641\u06a9\u06cc\u06a9 \u0628\u0631 \u0627\u0633\u0627\u0633 \u062d\u0633\u0627\u0628 \u0648 \u062f\u0627\u0631\u0627\u06cc\u06cc.\n\nAuditor's trial balance over posted journal batches (admin only).",
+        "description": "تراز آزمایشی حسابداری (فقط ادمین): فقط اسناد posted؛ تفکیک بر اساس حساب و دارایی.\n\nAuditor's trial balance over posted journal batches (admin only).",
         "operationId": "get_trial_balance_api_v1_finance_ledger_trial_balance_get",
         "security": [
           {
@@ -21804,7 +22117,7 @@
           "finance"
         ],
         "summary": "Get Profit And Loss",
-        "description": "\u06af\u0632\u0627\u0631\u0634 \u0633\u0648\u062f \u0648 \u0632\u06cc\u0627\u0646 (\u0641\u0642\u0637 \u0627\u062f\u0645\u06cc\u0646): \u062f\u0631\u0622\u0645\u062f \u0648 \u0647\u0632\u06cc\u0646\u0647 \u0627\u0632 \u0627\u0633\u0646\u0627\u062f posted \u062f\u0631 \u0628\u0627\u0632\u0647 \u062a\u0627\u0631\u06cc\u062e.\n\nProfit & loss over posted journal batches (admin only). Accounts referenced\nby entries but missing from the chart of accounts are surfaced in\n``unclassified`` instead of being silently dropped.",
+        "description": "گزارش سود و زیان (فقط ادمین): درآمد و هزینه از اسناد posted در بازه تاریخ.\n\nProfit & loss over posted journal batches (admin only). Accounts referenced\nby entries but missing from the chart of accounts are surfaced in\n``unclassified`` instead of being silently dropped.",
         "operationId": "get_profit_and_loss_api_v1_finance_ledger_profit_and_loss_get",
         "security": [
           {
@@ -24338,6 +24651,334 @@
         }
       }
     },
+    "/api/v1/sponsors/slot": {
+      "get": {
+        "tags": [
+          "sponsors",
+          "Sponsors"
+        ],
+        "summary": "Get Slot",
+        "description": "The single sponsor permitted at this placement, or a negative answer.\n\n`present: false` with no surrounding markup is the expected state most of\nthe time. The frontend must render nothing at all in that case, not an\nempty frame.",
+        "operationId": "get_slot_api_v1_sponsors_slot_get",
+        "parameters": [
+          {
+            "name": "placement",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/SlotPlacement",
+              "default": "public_services"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sponsors": {
+      "get": {
+        "tags": [
+          "sponsors",
+          "Sponsors"
+        ],
+        "summary": "List Sponsors",
+        "description": "Full transparency list.\n\nThe platform's claim is that sponsorship is disclosed, so the list is\npublic and includes terminations with their reason. A sponsor that was\nremoved for harming trust has no incentive to be quiet about it, which is\nthe point.",
+        "operationId": "list_sponsors_api_v1_sponsors_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/sponsors": {
+      "get": {
+        "tags": [
+          "admin-sponsors",
+          "Admin: Sponsors"
+        ],
+        "summary": "List All",
+        "operationId": "list_all_api_v1_admin_sponsors_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SponsorshipOut"
+                  },
+                  "type": "array",
+                  "title": "Response List All Api V1 Admin Sponsors Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "admin-sponsors",
+          "Admin: Sponsors"
+        ],
+        "summary": "Create",
+        "operationId": "create_api_v1_admin_sponsors_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SponsorshipCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SponsorshipOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/sponsors/{sponsor_id}/activate": {
+      "post": {
+        "tags": [
+          "admin-sponsors",
+          "Admin: Sponsors"
+        ],
+        "summary": "Activate",
+        "operationId": "activate_api_v1_admin_sponsors__sponsor_id__activate_post",
+        "parameters": [
+          {
+            "name": "sponsor_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Sponsor Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SponsorshipOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/sponsors/{sponsor_id}/suspend": {
+      "post": {
+        "tags": [
+          "admin-sponsors",
+          "Admin: Sponsors"
+        ],
+        "summary": "Suspend",
+        "operationId": "suspend_api_v1_admin_sponsors__sponsor_id__suspend_post",
+        "parameters": [
+          {
+            "name": "sponsor_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Sponsor Id"
+            }
+          },
+          {
+            "name": "reason",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Reason"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SponsorshipOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/sponsors/{sponsor_id}/terminate": {
+      "post": {
+        "tags": [
+          "admin-sponsors",
+          "Admin: Sponsors"
+        ],
+        "summary": "Terminate",
+        "operationId": "terminate_api_v1_admin_sponsors__sponsor_id__terminate_post",
+        "parameters": [
+          {
+            "name": "sponsor_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Sponsor Id"
+            }
+          },
+          {
+            "name": "reason",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Reason"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SponsorshipOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/sponsors/{sponsor_id}/green-review": {
+      "post": {
+        "tags": [
+          "admin-sponsors",
+          "Admin: Sponsors"
+        ],
+        "summary": "Green Review",
+        "operationId": "green_review_api_v1_admin_sponsors__sponsor_id__green_review_post",
+        "parameters": [
+          {
+            "name": "sponsor_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Sponsor Id"
+            }
+          },
+          {
+            "name": "attested_by",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Attested By"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SponsorshipOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/": {
       "get": {
         "tags": [
@@ -24756,13 +25397,13 @@
             },
             "type": "array",
             "title": "Dem Array",
-            "description": "\u0622\u0631\u0627\u06cc\u0647 DEM"
+            "description": "آرایه DEM"
           },
           "resolution": {
             "type": "number",
             "exclusiveMinimum": 0.0,
             "title": "Resolution",
-            "description": "\u0648\u0636\u0648\u062d (\u0645\u062a\u0631)"
+            "description": "وضوح (متر)"
           },
           "area_km2": {
             "anyOf": [
@@ -24775,7 +25416,7 @@
               }
             ],
             "title": "Area Km2",
-            "description": "\u0645\u0633\u0627\u062d\u062a (km\u00b2)"
+            "description": "مساحت (km²)"
           }
         },
         "type": "object",
@@ -24784,7 +25425,7 @@
           "resolution"
         ],
         "title": "AnalyzeDrainageRequest",
-        "description": "\u062f\u0631\u062e\u0648\u0627\u0633\u062a \u062a\u062d\u0644\u06cc\u0644 \u0632\u0647\u06a9\u0634\u06cc"
+        "description": "درخواست تحلیل زهکشی"
       },
       "AnalyzeRequest": {
         "properties": {
@@ -24858,13 +25499,13 @@
             },
             "type": "array",
             "title": "Dem Array",
-            "description": "\u0622\u0631\u0627\u06cc\u0647 DEM"
+            "description": "آرایه DEM"
           },
           "resolution": {
             "type": "number",
             "exclusiveMinimum": 0.0,
             "title": "Resolution",
-            "description": "\u0648\u0636\u0648\u062d (\u0645\u062a\u0631)"
+            "description": "وضوح (متر)"
           }
         },
         "type": "object",
@@ -24873,7 +25514,7 @@
           "resolution"
         ],
         "title": "AnalyzeTerrainRequest",
-        "description": "\u062f\u0631\u062e\u0648\u0627\u0633\u062a \u062a\u062d\u0644\u06cc\u0644 \u062a\u0648\u067e\u0648\u06af\u0631\u0627\u0641\u06cc"
+        "description": "درخواست تحلیل توپوگرافی"
       },
       "ApiKeyCreateRequest": {
         "properties": {
@@ -24933,7 +25574,7 @@
             "maximum": 90.0,
             "minimum": 0.0,
             "title": "Slope Degrees",
-            "description": "\u0634\u06cc\u0628 (\u062f\u0631\u062c\u0647)"
+            "description": "شیب (درجه)"
           },
           "soil_depth_m": {
             "anyOf": [
@@ -24946,30 +25587,30 @@
               }
             ],
             "title": "Soil Depth M",
-            "description": "\u0639\u0645\u0642 \u062e\u0627\u06a9 (\u0645\u062a\u0631)"
+            "description": "عمق خاک (متر)"
           },
           "erosion_risk": {
             "type": "string",
             "title": "Erosion Risk",
-            "description": "\u0631\u06cc\u0633\u06a9 \u0641\u0631\u0633\u0627\u06cc\u0634",
+            "description": "ریسک فرسایش",
             "default": "low"
           },
           "drainage_class": {
             "type": "string",
             "title": "Drainage Class",
-            "description": "\u06a9\u0644\u0627\u0633 \u0632\u0647\u06a9\u0634\u06cc",
+            "description": "کلاس زهکشی",
             "default": "well_drained"
           },
           "climate_zone": {
             "type": "string",
             "title": "Climate Zone",
-            "description": "\u0645\u0646\u0637\u0642\u0647 \u0627\u0642\u0644\u06cc\u0645\u06cc",
+            "description": "منطقه اقلیمی",
             "default": "temperate"
           },
           "soil_texture": {
             "type": "string",
             "title": "Soil Texture",
-            "description": "\u0628\u0627\u0641\u062a \u062e\u0627\u06a9",
+            "description": "بافت خاک",
             "default": "loam"
           }
         },
@@ -24978,7 +25619,34 @@
           "slope_degrees"
         ],
         "title": "AssessCapabilityRequest",
-        "description": "\u062f\u0631\u062e\u0648\u0627\u0633\u062a \u0627\u0631\u0632\u06cc\u0627\u0628\u06cc \u0642\u0627\u0628\u0644\u06cc\u062a"
+        "description": "درخواست ارزیابی قابلیت"
+      },
+      "AuthenticationOptionsResponse": {
+        "properties": {
+          "options": {
+            "type": "string",
+            "title": "Options",
+            "description": "JSON for navigator.credentials.get()"
+          }
+        },
+        "type": "object",
+        "required": [
+          "options"
+        ],
+        "title": "AuthenticationOptionsResponse"
+      },
+      "AuthenticationResult": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id"
+        ],
+        "title": "AuthenticationResult"
       },
       "B2BDemandCreate": {
         "properties": {
@@ -26515,6 +27183,77 @@
         ],
         "title": "ContentResponse"
       },
+      "ContentSearchHit": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "language": {
+            "type": "string",
+            "title": "Language"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published At"
+          },
+          "snippet": {
+            "type": "string",
+            "title": "Snippet"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "category",
+          "language",
+          "snippet"
+        ],
+        "title": "ContentSearchHit",
+        "description": "One published document returned by the search surface."
+      },
+      "ContentSearchResponse": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/ContentSearchHit"
+            },
+            "type": "array",
+            "title": "Results"
+          }
+        },
+        "type": "object",
+        "required": [
+          "query",
+          "count"
+        ],
+        "title": "ContentSearchResponse",
+        "description": "Search over published content.\n\n`response_model=dict` published an empty object schema, so a client could not\ntype the query it sent or a single result field. Every field here is set by\nthe route below, so the declaration states what the search actually returns."
+      },
       "ContentTranslationResponse": {
         "properties": {
           "id": {
@@ -26781,21 +27520,21 @@
           "name": {
             "type": "string",
             "title": "Name",
-            "description": "\u0646\u0627\u0645 \u0632\u0645\u06cc\u0646"
+            "description": "نام زمین"
           },
           "location_lat": {
             "type": "number",
             "maximum": 90.0,
             "minimum": -90.0,
             "title": "Location Lat",
-            "description": "\u0639\u0631\u0636 \u062c\u063a\u0631\u0627\u0641\u06cc\u0627\u06cc\u06cc"
+            "description": "عرض جغرافیایی"
           },
           "location_lon": {
             "type": "number",
             "maximum": 180.0,
             "minimum": -180.0,
             "title": "Location Lon",
-            "description": "\u0637\u0648\u0644 \u062c\u063a\u0631\u0627\u0641\u06cc\u0627\u06cc\u06cc"
+            "description": "طول جغرافیایی"
           },
           "description": {
             "anyOf": [
@@ -26807,7 +27546,7 @@
               }
             ],
             "title": "Description",
-            "description": "\u062a\u0648\u0636\u06cc\u062d\u0627\u062a"
+            "description": "توضیحات"
           },
           "area_hectares": {
             "anyOf": [
@@ -26820,7 +27559,7 @@
               }
             ],
             "title": "Area Hectares",
-            "description": "\u0645\u0633\u0627\u062d\u062a (\u0647\u06a9\u062a\u0627\u0631)"
+            "description": "مساحت (هکتار)"
           },
           "dem_source": {
             "anyOf": [
@@ -26832,7 +27571,7 @@
               }
             ],
             "title": "Dem Source",
-            "description": "\u0645\u0646\u0628\u0639 DEM"
+            "description": "منبع DEM"
           },
           "dem_resolution_m": {
             "anyOf": [
@@ -26845,7 +27584,7 @@
               }
             ],
             "title": "Dem Resolution M",
-            "description": "\u0648\u0636\u0648\u062d DEM (\u0645\u062a\u0631)"
+            "description": "وضوح DEM (متر)"
           }
         },
         "type": "object",
@@ -26855,7 +27594,7 @@
           "location_lon"
         ],
         "title": "CreateProfileRequest",
-        "description": "\u062f\u0631\u062e\u0648\u0627\u0633\u062a \u0627\u06cc\u062c\u0627\u062f \u067e\u0631\u0648\u0641\u0627\u06cc\u0644"
+        "description": "درخواست ایجاد پروفایل"
       },
       "CropWaterReqInput": {
         "properties": {
@@ -28429,6 +29168,45 @@
         ],
         "title": "FestivalCreate"
       },
+      "FinishAuthenticationRequest": {
+        "properties": {
+          "credential": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Credential"
+          }
+        },
+        "type": "object",
+        "required": [
+          "credential"
+        ],
+        "title": "FinishAuthenticationRequest"
+      },
+      "FinishRegistrationRequest": {
+        "properties": {
+          "credential": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Credential"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "credential"
+        ],
+        "title": "FinishRegistrationRequest"
+      },
       "ForgotPasswordRequest": {
         "properties": {
           "email": {
@@ -29461,7 +30239,7 @@
           "id": "550e8400-e29b-41d4-a716-446655440000",
           "location_lat": 32.65,
           "location_lon": 51.67,
-          "name": "\u0645\u0632\u0631\u0639\u0647 \u0646\u0645\u0648\u0646\u0647",
+          "name": "مزرعه نمونه",
           "region": "Isfahan"
         }
       },
@@ -29605,7 +30383,7 @@
           "carbon_unit": {
             "type": "string",
             "title": "Carbon Unit",
-            "default": "ton CO\u2082e"
+            "default": "ton CO₂e"
           },
           "area_restored": {
             "anyOf": [
@@ -29637,7 +30415,7 @@
           "water_unit": {
             "type": "string",
             "title": "Water Unit",
-            "default": "m\u00b3"
+            "default": "m³"
           },
           "activity_count": {
             "type": "integer",
@@ -29891,6 +30669,194 @@
         },
         "type": "object",
         "title": "LogoutRequest"
+      },
+      "ManualCropsResponse": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "rows": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Rows"
+          }
+        },
+        "type": "object",
+        "required": [
+          "count"
+        ],
+        "title": "ManualCropsResponse",
+        "description": "Crop water parameters; same envelope as any other dataset page."
+      },
+      "ManualMonthsResponse": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "rows": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Rows"
+          }
+        },
+        "type": "object",
+        "required": [
+          "count"
+        ],
+        "title": "ManualMonthsResponse",
+        "description": "Monthly climate normals; same envelope as any other dataset page."
+      },
+      "ManualRegionsResponse": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "rows": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Rows"
+          }
+        },
+        "type": "object",
+        "required": [
+          "count"
+        ],
+        "title": "ManualRegionsResponse",
+        "description": "Soil hydraulic regions; same envelope as any other dataset page."
+      },
+      "ManualRowsResponse": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "rows": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Rows"
+          }
+        },
+        "type": "object",
+        "required": [
+          "count"
+        ],
+        "title": "ManualRowsResponse",
+        "description": "A dataset page.\n\n`rows` holds the dataframe records exactly as stored, so the record type is\nthe dataset's own column names. The manual tables are not homogeneous and the\npublished contract therefore describes the envelope precisely while leaving\nthe cell shape to the payload, which is what the client reads back."
+      },
+      "ManualSite": {
+        "properties": {
+          "site_id": {
+            "title": "Site Id"
+          },
+          "country": {
+            "title": "Country"
+          },
+          "admin1_city": {
+            "title": "Admin1 City"
+          },
+          "province": {
+            "title": "Province"
+          },
+          "lat": {
+            "title": "Lat"
+          },
+          "lon": {
+            "title": "Lon"
+          },
+          "elevation_m": {
+            "title": "Elevation M"
+          },
+          "koppen": {
+            "title": "Koppen"
+          },
+          "annual_rain_normal_mm": {
+            "title": "Annual Rain Normal Mm"
+          }
+        },
+        "type": "object",
+        "required": [
+          "site_id"
+        ],
+        "title": "ManualSite",
+        "description": "One climate site.\n\nEvery field is selected explicitly by `manual_sites`, so this model states\nthe columns the route actually returns instead of accepting any object."
+      },
+      "ManualSitesResponse": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "sites": {
+            "items": {
+              "$ref": "#/components/schemas/ManualSite"
+            },
+            "type": "array",
+            "title": "Sites"
+          }
+        },
+        "type": "object",
+        "required": [
+          "count"
+        ],
+        "title": "ManualSitesResponse"
+      },
+      "ManualStatusResponse": {
+        "properties": {
+          "exists": {
+            "type": "boolean",
+            "title": "Exists"
+          },
+          "path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Path"
+          },
+          "size_mb": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Size Mb"
+          },
+          "tables": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Tables"
+          }
+        },
+        "type": "object",
+        "required": [
+          "exists"
+        ],
+        "title": "ManualStatusResponse",
+        "description": "Existence, size and table inventory of the reference SQLite file.\n\n`exists` is a deployment state, not a claim about data quality: the frontend\nreports a missing file as missing rather than as an error."
       },
       "MarketplaceCreate": {
         "properties": {
@@ -31399,6 +32365,46 @@
         ],
         "title": "OrganizationCreate"
       },
+      "PasskeyResponse": {
+        "properties": {
+          "credential_id": {
+            "type": "string",
+            "title": "Credential Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "sign_count": {
+            "type": "integer",
+            "title": "Sign Count",
+            "default": 0
+          },
+          "aaguid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Aaguid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "credential_id"
+        ],
+        "title": "PasskeyResponse"
+      },
       "PaymentConfirmRequest": {
         "properties": {
           "ref_id": {
@@ -32133,6 +33139,76 @@
         ],
         "title": "ProvidersOut"
       },
+      "PublicDashboardResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "auth_required": {
+            "type": "boolean",
+            "title": "Auth Required"
+          },
+          "data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Data"
+          },
+          "timestamp": {
+            "type": "string",
+            "title": "Timestamp"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "auth_required",
+          "timestamp"
+        ],
+        "title": "PublicDashboardResponse",
+        "description": "Envelope shared by every `/dashboard/public/*` route.\n\n`data` stays a free-form object because each route aggregates a different set\nof DuckDB tables. Declaring the envelope is still worth doing: without a\nresponse model the published contract is `{}`, so a client cannot type the\nstatus, the auth flag or the observation time."
+      },
+      "PublicRouterCheckResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "auth_required": {
+            "type": "boolean",
+            "title": "Auth Required"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "schema_verified": {
+            "type": "boolean",
+            "title": "Schema Verified"
+          },
+          "available_endpoints": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Available Endpoints"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "message",
+          "auth_required",
+          "version",
+          "schema_verified"
+        ],
+        "title": "PublicRouterCheckResponse",
+        "description": "Reachability report from `/dashboard/public/test`.\n\nThis route answers whether the router serves, not a platform claim, which is\nwhy `schema_verified` states that the response shape was checked rather than\nthat any value in it was measured."
+      },
       "QueryRequest": {
         "properties": {
           "question": {
@@ -32259,7 +33335,7 @@
           "summary"
         ],
         "title": "RealLandResponse",
-        "description": "Aggregated REAL land intelligence (satellite + climate + soil).\n\nEvery block carries an explicit ``status`` and ``data_source`` label.\nThe satellite block may be ``credentials_required`` until free CDSE\ncredentials are configured \u2014 this endpoint never fabricates data."
+        "description": "Aggregated REAL land intelligence (satellite + climate + soil).\n\nEvery block carries an explicit ``status`` and ``data_source`` label.\nThe satellite block may be ``credentials_required`` until free CDSE\ncredentials are configured — this endpoint never fabricates data."
       },
       "ReceiptRequest": {
         "properties": {
@@ -32734,6 +33810,20 @@
         ],
         "title": "RegisterRequest"
       },
+      "RegistrationOptionsResponse": {
+        "properties": {
+          "options": {
+            "type": "string",
+            "title": "Options",
+            "description": "JSON for navigator.credentials.create()"
+          }
+        },
+        "type": "object",
+        "required": [
+          "options"
+        ],
+        "title": "RegistrationOptionsResponse"
+      },
       "ReservationRequest": {
         "properties": {
           "sku_code": {
@@ -33094,6 +34184,19 @@
             "title": "Method",
             "description": "Method to use for calculation",
             "default": "SCS-CN"
+          },
+          "storm_duration_h": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.01
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Storm Duration H",
+            "description": "Design storm duration in hours. The rational method is valid for storms at least as long as the time of concentration, and an SCS-CN peak flow is an event mean rate over the storm, so both need it. Defaults to 1 hour when unset."
           },
           "rational_coefficient": {
             "type": "number",
@@ -34139,6 +35242,15 @@
         "title": "SlopeClass",
         "description": "USDA Slope Classes"
       },
+      "SlotPlacement": {
+        "type": "string",
+        "enum": [
+          "public_services",
+          "public_audiences",
+          "tool_footer"
+        ],
+        "title": "SlotPlacement"
+      },
       "SmsIn": {
         "properties": {
           "phone_number": {
@@ -34652,6 +35764,219 @@
         "title": "SourceResponse",
         "description": "Reference source for the answer."
       },
+      "SponsorTier": {
+        "type": "string",
+        "enum": [
+          "page",
+          "section",
+          "tool",
+          "district",
+          "founding"
+        ],
+        "title": "SponsorTier"
+      },
+      "SponsorshipCreate": {
+        "properties": {
+          "sponsor_name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Sponsor Name"
+          },
+          "sponsor_url": {
+            "type": "string",
+            "maxLength": 500,
+            "title": "Sponsor Url"
+          },
+          "amount": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Amount"
+          },
+          "starts_on": {
+            "type": "string",
+            "format": "date",
+            "title": "Starts On"
+          },
+          "ends_on": {
+            "type": "string",
+            "format": "date",
+            "title": "Ends On"
+          },
+          "placement": {
+            "$ref": "#/components/schemas/SlotPlacement"
+          },
+          "tier": {
+            "$ref": "#/components/schemas/SponsorTier",
+            "default": "page"
+          },
+          "sponsor_name_fa": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sponsor Name Fa"
+          },
+          "logo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logo Url"
+          },
+          "tagline": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tagline"
+          },
+          "tagline_fa": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tagline Fa"
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency",
+            "default": "USD"
+          },
+          "is_project_funder": {
+            "type": "boolean",
+            "title": "Is Project Funder",
+            "default": false
+          },
+          "is_revenue_source_funder": {
+            "type": "boolean",
+            "title": "Is Revenue Source Funder",
+            "default": false
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "placement_path": {
+            "type": "string",
+            "title": "Placement Path",
+            "default": ""
+          },
+          "internal_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Internal Notes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sponsor_name",
+          "sponsor_url",
+          "amount",
+          "starts_on",
+          "ends_on",
+          "placement"
+        ],
+        "title": "SponsorshipCreate"
+      },
+      "SponsorshipOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "sponsor_name": {
+            "type": "string",
+            "title": "Sponsor Name"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "placement": {
+            "type": "string",
+            "title": "Placement"
+          },
+          "amount": {
+            "type": "string",
+            "title": "Amount"
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency"
+          },
+          "starts_on": {
+            "type": "string",
+            "format": "date",
+            "title": "Starts On"
+          },
+          "ends_on": {
+            "type": "string",
+            "format": "date",
+            "title": "Ends On"
+          },
+          "green_claims_reviewed_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Green Claims Reviewed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "sponsor_name",
+          "status",
+          "placement",
+          "amount",
+          "currency",
+          "starts_on",
+          "ends_on"
+        ],
+        "title": "SponsorshipOut"
+      },
       "StatisticsResponse": {
         "properties": {
           "materials_count": {
@@ -34802,6 +36127,58 @@
           "status"
         ],
         "title": "StatusUpdate"
+      },
+      "StepUpRequest": {
+        "properties": {
+          "purpose": {
+            "type": "string",
+            "title": "Purpose"
+          },
+          "method": {
+            "type": "string",
+            "title": "Method"
+          },
+          "auth_time": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Auth Time"
+          }
+        },
+        "type": "object",
+        "required": [
+          "purpose",
+          "method"
+        ],
+        "title": "StepUpRequest"
+      },
+      "StepUpResponse": {
+        "properties": {
+          "token": {
+            "type": "string",
+            "title": "Token"
+          },
+          "expires_in": {
+            "type": "integer",
+            "title": "Expires In"
+          },
+          "purpose": {
+            "type": "string",
+            "title": "Purpose"
+          }
+        },
+        "type": "object",
+        "required": [
+          "token",
+          "expires_in",
+          "purpose"
+        ],
+        "title": "StepUpResponse"
       },
       "StocktakeCreate": {
         "properties": {
@@ -35409,6 +36786,27 @@
         ],
         "title": "TokenizeRequest"
       },
+      "ToolListResponse": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "tools": {
+            "items": {
+              "$ref": "#/components/schemas/ToolResponse"
+            },
+            "type": "array",
+            "title": "Tools"
+          }
+        },
+        "type": "object",
+        "required": [
+          "count"
+        ],
+        "title": "ToolListResponse",
+        "description": "A filtered page of registry entries."
+      },
       "ToolRegistryCreate": {
         "properties": {
           "tool_id": {
@@ -35692,6 +37090,149 @@
         },
         "type": "object",
         "title": "ToolRegistryUpdate"
+      },
+      "ToolResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "tool_id": {
+            "type": "string",
+            "title": "Tool Id"
+          },
+          "name_fa": {
+            "type": "string",
+            "title": "Name Fa"
+          },
+          "name_en": {
+            "type": "string",
+            "title": "Name En"
+          },
+          "domain": {
+            "type": "string",
+            "title": "Domain"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "fidelity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fidelity"
+          },
+          "reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "formula": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Formula"
+          },
+          "service_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Service Slug"
+          },
+          "endpoint_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Endpoint Path"
+          },
+          "phase": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phase"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "default": true
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "tool_id",
+          "name_fa",
+          "name_en",
+          "domain",
+          "category"
+        ],
+        "title": "ToolResponse",
+        "description": "One tool registry entry, exactly as `_to_response` serialises it."
       },
       "TopographyInput": {
         "properties": {

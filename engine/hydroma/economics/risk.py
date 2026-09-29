@@ -19,14 +19,24 @@ def assess_market_price_risk(
     """
     Assesses risk due to market price fluctuations using Value at Risk (VaR).
 
+    Volatility and ``confidence_level`` are FRACTIONS, not percentages, and
+    ``base_price`` is a price LEVEL. The two are kept apart: the quantile
+    return is ``z_alpha * sigma_T``, a fraction of the base price, so the
+    worst-case price scales the base price by it rather than adding to it.
+
     Args:
-        base_price: Current or expected average price.
-        volatility: Historical or estimated price volatility (standard deviation).
+        base_price: Current or expected average price, in IRR per unit.
+        volatility: Annualised fractional volatility of the price, i.e. the
+            standard deviation of log-returns, e.g. 0.15 for 15 %.
         time_horizon_years: Time period for the risk assessment.
-        confidence_level: Confidence level for VaR calculation (alpha).
+        confidence_level: Lower-tail confidence level (alpha), e.g. 0.05 for a
+            5 % VaR at 95 % confidence.
 
     Returns:
-        Dictionary containing risk metrics (e.g., VaR).
+        Dictionary containing risk metrics. ``expected_worst_case_price_irr``
+        is a price level again, ``base_price * (1 + z_alpha * sigma_T)``, not a
+        fractional change; ``value_at_risk_irr`` is the absolute currency
+        amount and ``value_at_risk_percentage`` its share of the base price.
     """
     # Adjust volatility for the time horizon: sigma_T = sigma * sqrt(T)
     adjusted_volatility = volatility * np.sqrt(time_horizon_years)
@@ -37,8 +47,13 @@ def assess_market_price_risk(
     var_absolute = base_price * abs(z_score) * adjusted_volatility
     var_percentage = (var_absolute / base_price) * 100
 
-    # Expected worst case price
-    worst_case_price = base_price + (z_score * adjusted_volatility)
+    # Expected worst case price. sigma_T is a FRACTION of the price, so it
+    # multiplies the base price; adding it to the base price added a level
+    # (IRR) to a dimensionless change. At the module's own defaults - price
+    # 100, sigma 0.15, T = 1, z = -1.645 - the old form returned 99.75, a 0.25
+    # % move where a 24.75 % downside was intended, a factor of ~100 on the
+    # revenue figure this feeds.
+    worst_case_price = base_price * (1.0 + z_score * adjusted_volatility)
 
     return {
         "risk_type": "market_price_fluctuation",

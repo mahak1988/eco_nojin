@@ -5,6 +5,7 @@ import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 
@@ -28,11 +29,8 @@ export async function generateMetadata({
       title: t('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/trust/report`,
-      languages: {
-        fa: `${BASE_URL}/fa/trust/report`,
-        en: `${BASE_URL}/en/trust/report`,
-      },
+      canonical: canonicalFor(locale, '/trust/report'),
+      languages: languageAlternates('/trust/report'),
     },
   };
 }

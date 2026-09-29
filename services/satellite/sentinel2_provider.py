@@ -34,6 +34,7 @@ warnings.filterwarnings("ignore", message=".*non-nanosecond precision.*")
 warnings.filterwarnings("ignore", message=".*no geotransform.*")
 
 import hashlib
+import pickle
 import time
 from dataclasses import dataclass
 from datetime import datetime, timedelta
@@ -405,8 +406,6 @@ class Sentinel2Provider:
     def _save_to_disk_cache(self, key: str, data: dict[str, xr.DataArray]):
         """Save band data to disk cache."""
         try:
-            import pickle
-
             cache_file = self.disk_cache_dir / f"{key}.pkl"
             # Convert to Integerizable format
             Integerizable = {}

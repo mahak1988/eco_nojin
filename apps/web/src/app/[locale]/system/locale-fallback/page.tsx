@@ -5,7 +5,7 @@ import { LocaleFallbackChain } from '@/components/system/LocaleFallbackChain';
 import { LocaleSelector } from '@/components/system/LocaleSelector';
 import { type RecoveryLinkItem, RecoveryLinks } from '@/components/system/RecoveryLinks';
 import { RefreshStateButton } from '@/components/system/RefreshStateButton';
-import { SITE_URL as BASE_URL } from '@/config/site';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import {
   LIVE_LABEL_KEY,
   METRIC_LABEL_KEY,
@@ -31,11 +31,8 @@ export async function generateMetadata({
     description: t('statusPage.subtitle'),
     robots: { index: false, follow: false },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/system/locale-fallback`,
-      languages: {
-        fa: `${BASE_URL}/fa/system/locale-fallback`,
-        en: `${BASE_URL}/en/system/locale-fallback`,
-      },
+      canonical: canonicalFor(locale, '/system/locale-fallback'),
+      languages: languageAlternates('/system/locale-fallback'),
     },
   };
 }

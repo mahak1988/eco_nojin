@@ -4,7 +4,7 @@ import { type DotState, StatusDot } from '@/components/StatusDot';
 import { type RecoveryLinkItem, RecoveryLinks } from '@/components/system/RecoveryLinks';
 import { RefreshStateButton } from '@/components/system/RefreshStateButton';
 import { type HealthRow, SystemHealthMatrix } from '@/components/system/SystemHealthMatrix';
-import { SITE_URL as BASE_URL } from '@/config/site';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { apiGet, type CppStatus, type PlatformHealth, type PlatformStats } from '@/lib/api/client';
 import { getServiceOverview } from '@/lib/api/health';
 import {
@@ -33,11 +33,8 @@ export async function generateMetadata({
     description: t('statusPage.subtitle'),
     robots: { index: false, follow: false },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/system`,
-      languages: {
-        fa: `${BASE_URL}/fa/system`,
-        en: `${BASE_URL}/en/system`,
-      },
+      canonical: canonicalFor(locale, '/system'),
+      languages: languageAlternates('/system'),
     },
   };
 }

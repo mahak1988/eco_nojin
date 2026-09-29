@@ -24,7 +24,10 @@ from uuid import uuid4
 import numpy as np
 import pandas as pd
 
-from engine.hydroma.models.base import ScientificModel
+from engine.hydroma.models.base import (ModelInput,
+    ModelOutput,
+    ScientificModel,
+)
 from engine.hydroma.models.expansion.registry import (
     ModelDomain,
     ModelFidelity,

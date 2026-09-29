@@ -4,6 +4,7 @@ import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
@@ -25,12 +26,6 @@ type ContentSearch = {
   results: ContentHit[];
 };
 
-const TITLES: Record<string, string> = { fa: 'کتابخانه آموزشی', en: 'Education Library' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'جستجو در محتوای منتشرشدهٔ آموزشی',
-  en: 'Search the published learning content',
-};
-
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
@@ -39,21 +34,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-education-library');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/education/library`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/education/library`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/education/library`,
-        en: `${BASE_URL}/en/public/education/library`,
-      },
+      canonical: canonicalFor(locale, '/public/education/library'),
+      languages: languageAlternates('/public/education/library'),
     },
   };
 }
@@ -68,10 +61,12 @@ export default async function LibraryPage({
   const { locale } = await params;
   const query = await searchParams;
   setRequestLocale(locale);
+
+  const meta = await getTranslations('pageMeta.public-education-library');
   const template = await getTranslations('market.template');
   const learn = await getTranslations('learn');
-  const title = TITLES[locale] ?? TITLES.en;
-  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+  const title = meta('title');
+  const description = meta('description');
 
   // The gateway publishes no unfiltered content listing: `q` is required by the
   // registered route, so the page searches it directly instead of faking a catalogue.
@@ -92,9 +87,8 @@ export default async function LibraryPage({
           label={title}
           verified={search ? search.ok : false}
           method={CONTENT_SEARCH_PATH}
-        >
-          <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-        </ProvenanceStamp>
+        />
+        <h1 className="display text-4xl font-bold text-ink">{title}</h1>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
       </section>
 

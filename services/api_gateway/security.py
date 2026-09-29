@@ -57,12 +57,19 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         window: int | None = None,
         enabled: bool = True,
         trusted_proxies: list[str] | None = None,
+        key_by_subject: bool = False,
     ) -> None:
         super().__init__(app)
         self.redis = redis_client
         self.enabled = enabled
+        # NOTE: ``limit``/``window`` are the only supported way to override. The
+        # constructor reads the class attributes here and copies them onto the
+        # instance, so reassigning ``instance.DEFAULT_LIMIT`` afterwards (as
+        # routers/auth.py used to do) created a shadowing attribute and left
+        # ``self.limit`` at the default. Callers must pass limit=/window=.
         self.limit = int(limit) if limit is not None else self.DEFAULT_LIMIT
         self.window_seconds = int(window) if window is not None else self.WINDOW_SECONDS
+        self.key_by_subject = key_by_subject
         self._hits: dict[str, deque[float]] = defaultdict(deque)
         self.trusted_proxies = trusted_proxies or []
         self._trusted_proxy_networks = []
@@ -72,6 +79,19 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             for proxy in self.trusted_proxies:
                 with contextlib.suppress(ValueError):
                     self._trusted_proxy_networks.append(ipaddress.ip_network(proxy, strict=False))
+
+    def is_allowed(self, request: Request) -> tuple[bool, int, int]:
+        """Consume one unit for this client and return (allowed, remaining, reset).
+
+        Callers must use this rather than ``_check_memory`` directly: the latter
+        returns a 3-tuple, and assigning that tuple to a variable used in a
+        boolean context is always truthy, which silently disabled every
+        per-endpoint limit that did so.
+        """
+        key = self._bucket(request)
+        if self.redis is not None:
+            return self._check_redis(key)
+        return self._check_memory(key)
 
     def _client_key(self, request: Request) -> str:
         client_host = request.client.host if request.client else "unknown"
@@ -99,15 +119,44 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                     pass
         return client_host
 
+    def _bucket(self, request: Request) -> str:
+        """The rate-limit bucket for a request.
+
+        The key is the client IP alone by default, which means every user behind
+        one NAT or corporate proxy shares a single bucket: five registrations from
+        one office would lock out everyone else on that egress address. Adding the
+        authenticated subject when one is available splits the bucket per account
+        while still bounding a single IP for unauthenticated traffic.
+
+        Set ``key_by_subject = True`` on the middleware to enable the split; it
+        is off by default so that a deployment which does not populate
+        ``request.state`` keeps the previous IP-only behaviour exactly.
+        """
+        ip = self._client_key(request)
+        if not self.key_by_subject:
+            return ip
+        # TenantMiddleware and the auth dependency populate one of these; the
+        # token subject is the account identity, tenant_id the account's tenant.
+        subject = getattr(request.state, "user_id", None) or getattr(
+            request.state, "tenant_id", None
+        )
+        return f"{ip}:{subject}" if subject else ip
+
     def _check_redis(self, key: str) -> tuple[bool, int, int]:
         assert self.redis is not None
         now = time.time()
         window_start = now - self.window_seconds
         key_name = f"ratelimit:{key}"
+        # The sorted-set member must be unique per request; only the *score*
+        # drives the sliding window. Using the raw clock as the member collapses
+        # concurrent requests into a single entry, because time.time() has only
+        # ~15.6ms resolution on Windows: a burst then undercounts and walks
+        # straight past the ceiling. uuid4 keeps every request distinct.
+        member = f"{now!r}:{uuid.uuid4().hex}"
         pipe = self.redis.pipeline()
         pipe.zremrangebyscore(key_name, 0, window_start)
         pipe.zcard(key_name)
-        pipe.zadd(key_name, {str(time.time()): time.time()})
+        pipe.zadd(key_name, {member: now})
         pipe.expire(key_name, self.window_seconds + 1)
         results = pipe.execute()
         current_count = results[1]

@@ -106,7 +106,6 @@ class NojinApplicationPlan(Base):
     """Application plans (Phase 1)."""
 
     __tablename__ = "nojin_application_plans"
-    __table_args__ = {"extend_existing": True}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     formulation_id = Column(Integer, ForeignKey("nojin_formulations.id"), nullable=False)

@@ -46,10 +46,12 @@ const overlayStyles: CSSProperties = {
 
 const paletteStyles: CSSProperties = {
   position: 'fixed',
-  top: '15%',
-  left: '50%',
-  transform: 'translateX(-50%)',
-  width: 'min(640px, calc(100vw - var(--space-8)))',
+  insetBlockStart: '15%',
+  // Logical centring: inset both inline edges to zero and let auto margins do the
+  // work, rather than `left: 50%` plus a compensating translate.
+  insetInline: 0,
+  marginInline: 'auto',
+  inlineSize: 'min(640px, calc(100vw - var(--space-8)))',
   backgroundColor: 'var(--color-surface)',
   border: '1px solid var(--color-line)',
   borderRadius: 'var(--radius-16)',
@@ -99,8 +101,8 @@ const keyframes = `
     to { opacity: 1; }
   }
   @keyframes slideDown {
-    from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
-    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 `;
 

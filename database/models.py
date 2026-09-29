@@ -61,6 +61,48 @@ class User(Base):
 
     land_profiles = relationship("LandProfile", back_populates="user")
 
+    passkey_credentials = relationship(
+        "WebAuthnCredential",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
+
+
+# --- WebAuthn / passkey credentials ---
+class WebAuthnCredential(Base):
+    """A registered passkey.
+
+    ``credential_id`` is the raw binary id returned by the authenticator,
+    base64url-encoded for storage; it is the primary lookup key for
+    authentication. ``public_key`` holds the COSE-encoded key exactly as the
+    library produced it — re-encoding it is a common source of verification
+    failures, so it is stored verbatim.
+    """
+
+    __tablename__ = "webauthn_credentials"
+
+    id = Column(String, primary_key=True, default=_uuid)
+    user_id = Column(
+        String,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    credential_id = Column(String, nullable=False, unique=True, index=True)
+    public_key = Column(String, nullable=False)
+    sign_count = Column(Integer, nullable=False, default=0)
+    transports = Column(String, nullable=True)  # comma separated, e.g. "internal,hybrid"
+    device_type = Column(String, nullable=True)  # singleDevice / multiDevice
+    backed_up = Column(Boolean, default=False, nullable=False)
+    name = Column(String, nullable=True)  # user-supplied label
+    aaguid = Column(String, nullable=True)
+
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=True)
+    last_used_at = Column(DateTime, nullable=True)
+
+    user = relationship("User", back_populates="passkey_credentials")
+
 
 class OrganizationRole(str, PyEnum):
     ADMIN = "admin"
@@ -595,17 +637,6 @@ class CalibrationRecordDB(Base):
 
 # --- مدل‌های Placeholder با رابطه ---
 # توجه کنید که مدل‌هایی که از land_profiles یا users ارجاع می‌دهند، بعد از آن‌ها تعریف می‌شوند.  # noqa: RUF003
-
-
-class NojinApplicationPlanDB(Base):
-    __tablename__ = "nojin_application_plans"  # احتمالاً اسم جدول از خطا تشخیص داده شده
-    id = Column(Integer, primary_key=True)
-    land_profile_id = Column(String, ForeignKey("land_profiles.id"))  # اضافه کردن ForeignKey
-    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
-    # افزودن رابطه
-    land_profile = relationship("LandProfile")
-
-    __table_args__ = (Index("ix_nojin_app_plan_profile_created", "land_profile_id", "created_at"),)
 
 
 class NojinCalibrationRecordDB(Base):
@@ -1458,7 +1489,9 @@ class ContentItem(Base):
     body = Column(Text, nullable=False)
     category = Column(String(50), nullable=False, default="general", index=True)
     language = Column(String(8), nullable=False, default="fa", index=True)
-    status = Column(String(20), nullable=False, default="draft", index=True)  # draft, published, archived
+    status = Column(
+        String(20), nullable=False, default="draft", index=True
+    )  # draft, published, archived
     source = Column(String(50), nullable=True)  # ai-generated, manual, imported
     generated_by_ai = Column(Boolean, default=False, nullable=False)
     rag_synced = Column(Boolean, default=False, nullable=False)
@@ -1473,7 +1506,9 @@ class ContentItem(Base):
     )
 
     # Relationships
-    versions = relationship("ContentVersion", back_populates="content", order_by="ContentVersion.version.desc()")
+    versions = relationship(
+        "ContentVersion", back_populates="content", order_by="ContentVersion.version.desc()"
+    )
     translations = relationship("ContentTranslation", back_populates="content")
 
     __table_args__ = (
@@ -1488,7 +1523,9 @@ class ContentVersion(Base):
     __tablename__ = "content_versions"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    content_id = Column(Integer, ForeignKey("content_items.id", ondelete="CASCADE"), nullable=False, index=True)
+    content_id = Column(
+        Integer, ForeignKey("content_items.id", ondelete="CASCADE"), nullable=False, index=True
+    )
     version = Column(Integer, nullable=False)
     title = Column(String(300), nullable=False)
     body = Column(Text, nullable=False)
@@ -1509,7 +1546,9 @@ class ContentTranslation(Base):
     __tablename__ = "content_translations"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    content_id = Column(Integer, ForeignKey("content_items.id", ondelete="CASCADE"), nullable=False, index=True)
+    content_id = Column(
+        Integer, ForeignKey("content_items.id", ondelete="CASCADE"), nullable=False, index=True
+    )
     locale = Column(String(8), nullable=False, index=True)
     title = Column(String(300), nullable=False)
     body = Column(Text, nullable=False)
@@ -1582,4 +1621,165 @@ class EscrowRecord(Base):
         Index("ix_escrow_record_state", "state"),
         Index("ix_escrow_record_buyer", "buyer_id"),
         Index("ix_escrow_record_seller", "seller_id"),
+    )
+
+
+# ---------------------------------------------------------------------------
+# Engine result tables
+#
+# These six were declared in a file that could never be imported: the directory
+# database/models/ sat beside database/models.py, so Python resolved the import
+# name to the file and the directory became a shadow. The file also imported
+# Base from database.models, the name it shadowed, so it was unimportable by
+# construction as well as by accident.
+#
+# Every one names a result the engine computes and the repository had nowhere to
+# store, and none appeared in any migration, so each result was produced and
+# then dropped on the floor. They live here now, where Alembic sees them.
+#
+# Each column set is the one the shadowed file declared; none of it was
+# verified against a caller, because there were none. The type notes record
+# where the engine's own model differs.
+# ---------------------------------------------------------------------------
+
+
+# Type note: peak_flow_m3s. The engine's own RunoffOutput reports a rate, and
+# the same name once carried a volume divided by a dimensionless 36000.
+# Checked: the peak flow is now volume / (storm_duration_h * 3600).
+# --- Runoff ---
+class RunoffCalculationResult(Base):
+    __tablename__ = "runoff_calculation_results"
+    id = Column(Integer, primary_key=True, index=True)
+    site_id = Column(String, index=True)
+    precipitation_mm = Column(Float)
+    curve_number = Column(Float)
+    area_ha = Column(Float)
+    method = Column(String)
+    volume_m3 = Column(Float)
+    peak_flow_m3s = Column(Float)
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
+
+
+# --- Groundwater ---
+class GroundwaterModelResult(Base):
+    __tablename__ = "groundwater_model_results"
+    id = Column(Integer, primary_key=True, index=True)
+    site_id = Column(String, index=True)
+    model_type = Column(String)
+    transmissivity_m2day = Column(Float)
+    storativity = Column(Float)
+    pumping_rate_m3day = Column(Float)
+    observation_distance_m = Column(Float)
+    time_days = Column(Float)
+    drawdown_m = Column(Float)
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
+
+
+# Type note: planting_date and harvest_date are declared DateTime here, but
+# engine.hydroma.calculations.crop_water_req_calc.CropWaterReqInput carries
+# datetime.date for both. A date-only value stored as a timestamp gains a
+# midnight component, so a query for the planting day needs a range rather
+# than an equality. Left as declared rather than changed, because the table
+# has never been created and the right fix belongs with its first caller.
+# --- Crop Water Requirement ---
+class CropWaterReqResult(Base):
+    __tablename__ = "crop_water_req_results"
+    id = Column(Integer, primary_key=True, index=True)
+    site_id = Column(String, index=True)
+    crop_type = Column(String)
+    planting_date = Column(DateTime)
+    harvest_date = Column(DateTime)
+    seasonal_water_requirement_mm = Column(Float)
+    daily_et_crop_data = Column(Text)  # Store as JSON string
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
+
+
+# --- Structure Design ---
+class StructureDesignResult(Base):
+    __tablename__ = "structure_design_results"
+    id = Column(Integer, primary_key=True, index=True)
+    design_id = Column(String, unique=True, index=True)
+    site_location_lat = Column(Float)
+    site_location_lon = Column(Float)
+    structure_type = Column(String)
+    area_ha = Column(Float)
+    max_flow_m3s = Column(Float)
+    geometry_geojson = Column(Text)  # Store GeoJSON as text
+    material_estimate = Column(Text)  # Store as JSON string
+    cost_estimate_usd = Column(Float)
+    design_summary = Column(Text)  # Store as JSON string
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
+
+
+# --- Irrigation Design ---
+class IrrigationDesignResult(Base):
+    __tablename__ = "irrigation_design_results"
+    id = Column(Integer, primary_key=True, index=True)
+    design_id = Column(String, unique=True, index=True)
+    site_location_lat = Column(Float)
+    site_location_lon = Column(Float)
+    crop_type = Column(String)
+    area_ha = Column(Float)
+    irrigation_type = Column(String)
+    layout_geojson = Column(Text)  # Store GeoJSON as text
+    equipment_list = Column(Text)  # Store as JSON string
+    irrigation_schedule = Column(Text)  # Store as JSON string
+    design_summary = Column(Text)  # Store as JSON string
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
+
+
+# --- Calibration ---
+class CalibrationResult(Base):
+    __tablename__ = "calibration_results"
+    id = Column(Integer, primary_key=True, index=True)
+    model_name = Column(String, index=True)
+    site_id = Column(String, index=True)
+    calibrated_parameters = Column(Text)  # Store as JSON string
+    best_objective_value = Column(Float)
+    history = Column(Text)  # Store as JSON string
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
+
+
+class WorkflowStatus(str, PyEnum):
+    """Lifecycle of a multi-stage workflow run."""
+
+    PENDING = "pending"
+    RUNNING = "running"
+    COMPLETED = "completed"
+    PARTIAL = "partial"
+    FAILED = "failed"
+
+
+class WorkflowRun(Base):
+    """A persisted multi-stage workflow run.
+
+    Added because ``services/workflow/service.py`` constructed this model and
+    imported it from ``database.models``, where it did not exist: the module
+    raised ImportError on import, so workflow runs were never persisted and
+    the ``except`` in ``_persist_run`` had nothing to report. Found by the
+    phase 3 G1 import gate.
+    """
+
+    __tablename__ = "workflow_runs"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    run_id = Column(String(64), nullable=False, index=True)
+    farmer_id = Column(String(64), nullable=True, index=True)
+    field_id = Column(String(64), nullable=True, index=True)
+    crop_type = Column(String(64), nullable=True)
+    status = Column(String(20), nullable=False, default=WorkflowStatus.PENDING.value, index=True)
+    stages = Column(JSON, nullable=False, default=list)
+    started_at = Column(DateTime, nullable=True)
+    completed_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=False)
+    updated_at = Column(
+        DateTime,
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+        nullable=False,
+    )
+
+    __table_args__ = (
+        Index("ix_workflow_run_run_id", "run_id", unique=True),
+        Index("ix_workflow_run_farmer_status", "farmer_id", "status"),
     )

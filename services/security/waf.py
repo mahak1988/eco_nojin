@@ -7,6 +7,7 @@ score crosses the threshold is blocked (403) and recorded as a security event.
 
 import re
 import time
+from urllib.parse import unquote, unquote_plus
 
 # rule name -> (compiled regex, weight, block_when_hit)
 _RULES: list[tuple[str, "re.Pattern[str]", int, bool]] = [
@@ -43,27 +44,59 @@ _RULES: list[tuple[str, "re.Pattern[str]", int, bool]] = [
 ]
 
 BLOCK_THRESHOLD = 40
+MAX_EVENTS = 1_000  # bounded: an attack must not grow the block log without limit
 
 
 class WafEngine:
     """In-memory WAF. `check` returns (allowed, score, hits, reason)."""
 
     def __init__(self) -> None:
-        self.events: list[dict] = []
+        self.events: list[dict[str, object]] = []
+
+    def _record(self, event: dict[str, object]) -> None:
+        self.events.append(event)
+        while len(self.events) > MAX_EVENTS:
+            self.events.pop(0)
+
+    @staticmethod
+    def _surfaces(path: str, query: str, body: str, user_agent: str) -> list[str]:
+        """Every form of the request a rule should be matched against.
+
+        Percent-encoding is decoded before matching: the application layer
+        decodes it too, so scanning the raw text alone let encoded injection
+        (`%55%4e%49%4f%4e%20%73%45%4c%45%43%54`) through with a score of zero.
+        Single and double decoding are both covered, and query strings also
+        expand `+` to a space the way form decoding does.
+        """
+        out: list[str] = []
+        for raw, plus in ((path, False), (query, True), (body, False)):
+            if not raw:
+                continue
+            forms = [raw]
+            dec = unquote_plus(raw) if plus else unquote(raw)
+            if dec != raw:
+                forms.append(dec)
+                dec2 = unquote_plus(dec) if plus else unquote(dec)
+                if dec2 != dec:
+                    forms.append(dec2)
+            out.extend(forms)
+        if user_agent:
+            out.append(user_agent)
+        return out
 
     def check(
         self, method: str, path: str, query: str, body: str, user_agent: str
     ) -> tuple[bool, int, list[str], str]:
         """Evaluate one request. Returns (allowed, score, matched_rules, reason)."""
-        payload = f"{path} {query} {body}"
+        surfaces = self._surfaces(path, query, body, user_agent)
         score = 0
         hits: list[str] = []
         for name, pattern, weight, block_when_hit in _RULES:
-            if pattern.search(payload) or pattern.search(user_agent):
+            if any(pattern.search(s) for s in surfaces):
                 score += weight
                 hits.append(name)
                 if block_when_hit and weight >= BLOCK_THRESHOLD:
-                    self.events.append(
+                    self._record(
                         {
                             "ts": time.time(),
                             "method": method,
@@ -76,7 +109,7 @@ class WafEngine:
                     return False, score, hits, f"waf:{name}"
         allowed = score < BLOCK_THRESHOLD
         if not allowed:
-            self.events.append(
+            self._record(
                 {
                     "ts": time.time(),
                     "method": method,

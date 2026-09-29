@@ -414,8 +414,27 @@ def set_auth_cookies(response: Response, access_token: str, refresh_token: str) 
         path="/",
     )
 
+    # Double-submit CSRF token. Deliberately NOT httpOnly: the client has to
+    # read it and echo it back in the x-csrf-token header. It is not a
+    # credential, and without it CSRFMiddleware rejects every cookie-based
+    # unsafe request, because the cookie was previously never set anywhere.
+    from services.security.csrf import CSRF_COOKIE, new_csrf_token
+
+    response.set_cookie(
+        key=CSRF_COOKIE,
+        value=new_csrf_token(),
+        httponly=False,
+        secure=is_production,
+        samesite="lax",
+        max_age=_settings.refresh_token_expire_minutes * 60,
+        path="/",
+    )
+
 
 def clear_auth_cookies(response: Response) -> None:
     """Clear auth cookies on logout."""
+    from services.security.csrf import CSRF_COOKIE
+
     response.delete_cookie(ACCESS_TOKEN_COOKIE, path="/")
     response.delete_cookie(REFRESH_TOKEN_COOKIE, path="/")
+    response.delete_cookie(CSRF_COOKIE, path="/")

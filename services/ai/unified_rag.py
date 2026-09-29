@@ -13,14 +13,14 @@ from typing import Any
 from qdrant_client import AsyncQdrantClient
 from qdrant_client.models import (
     Distance,
-    Filter,
     FieldCondition,
+    Filter,
     MatchValue,
     PointStruct,
     VectorParams,
 )
 
-from services.ai.embedding_service import get_embedding_service, EmbeddingProvider
+from services.ai.embedding_service import get_embedding_service
 from services.ai.llm_router import get_router
 
 
@@ -78,6 +78,7 @@ class UnifiedRAG:
     def _detect_language(self, text: str) -> str:
         try:
             from langdetect import detect
+
             return detect(text)
         except Exception:
             return "fa"
@@ -88,7 +89,7 @@ class UnifiedRAG:
         language: str | None = None,
     ) -> list[str]:
         """Add documents to the knowledge base.
-        
+
         Each document: {"content": str, "metadata": dict, "language": str (optional)}
         """
         await self._init_client()
@@ -98,12 +99,14 @@ class UnifiedRAG:
 
         points = []
         ids = []
-        for i, (doc, emb) in enumerate(zip(documents, embeddings, strict=False)):
+        for doc, emb in zip(documents, embeddings, strict=False):
             point_id = str(uuid.uuid4())
             ids.append(point_id)
             meta = doc.get("metadata", {}).copy()
             meta["content"] = doc["content"]
-            meta["language"] = doc.get("language") or language or self._detect_language(doc["content"])
+            meta["language"] = (
+                doc.get("language") or language or self._detect_language(doc["content"])
+            )
             meta["source"] = meta.get("source", "user")
             points.append(PointStruct(id=point_id, vector=emb, payload=meta))
 
@@ -129,7 +132,9 @@ class UnifiedRAG:
 
         must_conditions = []
         if query_lang:
-            must_conditions.append(FieldCondition(key="language", match=MatchValue(value=query_lang)))
+            must_conditions.append(
+                FieldCondition(key="language", match=MatchValue(value=query_lang))
+            )
         if filter_metadata:
             for k, v in filter_metadata.items():
                 must_conditions.append(FieldCondition(key=k, match=MatchValue(value=v)))
@@ -179,13 +184,15 @@ class UnifiedRAG:
         context_parts = []
         sources = []
         for i, r in enumerate(results):
-            context_parts.append(f"[Source {i+1}] {r.content}")
-            sources.append({
-                "id": r.id,
-                "content": r.content[:200],
-                "metadata": r.metadata,
-                "score": r.score,
-            })
+            context_parts.append(f"[Source {i + 1}] {r.content}")
+            sources.append(
+                {
+                    "id": r.id,
+                    "content": r.content[:200],
+                    "metadata": r.metadata,
+                    "score": r.score,
+                }
+            )
 
         context = "\n\n".join(context_parts)
 

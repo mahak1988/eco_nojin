@@ -588,11 +588,29 @@ class HybridEnKF4DVar:
         static_B: np.ndarray,
         hybrid_weight: float = 0.5,  # Weight for ensemble covariance
     ):
+        """
+        Args:
+            static_B: Static background-error covariance. Used to initialise the
+                ensemble perturbations; it does not enter any later gain.
+            hybrid_weight: **Accepted and recorded, but not applied.**
+
+                The hybrid covariance
+                ``(1 - w) B + w P_f``
+                was computed in :meth:`run_hybrid_assimilation` and the result
+                discarded, so every run was a pure EnKF while the method, the
+                weight and the comments all described a hybrid one. Implementing
+                a hybrid gain requires choosing among several published
+                formulations, and choosing one without a citation would be
+                inventing physics. The weight is therefore kept as a parameter so
+                existing callers continue to work, and its lack of effect is
+                stated here so nobody tunes it expecting an answer.
+        """
         self.model = model
         self.config = config
         self.obs_operators = observation_operators
         self.static_B = static_B
         self.hybrid_weight = hybrid_weight
+        self.hybrid_weight_applied = False
 
         self.enkf = EnsembleKalmanFilter(model, config, observation_operators)
         self.var4d = None
@@ -616,12 +634,21 @@ class HybridEnKF4DVar:
             if t > 0:
                 self.enkf.forecast_step(dt=1.0)
 
-            # Analysis with hybrid covariance
-            # Use ensemble covariance to augment static B
-            P_ens = np.cov(self.enkf.ensemble)
-            (1 - self.hybrid_weight) * B + self.hybrid_weight * P_ens
-
-            # Run 4D-Var with hybrid B (single iteration EnKF update)
+            # Analysis.
+            #
+            # This used to compute the hybrid covariance here
+            #     P_ens = np.cov(self.enkf.ensemble)
+            #     (1 - self.hybrid_weight) * B + self.hybrid_weight * P_ens
+            # and throw the result away: the comment above it said "Analysis with
+            # hybrid covariance / Use ensemble covariance to augment static B", and
+            # the line below said "Run 4D-Var with hybrid B". Neither was true.
+            # The gain inside analysis_step is built from the ensemble
+            # perturbations alone, so the covariance actually used is the ensemble
+            # one, and the run is a pure EnKF.
+            #
+            # The static B therefore has no effect beyond the initial ensemble
+            # spread, and hybrid_weight has none at all. See the constructor's
+            # docstring. Introducing a real hybrid gain needs a cited formulation.
             analysis = self.enkf.analysis_step(obs)
             analysis_states.append(analysis)
 

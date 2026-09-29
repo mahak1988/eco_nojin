@@ -8,8 +8,15 @@ they are intentionally NOT re-exported here to keep one import path.
 from __future__ import annotations
 
 from .idempotency import IdempotencyMiddleware
+from .identity import IdentityMiddleware
 from .locale import LocaleMiddleware
 from .tenant import TenantMiddleware
 from .upload_size import UploadSizeMiddleware
 
-__all__ = ["IdempotencyMiddleware", "LocaleMiddleware", "TenantMiddleware", "UploadSizeMiddleware"]
+__all__ = [
+    "IdempotencyMiddleware",
+    "IdentityMiddleware",
+    "LocaleMiddleware",
+    "TenantMiddleware",
+    "UploadSizeMiddleware",
+]

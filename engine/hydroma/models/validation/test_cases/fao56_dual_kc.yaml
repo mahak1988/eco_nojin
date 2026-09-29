@@ -44,10 +44,18 @@ cases:
       harvest_date: "2025-06-15"
       daily_climate:
         # 226 days of data
-        et0_mm: [3.5]*226  # Simplified constant ET0
-        prec_mm: [0.0]*226  # No rain - irrigation only
-        t_max_c: [20.0]*226
-        t_min_c: [10.0]*226
+        et0_mm:  # Simplified constant ET0
+          value: 3.5
+          repeat: 226
+        prec_mm:  # No rain - irrigation only
+          value: 0.0
+          repeat: 226
+        t_max_c:
+          value: 20.0
+          repeat: 226
+        t_min_c:
+          value: 10.0
+          repeat: 226
       irrigation_schedule:
         - date: "2024-11-15"
           depth_mm: 50.0
@@ -86,10 +94,18 @@ cases:
       planting_date: "2024-05-01"
       harvest_date: "2024-10-15"
       daily_climate:
-        et0_mm: [5.0]*168
-        prec_mm: [0.0]*168
-        t_max_c: [30.0]*168
-        t_min_c: [18.0]*168
+        et0_mm:
+          value: 5.0
+          repeat: 168
+        prec_mm:
+          value: 0.0
+          repeat: 168
+        t_max_c:
+          value: 30.0
+          repeat: 168
+        t_min_c:
+          value: 18.0
+          repeat: 168
       irrigation_schedule: []
       initial_conditions:
         root_zone_depletion_mm: 0.0
@@ -108,10 +124,18 @@ cases:
       planting_date: "2024-04-01"
       harvest_date: "2024-09-30"
       daily_climate:
-        et0_mm: [6.0]*182
-        prec_mm: [0.0]*182
-        t_max_c: [28.0]*182
-        t_min_c: [16.0]*182
+        et0_mm:
+          value: 6.0
+          repeat: 182
+        prec_mm:
+          value: 0.0
+          repeat: 182
+        t_max_c:
+          value: 28.0
+          repeat: 182
+        t_min_c:
+          value: 16.0
+          repeat: 182
       irrigation_schedule:
         # Daily 5mm irrigation
         - date: "2024-04-01"
@@ -134,10 +158,18 @@ cases:
       crop: "wheat"
       planting_date: "2024-11-01"
       daily_climate:
-        et0_mm: [4.0]*60
-        prec_mm: [0.0]*60
-        t_max_c: [20.0]*60
-        t_min_c: [10.0]*60
+        et0_mm:
+          value: 4.0
+          repeat: 60
+        prec_mm:
+          value: 0.0
+          repeat: 60
+        t_max_c:
+          value: 20.0
+          repeat: 60
+        t_min_c:
+          value: 10.0
+          repeat: 60
       irrigation_schedule: []
       initial_conditions:
         # Start at RAW boundary (readily available water depleted)
@@ -158,10 +190,18 @@ cases:
       crop: "cotton"
       planting_date: "2024-04-01"
       daily_climate:
-        et0_mm: [7.0]*30
-        prec_mm: [0.0]*30
-        t_max_c: [32.0]*30
-        t_min_c: [20.0]*30
+        et0_mm:
+          value: 7.0
+          repeat: 30
+        prec_mm:
+          value: 0.0
+          repeat: 30
+        t_max_c:
+          value: 32.0
+          repeat: 30
+        t_min_c:
+          value: 20.0
+          repeat: 30
       irrigation_schedule:
         # Single irrigation at day 15
         - date: "2024-04-15"

@@ -3,6 +3,7 @@
 
 import os
 import sys
+from urllib.parse import urlsplit
 
 from sqlalchemy import create_engine, inspect, text
 
@@ -14,7 +15,11 @@ def verify_schema():
     inspector = inspect(engine)
 
     tables = inspector.get_table_names()
-    print(f"Database: {DATABASE_URL}")
+    parsed_url = urlsplit(DATABASE_URL)
+    database_label = f"{parsed_url.scheme}://{parsed_url.hostname or 'local'}"
+    if parsed_url.port:
+        database_label += f":{parsed_url.port}"
+    print(f"Database: {database_label}")
     print(f"Tables found: {len(tables)}")
 
     # Core tables that should exist after migration

@@ -4,18 +4,13 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { UnavailableCapability } from '../../data-states';
 
 // The LMS video routes are not registered on the gateway, so no asset is served.
 const MISSING_PATH = '/api/v1/public/education/video';
 const SEARCH_PATH = '/api/v1/content/search';
-
-const TITLES: Record<string, string> = { fa: 'پخش ویدئو', en: 'Video Player' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'سرویس ویدئو در گیتوی ثبت نشده است؛ هیچ پخش‌کننده یا زیرنویسی بارگذاری نمی‌شود',
-  en: 'The video service is not registered on the gateway; no player or subtitle is loaded',
-};
 
 export const dynamic = 'force-dynamic';
 
@@ -25,21 +20,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-education-video-player');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/education/video-player`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/education/video-player`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/education/video-player`,
-        en: `${BASE_URL}/en/public/education/video-player`,
-      },
+      canonical: canonicalFor(locale, '/public/education/video-player'),
+      languages: languageAlternates('/public/education/video-player'),
     },
   };
 }
@@ -47,18 +40,24 @@ export async function generateMetadata({
 export default async function VideoPlayerPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  const meta = await getTranslations('pageMeta.public-education-video-player');
   const learn = await getTranslations('learn');
   const common = await getTranslations('common');
-  const title = TITLES[locale] ?? TITLES.en;
-  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+  const title = meta('title');
+  const description = meta('description');
 
   return (
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp source={MISSING_PATH} label={title} verified={false} method={MISSING_PATH}>
-          <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-        </ProvenanceStamp>
+        <ProvenanceStamp
+          source={MISSING_PATH}
+          label={title}
+          verified={false}
+          method={MISSING_PATH}
+        />
+        <h1 className="display text-4xl font-bold text-ink">{title}</h1>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
       </section>
 

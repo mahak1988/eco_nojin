@@ -8,7 +8,7 @@ Existing modules used:
 - engine/hydroma/groundwater/ (GroundwaterService, models)
 - engine/hydroma/soil/water_retention.py (calculate_available_water)
 - services/map_engine/pipelines/runoff.py (RunoffPipeline - SCS-CN)
-- engine/hydroma/core.py (compute_rainfall_erosivity)
+- engine/hydroma/core/ (package; compute_rainfall_erosivity)
 
 Scientific References:
 - USDA SCS National Engineering Handbook (1972)

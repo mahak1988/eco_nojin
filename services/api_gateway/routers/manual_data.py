@@ -9,18 +9,80 @@ from __future__ import annotations
 from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query
+from pydantic import BaseModel, Field
 
 from services.data_manual import manual
 
 router = APIRouter(prefix="/api/v1/manual", tags=["manual-data"])
 
 
-@router.get("/status")
+class ManualStatusResponse(BaseModel):
+    """Existence, size and table inventory of the reference SQLite file.
+
+    `exists` is a deployment state, not a claim about data quality: the frontend
+    reports a missing file as missing rather than as an error.
+    """
+
+    exists: bool
+    path: str | None = None
+    size_mb: float | None = None
+    tables: dict[str, int] = Field(default_factory=dict)
+
+
+class ManualRowsResponse(BaseModel):
+    """A dataset page.
+
+    `rows` holds the dataframe records exactly as stored, so the record type is
+    the dataset's own column names. The manual tables are not homogeneous and the
+    published contract therefore describes the envelope precisely while leaving
+    the cell shape to the payload, which is what the client reads back.
+    """
+
+    count: int
+    rows: list[dict[str, Any]] = Field(default_factory=list)
+
+
+class ManualSite(BaseModel):
+    """One climate site.
+
+    Every field is selected explicitly by `manual_sites`, so this model states
+    the columns the route actually returns instead of accepting any object.
+    """
+
+    site_id: Any
+    country: Any = None
+    admin1_city: Any = None
+    province: Any = None
+    lat: Any = None
+    lon: Any = None
+    elevation_m: Any = None
+    koppen: Any = None
+    annual_rain_normal_mm: Any = None
+
+
+class ManualSitesResponse(BaseModel):
+    count: int
+    sites: list[ManualSite] = Field(default_factory=list)
+
+
+class ManualRegionsResponse(ManualRowsResponse):
+    """Soil hydraulic regions; same envelope as any other dataset page."""
+
+
+class ManualCropsResponse(ManualRowsResponse):
+    """Crop water parameters; same envelope as any other dataset page."""
+
+
+class ManualMonthsResponse(ManualRowsResponse):
+    """Monthly climate normals; same envelope as any other dataset page."""
+
+
+@router.get("/status", response_model=ManualStatusResponse)
 def manual_status() -> dict[str, Any]:
     return manual.status()
 
 
-@router.get("/sites")
+@router.get("/sites", response_model=ManualSitesResponse)
 def manual_sites(
     q: str | None = Query(None, description="search in site_id/country/province"),
 ) -> dict[str, Any]:
@@ -51,7 +113,7 @@ def manual_sites(
     return {"count": len(df), "sites": df[cols].to_dict("records")}
 
 
-@router.get("/sites/{site_id}")
+@router.get("/sites/{site_id}", response_model=ManualSite)
 def manual_site(site_id: str) -> dict[str, Any]:
     df = manual.site(site_id)
     if df.empty:
@@ -59,7 +121,7 @@ def manual_site(site_id: str) -> dict[str, Any]:
     return df.iloc[0].to_dict()
 
 
-@router.get("/weather-daily/{site_id}")
+@router.get("/weather-daily/{site_id}", response_model=ManualRowsResponse)
 def manual_weather_daily(
     site_id: str,
     start: str | None = Query(None),
@@ -72,7 +134,7 @@ def manual_weather_daily(
     return {"count": len(df), "rows": df.head(limit).to_dict("records")}
 
 
-@router.get("/climate-normals/{site_id}")
+@router.get("/climate-normals/{site_id}", response_model=ManualMonthsResponse)
 def manual_normals(site_id: str) -> dict[str, Any]:
     df = manual.climate_normals(site_id)
     if df.empty:
@@ -80,19 +142,19 @@ def manual_normals(site_id: str) -> dict[str, Any]:
     return {"count": len(df), "months": df.to_dict("records")}
 
 
-@router.get("/crop-params")
+@router.get("/crop-params", response_model=ManualCropsResponse)
 def manual_crop_params(species_id: str | None = None) -> dict[str, Any]:
     df = manual.crop_water_params(species_id=species_id)
     return {"count": len(df), "crops": df.to_dict("records")}
 
 
-@router.get("/soil-regions")
+@router.get("/soil-regions", response_model=ManualRegionsResponse)
 def manual_soil(province: str | None = None) -> dict[str, Any]:
     df = manual.soil_regions(province=province)
     return {"count": len(df), "regions": df.to_dict("records")}
 
 
-@router.get("/crop-calendar")
+@router.get("/crop-calendar", response_model=ManualRowsResponse)
 def manual_calendar(province: str | None = None, crop_fa: str | None = None) -> dict[str, Any]:
     df = manual.crop_calendar(province=province, crop_fa=crop_fa)
     return {"count": len(df), "rows": df.to_dict("records")}

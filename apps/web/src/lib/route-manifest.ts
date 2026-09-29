@@ -1,7 +1,19 @@
-export const ROUTE_MANIFEST_VERSION = '2026-09-24';
+export const ROUTE_MANIFEST_VERSION = '2026-09-26';
 
 export const PLANNING_CEILING = 987;
-export const CURRENT_PAGE_FILES_OBSERVED = 175;
+/**
+ * Measured by scanning `src/app` for every `page.tsx`.
+ *
+ * This constant sat at 175 while the real count was 241, because nothing compared
+ * it to disk, and it drifted again to 352 as pages were generated from the
+ * catalogue. The assertion in `route-manifest.test.ts` is what makes that
+ * impossible: the number in the source is a claim, and the assertion is the
+ * check.
+ *
+ * The figure is the whole tree. `page-catalog.test.ts` scans the same tree for
+ * routable pages, excluding the catalogue catch-all and `_not-found`.
+ */
+export const CURRENT_PAGE_FILES_OBSERVED = 352;
 
 export type RouteContext =
   | 'public'

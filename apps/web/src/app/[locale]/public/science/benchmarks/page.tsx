@@ -4,6 +4,7 @@ import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
@@ -31,12 +32,6 @@ type ValidationReport = {
   checks: ValidationCheck[];
 };
 
-const TITLES: Record<string, string> = { fa: 'معیارهای مقایسه', en: 'Benchmarks' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'نتیجهٔ واقعی بررسی فرمول‌ها در برابر مرجع علمی',
-  en: 'Real formula-verification results against published references',
-};
-
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
@@ -45,21 +40,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-science-benchmarks');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/science/benchmarks`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/science/benchmarks`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/science/benchmarks`,
-        en: `${BASE_URL}/en/public/science/benchmarks`,
-      },
+      canonical: canonicalFor(locale, '/public/science/benchmarks'),
+      languages: languageAlternates('/public/science/benchmarks'),
     },
   };
 }
@@ -67,10 +60,12 @@ export async function generateMetadata({
 export default async function BenchmarksPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  const meta = await getTranslations('pageMeta.public-science-benchmarks');
   const status = await getTranslations('statusLine');
   const template = await getTranslations('market.template');
-  const title = TITLES[locale] ?? TITLES.en;
-  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+  const title = meta('title');
+  const description = meta('description');
 
   // The independent formula-verification suite is the only measured comparison the
   // gateway publishes: every row is an executed check against a cited reference.
@@ -82,14 +77,15 @@ export default async function BenchmarksPage({ params }: { params: Promise<{ loc
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp
-          source={VALIDATION_PATH}
-          label={title}
-          verified={report.ok}
-          method={VALIDATION_PATH}
-        >
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-        </ProvenanceStamp>
+          <ProvenanceStamp
+            source={VALIDATION_PATH}
+            label={title}
+            verified={report.ok}
+            method={VALIDATION_PATH}
+          />
+        </div>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
       </section>
 

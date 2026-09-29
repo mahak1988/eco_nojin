@@ -17,6 +17,9 @@ down_revision = "a1b2c3d4_phase0_financial_schema"
 branch_labels = None
 depends_on = None
 
+json_type = postgresql.JSONB(astext_type=sa.Text()).with_variant(sa.JSON(), "sqlite")
+string_array_type = postgresql.ARRAY(sa.String(64)).with_variant(sa.JSON(), "sqlite")
+
 
 def upgrade() -> None:
     # Ecosystem Activities
@@ -29,10 +32,8 @@ def upgrade() -> None:
         sa.Column("description", sa.Text(), nullable=False),
         sa.Column("location_hash", sa.String(64), nullable=False),
         sa.Column("region", sa.String(120), nullable=False),
-        sa.Column(
-            "estimated_impact", postgresql.JSONB(astext_type=sa.Text()), nullable=False, default={}
-        ),
-        sa.Column("evidence_ids", postgresql.ARRAY(sa.String(64)), nullable=False, default=[]),
+        sa.Column("estimated_impact", json_type, nullable=False, default={}),
+        sa.Column("evidence_ids", string_array_type, nullable=False, default=[]),
         sa.Column("status", sa.String(32), nullable=False, default="provisional"),
         sa.Column("confidence", sa.Integer(), nullable=False, default=0),
         sa.Column("trust_score", sa.Numeric(5, 4), nullable=False, default=0.5),
@@ -64,11 +65,9 @@ def upgrade() -> None:
         sa.Column("data_type", sa.String(32), nullable=False),
         sa.Column("encrypted_data", sa.LargeBinary(), nullable=False),
         sa.Column("commitment_hash", sa.String(64), nullable=False),
-        sa.Column("metadata", postgresql.JSONB(astext_type=sa.Text()), nullable=True, default={}),
+        sa.Column("metadata", json_type, nullable=True, default={}),
         sa.Column("uploaded_at", sa.DateTime(timezone=True), nullable=False, default=sa.func.now()),
-        sa.Column(
-            "access_log", postgresql.JSONB(astext_type=sa.Text()), nullable=False, default=[]
-        ),
+        sa.Column("access_log", json_type, nullable=False, default=[]),
     )
     op.create_index(
         "ix_ecosystem_evidence_activity", "ecosystem_activity_evidence", ["activity_id"]
@@ -189,11 +188,9 @@ def upgrade() -> None:
         sa.Column("owner_id", sa.String(64), nullable=False, index=True),
         sa.Column("ciphertext", sa.LargeBinary(), nullable=False),
         sa.Column("commitment_hash", sa.String(64), nullable=False, unique=True, index=True),
-        sa.Column("metadata", postgresql.JSONB(astext_type=sa.Text()), nullable=True, default={}),
+        sa.Column("metadata", json_type, nullable=True, default={}),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False, default=sa.func.now()),
-        sa.Column(
-            "access_log", postgresql.JSONB(astext_type=sa.Text()), nullable=False, default=[]
-        ),
+        sa.Column("access_log", json_type, nullable=False, default=[]),
     )
     op.create_index("ix_privacy_vault_owner", "privacy_vault_entry", ["owner_id"])
 

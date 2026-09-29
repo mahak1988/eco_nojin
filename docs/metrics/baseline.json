@@ -1,0 +1,85 @@
+{
+  "metrics": {
+    "coverage": {
+      "fail_under": 36.0,
+      "services_fail_under": 38.0,
+      "services_measured_pct": 41.0
+    },
+    "dead_code": {
+      "detail": [
+        "services\\api_gateway\\metrics.py:528: unused variable 'exc_tb' (100% confidence)",
+        "services\\api_gateway\\metrics.py:528: unused variable 'exc_val' (100% confidence)",
+        "services\\api_gateway\\metrics.py:545: unused variable 'exc_tb' (100% confidence)",
+        "services\\api_gateway\\metrics.py:545: unused variable 'exc_val' (100% confidence)",
+        "services\\api_gateway\\middleware\\upload_size.py:100: unused variable 'max_size_mb' (100% confidence)",
+        "services\\api_gateway\\routers\\blockchain.py:248: unused variable 'metadata_uri' (100% confidence)",
+        "services\\api_gateway\\routers\\blockchain.py:406: unused variable 'recipient' (100% confidence)",
+        "services\\api_gateway\\routers\\platform.py:338: unreachable code after 'raise' (100% confidence)",
+        "services\\api_gateway\\routers\\sync.py:56: unsatisfiable 'ternary' condition (100% confidence)",
+        "services\\api_gateway\\routers\\sync.py:461: unused variable 'vector_clock' (100% confidence)",
+        "services\\api_gateway\\routers\\sync.py:474: unused variable 'vector_clock' (100% confidence)",
+        "services\\marketplace\\hub_service.py:278: unused variable 'is_admin' (100% confidence)",
+        "services\\marketplace\\hub_service.py:364: unused variable 'is_admin' (100% confidence)",
+        "services\\marketplace\\hub_service.py:750: unused variable 'fee_paid' (100% confidence)",
+        "services\\marketplace\\tests\\test_hub_service.py:57: unused variable 'village_created' (100% confidence)",
+        "services\\oracle\\service.py:108: unused variable 'reporter' (100% confidence)",
+        "services\\oracle\\service.py:143: unused variable 'challenger' (100% confidence)",
+        "services\\oracle\\service.py:161: unused variable 'upheld' (100% confidence)",
+        "services\\oracle\\service.py:225: unused variable 'photo_hash' (100% confidence)",
+        "services\\oracle\\service.py:235: unused variable 'certificate_hash' (100% confidence)",
+        "services\\oracle\\service.py:235: unused variable 'lab_id' (100% confidence)",
+        "services\\oracle\\service.py:249: unused variable 'activity_data' (100% confidence)",
+        "services\\privacy\\vault.py:110: unused variable 'requester_role' (100% confidence)",
+        "services\\privacy\\vault.py:171: unused variable 'expiry' (100% confidence)",
+        "services\\satellite\\openet_service.py:12: unused variable 'geometry' (100% confidence)",
+        "services\\scientific_motors\\carbon_sequestration.py:30: unused import '_cpp_richards' (90% confidence)",
+        "services\\scientific_motors\\crop_advisor.py:396: unused variable 'water_mm' (100% confidence)",
+        "services\\scientific_motors\\data_repository.py:153: unused variable 'crop_category' (100% confidence)",
+        "services\\scientific_motors\\erosion_rusle.py:18: unused import '_cpp_ls_factor' (90% confidence)",
+        "services\\scientific_motors\\erosion_rusle.py:18: unused import '_cpp_rainfall_r' (90% confidence)",
+        "services\\scientific_motors\\erosion_rusle.py:18: unused import '_cpp_rusle' (90% confidence)",
+        "services\\scientific_motors\\erosion_rusle.py:18: unused import '_cpp_soil_k' (90% confidence)",
+        "services\\scientific_motors\\irrigation_scheduler.py:16: unused import '_cpp_crop_water' (90% confidence)",
+        "services\\scientific_motors\\irrigation_scheduler.py:16: unused import '_cpp_penman' (90% confidence)",
+        "services\\scientific_motors\\satellite_integration.py:26: unused import '_cpp_evi' (90% confidence)",
+        "services\\scientific_motors\\satellite_integration.py:26: unused import '_cpp_nbr' (90% confidence)",
+        "services\\scientific_motors\\satellite_integration.py:26: unused import '_cpp_ndvi' (90% confidence)",
+        "services\\scientific_motors\\satellite_integration.py:26: unused import '_cpp_ndvi_array' (90% confidence)",
+        "services\\scientific_motors\\satellite_integration.py:26: unused import '_cpp_ndwi' (90% confidence)",
+        "services\\scientific_motors\\satellite_integration.py:26: unused import '_cpp_savi' (90% confidence)",
+        "services\\security\\step_up.py:130: unused variable 'ttl_seconds' (100% confidence)"
+      ],
+      "findings": 41
+    },
+    "fabrications": {
+      "by_rule": {
+        "G2.dict-claims-success": 29,
+        "G2.except-pass": 48
+      },
+      "count": 77
+    },
+    "inventory": {
+      "prod_files": 582,
+      "prod_lines": 139146,
+      "service_modules": 59,
+      "test_files": 249,
+      "test_lines": 38040
+    },
+    "scientific": {
+      "motors": 22,
+      "with_conformance_test": 6
+    },
+    "structure": {
+      "by_rule": {
+        "G5.router-touches-db": 494,
+        "G5.service-takes-session": 273
+      },
+      "violations": 767
+    },
+    "tolerations": {
+      "count": 25,
+      "high_risk": 18
+    }
+  },
+  "note": "Generated by scripts/measure_baseline.py. Ratchet state for the phase 3 CI gates: a metric that improves should be re-pinned by running this script again."
+}

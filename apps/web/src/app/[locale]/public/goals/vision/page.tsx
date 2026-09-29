@@ -1,8 +1,9 @@
 import { Metadata } from 'next';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
@@ -15,12 +16,6 @@ type ToolRegistry = {
   categories: { domain_slug: string; count: number }[];
 };
 
-const TITLES: Record<string, string> = { fa: 'چشم‌انداز', en: 'Vision' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'دامنه‌های ثبت‌شده در رجیستری ابزار',
-  en: 'The domains registered in the tool registry',
-};
-
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
@@ -29,21 +24,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-goals-vision');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/goals/vision`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/goals/vision`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/goals/vision`,
-        en: `${BASE_URL}/en/public/goals/vision`,
-      },
+      canonical: canonicalFor(locale, '/public/goals/vision'),
+      languages: languageAlternates('/public/goals/vision'),
     },
   };
 }
@@ -51,8 +44,10 @@ export async function generateMetadata({
 export default async function VisionPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const title = TITLES[locale] ?? TITLES.en;
-  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+
+  const meta = await getTranslations('pageMeta.public-goals-vision');
+  const title = meta('title');
+  const description = meta('description');
 
   const registry = await apiGet<ToolRegistry>('/api/v1/tool-registry');
   const registryState = toDataState(
@@ -65,14 +60,15 @@ export default async function VisionPage({ params }: { params: Promise<{ locale:
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <div className="mx-auto max-w-4xl px-6 pb-12 pt-8">
-        <ProvenanceStamp
-          source={'/api/v1/tool-registry'}
-          label={title}
-          verified={registry.ok}
-          method={'/api/v1/tool-registry'}
-        >
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-        </ProvenanceStamp>
+          <ProvenanceStamp
+            source={'/api/v1/tool-registry'}
+            label={title}
+            verified={registry.ok}
+            method={'/api/v1/tool-registry'}
+          />
+        </div>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
 
         <section className="mt-8">

@@ -34,13 +34,18 @@ const overlayStyles: CSSProperties = {
 
 const dialogStyles: CSSProperties = {
   position: 'fixed',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  insetBlockStart: '50%',
+  // `left: 50%` plus `translateX(-50%)` is symmetric and would in fact centre
+  // correctly under RTL, so it was not a live bug — but it is a physical
+  // property, and the logical form is unambiguous: inset both edges to zero and
+  // let auto margins centre the box. Same result, no direction to reason about.
+  insetInline: 0,
+  marginInline: 'auto',
+  transform: 'translateY(-50%)',
   margin: 0,
   maxWidth: 'calc(100vw - var(--space-8))',
   maxHeight: 'calc(100vh - var(--space-8))',
-  width: 'min(560px, 100%)',
+  inlineSize: 'min(560px, 100%)',
   backgroundColor: 'var(--color-surface)',
   border: '1px solid var(--color-line)',
   borderRadius: 'var(--radius-16)',
@@ -57,8 +62,8 @@ const keyframes = `
     to { opacity: 1; }
   }
   @keyframes slideUp {
-    from { opacity: 0; transform: translate(-50%, -48%); }
-    to { opacity: 1; transform: translate(-50%, -50%); }
+    from { opacity: 0; transform: translateY(-48%); }
+    to { opacity: 1; transform: translateY(-50%); }
   }
 `;
 

@@ -51,20 +51,33 @@ class CalculationEngine:
         default_value = indicator.get("default_value", 0.0)
 
         # ارزیابی فرمول با متغیرهای داده‌شده
-        from .formula_evaluator import FormulaEvaluator
+        from .formula_evaluator import FormulaEvaluationError, FormulaEvaluator
 
         evaluator = FormulaEvaluator()
 
-        result_value = evaluator.evaluate(formula, region_data)
-
-        # اگر فرمول قابل ارزیابی نبود، از مقدار پیش‌فرض استفاده کن
-        if result_value == 0.0 and default_value != 0.0:
+        # A default is for a formula that was never evaluated, not for one that
+        # evaluated to zero. The previous code compared the result to 0.0 and
+        # substituted the default, but the evaluator returned 0.0 for every
+        # failure mode, so a real computed zero and an error were indistinguishable
+        # and the default silently overwrote genuine results. The error is now
+        # caught explicitly and reported alongside the fallback.
+        error: str | None = None
+        try:
+            result_value = evaluator.evaluate(formula, region_data, strict=True)
+        except FormulaEvaluationError as exc:
             result_value = default_value
+            error = str(exc)
 
-        return {
+        payload = {
             "specialty_id": specialty_id,
             "indicator_id": indicator_id,
             "value": result_value,
             "formula": formula,
             "default_value": default_value,
         }
+        if error is not None:
+            payload["value_source"] = "default"
+            payload["error"] = error
+        else:
+            payload["value_source"] = "computed"
+        return payload

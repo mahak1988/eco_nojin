@@ -122,8 +122,43 @@ class MapPipeline(ABC):
         return f"EPSG:{epsg}"
 
 
+class DataOrigin(StrEnum):
+    """Where a layer's pixels actually came from.
+
+    Added by the phase 4 group 5 decision. Every fetcher in this package
+    currently produces random numbers, and that was invisible at the API
+    boundary: ``/motors/map/{type}`` fed those rasters into SWAT/AquaCrop/RUSLE
+    and returned the answer with no indication that the terrain, rainfall and
+    soil were invented. That is the same defect as ``land_profile`` reporting
+    ``dem_source="SRTM"`` for an elevation range it made up.
+
+    A fetcher must declare its origin, and a synthetic one can never be
+    reported as ``OK``.
+    """
+
+    MEASURED = "measured"
+    """Real observations from an instrument or survey."""
+
+    DERIVED = "derived"
+    """Computed from measured inputs by a documented method."""
+
+    EXTERNAL = "external"
+    """Fetched from a named third-party data service."""
+
+    SYNTHETIC = "synthetic"
+    """Generated. Not an observation. Must never be presented as science."""
+
+
 class MapFetcher(ABC):
     """Abstract base class for data fetchers."""
+
+    #: Every concrete fetcher must set this. Defaults to the safe answer:
+    #: a fetcher that has not declared where its data came from is treated as
+    #: synthetic, not as trusted.
+    DATA_ORIGIN: DataOrigin = DataOrigin.SYNTHETIC
+
+    #: Human-readable detail for the origin, surfaced in API responses.
+    ORIGIN_DETAIL: str = "fetcher did not declare a data origin"
 
     @abstractmethod
     async def fetch(self, region: Polygon, **kwargs) -> xr.DataArray:
@@ -135,3 +170,18 @@ class MapFetcher(ABC):
     def layer_name(self) -> str:
         """Name of the layer this fetcher provides."""
         pass
+
+    @classmethod
+    def provenance(cls, instance: MapFetcher | None = None) -> dict[str, Any]:
+        """Provenance record for this fetcher, per the S-HONEST contract."""
+        layer = None
+        try:
+            layer = cls.layer_name.fget(instance) if instance is not None else None
+        except Exception:  # pragma: no cover - property access is best effort
+            layer = None
+        return {
+            "layer": layer,
+            "origin": cls.DATA_ORIGIN.value,
+            "synthetic": cls.DATA_ORIGIN is DataOrigin.SYNTHETIC,
+            "detail": cls.ORIGIN_DETAIL,
+        }

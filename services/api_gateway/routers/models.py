@@ -36,10 +36,37 @@ def pinn_status():
 
 @router.get("/cpp-status", response_model=dict)
 def cpp_status():
-    """C++20 parity bridge status (hot kernels)."""
-    from services.models.cpp_bridge import status
+    """C++20 native-core capability (single source of truth).
 
-    return status()
+    This used to read a second, ctypes-based loader
+    (``services/models/cpp_bridge.py``) that probed for a ``hydroma_core.dll``.
+    That loader had no build path -- its source ``bindings/c_api.cpp`` is in no
+    CMake target -- so it always reported ``available: false`` while ``/health``
+    reported ``cpp_core: "ok"`` for the pybind11 module. Two endpoints answered
+    the same question about the same capability with different numbers.
+
+    Both now read ``engine.hydroma.cpp_bridge.backend_status()``, so the numbers
+    cannot disagree.
+    """
+    from engine.hydroma.cpp_bridge import (
+        _ARRAY_CPP_THRESHOLD,
+        _NUMBA_AVAILABLE,
+        backend_status,
+        get_module,
+    )
+
+    state = backend_status()
+    module = get_module()
+    return {
+        "available": state["cpp_available"],
+        "backend": state["backend"],
+        "import_error": state["import_error"],
+        "module_path": getattr(module, "__file__", None),
+        "symbols": len([n for n in dir(module) if not n.startswith("_")]) if module else 0,
+        "numba_available": _NUMBA_AVAILABLE,
+        "array_cpp_threshold": _ARRAY_CPP_THRESHOLD,
+        "telemetry": state["telemetry"],
+    }
 
 
 @router.get("/{slug}", response_model=dict)

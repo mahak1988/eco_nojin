@@ -111,6 +111,10 @@ dev = [
     "bandit>=1.7,<2.0",
     "pip-audit>=2.7,<3.0",
     "vulture>=2.11,<3.0",
+    # Required to build engine/cpp_core (hydroma_core pybind11 module).
+    # CMakeLists.txt and the c_api bindings both need the pybind11 headers;
+    # without this the native module cannot be compiled from a clean checkout.
+    "pybind11>=2.10",
 ]
 
 # نصب کامل برای محیط توسعه محلی (Local Dev Environment)
@@ -131,7 +135,10 @@ include = ["engine*", "database*", "services*", "contracts*", "shared*"]
 exclude = ["tests*", "docs*", "backups*", "build*"]
 
 [tool.setuptools.package-data]
-"*" = ["*.yaml", "*.yml", "*.json", "*.sql", "*.md"]
+# .csv is load-bearing: engine/hydroma/soil/parameters.py reads
+# engine/data/soil_vg_table.csv at import, so a wheel built without it fails to
+# import the soil package at all.
+"*" = ["*.yaml", "*.yml", "*.json", "*.sql", "*.md", "*.csv"]
 
 # === RUFF CONFIGURATION ===
 [tool.ruff]
@@ -150,6 +157,18 @@ ignore = ["E501", "B008", "C901", "PLR0913", "PLR0912"]
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401", "F403"]
 "tests/*" = ["PLR2004", "S101"]
+# The strict engine suite asserts the *category* of failure it is hunting, not a
+# message. A tripwire that pins "ValueError" is checking that the engine rejects
+# the input at all; pinning the wording would make the test fail on a message
+# change while the defect it guards is still open. Where the message IS the
+# contract, the test passes match= itself.
+"engine/strict_tests/*" = ["PLR2004", "S101", "PT011"]
+# RUF001/RUF003 flag Persian and Arabic letters as Latin homoglyphs. In the
+# files below those characters ARE the payload (Persian-language content and
+# the orthographic-fold tables in the local RAG index), not lookalike typos.
+"services/ai/rag.py" = ["RUF001", "RUF003"]
+"services/ai/nlg.py" = ["RUF001", "RUF003"]
+"tests/unit/test_rag_local.py" = ["RUF001", "RUF003"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["engine", "database", "services", "contracts", "shared"]
@@ -201,6 +220,17 @@ branch = true
 [tool.coverage.report]
 show_missing = true
 skip_empty = true
+  # Ratchet, not a target. The engine measured 37.56% under engine/strict_tests
+  # alone and 37.6% with the nested engine suites added, so 80% was never in
+  # effect -- it was asserted in AGENTS.md and implemented nowhere. Starting the
+  # floor just under the measured value keeps the gate honest on day one and
+  # makes any drop fail. Raise it as coverage genuinely improves; never lower it
+  # to make a build pass.
+  #
+  # Enforced by tests/contract/test_g3_g4_coverage_and_deadcode.py, which
+  # asserts the value is a rung on the ladder {36, 60, 70, 80} and that it is
+  # never lower than the recorded baseline.
+  fail_under = 36
 
 # === MUTMUT CONFIGURATION ===
 [tool.mutmut]

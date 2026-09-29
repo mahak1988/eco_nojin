@@ -11,7 +11,7 @@ from alembic.config import Config
 from sqlalchemy import text
 
 from alembic import command
-from database.hub import hub
+from database.hub import DataHub, hub
 
 
 @pytest.fixture
@@ -44,13 +44,13 @@ def alembic_config(sqlite_database_url):
 @pytest.fixture
 def hub_instance():
     """Create fresh DataHub instance for testing."""
-    # Reset singleton
-    hub._instance = None
-    hub._initialized = False
-    yield hub
-    # Cleanup
-    hub._instance = None
-    hub._initialized = False
+    if hub._sqlalchemy_engine is not None:
+        hub.close_all()
+    DataHub._instance = None
+    instance = DataHub()
+    yield instance
+    instance.close_all()
+    DataHub._instance = None
 
 
 class TestSqliteMigrations:
@@ -78,16 +78,15 @@ class TestSqliteMigrations:
         async with hub_instance.get_async_session() as session:
             # Check key tables exist
             tables_to_check = [
-                "user",
-                "organization",
-                "organization_membership",
-                "audit_log",
-                "ledger_entry",
-                "carbon_project",
-                "carbon_credit",
-                "farm",
-                "land_profile",
-                "iot_device",
+                "users",
+                "organizations",
+                "organization_memberships",
+                "auditlog",
+                "ledgerentry",
+                "carbon_projects",
+                "farms",
+                "land_profiles",
+                "iot_devices",
             ]
 
             for table in tables_to_check:
@@ -131,7 +130,7 @@ class TestSqliteMigrations:
 
             # Verify user exists
             result = await session.execute(
-                text("SELECT COUNT(*) FROM user WHERE email = 'test@example.com'")
+                text("SELECT COUNT(*) FROM users WHERE email = 'test@example.com'")
             )
             count = result.scalar()
             assert count == 1
@@ -152,7 +151,7 @@ class TestSqliteMigrations:
 
             # Verify original user still exists
             result = await session.execute(
-                text("SELECT COUNT(*) FROM user WHERE email = 'test@example.com'")
+                text("SELECT COUNT(*) FROM users WHERE email = 'test@example.com'")
             )
             count = result.scalar()
             assert count == 1
@@ -170,7 +169,7 @@ class TestDataIntegrity:
 
         async with hub_instance.get_async_session() as session:
             # Create organization
-            org = Organization(name="Test Org", code="TEST")
+            org = Organization(name="Test Org", slug="test-org")
             session.add(org)
             await session.flush()
 
@@ -181,7 +180,7 @@ class TestDataIntegrity:
 
             # Create valid membership
             membership = OrganizationMembership(
-                organization_id=org.id,
+                org_id=org.id,
                 user_id=user.id,
                 role="member",
             )
@@ -190,7 +189,7 @@ class TestDataIntegrity:
 
             # Try to create membership with invalid org_id
             invalid_membership = OrganizationMembership(
-                organization_id=99999,  # non-existent
+                org_id=99999,  # non-existent
                 user_id=user.id,
                 role="member",
             )

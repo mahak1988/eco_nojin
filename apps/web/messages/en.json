@@ -123,7 +123,8 @@
   "brand": {
     "name": "HyDroMa Nojin",
     "logoAlt": "HyDroMa Nojin (Eco Nojin) platform logo",
-    "iconAlt": "HyDroMa Nojin platform icon"
+    "iconAlt": "HyDroMa Nojin platform icon",
+    "description": "Ecological intelligence for soil, water, climate and livelihoods."
   },
   "owner": {
     "line": "Platform owner: Dasht Omid Narvan Agro-Industry Co.",
@@ -165,64 +166,136 @@
       "Every solution needs validated data and local calibration",
       "A pilot result is not final without field review"
     ],
-    "next": ["Choose a small pilot", "Capture user feedback and revise the model"]
+    "next": [
+      "Choose a small pilot",
+      "Capture user feedback and revise the model"
+    ],
+    "farmersTitle": "For agricultural producers",
+    "farmersDesc": "Crop planning, irrigation, soil fertility and water-resource management with reasoned recommendations.",
+    "institutionsTitle": "For institutions",
+    "institutionsDesc": "At-risk area mapping, water-resource planning and compliance reporting.",
+    "researchersTitle": "For researchers and universities",
+    "researchersDesc": "Scientific models, open datasets, a compute environment and reproducible processing.",
+    "pilotCta": "Request a pilot session",
+    "pilotNote": "Pilot sites are limited and selected on the basis of the data."
   },
   "evidence": {
     "title": "Science and evidence",
     "lead": "Every scientific claim is shown with its source, validation method and limitations.",
     "what": "The evidence library links standard FAO and IPCC methods and scientific tool outputs to traceable decisions.",
     "audience": "Researchers, advisers and users who need an explanation and a reference.",
-    "evidence": ["DOI references for selected studies", "Model version and uncertainty range"],
+    "evidence": [
+      "DOI references for selected studies",
+      "Model version and uncertainty range"
+    ],
     "limits": [
       "Not every model is valid in every climate",
       "Field data quality remains the primary limitation"
     ],
-    "next": ["Select an appropriate reference", "Review evidence periodically"]
+    "next": [
+      "Select an appropriate reference",
+      "Review evidence periodically"
+    ],
+    "refsTitle": "Method and references",
+    "refs": [
+      "Soil modelling and water-balance methods",
+      "FAO-56 standards for evapotranspiration",
+      "Sampling and quality-control protocols"
+    ],
+    "limitsTitle": "Declared limits",
+    "nextTitle": "Next step"
   },
   "ai": {
     "title": "AI assistant",
     "lead": "Traceable answers for water, soil and livelihood questions.",
     "what": "The assistant can prepare a calculation, but its final answer always needs a source and human confirmation.",
     "audience": "Advisers, farmers and support teams.",
-    "evidence": ["A source is shown for every answer", "Draft label for answers without a source"],
+    "evidence": [
+      "A source is shown for every answer",
+      "Draft label for answers without a source"
+    ],
     "limits": [
       "A language model does not replace local judgement",
       "Sensitive data must not be sent without permission"
     ],
-    "next": ["Connect source search", "Require human review before publication"]
+    "next": [
+      "Connect source search",
+      "Require human review before publication"
+    ],
+    "sourceRule": "Every answer must cite its source or be labelled a model draft.",
+    "limitsTitle": "Declared limits",
+    "nextTitle": "Next step"
   },
   "trust": {
     "title": "Trust and provenance",
     "lead": "Every datum can be traced to its service, retrieval time and validation method.",
     "what": "The provenance explorer shows the data chain and distinguishes live data, demos and unavailable services.",
     "audience": "Organisational users, auditors and scientific teams.",
-    "evidence": ["Source identifier and retrieval time", "Data version and change history"],
+    "evidence": [
+      "Source identifier and retrieval time",
+      "Data version and change history"
+    ],
     "limits": [
       "Not all services have the same timestamp contract yet",
       "Deleted data cannot be recovered"
     ],
-    "next": ["Complete the provenance chain", "Add data-change reports"]
+    "next": [
+      "Complete the provenance chain",
+      "Add data-change reports"
+    ],
+    "provenanceTitle": "Provenance explorer",
+    "provenanceDesc": "Follow any datum to the service, the dataset image and the acquisition date.",
+    "registryTitle": "Carbon registry",
+    "registryDesc": "The carbon credits the project generates are accessible and verifiable; the blockchain address is not available yet.",
+    "disclosureTitle": "Responsible disclosure",
+    "disclosureDesc": "Vulnerabilities are disclosed privately, without exposing user data.",
+    "statusCta": "See the service status"
   },
   "developers": {
     "title": "Developers",
     "lead": "APIs, data contracts and integration tools for dependable services.",
     "what": "OpenAPI documentation and a generated client provide a clear path to connect platform services.",
     "audience": "Software teams, researchers and technology partners.",
-    "evidence": ["A versioned API contract", "Request and response examples"],
+    "evidence": [
+      "A versioned API contract",
+      "Request and response examples"
+    ],
     "limits": [
       "Rate limits and authentication must be respected",
       "Development and production environments differ"
     ],
-    "next": ["Complete public route documentation", "Add webhooks and versioned contracts"]
+    "next": [
+      "Complete public route documentation",
+      "Add webhooks and versioned contracts"
+    ],
+    "docsTitle": "API documentation",
+    "docsDesc": "Every endpoint is documented with request and response examples, rate limits and error codes.",
+    "toolsTitle": "Developer tools",
+    "toolsDesc": "The tools include generated clients, test collections and integration examples.",
+    "changesTitle": "Change log",
+    "changesDesc": "Every API change is tied to a version and published in the change log.",
+    "publicNote": "The public environment is read-only. Tests and writes are authenticated and limited to permitted operations."
   },
   "accessibility": {
     "title": "Accessibility",
     "lead": "An experience usable with keyboards, screen readers, right-to-left and left-to-right languages.",
     "what": "Semantic controls, Tab navigation, sufficient contrast and translatable messages are part of the base design.",
     "audience": "Everyone, especially people with diverse access needs.",
-    "evidence": ["Automated axe checks", "Direction and language checks in browsers"],
-    "limits": ["Some specialist content still needs human review"],
-    "next": ["Complete route coverage", "Review with real users"]
+    "evidence": [
+      "Automated axe checks",
+      "Direction and language checks in browsers"
+    ],
+    "limits": [
+      "Some specialist content still needs human review"
+    ],
+    "next": [
+      "Complete route coverage",
+      "Review with real users"
+    ],
+    "standardTitle": "Standards applied",
+    "standardDesc": "The site targets WCAG 2.2 level AA. Automated checks do not replace manual verification with people.",
+    "feedbackTitle": "Reporting an accessibility barrier",
+    "feedbackDesc": "If you hit a barrier, report the page in question. We will resolve it in the next update cycle."
   },
   "statements": {
     "title": "Statements and documents",
@@ -237,11 +310,19 @@
   "legal": {
     "title": "Legal documents",
     "version": "Version 1.0 — 2026-09-24",
-    "lead": "Review the terms of use and privacy notice before any commercial activity."
+    "lead": "Review the terms of use and privacy notice before any commercial activity.",
+    "termsTitle": "Terms of use",
+    "termsBody": "Using the platform means accepting these terms. The project does not claim external certifications it has not verified.",
+    "privacyTitle": "Personal data",
+    "privacyBody": "We use personal data to provide the service requested. We do not share identifying data for commercial purposes.",
+    "cookiesTitle": "Cookies and language",
+    "cookiesBody": "We use one technical cookie to remember the chosen language; you can change it at any time in your browser settings."
   },
   "learn": {
     "emptyTitle": "The learning library is not published yet",
-    "emptyDesc": "Reviewed learning content will be published soon. Until then, use the getting-started guide and field learning materials."
+    "emptyDesc": "Reviewed learning content will be published soon. Until then, use the getting-started guide and field learning materials.",
+    "title": "Content and training",
+    "lead": "Video lessons, a bilingual glossary and operational guides for use in the field."
   },
   "platformOverview": {
     "title": "Platform components",
@@ -258,39 +339,20 @@
   },
   "public": {
     "home": {
-      "title": "HyDroMa Nojin — Landscape restoration platform",
-      "lead": "Data, scientific models and practical paths for restoring water, soil and rural livelihoods.",
-      "provenanceLabel": "Status source",
-      "liveWhenAvailable": "Shown when live data is available",
-      "whatTitle": "One window for better decisions",
-      "whatLead": "From a land profile to markets and carbon, every area states its status and limitations.",
-      "whatDesc": "Recorded data is shown with source and date, and experimental results are never presented as verified data.",
-      "keyMetrics": "Status overview",
-      "beneficiaries": "Beneficiaries",
+      "title": "Ecological monitoring and decision platform",
+      "lead": "Soil, water, climate and carbon monitoring on a scientific basis.",
+      "provenanceLabel": "Source of the claim",
+      "liveWhenAvailable": "Live, when the gateway is reachable",
+      "whatTitle": "What this is",
+      "whatLead": "One platform, four parts, one contract.",
+      "whatDesc": "A scientific engine that names its model version, a gateway that publishes what it can serve, an offline-first client, and a marketplace that pays for what is actually grown.",
+      "keyMetrics": "What the gateway reports",
+      "beneficiaries": "Registered producers",
       "activeMarkets": "Active markets",
       "landProfiles": "Land profiles",
       "carbonProjects": "Carbon projects",
-      "quickActions": "Next steps",
-      "enterMarket": "Open the marketplace",
-      "exploreScience": "Explore the science engine",
-      "learnMore": "Open the learning guide",
-      "statusSource": "Platform service status",
-      "afterPilot": "After the pilot",
-      "evidenceItems": [
-        "FAO/IPCC standards",
-        "Traceable scientific references",
-        "Reproducible protocols"
-      ],
-      "limitsItems": [
-        "Experimental results remain provisional until human review",
-        "Field data coverage is limited",
-        "Machine translations require review"
-      ],
-      "nextItems": [
-        "Choose a small pilot",
-        "Complete live data connection",
-        "Publish an impact report"
-      ]
+      "quickActions": "Where to go next",
+      "enterMarket": "Enter the market"
     },
     "why": {
       "title": "Why Eco Nojin?",
@@ -311,7 +373,11 @@
       "p3_solution": "Evidence, uncertainty and data status",
       "p4_problem": "Unequal access to tools",
       "p4_solution": "PWA, multiple languages and inclusive channels",
-      "evidenceItems": ["Stakeholder workshops", "Field research", "Recorded pilots"],
+      "evidenceItems": [
+        "Stakeholder workshops",
+        "Field research",
+        "Recorded pilots"
+      ],
       "limitsItems": [
         "Regional generalisation is limited",
         "Long-term impact is still being measured",
@@ -324,29 +390,47 @@
       ]
     },
     "cta": {
-      "title": "Call to action",
-      "lead": "Choose a clear entry point to the marketplace, science engine and learning content.",
-      "provenanceLabel": "Product strategy source",
-      "whatTitle": "Choose the next step",
-      "whatLead": "Each path has an explicit starting point.",
-      "whatDesc": "Check data status and limitations before taking action.",
-      "audience": "Visitors, users and potential partners",
-      "primaryCTAs": "Primary access paths",
-      "cta1_title": "Open the marketplace",
-      "cta1_desc": "Explore discovery, orders and escrow",
-      "cta1_action": "Open marketplace",
-      "cta2_title": "Explore science",
-      "cta2_desc": "Understand the engine, models and provenance",
+      "title": "Take part",
+      "lead": "Your way into the market, the scientific engine and the training starts here.",
+      "provenanceLabel": "Source of the claim",
+      "whatTitle": "What this is",
+      "whatLead": "Four paths, each posting to a real endpoint.",
+      "whatDesc": "Choose the path that matches your work. Nothing on this page posts anywhere that does not exist.",
+      "audience": "Farmers, cooperatives, researchers, planners and their funders",
+      "primaryCTAs": "The paths",
+      "cta1_title": "Enter the market",
+      "cta1_desc": "Browse, list and settle, with every order traceable.",
+      "cta1_action": "See the marketplace",
+      "cta2_title": "Use the scientific engine",
+      "cta2_desc": "Run a soil, hydrology, climate or carbon model.",
       "cta2_action": "Open the engine",
-      "cta3_title": "Start learning",
-      "cta3_desc": "Read reviewed guides and learning content",
-      "cta3_action": "Open learning",
-      "cta4_title": "Terms of use",
-      "cta4_desc": "Review legal documents before commercial activity",
-      "cta4_action": "Read terms",
-      "evidenceItems": ["User journey maps", "Accessibility tests", "CTA content review"],
-      "limitsItems": ["CTA variants vary by region", "Offline forms are still being completed"],
-      "nextItems": ["Add role-aware CTAs", "Record conversion events", "Connect onboarding"]
+      "cta3_title": "Read the field manual",
+      "cta3_desc": "Reference tables and guides for the work itself.",
+      "cta3_action": "Open the manual",
+      "cta4_title": "Check the platform",
+      "cta4_desc": "What the verification suite found, including its failures.",
+      "cta4_action": "See the status",
+      "evidenceItems": [
+        "Each path posts to an endpoint the gateway publishes.",
+        "A path that cannot be reached says so rather than appearing to work."
+      ],
+      "limitsItems": [
+        "A path is only as good as the contract behind it; the contract is linked.",
+        "Nothing on this page promises a result the checks have not demonstrated."
+      ],
+      "nextItems": [
+        "Choose one path rather than all four.",
+        "Read the contract before you rely on it."
+      ],
+      "body": "Choose the path that matches your work. Each one posts to a real endpoint.",
+      "optionsTitle": "Where to start",
+      "farmersLink": "I grow something",
+      "governmentLink": "I work for a public body",
+      "investorsLink": "I fund work like this",
+      "ngosLink": "I work for a non-profit",
+      "newsletterBody": "Occasional notes on what changed, and what the checks found.",
+      "newsletterConsent": "Send me the newsletter",
+      "newsletterSubmit": "Subscribe"
     },
     "science": {
       "evidenceBase": {
@@ -380,64 +464,62 @@
     },
     "channels": {
       "title": "Access channels",
-      "lead": "An experience for web, mobile and low-connectivity users.",
-      "provenanceLabel": "Channel registry source",
-      "whatTitle": "One platform, multiple access paths",
-      "whatLead": "Each channel has its own contract and status.",
-      "whatDesc": "USSD, SMS and Voice are shown as independent adapters, not fake Next.js routes.",
-      "audience": "Web, mobile and feature-phone users",
+      "lead": "The same platform, on whichever device the reader actually has.",
+      "provenanceLabel": "Source of the claim",
+      "whatTitle": "What this is",
+      "whatLead": "One contract, four ways to reach it.",
+      "whatDesc": "The gateway decides which channel can serve which surface, and the client renders whichever it can.",
+      "audience": "Farmers, cooperatives, researchers, planners and their funders",
       "channels": "Available channels",
-      "webPwa": "Web/PWA",
+      "webPwa": "Web and installable app",
       "mobileApp": "Mobile app",
       "ussd": "USSD",
       "sms": "SMS",
       "voice": "Voice",
       "telegram": "Telegram",
-      "evidenceItems": ["Inclusive design", "PWA and offline mode", "14 languages"],
+      "evidenceItems": [
+        "The status shown is the status the channel endpoint reports, read at request time.",
+        "A channel that cannot be reached says so rather than falling back silently."
+      ],
       "limitsItems": [
-        "USSD/SMS/Voice do not have production contracts yet",
-        "The mobile app is in beta",
-        "USSD character limits"
+        "A channel narrower than a form can only carry a short set of fields.",
+        "A channel that is down cannot be described as available."
       ],
       "nextItems": [
-        "Define an independent USSD adapter",
-        "Complete the Voice contract",
-        "Add WhatsApp"
-      ]
+        "Choose the channel your device actually supports.",
+        "Read the channel status before relying on it."
+      ],
+      "ussdLabel": "USSD",
+      "ussdBody": "Works on any handset with a keypad. No data plan required.",
+      "smsLabel": "SMS",
+      "smsBody": "Short text updates for the state a farmer needs without opening anything, and only for events they have subscribed to.",
+      "voiceLabel": "Voice",
+      "voiceBody": "Guidance read aloud for readers who cannot use a screen.",
+      "webLabel": "Web",
+      "webBody": "The full interface, for a device that can show a screen.",
+      "whatsappLabel": "WhatsApp",
+      "whatsappBody": "Marketplace notices on a channel many producers already use."
     },
     "visit": {
-      "title": "Field visit",
-      "lead": "A guide to observing pilot sites and recording observations.",
-      "provenanceLabel": "Field protocol source",
-      "whatTitle": "A repeatable visit protocol",
-      "whatLead": "Each visit records its context, method and limitations.",
-      "whatDesc": "The visit form covers soil, water, vegetation and community feedback.",
-      "audience": "Pilot teams, local partners and researchers",
-      "visitSteps": "Visit steps",
-      "s1_title": "Record context",
-      "s1_desc": "Record location, season, rainfall and access conditions.",
-      "s2_title": "Observe the land",
-      "s2_desc": "Review soil, water, vegetation and erosion evidence.",
-      "s3_title": "Listen locally",
-      "s3_desc": "Review needs and delivery gaps with participants.",
-      "s4_title": "Record the result",
-      "s4_desc": "Record findings, limitations and next steps in the run manifest.",
+      "title": "Farm visit",
+      "lead": "A guide to observing the pilot sites and recording what you see.",
+      "provenanceLabel": "Source of the claim",
+      "whatTitle": "What this is",
+      "whatLead": "Requesting a visit, and what happens next.",
+      "whatDesc": "A visit request is posted to the gateway. No date is promised until the request has been answered.",
+      "audience": "Farmers, cooperatives, researchers and the teams hosting visits",
+      "visitSteps": "The steps of a visit",
+      "s1_title": "Agree the purpose",
+      "s1_desc": "What the visit is for, agreed before anyone travels.",
+      "s2_title": "Record the site",
+      "s2_desc": "The location, with the coordinates the gateway holds.",
+      "s3_title": "Observe",
+      "s3_desc": "What was seen, recorded against the site rather than remembered later.",
+      "s4_title": "Submit the observation",
+      "s4_desc": "The observation is posted to the gateway, which stores it against the site.",
       "scheduleVisit": "Request a visit",
-      "evidenceItems": [
-        "Soil/water/carbon protocol",
-        "Community consent form",
-        "Visit context record"
-      ],
-      "limitsItems": [
-        "Seasonal access limits",
-        "Translated forms need review",
-        "Field data depends on local consent"
-      ],
-      "nextItems": [
-        "Publish visit reports",
-        "Record the next step in the run manifest",
-        "Review seasonally"
-      ]
+      "body": "The visit request is posted to the gateway.",
+      "visitNote": "No date is promised until the request has been answered."
     }
   },
   "offline": {
@@ -447,13 +529,16 @@
     "retry": "Try again"
   },
   "layout": {
-    "mainNav": "Main navigation"
+    "mainNav": "Main navigation",
+    "language": "Language"
   },
   "nav": {
     "home": "Home",
     "science": "Science",
     "market": "Marketplace",
-    "status": "Status"
+    "status": "Status",
+    "modelCount": "Model count",
+    "about": "About"
   },
   "home": {
     "title": "HyDroMa Nojin — Landscape restoration platform",
@@ -482,7 +567,8 @@
     "enterPublic": "Enter public pages",
     "enterMarketplace": "Enter the marketplace",
     "languageLabel": "Language",
-    "comingSoon": "coming soon"
+    "comingSoon": "coming soon",
+    "waveLabel": "wave"
   },
   "statusLine": {
     "beneficiaries": "Beneficiaries",
@@ -493,6 +579,12 @@
     "noData": "after pilot",
     "realData": "Live data from the backend",
     "unavailable": "Unavailable"
+  },
+  "search": {
+    "label": "Search this catalogue",
+    "placeholder": "Type a term",
+    "submit": "Search",
+    "noResults": "No result for “{term}”. The gateway matched nothing for that term."
   },
   "statusPage": {
     "title": "System status",
@@ -511,7 +603,15 @@
     "rows": "rows",
     "landProfileList": "Registered land profiles (live data)",
     "noLandProfiles": "No land profile has been recorded in the database yet.",
-    "emptyDbNote": "The database is connected but has no real records yet, so every counter is zero — no placeholder value is substituted."
+    "emptyDbNote": "The database is connected but has no real records yet, so every counter is zero — no placeholder value is substituted.",
+    "notFoundTitle": "Page not found",
+    "notFoundDetail": "The address you followed does not exist in this locale. The language switcher above returns to a page that does.",
+    "notFoundHome": "Return home",
+    "science": "Scientific services",
+    "storage": "Storage",
+    "operational": "Operational",
+    "available": "Available",
+    "requestUnavailable": "The request could not be completed at this time."
   },
   "market": {
     "title": "Marketplace",
@@ -717,9 +817,10 @@
     },
     "escrow": {
       "title": "Escrow",
+      "escrowStatus": "The escrow state the gateway reports.",
       "amount": "Amount",
       "contractHash": "Contract hash",
-      "orderId": "Order ID",
+      "orderId": "Order id",
       "parties": "Parties",
       "buyer": "Buyer",
       "seller": "Seller",
@@ -728,17 +829,17 @@
       "eventTimeline": "Event timeline",
       "signed": "Signed",
       "notSigned": "Not signed",
-      "escrowComplete": "Escrow is complete.",
+      "escrowComplete": "The escrow is complete.",
       "releaseFunds": "Release funds",
-      "cancelEscrow": "Cancel escrow",
-      "openDispute": "Open dispute",
-      "dataUnavailable": "Live escrow data is unavailable; this record is shown as demo data.",
-      "confirmRelease": "Release funds?",
-      "confirmReleaseDesc": "This action is allowed only after authorization and a contract review.",
+      "cancelEscrow": "Cancel the escrow",
+      "openDispute": "Open a dispute",
+      "dataUnavailable": "Live escrow data is unavailable; the current detail shown comes from the demo record.",
+      "confirmRelease": "Release the funds?",
+      "confirmReleaseDesc": "This action only proceeds after authorisation and a review of the conditions.",
       "confirmReleaseButton": "Confirm release",
-      "escrowProvenance": "Escrow source",
-      "released": "Funds released",
-      "cancelled": "Escrow cancelled"
+      "escrowProvenance": "Source of the escrow",
+      "released": "The funds were released",
+      "cancelled": "The escrow was cancelled"
     }
   },
   "common": {
@@ -766,7 +867,8 @@
     "signed": "Signed",
     "pending": "Pending",
     "cancel": "Cancel",
-    "released": "Released"
+    "released": "Released",
+    "static": "Content"
   },
   "a11y": {
     "skipToContent": "Skip to main content"
@@ -820,7 +922,18 @@
     "languages": {
       "fa": "Persian",
       "en": "English",
-      "ar": "Arabic"
+      "ar": "Arabic",
+      "it": "Italiano",
+      "ru": "Русский",
+      "ur": "اردو",
+      "de": "Deutsch",
+      "es": "Español",
+      "fr": "Français",
+      "hi": "हिन्दी",
+      "ms": "Bahasa Melayu",
+      "pt": "Português",
+      "zh": "中文",
+      "bn": "বাংলা"
     },
     "errors": {
       "forbidden": "The request was rejected by the session boundary. Reload the page and try again.",
@@ -895,5 +1008,1395 @@
       "source": "bff:/api/auth/session",
       "method": "HttpOnly session cookie"
     }
+  },
+  "pageMeta": {
+    "public-audiences-cooperatives": {
+      "title": "Cooperatives",
+      "description": "Registered applications and the real marketplace counters."
+    },
+    "public-audiences-farmers": {
+      "title": "Farmers",
+      "description": "Registered applications and the land profiles present in the database."
+    },
+    "public-audiences-government": {
+      "title": "Government",
+      "description": "Registered applications and the real database counters."
+    },
+    "public-audiences-investors": {
+      "title": "Investors",
+      "description": "Registered applications and real project counters; no return is claimed."
+    },
+    "public-audiences-ngos": {
+      "title": "NGOs",
+      "description": "Registered applications and the real indicator status."
+    },
+    "public-audiences-researchers": {
+      "title": "Research",
+      "description": "The model registry and the scientific reference behind each model."
+    },
+    "public-channels": {
+      "title": "Access channels",
+      "description": "The real status of the USSD, voice and synchronisation channels."
+    },
+    "public-components-api-playground": {
+      "title": "API playground",
+      "description": "An interactive console for testing endpoints."
+    },
+    "public-components-dispute-resolution": {
+      "title": "Dispute resolution",
+      "description": "No dispute list is registered in the gateway; no case and no verdict are shown."
+    },
+    "public-components-ecowallet": {
+      "title": "EcoWallet",
+      "description": "A presentation of the digital wallet features."
+    },
+    "public-components-hydroma-engine": {
+      "title": "HydroMa engine",
+      "description": "A presentation of the scientific engine modules."
+    },
+    "public-components-land-profiler": {
+      "title": "Land profiler",
+      "description": "Land analysis and management scenarios."
+    },
+    "public-components-marketplace": {
+      "title": "Marketplace",
+      "description": "A demonstration of the marketplace features."
+    },
+    "public-components-mrv-dashboard": {
+      "title": "MRV dashboard",
+      "description": "A presentation of monitoring, reporting and verification."
+    },
+    "public-components-satellite-view": {
+      "title": "Satellite view",
+      "description": "Satellite data layers and visualisation."
+    },
+    "public-cta": {
+      "title": "Take part",
+      "description": "Available paths as real endpoints, and a form that posts to the gateway."
+    },
+    "public-education-advanced-search": {
+      "title": "Advanced search",
+      "description": "Multi-criteria search in the education library."
+    },
+    "public-education-certifications": {
+      "title": "Certification programmes",
+      "description": "No certificate register is registered in the gateway; no certificate is shown."
+    },
+    "public-education-courses": {
+      "title": "Courses",
+      "description": "The course service is not registered in the gateway; published content is findable in the library."
+    },
+    "public-education-glossary": {
+      "title": "Bilingual glossary",
+      "description": "A searchable bilingual technical glossary."
+    },
+    "public-education-library": {
+      "title": "Education library",
+      "description": "Search the published learning content."
+    },
+    "public-education-library-advanced": {
+      "title": "Advanced library",
+      "description": "Broad content search and the real scientific term groups."
+    },
+    "public-education-video-player": {
+      "title": "Video player",
+      "description": "The video service is not registered in the gateway; no player and no subtitles load."
+    },
+    "public-education-workshops": {
+      "title": "Workshops",
+      "description": "No workshop calendar is registered in the gateway; no dates or capacities are shown."
+    },
+    "public-goals-impact": {
+      "title": "Impact",
+      "description": "The real counters of registered applications; no verified metric is claimed."
+    },
+    "public-goals-manifesto": {
+      "title": "Manifesto",
+      "description": "The registered phases and the limits that constrain the path today."
+    },
+    "public-goals-mission": {
+      "title": "Mission",
+      "description": "The ledger network and contract data the gateway returns."
+    },
+    "public-goals-roadmap": {
+      "title": "Roadmap",
+      "description": "The registered phase barriers and phases in the tool registry."
+    },
+    "public-goals-values": {
+      "title": "Values",
+      "description": "The real status of access through feature phones, from the USSD and voice routes."
+    },
+    "public-goals-vision": {
+      "title": "Vision",
+      "description": "The domains registered in the tool registry."
+    },
+    "public-home": {
+      "title": "Ecological monitoring and decision platform",
+      "description": "Soil, water, climate and carbon monitoring on a scientific basis."
+    },
+    "public-model-count": {
+      "title": "Model count",
+      "description": "The number and status of the registered scientific models."
+    },
+    "public-policy-accessibility": {
+      "title": "Accessibility statement",
+      "description": "No accessibility slug is registered in legal-texts, so no conformance status is shown."
+    },
+    "public-policy-cookies": {
+      "title": "Cookie policy",
+      "description": "The cookie policy text is read from the published legal-texts record."
+    },
+    "public-policy-governance": {
+      "title": "Governance structure",
+      "description": "No governance slug is registered in legal-texts, so no structure is shown."
+    },
+    "public-policy-licensing": {
+      "title": "Open-source licences",
+      "description": "No licensing slug is registered in legal-texts, so no licence inventory is shown."
+    },
+    "public-policy-privacy": {
+      "title": "Privacy policy",
+      "description": "The privacy policy text is read from the published legal-texts record."
+    },
+    "public-policy-terms": {
+      "title": "Terms of service",
+      "description": "The terms text and its version history are read from the legal-texts service."
+    },
+    "public-science-benchmarks": {
+      "title": "Benchmarks",
+      "description": "Real formula verification results against published references."
+    },
+    "public-science-case-studies": {
+      "title": "Case studies",
+      "description": "The registered scientific reference behind each model."
+    },
+    "public-science-data-sources": {
+      "title": "Data sources",
+      "description": "A data-source catalogue with status and licensing."
+    },
+    "public-science-evidence-base": {
+      "title": "Scientific evidence base",
+      "description": "Curated scientific evidence with DOI and verification status."
+    },
+    "public-science-gap-analysis": {
+      "title": "Gap analysis",
+      "description": "The registered validity domain and limits per model."
+    },
+    "public-science-limitations": {
+      "title": "Limitations",
+      "description": "Known limitations of the models and the data."
+    },
+    "public-science-methodology": {
+      "title": "Methodology",
+      "description": "Standards and scientific computation methods."
+    },
+    "public-science-peer-review": {
+      "title": "Peer review",
+      "description": "A registered scientific reference per model; no published review report exists."
+    },
+    "public-science-reproducibility": {
+      "title": "Reproducibility",
+      "description": "The registered shared runs and the real DOI issuance status."
+    },
+    "public-science-uncertainty": {
+      "title": "Uncertainty",
+      "description": "The declared limits and the real formula-verification status."
+    },
+    "public-science-validation": {
+      "title": "Validation tools",
+      "description": "Data and model quality checks."
+    },
+    "public-science-validation-methods": {
+      "title": "Validation methods",
+      "description": "Scientific methods for validating models."
+    },
+    "public-services-satellite-intelligence": {
+      "title": "Satellite intelligence",
+      "description": "Satellite data products and endpoints."
+    },
+    "public-visit": {
+      "title": "Farm visit",
+      "description": "The visit request is posted to the gateway; no scheduled visit is shown."
+    },
+    "public-why": {
+      "title": "Why this platform",
+      "description": "The problem, the solution and the checkable evidence."
+    },
+    "marketplace-market-cart-product_id": {
+      "title": "Cart item",
+      "description": "A single cart line, resolved from its identifier at request time."
+    },
+    "marketplace-market-producers": {
+      "title": "Producers",
+      "description": "The producers the marketplace has registered, with the verification state recorded for each."
+    },
+    "marketplace-market-stats": {
+      "title": "Marketplace statistics",
+      "description": "Counters read from the marketplace statistics endpoint, or a statement that the service could not be reached."
+    },
+    "hydroma-hydroma-carbon-credits-token_id-history": {
+      "title": "Credit history",
+      "description": "The movement history of a carbon credit, in the order the ledger records it."
+    },
+    "hydroma-hydroma-carbon-verra-registry_id": {
+      "title": "Registry record",
+      "description": "One registry record by identifier, with the state the engine reports."
+    },
+    "hydroma-hydroma-carbon-verra-standards": {
+      "title": "Registry standards",
+      "description": "The registry standards the engine implements, with the version it reports for each."
+    },
+    "hydroma-hydroma-climate-model_id-run": {
+      "title": "Climate run",
+      "description": "A climate run and the inputs the engine recorded for it."
+    },
+    "hydroma-hydroma-climate-scenarios": {
+      "title": "Climate scenarios",
+      "description": "The scenarios the engine can run, with the documented assumptions of each."
+    },
+    "hydroma-hydroma-economics-model_id-run": {
+      "title": "Economic run",
+      "description": "An economic result and the assumptions the engine recorded for it."
+    },
+    "hydroma-hydroma-elevation-grid-site_id": {
+      "title": "Elevation grid",
+      "description": "Elevation data for a site, with the source and resolution the engine records."
+    },
+    "hydroma-hydroma-hydrology-model_id-run": {
+      "title": "Hydrology run",
+      "description": "A hydrology result and the inputs the engine recorded for it."
+    },
+    "hydroma-hydroma-soil-model_id-run": {
+      "title": "Soil run",
+      "description": "A soil result and the inputs the engine recorded for it."
+    },
+    "admin-admin-content-item_id-translations": {
+      "title": "Content translations",
+      "description": "Which languages a content item is translated into, as the gateway records it."
+    },
+    "admin-admin-errors-error_id": {
+      "title": "Error record",
+      "description": "One recorded error and the context the gateway holds for it."
+    },
+    "admin-admin-errors-summary": {
+      "title": "Error summary",
+      "description": "A count of recorded errors by severity, computed from the errors the gateway actually holds."
+    },
+    "admin-admin-models": {
+      "title": "Registered models",
+      "description": "The models the gateway has registered, with the version and documentation each publishes."
+    },
+    "admin-admin-overview-health": {
+      "title": "Service health",
+      "description": "What each service reports about its own availability, read at request time."
+    },
+    "admin-admin-overview-metrics": {
+      "title": "Platform metrics",
+      "description": "Named platform metrics as the gateway reports them, with their units."
+    },
+    "admin-admin-security-audit": {
+      "title": "Security audit",
+      "description": "Audit events the gateway has recorded, with the actor and the action for each."
+    },
+    "admin-admin-security-logins": {
+      "title": "Login records",
+      "description": "Sign-in attempts the gateway has recorded, with the outcome and the address each came from."
+    },
+    "workspace-workspace-disputes-dispute_id": {
+      "title": "Dispute record",
+      "description": "One dispute by identifier, with the evidence attached and the state it has reached."
+    },
+    "workspace-workspace-finance-accounts": {
+      "title": "Finance accounts",
+      "description": "The finance accounts this workspace holds, with the state the gateway records for each."
+    },
+    "workspace-workspace-finance-idempotency-keys": {
+      "title": "Idempotency keys",
+      "description": "The idempotency keys this workspace has used, so a repeated request is recognisable as one."
+    },
+    "workspace-workspace-finance-ledger-accounts-account_id-balance": {
+      "title": "Account balance",
+      "description": "The balance the ledger holds for an account at the entry it was read at."
+    },
+    "workspace-workspace-finance-ledger-entries": {
+      "title": "Ledger entries",
+      "description": "Every ledger entry the workspace holds, in order, with the amount and direction of each."
+    },
+    "workspace-workspace-finance-ledger-profit-and-loss": {
+      "title": "Profit and loss",
+      "description": "Income and expenditure summarised from the ledger entries themselves, over the period stated."
+    },
+    "workspace-workspace-finance-ledger-trial-balance": {
+      "title": "Trial balance",
+      "description": "Debits and credits totalled from the ledger entries, and whether the two sides agree."
+    },
+    "workspace-workspace-finance-wallet": {
+      "title": "Workspace wallet",
+      "description": "The workspace wallet as the ledger records it, with the entries behind the balance."
+    },
+    "research-research-hub-runs-run_id-share": {
+      "title": "Shared run",
+      "description": "One run by identifier and the sharing state the research hub records."
+    },
+    "research-research-science-citations": {
+      "title": "Citations",
+      "description": "Citations the research hub holds, with the identifiers they resolve to."
+    },
+    "research-research-science-datasets-slug-doi": {
+      "title": "Dataset DOI",
+      "description": "The DOI recorded for a dataset, and whether it has been minted."
+    },
+    "research-research-science-model-cards": {
+      "title": "Model cards",
+      "description": "The model cards the research hub holds, with the models they document."
+    },
+    "inclusive-auth-2fa-methods": {
+      "title": "Two-factor methods",
+      "description": "The two-factor methods the account service has available."
+    },
+    "inclusive-auth-account-bio": {
+      "title": "Account biography",
+      "description": "The biography the account holder has recorded, editable by them."
+    },
+    "inclusive-auth-assets": {
+      "title": "Account assets",
+      "description": "The assets the account service has attached to an account."
+    },
+    "inclusive-auth-billing-subscription": {
+      "title": "Subscription",
+      "description": "The subscription state the billing service records, with its plan and period."
+    },
+    "inclusive-auth-billing-usage": {
+      "title": "Usage",
+      "description": "How much of the recorded allowance has been used, as the billing service reports it."
+    },
+    "inclusive-auth-export-data": {
+      "title": "Data export",
+      "description": "What the account service can export about an account, and in what form."
+    },
+    "inclusive-auth-notifications-preferences": {
+      "title": "Notification preferences",
+      "description": "The notification preferences the account service has recorded."
+    },
+    "inclusive-auth-privacy-settings": {
+      "title": "Privacy settings",
+      "description": "The privacy choices the account service has recorded for an account."
+    },
+    "inclusive-auth-referrals": {
+      "title": "Referrals",
+      "description": "Referrals recorded against an account, with the state each has reached."
+    },
+    "inclusive-auth-rewards": {
+      "title": "Rewards",
+      "description": "Rewards the account service has recorded, with the basis for each."
+    },
+    "learning-learn-content-search": {
+      "title": "Search learning content",
+      "description": "Search the published learning library. Results are whatever the index matches, with no ranking added here."
+    },
+    "learning-learn-manual-climate-normals-site_id": {
+      "title": "Climate normals",
+      "description": "Long-run climate normals for one station, with the period and baseline the figures are computed over."
+    },
+    "learning-learn-manual-crop-calendar": {
+      "title": "Crop calendar",
+      "description": "Sowing and harvest windows per crop and region, from the tables the engine ships."
+    },
+    "learning-learn-manual-crop-params": {
+      "title": "Crop parameters",
+      "description": "The parameters the models use per crop — coefficients, growth stages and stress thresholds."
+    },
+    "learning-learn-manual-sites": {
+      "title": "Reference sites",
+      "description": "The sites the manual refers to, with the coordinates the engine records for each."
+    },
+    "learning-learn-manual-sites-site_id": {
+      "title": "Site",
+      "description": "One reference site by identifier, with the fields the engine holds for it."
+    },
+    "learning-learn-manual-soil-regions": {
+      "title": "Soil regions",
+      "description": "The soil regions the manual describes, with the classification each follows."
+    },
+    "learning-learn-manual-status": {
+      "title": "Manual status",
+      "description": "What the manual service reports about its own content: what is published, what is in review."
+    },
+    "learning-learn-manual-weather-daily-site_id": {
+      "title": "Daily weather",
+      "description": "Daily weather observations for one site, in the order the service returns them, with units."
+    },
+    "learning-public-education-advanced-search": {
+      "title": "Advanced search",
+      "description": "Multi-criteria search across the learning library, with the real term groups the service indexes."
+    },
+    "learning-learn-legal": {
+      "title": "Legal texts",
+      "description": "The legal texts the platform publishes, with the locale and version each one carries."
+    },
+    "learning-learn-legal-locales": {
+      "title": "Legal locales",
+      "description": "The locales the legal texts are published in, as recorded."
+    },
+    "learning-learn-legal-slugs": {
+      "title": "Legal slugs",
+      "description": "The legal documents the platform holds, listed by slug."
+    },
+    "inclusive-auth-2fa-status": {
+      "title": "Two-factor status",
+      "description": "Whether two-factor authentication is active for this account, as the account service reports it."
+    },
+    "inclusive-auth-account-status": {
+      "title": "Account status",
+      "description": "The state the account service holds for this account, including any restriction it has applied."
+    },
+    "inclusive-auth-legacy": {
+      "title": "Legacy account data",
+      "description": "Data carried over from the previous account system, for migration review rather than daily use."
+    },
+    "inclusive-auth-me": {
+      "title": "My account",
+      "description": "The account record the service holds for this identity, exactly as it stores it."
+    },
+    "inclusive-auth-notifications": {
+      "title": "Notifications",
+      "description": "Notifications addressed to this account, in the order the service holds them."
+    },
+    "inclusive-auth-oauth-connections": {
+      "title": "Connected services",
+      "description": "Third-party services connected to this account, with the scopes each was granted."
+    },
+    "inclusive-auth-preferences": {
+      "title": "Preferences",
+      "description": "The preferences the account service has recorded for this account."
+    },
+    "inclusive-auth-preferences-extended": {
+      "title": "Extended preferences",
+      "description": "The full preference set, including the keys the service reserves for future use."
+    },
+    "inclusive-auth-profile-public": {
+      "title": "Public profile",
+      "description": "The part of your profile that is visible to others, as the service publishes it."
+    },
+    "inclusive-auth-rate-limit": {
+      "title": "Rate limit",
+      "description": "What you may still send and what remains in your window, as the service computes it."
+    },
+    "public-ai-analysis-providers": {
+      "title": "Analysis providers",
+      "description": "The analysis providers the gateway has registered, with the state it reports for each."
+    },
+    "public-ai-health": {
+      "title": "AI service health",
+      "description": "What the AI endpoints report about their own availability, read at request time."
+    },
+    "public-ai-history": {
+      "title": "Analysis history",
+      "description": "Previously recorded analyses, as the gateway holds them."
+    },
+    "public-ai-scenarios": {
+      "title": "Analysis scenarios",
+      "description": "The scenarios the gateway has registered for analysis, with their recorded state."
+    },
+    "public-ai-stream": {
+      "title": "Analysis stream",
+      "description": "The analysis event stream the gateway exposes, with the events it currently reports."
+    },
+    "public-ai-tools": {
+      "title": "AI tools",
+      "description": "The tools the AI surface exposes, listed from the registry rather than described by hand."
+    },
+    "public-ai-tools-tool_id": {
+      "title": "AI tool",
+      "description": "One tool by identifier, with the contract the gateway publishes for it."
+    },
+    "public-ai-tools-tool_id-schema": {
+      "title": "Tool schema",
+      "description": "The input schema a tool declares, exactly as the gateway returns it."
+    },
+    "public-help-personas": {
+      "title": "Reader personas",
+      "description": "The reader personas the guidance is written for, as registered."
+    },
+    "public-trust-blockchain-ecocoin-health": {
+      "title": "EcoCoin chain health",
+      "description": "What the EcoCoin endpoint reports about its own availability."
+    },
+    "public-trust-blockchain-ecocoin-stats": {
+      "title": "EcoCoin statistics",
+      "description": "Chain counters as the gateway records them at request time."
+    },
+    "public-trust-blockchain-ecocoin-wallet-user_id": {
+      "title": "EcoCoin wallet",
+      "description": "One wallet by identifier, with the balance the chain reports for it."
+    },
+    "public-trust-blockchain-health": {
+      "title": "Chain health",
+      "description": "Availability of the blockchain endpoints, read at request time."
+    },
+    "public-trust-blockchain-impact-certificate-certificate_id": {
+      "title": "Impact certificate",
+      "description": "One impact certificate by identifier, with the state recorded on chain."
+    },
+    "public-trust-blockchain-info": {
+      "title": "Chain information",
+      "description": "The chain parameters the gateway reports: network, contract addresses and status."
+    },
+    "public-trust-blockchain-oracle-metrics-activity_id": {
+      "title": "Oracle metrics",
+      "description": "Price metrics the oracle records for one activity, with its observation time."
+    },
+    "public-trust-blockchain-stats": {
+      "title": "Chain statistics",
+      "description": "Chain counters as recorded, with the block height they were read at."
+    },
+    "public-trust-blockchain-transactions": {
+      "title": "Chain transactions",
+      "description": "Transactions the gateway reports, with the fields it actually returns."
+    },
+    "public-trust-blockchain-transactions-tx_hash": {
+      "title": "Chain transaction",
+      "description": "One transaction by hash, with the state recorded on chain."
+    },
+    "public-trust-blockchain-verification": {
+      "title": "Chain verification",
+      "description": "The verification state the gateway holds for a recorded claim."
+    },
+    "public-trust-cors-proxy-status": {
+      "title": "Proxy status",
+      "description": "Whether the CORS proxy is available, read at request time."
+    },
+    "public-trust-data-availability": {
+      "title": "Data availability",
+      "description": "Which datasets the gateway can currently serve, and which it cannot."
+    },
+    "public-trust-data-freshness": {
+      "title": "Data freshness",
+      "description": "How recently each recorded dataset was updated, as the gateway reports it."
+    },
+    "public-trust-data-lineage": {
+      "title": "Data lineage",
+      "description": "Where each recorded dataset came from, as the gateway reports it."
+    },
+    "public-trust-data-quality": {
+      "title": "Data quality",
+      "description": "The quality signals the gateway computes, not a score the platform asserts."
+    },
+    "public-trust-mrv-reports": {
+      "title": "MRV reports",
+      "description": "Monitoring, reporting and verification records as the gateway holds them."
+    },
+    "public-trust-report-period-period": {
+      "title": "Period report",
+      "description": "One reporting period and the records the gateway holds for it."
+    },
+    "public-trust-transparency-log": {
+      "title": "Transparency log",
+      "description": "The disclosure and amendment history the gateway records, in the order it holds it."
+    },
+    "public-trust-blockchain-phasegate-status": {
+      "title": "Phase gate status",
+      "description": "Whether the phase gate is open, as the chain endpoint reports it at request time."
+    },
+    "public-trust-blockchain-treasury-balance": {
+      "title": "Treasury balance",
+      "description": "The treasury balance the chain records, with the block height it was read at."
+    },
+    "public-public-pilot-stats": {
+      "title": "Pilot statistics",
+      "description": "Counters for the pilot programme, as reported by the service that owns them."
+    },
+    "system-system-dashboard-public-analytics": {
+      "title": "Public analytics",
+      "description": "Aggregate figures the public dashboard publishes, with the window each one covers."
+    },
+    "system-system-dashboard-public-carbon": {
+      "title": "Public carbon dashboard",
+      "description": "Carbon figures the public dashboard publishes, with the method version the engine reports."
+    },
+    "system-system-dashboard-public-full": {
+      "title": "Full public dashboard",
+      "description": "Every panel the public dashboard publishes, in the order the service returns them."
+    },
+    "system-system-dashboard-public-mrv": {
+      "title": "Public MRV dashboard",
+      "description": "Monitoring, reporting and verification records the public dashboard exposes."
+    },
+    "system-system-dashboard-public-projects": {
+      "title": "Public projects",
+      "description": "The projects the public dashboard lists, with the state each one is recorded in."
+    },
+    "system-system-dashboard-public-satellite": {
+      "title": "Public satellite dashboard",
+      "description": "Satellite layers the public dashboard serves, with the acquisition time of each."
+    },
+    "system-system-dashboard-public-simulations": {
+      "title": "Public simulations",
+      "description": "The simulation runs the public dashboard publishes, with the parameters each was run with."
+    },
+    "system-system-dashboard-public-soil": {
+      "title": "Public soil dashboard",
+      "description": "Soil measurements the public dashboard publishes, with the sampling depth and date of each."
+    },
+    "system-system-dashboard-public-test": {
+      "title": "Public dashboard probe",
+      "description": "A self-check of the public dashboard pipeline, published so an outage is visible before it is reported."
+    },
+    "system-system-dashboard-public-tourism": {
+      "title": "Public tourism dashboard",
+      "description": "Tourism figures the public dashboard publishes, with the period they cover."
+    },
+    "system-system-dashboard-public-weather": {
+      "title": "Public weather dashboard",
+      "description": "Weather observations the public dashboard publishes, with the station and time of each."
+    },
+    "admin-admin-bots": {
+      "title": "Bots",
+      "description": "The bots the gateway has registered, with the state it reports for each."
+    },
+    "admin-admin-content": {
+      "title": "Content register",
+      "description": "The content the platform holds, with its publication state as recorded."
+    },
+    "admin-admin-content-item_id": {
+      "title": "Content item",
+      "description": "One content item by identifier, with its recorded state and translation coverage."
+    },
+    "admin-admin-content-item_id-versions": {
+      "title": "Content versions",
+      "description": "Every version of a content item, with the change recorded for each."
+    },
+    "admin-admin-dashboard-overview": {
+      "title": "Platform overview",
+      "description": "Platform counters read from the gateway, with no value the service did not report."
+    },
+    "admin-admin-errors": {
+      "title": "Error register",
+      "description": "The errors the gateway has recorded, with their status and route."
+    },
+    "admin-admin-health": {
+      "title": "Gateway health",
+      "description": "What the gateway reports about its own health, read at request time."
+    },
+    "admin-admin-models-name": {
+      "title": "Registered model",
+      "description": "One registered model by name, with the version and documentation the gateway publishes for it."
+    },
+    "admin-admin-overview": {
+      "title": "Platform overview",
+      "description": "Platform counters read from the gateway, with no value the service did not report."
+    },
+    "admin-admin-settings": {
+      "title": "Platform settings",
+      "description": "The settings the gateway has recorded, with the source of each value."
+    },
+    "admin-admin-telemetry": {
+      "title": "Telemetry",
+      "description": "The telemetry the gateway emits, with the interval it was collected over."
+    },
+    "admin-admin-telemetry-metrics": {
+      "title": "Telemetry metrics",
+      "description": "Named telemetry metrics as the gateway reports them, with their units."
+    },
+    "admin-admin-telemetry-traces": {
+      "title": "Telemetry traces",
+      "description": "Request traces the gateway recorded, with their status and duration."
+    },
+    "hydroma-hydroma-analyses-crop-water-req": {
+      "title": "Crop water requirement",
+      "description": "A crop water requirement estimate, with the method and inputs the model records."
+    },
+    "hydroma-hydroma-analyses-groundwater": {
+      "title": "Groundwater analysis",
+      "description": "Groundwater results with the model version and uncertainty the engine reports."
+    },
+    "hydroma-hydroma-analyses-irrigation-design": {
+      "title": "Irrigation design",
+      "description": "An irrigation design result, with the assumptions the engine recorded for it."
+    },
+    "hydroma-hydroma-analyses-runoff": {
+      "title": "Runoff analysis",
+      "description": "A runoff estimate with the model version and inputs the engine holds."
+    },
+    "hydroma-hydroma-analyses-structure-design": {
+      "title": "Structure design",
+      "description": "A structure design result and the safety factors the engine applied."
+    },
+    "hydroma-hydroma-analyses-topography": {
+      "title": "Topography analysis",
+      "description": "Topographic results as the engine computes them, with the resolution recorded."
+    },
+    "hydroma-hydroma-carbon": {
+      "title": "Carbon accounting",
+      "description": "Carbon estimates from the engine, with the method version and uncertainty shown."
+    },
+    "hydroma-hydroma-carbon-credits-balance": {
+      "title": "Carbon credit balance",
+      "description": "The credit balance the engine reports, with the projects it is attributed to."
+    },
+    "hydroma-hydroma-carbon-credits-retire": {
+      "title": "Credit retirement",
+      "description": "Retirement records the engine holds, with the quantity attributed to each."
+    },
+    "hydroma-hydroma-carbon-credits-token_id-verify": {
+      "title": "Credit verification",
+      "description": "The verification state the engine records for a credit, with the method it used."
+    },
+    "hydroma-hydroma-carbon-credits-transfer": {
+      "title": "Credit transfer",
+      "description": "Transfer records between registered accounts, as the engine recorded them."
+    },
+    "hydroma-hydroma-carbon-methods": {
+      "title": "Carbon methods",
+      "description": "The carbon accounting methods the engine implements, with their version and documentation reference."
+    },
+    "hydroma-hydroma-climate": {
+      "title": "Climate models",
+      "description": "The climate models the engine has implemented, with the version and scope each documents."
+    },
+    "hydroma-hydroma-climate-model_id": {
+      "title": "Climate model",
+      "description": "One climate model by identifier, with its version and documented scope."
+    },
+    "hydroma-hydroma-db-stats": {
+      "title": "Engine database",
+      "description": "What the engine reports about its own storage: the backend, reachability and record counts."
+    },
+    "hydroma-hydroma-economics": {
+      "title": "Economic models",
+      "description": "The economic models the engine has implemented, with the cost basis each assumes."
+    },
+    "hydroma-hydroma-economics-model_id": {
+      "title": "Economic model",
+      "description": "One economic model by identifier, with the cost basis it assumes."
+    },
+    "hydroma-hydroma-elevation-model_id": {
+      "title": "Elevation model",
+      "description": "One elevation model by identifier, with the resolution and extent it covers."
+    },
+    "hydroma-hydroma-farms": {
+      "title": "Farms",
+      "description": "Farms the engine has registered, with the area and location it records for each."
+    },
+    "hydroma-hydroma-hydrology-model_id": {
+      "title": "Hydrology model",
+      "description": "One hydrology model by identifier, with the version and calibration the engine reports."
+    },
+    "hydroma-hydroma-provenance-dataset_id": {
+      "title": "Dataset provenance",
+      "description": "Where a dataset came from, when it was acquired, and which service produced it."
+    },
+    "hydroma-hydroma-soil-model_id": {
+      "title": "Soil model",
+      "description": "One soil model by identifier, with the parameters and calibration it uses."
+    },
+    "marketplace-market-admin-orders": {
+      "title": "Order administration",
+      "description": "The order ledger the gateway exposes, with its real state and no synthetic rows."
+    },
+    "marketplace-market-admin-stats": {
+      "title": "Marketplace statistics",
+      "description": "Counters read from the marketplace statistics endpoint, or an explicit statement that the service is unreachable."
+    },
+    "marketplace-market-marketplaces": {
+      "title": "Marketplaces",
+      "description": "The marketplaces the gateway has registered, as they are actually recorded."
+    },
+    "marketplace-market-marketplaces-marketplace_id": {
+      "title": "Marketplace record",
+      "description": "One marketplace by identifier: the state the gateway holds for it, not a description of what it should be."
+    },
+    "marketplace-market-marketplaces-marketplace_id-approve": {
+      "title": "Marketplace approval queue",
+      "description": "Marketplaces awaiting approval, listed exactly as the gateway reports them."
+    },
+    "marketplace-market-marketplaces-marketplace_id-members": {
+      "title": "Marketplace members",
+      "description": "The members recorded against a marketplace, with the roles the gateway holds for them."
+    },
+    "marketplace-market-marketplaces-marketplace_id-shops": {
+      "title": "Marketplace shops",
+      "description": "Shops registered to a marketplace, as the gateway actually records them."
+    },
+    "marketplace-market-orders-order_id": {
+      "title": "Order record",
+      "description": "One order by identifier, with the state transition the gateway last recorded."
+    },
+    "marketplace-market-orders-order_id-status": {
+      "title": "Order status",
+      "description": "The current status of an order, read from the gateway at request time."
+    },
+    "marketplace-market-orders-order_id-timeline": {
+      "title": "Order timeline",
+      "description": "The recorded state history of an order, in the order the gateway returns it."
+    },
+    "marketplace-market-orders-order_id-track": {
+      "title": "Order tracking",
+      "description": "The tracking record the gateway holds for an order, with its current state."
+    },
+    "marketplace-market-payments-payment_id-escrow": {
+      "title": "Escrow record",
+      "description": "The escrow state the gateway holds for a payment, with the transitions it has recorded."
+    },
+    "marketplace-market-products": {
+      "title": "Products",
+      "description": "Products the marketplace has registered, with the price and quantity the gateway reports for each."
+    },
+    "marketplace-market-products-search": {
+      "title": "Product search",
+      "description": "Search the registered catalogue. Results are whatever the gateway matches, with no ranking invented here."
+    },
+    "marketplace-market-products-product_id": {
+      "title": "Product record",
+      "description": "One product by identifier, with the fields the gateway holds for it."
+    },
+    "marketplace-market-products-product_id-carbon-credits": {
+      "title": "Product carbon credits",
+      "description": "Carbon credits attributed to a product, with the method the gateway recorded for them."
+    },
+    "marketplace-market-products-product_id-trace": {
+      "title": "Product trace",
+      "description": "The recorded chain of custody for a product, from the entries the gateway holds."
+    },
+    "marketplace-market-shops-shop_id": {
+      "title": "Shop record",
+      "description": "One shop by identifier, with the fields the gateway actually holds for it."
+    },
+    "marketplace-market-shops-shop_id-orders": {
+      "title": "Shop orders",
+      "description": "Orders recorded against a shop, without invented totals or statuses."
+    },
+    "marketplace-market-shops-shop_id-products": {
+      "title": "Shop products",
+      "description": "Products a shop has registered, with the quantities the gateway reports."
+    },
+    "marketplace-market-shops-shop_id-stats": {
+      "title": "Shop statistics",
+      "description": "Counters read from the shop statistics endpoint for a single shop."
+    },
+    "marketplace-market-transactions": {
+      "title": "Transactions",
+      "description": "The transaction ledger the marketplace gateway exposes, as recorded."
+    },
+    "marketplace-market-transactions-transaction_id": {
+      "title": "Transaction record",
+      "description": "One transaction by identifier, with the gateway’s own record of it."
+    },
+    "marketplace-market-vendors-vendor_id": {
+      "title": "Vendor record",
+      "description": "One vendor by identifier, with the verification state the gateway records."
+    },
+    "marketplace-market-vendors-vendor_id-orders": {
+      "title": "Vendor orders",
+      "description": "Orders recorded against a vendor, with the state each one is actually in."
+    },
+    "marketplace-market-vendors-vendor_id-products": {
+      "title": "Vendor products",
+      "description": "Products a vendor has registered, with the quantities the gateway reports."
+    },
+    "marketplace-market-wallet": {
+      "title": "Marketplace wallet",
+      "description": "The wallet balance the gateway reports, or a statement that it could not be read."
+    },
+    "marketplace-market-wallet-balance": {
+      "title": "Wallet balance",
+      "description": "The balance as the gateway records it at request time."
+    },
+    "marketplace-market-wallet-history": {
+      "title": "Wallet history",
+      "description": "The recorded movement history of the wallet, in the order the gateway returns it."
+    },
+    "marketplace-market-wallet-methods": {
+      "title": "Payment methods",
+      "description": "The payment methods the gateway has enabled, as configured."
+    },
+    "marketplace-market-wallet-methods-method_id": {
+      "title": "Payment method",
+      "description": "One payment method by identifier, with its configured state."
+    },
+    "marketplace-market-wallet-payouts": {
+      "title": "Payouts",
+      "description": "Recorded payouts, with the amounts and states the gateway holds."
+    },
+    "marketplace-market-wallet-payouts-payout_id": {
+      "title": "Payout record",
+      "description": "One payout by identifier and the state the gateway last recorded for it."
+    },
+    "marketplace-market-wallet-payouts-payout_id-status": {
+      "title": "Payout status",
+      "description": "The current state of a payout, read at request time."
+    },
+    "marketplace-market-wallet-transactions": {
+      "title": "Wallet transactions",
+      "description": "Wallet movements as recorded by the gateway, with no derived balances."
+    },
+    "marketplace-market-wallet-transactions-tx_id": {
+      "title": "Wallet transaction",
+      "description": "One wallet movement by identifier and the state recorded for it."
+    },
+    "marketplace-market-wallet-verification": {
+      "title": "Wallet verification",
+      "description": "The verification state the gateway holds for a wallet, not a claim about the holder."
+    },
+    "marketplace-market-wallet-verification-methods": {
+      "title": "Verification methods",
+      "description": "The identity verification methods the gateway has configured."
+    },
+    "marketplace-market-wallet-verification-methods-method_id": {
+      "title": "Verification method",
+      "description": "One verification method by identifier and its configured state."
+    },
+    "marketplace-market-villages-b2b-demands-my": {
+      "title": "My village demands",
+      "description": "Procurement demands recorded for the villages you belong to, as the gateway holds them."
+    },
+    "marketplace-market-villages-b2b-matches-village_id": {
+      "title": "Village matches",
+      "description": "Suppliers a procurement demand was matched with, with the score the gateway computed."
+    },
+    "marketplace-market-villages-entrepreneurs": {
+      "title": "Village entrepreneurs",
+      "description": "Entrepreneurs the gateway has registered against a village, as recorded."
+    },
+    "marketplace-market-villages-entrepreneurs-me": {
+      "title": "My entrepreneur record",
+      "description": "The entrepreneur record held for your account, with the fields the gateway stores."
+    },
+    "marketplace-market-villages-investments": {
+      "title": "Village investments",
+      "description": "Investments recorded against villages, with the amounts the gateway reports."
+    },
+    "marketplace-market-villages-nomadic-communities": {
+      "title": "Nomadic communities",
+      "description": "Pastoralist communities the gateway has registered, with the settlements it records for them."
+    },
+    "marketplace-market-villages-opportunities": {
+      "title": "Village opportunities",
+      "description": "Opportunities the gateway has published for villages, with their recorded state."
+    },
+    "marketplace-market-villages-opportunities-opportunity_id-team": {
+      "title": "Opportunity team",
+      "description": "The team recorded against an opportunity, with the roles the gateway holds for each."
+    },
+    "marketplace-market-villages-projects-project_id-engaged": {
+      "title": "Engaged villages",
+      "description": "The villages recorded as engaged with a project, with the role each one holds."
+    },
+    "marketplace-market-villages-village_id": {
+      "title": "Village record",
+      "description": "One village by identifier, with the fields the gateway records for it."
+    },
+    "research-research-hub-runs": {
+      "title": "Research runs",
+      "description": "Reproduction runs recorded in the research hub, with their state."
+    },
+    "research-research-hub-shared": {
+      "title": "Shared runs",
+      "description": "Runs the account has chosen to share, as recorded."
+    },
+    "research-research-science-agrovoc": {
+      "title": "Agrovoc terms",
+      "description": "Controlled vocabulary terms, as the terminology service returns them."
+    },
+    "research-research-science-citations-index": {
+      "title": "Citation index",
+      "description": "The citation index the research hub maintains, with its coverage stated."
+    },
+    "research-research-science-datasets": {
+      "title": "Research datasets",
+      "description": "Datasets the research hub has registered, with their access state."
+    },
+    "research-research-science-zenodo-status": {
+      "title": "Zenodo status",
+      "description": "The state of the Zenodo integration, as the research hub reports it."
+    },
+    "system-system-analytics-activity-timeline": {
+      "title": "Activity timeline",
+      "description": "The activity the gateway has recorded, in the order it happened."
+    },
+    "system-system-analytics-carbon-summary": {
+      "title": "Carbon summary",
+      "description": "Carbon counters as the analytics service computed them, with its window stated."
+    },
+    "system-system-analytics-ndvi-trends": {
+      "title": "NDVI trends",
+      "description": "Vegetation index trends as the analytics service holds them, with the period each covers."
+    },
+    "system-system-analytics-overview": {
+      "title": "Analytics overview",
+      "description": "The analytics counters the service reports, and the window they cover."
+    },
+    "system-system-analytics-performance-metrics": {
+      "title": "Performance metrics",
+      "description": "Latency and throughput as the service measured them, with the sample stated."
+    },
+    "system-system-analytics-scenario-impact": {
+      "title": "Scenario impact",
+      "description": "What the analytics service computed for a scenario, with the assumptions it used."
+    },
+    "system-system-analytics-soil-trends": {
+      "title": "Soil trends",
+      "description": "Soil measurements over time, as the analytics service holds them."
+    },
+    "system-system-automation-agent-run": {
+      "title": "Agent run",
+      "description": "One agent run and what it recorded, including a failed run."
+    },
+    "system-system-automation-health": {
+      "title": "Automation health",
+      "description": "Whether the automation services are available, read at request time."
+    },
+    "system-system-dashboard-data": {
+      "title": "System dashboard data",
+      "description": "The counters the dashboard shows, each traceable to the service that produced it."
+    },
+    "system-system-dashboard-recommendations-farm_id": {
+      "title": "Farm recommendations",
+      "description": "Recommendations the engine computed for a farm, with the assumptions it used for each."
+    },
+    "system-system-events": {
+      "title": "System events",
+      "description": "Events the gateway has recorded, with their type and time."
+    },
+    "system-system-iot-devices": {
+      "title": "Connected devices",
+      "description": "Devices the gateway has registered, with the last reading time it holds for each."
+    },
+    "system-system-iot-devices-device_id": {
+      "title": "Device record",
+      "description": "One device by identifier, with the state the gateway records for it."
+    },
+    "system-system-iot-devices-device_id-readings": {
+      "title": "Device readings",
+      "description": "The readings a device has reported, in the order the gateway holds them, with their units."
+    },
+    "system-system-jobs": {
+      "title": "Background jobs",
+      "description": "The background jobs the gateway has run, with the state each finished in."
+    },
+    "system-system-jobs-job_id": {
+      "title": "Background job",
+      "description": "One job by identifier, with its recorded output or its recorded failure."
+    },
+    "system-system-logs": {
+      "title": "System logs",
+      "description": "Gateway log records, with the severity and route each was emitted for."
+    },
+    "workspace-workspace-analytics": {
+      "title": "Workspace analytics",
+      "description": "Counters for the signed-in workspace, computed from the records it holds."
+    },
+    "workspace-workspace-analytics-usage": {
+      "title": "Usage analytics",
+      "description": "How the workspace has actually been used, as its own records show."
+    },
+    "workspace-workspace-carbon": {
+      "title": "Workspace carbon",
+      "description": "Carbon figures for the workspace’s own recorded activities."
+    },
+    "workspace-workspace-carbon-credits": {
+      "title": "Workspace carbon credits",
+      "description": "Credits attributed to the workspace, with the projects they came from."
+    },
+    "workspace-workspace-commerce-orders": {
+      "title": "Commerce orders",
+      "description": "Orders in this workspace, with the state each one is actually in."
+    },
+    "workspace-workspace-commerce-orders-order_id": {
+      "title": "Commerce order",
+      "description": "One order by identifier, with its recorded state and the transitions it has passed through."
+    },
+    "workspace-workspace-commerce-orders-order_id-transitions": {
+      "title": "Order transitions",
+      "description": "The state transitions an order has actually been through, in the order recorded."
+    },
+    "workspace-workspace-dashboard": {
+      "title": "Workspace dashboard",
+      "description": "The workspace’s own recorded figures, grouped by the kind of activity."
+    },
+    "workspace-workspace-disputes": {
+      "title": "Disputes",
+      "description": "Disputes raised in this workspace and the state each has reached."
+    },
+    "workspace-workspace-documents": {
+      "title": "Documents",
+      "description": "The documents this workspace holds, with their recorded state."
+    },
+    "workspace-workspace-notifications": {
+      "title": "Notifications",
+      "description": "Notifications addressed to this workspace, as recorded."
+    },
+    "workspace-workspace-profile": {
+      "title": "Workspace profile",
+      "description": "The profile this workspace has registered for itself."
+    },
+    "workspace-workspace-settings": {
+      "title": "Workspace settings",
+      "description": "The settings recorded for this workspace, with the source of each value."
+    },
+    "inclusive-auth-achievements": {
+      "title": "Achievements",
+      "description": "Achievements recorded against an account, with the criteria each was granted for."
+    },
+    "inclusive-auth-activity-history": {
+      "title": "Activity history",
+      "description": "What the account service has recorded as activity on an account."
+    },
+    "inclusive-auth-api-keys": {
+      "title": "API keys",
+      "description": "The API keys an account holds, with the scopes and created dates recorded."
+    },
+    "inclusive-auth-api-keys-key_id": {
+      "title": "API key",
+      "description": "One API key by identifier, with its scopes and last-used record."
+    },
+    "learning-learn-legal-locale-slug": {
+      "title": "Legal text",
+      "description": "One legal text in one locale, with the version the record carries."
+    },
+    "learning-learn-legal-locale-slug-versions": {
+      "title": "Version history",
+      "description": "Every version of a legal text, with the change recorded for each."
+    }
+  },
+  "pages": {
+    "research": {
+      "hubRuns": {
+        "noKey": "This feed is keyed by an anonymous client key. No user_key is present in this address, so no request was sent.",
+        "keyHint": "To read a key's runs, add its user_key to this address as a parameter, e.g. ?user_key=…"
+      }
+    }
+  },
+  "footer": {
+    "sitemap": "Sitemap",
+    "techStack": "Built for broad accessibility",
+    "navTitle": "Public links"
+  },
+  "surface": {
+    "back": "Back",
+    "unverifiedNote": "The gateway reported these values but did not mark them verified. A reported value is not a measured one: the platform shows what the gateway returned and claims nothing further.",
+    "verifiedNote": "The gateway marked this pass verified.",
+    "shapeNote": "The published contract for this path declares no fields, so the values below appear exactly as the gateway returned them and under the gateway's own key names. Nothing on this page is translated, rounded or verified.",
+    "emptyTitle": "Nothing was returned",
+    "emptyDescription": "The gateway answered but had nothing to show with it.",
+    "dashboards": {
+      "emptyTitle": "The gateway returned no dashboard data",
+      "emptyDescription": "The dashboard path answered but carried no data field.",
+      "full": {
+        "title": "Full public dashboard",
+        "description": "The whole public dashboard response in one answer."
+      },
+      "projects": {
+        "title": "Carbon projects",
+        "description": "The public list of projects the gateway reports."
+      },
+      "carbon": {
+        "title": "Carbon",
+        "description": "The public carbon summary the gateway reports."
+      },
+      "analytics": {
+        "title": "Platform analytics",
+        "description": "The public analytics counters the gateway reports."
+      },
+      "weather": {
+        "title": "Weather",
+        "description": "The public weather summary the gateway reports."
+      },
+      "satellite": {
+        "title": "Satellite",
+        "description": "The public satellite summary the gateway reports."
+      },
+      "soil": {
+        "title": "Soil",
+        "description": "The public soil summary the gateway reports."
+      },
+      "mrv": {
+        "title": "Measurement, reporting and verification",
+        "description": "The public MRV summary the gateway reports."
+      },
+      "simulations": {
+        "title": "Simulations",
+        "description": "The public simulation summary the gateway reports."
+      },
+      "tourism": {
+        "title": "Tourism",
+        "description": "The public tourism summary the gateway reports."
+      },
+      "test": {
+        "title": "Router reachability",
+        "description": "The gateway reports whether this router is serving. It is a reachability check, not a claim about the platform."
+      }
+    },
+    "market": {
+      "emptyTitle": "The gateway returned no data",
+      "emptyDescription": "The path answered but had nothing to show.",
+      "stats": {
+        "title": "Marketplace statistics",
+        "description": "Counters read from the marketplace statistics endpoint."
+      },
+      "producers": {
+        "title": "Producers",
+        "description": "The producers the marketplace has registered."
+      }
+    },
+    "content": {
+      "title": "Content search",
+      "description": "Search the published learning library.",
+      "searchTitle": "Search content",
+      "searchLabel": "Search content",
+      "searchPlaceholder": "A word or phrase",
+      "searchSubmit": "Search",
+      "resultsFor": "Results for “{search}”",
+      "noResults": "Nothing matched “{search}”.",
+      "emptyDescription": "The gateway answered but had nothing to show with it."
+    }
+  },
+  "why": {
+    "title": "Why Eco Nojin?",
+    "lead": "This page says only what the checks that were run and the gateway counters support. Anything the platform cannot demonstrate is declared unavailable rather than filled in.",
+    "problemTitle": "The problem",
+    "problemBody": "Smallholders make the majority of the food that is eaten, and they are the group least served by the data and advice available to them. Soil, water and climate decisions are made under uncertainty, without a record of what was decided or why.",
+    "solutionTitle": "The solution",
+    "solutionBody": "One platform that puts the scientific record next to the field: models that name their version, provenance for every value, and a market that pays for what is actually grown.",
+    "evidenceTitle": "What makes it checkable",
+    "evidenceBody": "Every figure on this platform carries its source, its method version and the limits the method declares. Where a value is reported rather than measured, the page says so rather than presenting the two as the same thing.",
+    "limitsTitle": "What it does not do",
+    "limitsBody": "It does not replace local knowledge, and it does not claim a yield increase it has not measured. A model that does not apply to your soil is shown as not applying to your soil.",
+    "whatTitle": "What this platform is",
+    "whatLead": "One integrated ecological intelligence platform: a scientific engine, an API gateway, an offline-first client and an event bus.",
+    "whatDesc": "Soil, hydrology, climate, erosion and carbon modelling behind one contract, with a client that works without a network.",
+    "audience": "Farmers, cooperatives, researchers, planners and their funders",
+    "problem": "The problem",
+    "solution": "This platform’s answer",
+    "problemSolutionTable": "Problem and answer",
+    "provenanceLabel": "Source of the claim",
+    "problemRows": [
+      {
+        "problem": "A farmer offline cannot reach a dashboard that assumes a connection.",
+        "solution": "The client holds the reference datasets and declares which surface is unavailable rather than showing a stale number as a current one."
+      },
+      {
+        "problem": "A model result arrives with no way to tell a measurement from an estimate.",
+        "solution": "Every surface carries a provenance stamp naming the source, the method, and whether the value is verified."
+      },
+      {
+        "problem": "A claim with no executed check behind it.",
+        "solution": "The only source of the platform’s claims is the verification suite, and its result is read live from the gateway."
+      }
+    ],
+    "evidenceItems": [
+      "Every claim on this page is read at request time from the executed verification suite, not from a stored summary.",
+      "The result shown is the result of the run, including a failing run."
+    ],
+    "limitsItems": [
+      "A model that does not apply to your soil is shown as not applying to your soil.",
+      "Where a value is reported rather than measured, the page says so rather than presenting the two as the same thing."
+    ],
+    "nextItems": [
+      "Read the methodology and the assumptions behind each model.",
+      "Check the verification suite, including its failures."
+    ]
+  },
+  "manual": {
+    "title": "Field manual",
+    "lead": "Reference tables and guides for the work itself.",
+    "sites": {
+      "title": "Reference climate sites",
+      "description": "Sites registered in the reference dataset, with location, elevation and climate classification. Every column is a field the gateway returns.",
+      "emptyTitle": "The site dataset is empty",
+      "emptyDescription": "The gateway answered but returned no rows.",
+      "searchTitle": "Site search",
+      "searchLabel": "Search sites",
+      "searchPlaceholder": "Site id, country or province",
+      "searchSubmit": "Search",
+      "searchHint": "The gateway searches the site_id, country and province fields with one value.",
+      "searching": "Search results for “{search}”",
+      "emptySearch": "No site matched “{search}”."
+    },
+    "cropCalendar": "Crop calendar",
+    "cropParams": "Crop parameters",
+    "climateNormals": "Climate normals",
+    "weatherDaily": "Daily weather",
+    "soilRegions": "Soil regions",
+    "status": {
+      "title": "Manual status",
+      "description": "What the manual service reports about its own content.",
+      "back": "Back",
+      "present": "Published",
+      "missing": "Not yet written",
+      "missingDescription": "This section is declared in the catalogue but has no text yet.",
+      "size": "Size",
+      "tables": "Tables",
+      "tableCaption": "The tables the manual holds",
+      "tableName": "Table",
+      "tableRows": "Rows",
+      "emptyDescription": "The gateway answered but returned no rows."
+    },
+    "search": "Search",
+    "back": "Back to the site list",
+    "columnNote": "Column names are the dataset field names. The interface adds no unit or label the gateway did not return.",
+    "tableCaption": "Rows returned from the reference dataset",
+    "truncated": "Showing {shown} of {total} rows the gateway reported",
+    "offline": "The device is offline; the request never reached the gateway.",
+    "site": {
+      "title": "Site {siteId}",
+      "description": "The record the reference dataset holds for this site.",
+      "back": "Back to the site list",
+      "offline": "The device is offline.",
+      "related": "Datasets related to this site",
+      "relatedNormals": "Climate normals",
+      "relatedWeather": "Daily weather"
+    },
+    "normals": {
+      "title": "Climate normals",
+      "description": "Long-run averages for this site, over the period the dataset states.",
+      "emptyTitle": "No climate normals",
+      "emptyDescription": "The gateway answered but returned no rows for this site.",
+      "backToSite": "Back to the site"
+    },
+    "weather": {
+      "title": "Daily weather",
+      "description": "Daily observations for this site, with the station and time of each.",
+      "emptyTitle": "No weather observations",
+      "emptyDescription": "The gateway answered but returned no rows for this site.",
+      "backToSite": "Back to the site"
+    },
+    "crops": {
+      "title": "Crop calendar",
+      "description": "Sowing and harvest windows per crop and region, from the tables the engine ships.",
+      "emptyTitle": "No crop calendar",
+      "emptyDescription": "The gateway answered but returned no rows."
+    },
+    "soil": {
+      "title": "Soil regions",
+      "description": "The soil regions the manual describes, with the classification each follows.",
+      "emptyTitle": "No soil regions",
+      "emptyDescription": "The gateway answered but returned no rows."
+    },
+    "calendar": {
+      "title": "Growing calendar",
+      "description": "The growing window per crop, as the engine reports it.",
+      "emptyTitle": "No growing calendar",
+      "emptyDescription": "The gateway answered but returned no rows."
+    }
+  },
+  "sponsors": {
+    "title": "Partners",
+    "lead": "The organisations whose contracts and data make these figures possible.",
+    "empty": "No partners are listed yet.",
+    "show": "Show",
+    "region_label": "Funding disclosure",
+    "disclosure": "This section is funded by {sponsor}.",
+    "policy_title": "Sponsorship policy",
+    "policy_intro": "Sponsorship means a named supporter is recognised for work this platform does. It is not advertising.",
+    "no_ads": "We run no algorithmic advertising. There is no ad network, no third-party ad SDK, no view tracking and no behavioural targeting in this product.",
+    "no_targeting": "A sponsorship response carries no user, device or referrer data, so there is no customisable advertising surface.",
+    "contextual": "A sponsor acknowledgement appears only on the service surface the sponsor funded. It never appears next to a recommendation we give a farmer.",
+    "no_advisory": "There is no sponsor placement on agronomy, payment, settlement or low-bandwidth surfaces.",
+    "transparency": "Every current sponsor is listed on this page, including any that has been suspended or ended, with the reason.",
+    "green_claims": "Every sponsor re-confirms quarterly that its own environmental claims are still documented. A sponsor that does not is suspended.",
+    "current_sponsors": "Current sponsors",
+    "become": "How sponsorship works",
+    "none": "No sponsor is listed at present."
   }
 }

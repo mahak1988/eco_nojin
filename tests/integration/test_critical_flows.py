@@ -1,8 +1,5 @@
 """Integration tests for critical infrastructure and security flows.
 
-Uses an isolated in-memory SQLite database to avoid schema drift
-with the file-based development database.
-
 Note: auth register/login flows are tested in services/auth/tests/
 because the auth router currently depends on a sync session generator
 (hub.get_session()) which is not thread-safe for async FastAPI test
@@ -12,30 +9,41 @@ clients. Those unit tests cover auth end-to-end with async fixtures.
 from __future__ import annotations
 
 import os
-import sys
-
-os.environ["DATABASE_URL"] = "sqlite:///:memory:"
-
-for mod_name in list(sys.modules):
-    if mod_name.startswith("database.hub"):
-        del sys.modules[mod_name]
-
-from database.hub.hub import DataHub
-
-DataHub._instance = None  # type: ignore[attr-defined]
 
 import pytest
 from fastapi.testclient import TestClient
 
-from database.base import Base
-from database.hub import hub
 from services.api_gateway.main import app
 
-engine = hub.get_sqlalchemy_engine()
-Base.metadata.drop_all(bind=engine)
-Base.metadata.create_all(bind=engine)
-
+# This module used to do global surgery at import time, which poisoned every
+# xdist worker for the rest of its run:
+#
+#   os.environ["DATABASE_URL"] = "sqlite:///:memory:"   # never restored
+#   sys.modules.pop("database.hub*")                     # purge the module
+#   DataHub._instance = None                              # kill the singleton
+#   reset_database()                                      # at import, not per test
+#
+# `DataHub` is a `__new__` singleton whose engines are created *lazily* from
+# `os.environ["DATABASE_URL"]` on first use. Repointing the env var at
+# `:memory:` therefore produced a second singleton whose async engine used a
+# different in-memory database from its sync one -- and with aiosqlite those are
+# genuinely separate, so the schema the sync engine created never appeared in
+# the async one. Every ASGI request in that worker then failed with
+# "no such table: users". Measured cost: 18 tests, and only in a full run,
+# because xdist performs a full collection before running anything.
+#
+# The root `conftest.py` now guarantees a per-worker database, so none of this
+# is needed. Isolation belongs in a fixture, not in an import side effect.
 client = TestClient(app)
+
+
+@pytest.fixture(autouse=True)
+def _isolated_db(clean_db):
+    """Give this module a clean schema without touching process-wide state.
+
+    Depends on ``clean_db`` for its side effect; no teardown of our own.
+    """
+    return None
 
 
 @pytest.fixture(autouse=True)

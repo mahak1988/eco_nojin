@@ -35,10 +35,28 @@ from collections.abc import AsyncGenerator, Generator
 from contextlib import asynccontextmanager, contextmanager
 from pathlib import Path
 from typing import Any, Optional
+from urllib.parse import urlsplit
 
 logger = logging.getLogger(__name__)
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+
+def normalize_database_url(url: str) -> str:
+    if url.startswith("postgres://"):
+        return "postgresql+psycopg://" + url[len("postgres://") :]
+    if url.startswith("postgresql://"):
+        return "postgresql+psycopg://" + url[len("postgresql://") :]
+    return url
+
+
+def safe_database_endpoint(url: str) -> dict[str, str | int | None]:
+    parsed = urlsplit(url)
+    return {
+        "scheme": parsed.scheme,
+        "host": parsed.hostname,
+        "port": parsed.port,
+    }
 
 
 class DataHub:
@@ -105,7 +123,9 @@ class DataHub:
             from sqlalchemy import create_engine
             from sqlalchemy.pool import QueuePool
 
-            database_url = os.environ.get("DATABASE_URL", f"sqlite:///{self.main_sqlite}")
+            database_url = normalize_database_url(
+                os.environ.get("DATABASE_URL", f"sqlite:///{self.main_sqlite}")
+            )
 
             self._sqlalchemy_engine = create_engine(
                 database_url,
@@ -132,7 +152,10 @@ class DataHub:
                     cursor.execute("PRAGMA synchronous=NORMAL")
                     cursor.close()
 
-            logger.info(f"SQLAlchemy engine created: {database_url}")
+            logger.info(
+                "SQLAlchemy engine created: %s",
+                safe_database_endpoint(database_url),
+            )
 
         return self._sqlalchemy_engine
 
@@ -209,20 +232,14 @@ class DataHub:
         if getattr(self, "_async_engine", None) is None:
             from sqlalchemy.ext.asyncio import create_async_engine
 
-            database_url = os.environ.get(
-                "DATABASE_URL",
-                f"sqlite:///{self.main_sqlite}",
+            database_url = normalize_database_url(
+                os.environ.get("DATABASE_URL", f"sqlite:///{self.main_sqlite}")
             )
 
-            # translate sync driver scheme -> async driver
             if database_url.startswith("sqlite:///"):
                 async_url = database_url.replace("sqlite:///", "sqlite+aiosqlite:///", 1)
-            elif database_url.startswith("postgresql://"):
-                async_url = database_url.replace("postgresql://", "postgresql+psycopg://", 1)
-            elif database_url.startswith("postgres://"):
-                async_url = database_url.replace("postgres://", "postgresql+psycopg://", 1)
             else:
-                async_url = database_url  # assume async-capable already
+                async_url = database_url
 
             # PostgreSQL async pool configuration
             pool_kwargs = {}
@@ -239,7 +256,10 @@ class DataHub:
                 echo=False,
                 **pool_kwargs,
             )
-            logger.info(f"Async SQLAlchemy engine created: {async_url}")
+            logger.info(
+                "Async SQLAlchemy engine created: %s",
+                safe_database_endpoint(async_url),
+            )
 
         return self._async_engine
 
@@ -293,8 +313,8 @@ class DataHub:
         """
         try:
             import duckdb
-        except ImportError:
-            raise ImportError("duckdb is not installed. Run: pip install duckdb")
+        except ImportError as exc:
+            raise ImportError("duckdb is not installed. Run: pip install duckdb") from exc
 
         if database == "master":
             db_path = self.master_duckdb
@@ -387,12 +407,12 @@ class DataHub:
         if self._redis_client is None:
             try:
                 import redis
-            except ImportError:
-                raise ImportError("redis is not installed. Run: pip install redis")
+            except ImportError as exc:
+                raise ImportError("redis is not installed. Run: pip install redis") from exc
 
             redis_url = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
             self._redis_client = redis.from_url(redis_url, decode_responses=True)
-            logger.info(f"Redis connection created: {redis_url}")
+            logger.info("Redis connection created: %s", safe_database_endpoint(redis_url))
 
         return self._redis_client
 

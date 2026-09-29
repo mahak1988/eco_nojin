@@ -1,5 +1,13 @@
 # Eco Nojin — Render Free Tier Deployment
 # Deploy: connect this repo to render.com, select "Web Service", use this file
+#
+# GATE: autoDeploy is intentionally OFF.
+# This blueprint was an ungated production path that bypassed all 11 backend CI
+# jobs and the frontend pipeline, contradicting docs/adr/0005-release-governance.md
+# ("Keep deployment disabled until the required checks are green" / "Branch builds
+# ... must not publish a package or deploy") and the Deployment section of
+# AGENTS.md. Re-enabling it requires an explicit recorded decision plus green
+# required checks. See reports/REMEDIATION_PLAN_FA_2026-09-25.md item 1.5.
 
 services:
   - type: web
@@ -9,7 +17,7 @@ services:
     plan: free
     buildCommand: "pip install -r requirements.txt"
     startCommand: "uvicorn services.api_gateway.main:app --host 0.0.0.0 --port $PORT"
-    autoDeploy: true
+    autoDeploy: false
     envVars:
       - key: PYTHON_VERSION
         value: "3.12"

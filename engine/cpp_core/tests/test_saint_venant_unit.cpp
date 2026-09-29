@@ -41,7 +41,17 @@ int main() {
         check(result.depth_m.size() == result.discharge_m3s.size(), "Depth and discharge output sizes match");
         check(!result.depth_m.empty(), "At least one output timestep was saved");
         check(result.depth_m[0].size() == static_cast<std::size_t>(opts.n_cells), "Output grid size matches input grid size");
-        check(std::abs(result.mass_balance - 1.0) < 0.1, "Mass balance is reasonable (< 10% error)"); // Relaxed check
+
+        // Conservation is now checked properly. The previous assertion was
+        // `abs(mass_balance - 1.0) < 0.1`, against a metric that was the storage
+        // ratio V_final / V_initial. With these inputs V0 = 100 m3 and the run
+        // injects Q*T = 12000 m3 with negligible outflow, so a perfect solver
+        // returns about 121 and the assertion could not be satisfied by any
+        // implementation. `mass_balance` is now the residual
+        // (V_in - V_out) - d(storage) in m3, and `mass_balance_error` is that
+        // residual normalised by the throughput, so 0 is perfect conservation.
+        check(result.mass_balance_error < 0.10,
+              "Mass balance is reasonable (< 10% error)");
     }
 
     // Test 2: Manning normal depth

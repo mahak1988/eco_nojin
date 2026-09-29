@@ -61,19 +61,20 @@ from services.inventory.routers import inventory as inventory_router
 # Import all routers
 # Import individual routers that are used later with app.include_router
 from .routers import (  # Import the new router
-    admin_users,
-    admin_content,
     admin_bots,
+    admin_content,
     admin_errors,
-    admin_settings,
     admin_models,
     admin_overview,
     admin_security,
+    admin_settings,
+    admin_users,
     ai,
-    ai_chat,
     ai_analysis,
+    ai_chat,
     analyses,
     analytics,
+    audit,
     auth,
     auth_supabase,
     automation,
@@ -112,6 +113,7 @@ from .routers import (  # Import the new router
     newsletter,
     nojin,
     organizations,
+    passkey_router,
     pilot,
     platform,
     quality,
@@ -119,6 +121,7 @@ from .routers import (  # Import the new router
     satellite,
     scenarios,
     science,
+    security_router,
     simulation,
     soil,
     support,
@@ -138,7 +141,87 @@ _settings = get_settings()
 logger.info(f"Settings loaded: app={_settings.app_name}, env={_settings.app_env}")
 
 
-app = FastAPI(title="Eco Nojin API Gateway")
+# ============================================================================
+# LIFESPAN (modern FastAPI startup/shutdown)
+#
+# Defined before the app is constructed because ``FastAPI(lifespan=...)``
+# binds the reference at construction time. Registering it after
+# ``app = FastAPI(...)`` left the whole startup/shutdown path unreachable:
+# the DB was never initialised, NATS was never connected and the carbon
+# repository was never bound.
+# ============================================================================
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Application lifespan - startup and shutdown events."""
+    # Startup
+    logger.info("=" * 60)
+    logger.info("🚀 Starting Eco Nojin API...")
+    logger.info("=" * 60)
+
+    try:
+        init_db()
+        logger.info("✅ Database initialized successfully")
+    except Exception as e:
+        logger.error(f"❌ Database init failed: {e}")
+        logger.error(traceback.format_exc())
+
+    app.state.start_time = time.time()
+
+    # Initialize NATS JetStream Event Bus
+    try:
+        if _settings.enable_event_bus:
+            await init_nats()
+            logger.info("✅ NATS JetStream Event Bus initialized")
+        else:
+            logger.info("ℹ️ NATS Event Bus disabled (ENABLE_EVENT_BUS=false)")
+    except Exception as e:
+        logger.warning(f"⚠️ NATS Event Bus not initialized: {e}")
+
+    # Marketplace singletons. These are still wired to the in-memory demo
+    # catalog: the DB repositories from services/marketplace/db_repos.py are
+    # NOT connected yet (see INTEGRATION plan, group 4). The log line states
+    # the real state instead of claiming a fully initialised marketplace.
+    try:
+        from services.marketplace.order_management import init_order_manager
+        from services.marketplace.product_catalog import init_catalog
+
+        init_catalog(seller_repo=None, product_repo=None)
+        init_order_manager(order_repo=None)
+        logger.warning(
+            "⚠️ Marketplace running on the in-memory demo catalog "
+            "(db_repos not wired yet) - do not treat as production data"
+        )
+    except Exception as e:
+        logger.warning(f"⚠️ Marketplace not initialized: {e}")
+
+    # Initialize carbon repository
+    try:
+        from engine.hydroma.carbon.calculator import set_repository as set_carbon_repository
+        from services.carbon.repository import CarbonProjectRepository
+
+        with hub.get_session() as session:
+            carbon_repo = CarbonProjectRepository(session)
+        set_carbon_repository(carbon_repo)
+        logger.info("✅ Carbon repository initialized")
+    except Exception as e:
+        logger.warning(f"⚠️ Carbon repository not initialized: {e}")
+
+    logger.info(f"🌍 CORS origins: {_settings.cors_origins}")
+    logger.info(f"📚 API docs: http://{os.environ.get('HOST', '127.0.0.1')}:8000/docs")
+    logger.info("=" * 60)
+
+    yield
+
+    # Shutdown
+    logger.info("🛑 Shutting down Eco Nojin API...")
+    try:
+        await shutdown_nats()
+        logger.info("✅ NATS JetStream Event Bus shut down")
+    except Exception as e:
+        logger.warning(f"⚠️ NATS shutdown error: {e}")
+
+
+app = FastAPI(title="Eco Nojin API Gateway", lifespan=lifespan)
 
 # Include existing routers (prefixes are defined in each router)
 app.include_router(platform.router)
@@ -150,6 +233,8 @@ app.include_router(admin_settings.router, prefix="/api/v1/admin", tags=["admin"]
 app.include_router(admin_models.router, prefix="/api/v1/admin", tags=["admin"])
 app.include_router(admin_overview.router, prefix="/api/v1/admin", tags=["admin"])
 app.include_router(admin_security.router, prefix="/api/v1/admin", tags=["admin"])
+# P1: passkey registration/authentication + step-up proofs for sensitive acts
+app.include_router(passkey_router.router)
 app.include_router(auth.router)
 app.include_router(analyses.router)
 app.include_router(auth_supabase.router)
@@ -186,90 +271,31 @@ try:
     )
 
     instrumentator.instrument(app).expose(app, endpoint="/metrics")
-    logger.info("✅ Prometheus metrics instrumentation enabled (with custom metrics)")
+
+    # Import the custom metric definitions so they are registered in the
+    # default registry. Without this, /metrics exposed only the instrumentator's
+    # own HTTP series, and the log below announced custom metrics that were in
+    # fact never imported: services/api_gateway/metrics.py — 616 lines covering
+    # Redis, PostgreSQL, sync events, C++ calls and business KPIs — had no
+    # importer anywhere in the repository.
+    try:
+        from services.api_gateway import metrics as _custom_metrics
+
+        _custom_count = len([n for n in dir(_custom_metrics) if not n.startswith("_")])
+        logger.info(
+            f"✅ Prometheus metrics enabled: HTTP series + {_custom_count} custom metric "
+            "objects registered (redis, postgres, sync, cpp, realtime, business kpi)"
+        )
+    except Exception as custom_error:
+        # S-HONEST: say plainly that the custom metrics are missing rather than
+        # letting the line above imply they are present.
+        logger.warning(
+            f"⚠️ Prometheus HTTP metrics enabled but custom metrics are NOT registered: {custom_error}"
+        )
 except ImportError:
     logger.info("ℹ️ prometheus-fastapi-instrumentator not installed, metrics endpoint disabled")
 except Exception as e:
     logger.warning(f"⚠️ Prometheus metrics setup failed: {e}")
-
-
-# ============================================================================
-# LIFESPAN (modern FastAPI startup/shutdown)
-# ============================================================================
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """Application lifespan - startup and shutdown events."""
-    # Startup
-    logger.info("=" * 60)
-    logger.info("🚀 Starting Eco Nojin API...")
-    logger.info("=" * 60)
-
-    try:
-        init_db()
-        logger.info("✅ Database initialized successfully")
-    except Exception as e:
-        logger.error(f"❌ Database init failed: {e}")
-        logger.error(traceback.format_exc())
-
-    app.state.start_time = time.time()
-
-    # Initialize NATS JetStream Event Bus
-    try:
-        if _settings.enable_event_bus:
-            await init_nats()
-            logger.info("✅ NATS JetStream Event Bus initialized")
-        else:
-            logger.info("ℹ️ NATS Event Bus disabled (ENABLE_EVENT_BUS=false)")
-    except Exception as e:
-        logger.warning(f"⚠️ NATS Event Bus not initialized: {e}")
-
-    # Initialize marketplace repositories
-    try:
-        from services.marketplace.order_management import init_order_manager
-        from services.marketplace.product_catalog import init_catalog
-        from services.marketplace.repositories.marketplace_repository import (
-            MarketplaceMemberRepository,
-            MarketplaceRepository,
-            MarketplaceShopRepository,
-        )
-
-        with hub.get_session() as session:
-            MarketplaceRepository(session)
-            MarketplaceMemberRepository(session)
-            MarketplaceShopRepository(session)
-
-        # Initialize with actual repositories (placeholder for now - will be replaced with proper repositories)
-        init_catalog(seller_repo=None, product_repo=None)
-        init_order_manager(order_repo=None)
-        logger.info("✅ Marketplace repositories initialized")
-    except Exception as e:
-        logger.warning(f"⚠️ Marketplace repositories not initialized: {e}")
-
-    # Initialize carbon repository
-    try:
-        from engine.hydroma.carbon.calculator import set_repository as set_carbon_repository
-        from services.carbon.repository import CarbonProjectRepository
-
-        with hub.get_session() as session:
-            carbon_repo = CarbonProjectRepository(session)
-        set_carbon_repository(carbon_repo)
-        logger.info("✅ Carbon repository initialized")
-    except Exception as e:
-        logger.warning(f"⚠️ Carbon repository not initialized: {e}")
-
-    logger.info(f"🌍 CORS origins: {_settings.cors_origins}")
-    logger.info(f"📚 API docs: http://{os.environ.get('HOST', '127.0.0.1')}:8000/docs")
-    logger.info("=" * 60)
-
-    yield
-
-    # Shutdown
-    logger.info("🛑 Shutting down Eco Nojin API...")
-    try:
-        await shutdown_nats()
-        logger.info("✅ NATS JetStream Event Bus shut down")
-    except Exception as e:
-        logger.warning(f"⚠️ NATS shutdown error: {e}")
 
 
 # ============================================================================
@@ -312,7 +338,11 @@ app.add_middleware(
 # RATE LIMITING + REQUEST ID + SECURITY HEADERS MIDDLEWARES
 # ============================================================================
 # Rate limit + request ID + security headers middlewares
-from services.api_gateway.middleware import IdempotencyMiddleware, LocaleMiddleware
+from services.api_gateway.middleware import (
+    IdempotencyMiddleware,
+    IdentityMiddleware,
+    LocaleMiddleware,
+)
 from services.api_gateway.security import (
     HTTPSRedirectMiddleware,
     RateLimitMiddleware,
@@ -350,9 +380,33 @@ logger.info(
     "HTTPS redirect + rate limit + security headers + request ID + CSRF + Idempotency middleware applied"
 )
 
+# Identity must be OUTSIDE Idempotency: middleware is registered last-outside,
+# so this has to be added after IdempotencyMiddleware in order to resolve
+# request.state.user_id before the idempotency scope is computed.
+app.add_middleware(IdentityMiddleware)
+
 # Locale detection middleware (must be after CORS, before auth)
 app.add_middleware(LocaleMiddleware)
 logger.info("✅ Locale detection middleware applied")
+
+# P0: the spider firewall (honeypot -> circuit breaker -> WAF -> anomaly scoring)
+# was implemented in services.security.middleware but never mounted, so those
+# layers inspected no production traffic. Mounted last => outermost => it sees
+# the request first. Rate limiting is delegated to the RateLimitMiddleware
+# mounted above, which already enforces a per-IP budget correctly.
+from services.security.middleware import SpiderFirewallMiddleware
+
+_trusted_proxies = getattr(_settings, "trusted_proxies", "") or ""
+app.add_middleware(
+    SpiderFirewallMiddleware,
+    redis_client=_redis_client,
+    enable_rate_limit=False,
+    trusted_proxies=_trusted_proxies,
+)
+logger.info(
+    "✅ Spider firewall mounted (honeypot + circuit breaker + WAF + anomaly); trusted_proxies=%s",
+    _trusted_proxies or "(none: X-Forwarded-For ignored)",
+)
 
 # OpenTelemetry tracing (optional)
 try:
@@ -502,6 +556,29 @@ app.include_router(hydroma_climate.router, tags=["hydroma-climate"])
 app.include_router(hydroma_neuro.router, tags=["plant-neuro"])
 app.include_router(iot_devices.router, tags=["iot-devices"])
 app.include_router(insurance.router, tags=["insurance"])
+
+# ============================================================================
+# SECURITY POSTURE & CARBON AUDIT
+# ============================================================================
+# Both of these existed as importable modules that no request could reach:
+# nothing in this file ever included them, so a defined router is not a served
+# one. The security router reads the live ``app.middleware_stack`` and is the
+# only endpoint that reports which firewall layers are actually mounted. The
+# audit router drives the SECURITY DEFINER RPCs from
+# supabase/migrations/0006_audit_credits.sql.
+app.include_router(security_router.router)
+app.include_router(audit.router)
+
+# Sponsorship: labelled funder recognition, not advertising. The public
+# router takes no user, visitor or referrer parameter, so contextual placement
+# is structural rather than a promise. See services/sponsors/policy.py.
+from services.sponsors.routers import (
+    admin as sponsors_admin,
+    sponsors as sponsors_public,
+)
+
+app.include_router(sponsors_public.router, tags=["sponsors"])
+app.include_router(sponsors_admin.router, tags=["admin-sponsors"])
 
 
 # ============================================================================

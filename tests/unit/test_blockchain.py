@@ -247,14 +247,45 @@ class TestBlockchainAPIEndpoints:
         pass
 
     def test_blockchain_health_endpoint(self):
-        """Verify blockchain health endpoint."""
+        """Blockchain health must report reality, not aspiration.
+
+        2026-09-26: this endpoint previously returned status="operational"
+        with all seven capability flags True while none of the seven was
+        implemented. The assertions below are a regression guard: they fail
+        if a flag is flipped back to True without an implementation behind it.
+        """
         response = client.get("/api/v1/blockchain/health")
 
         assert response.status_code == 200
         data = response.json()
-        assert data["status"] == "operational"
-        assert data["features"]["ecocoin"] is True
-        assert data["features"]["phase_gate"] is True
+
+        # Honest status, not a claim of readiness.
+        assert data["status"] == "degraded"
+        assert data["production_ready"] is False
+        assert data["deployed"] is False
+
+        # No capability may be advertised as available.
+        assert all(v is False for v in data["features"].values()), (
+            f"a capability is advertised as available: {data['features']}"
+        )
+
+        # And the reason must be recorded, so a reader is not left guessing.
+        assert len(data["implementation_status"]) == len(data["features"])
+        for cap, reason in data["implementation_status"].items():
+            assert isinstance(reason, str) and len(reason) > 40, (
+                f"{cap} has no substantive explanation"
+            )
+
+    def test_blockchain_info_does_not_imply_deployment(self):
+        """Addresses must be null while nothing is deployed."""
+        data = client.get("/api/v1/blockchain/info").json()
+        assert data["deployed"] is False
+        assert all(v is None for v in data["contracts"].values())
+
+    def test_referral_program_is_not_claimed(self):
+        """referral_program was True with no referral code anywhere in the repo."""
+        data = client.get("/api/v1/blockchain/ecocoin/health").json()
+        assert data["features"]["referral_program"] is False
 
     def test_main_health_reports_blockchain(self):
         """Verify main health endpoint reports blockchain module."""

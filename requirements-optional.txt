@@ -2,7 +2,8 @@
 # corresponding feature is enabled (see docs/02_hydroma_engine.md).
 # torch>=2.4          # deep-learning extras
 # celery>=5.4         # async task queue
-# redis>=5.0          # broker/cache
+redis>=5.0,<9.0         # broker/cache
+nats-py>=2.9,<3.0        # event bus
 # mlflow>=2.16        # experiment tracking
 # xgboost>=2.1
 # lightgbm>=4.5

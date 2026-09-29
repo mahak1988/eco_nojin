@@ -1,5 +1,8 @@
 {
-  "meta": { "machineTranslated": true, "fallbackLocale": "fa" },
+  "meta": {
+    "machineTranslated": true,
+    "fallbackLocale": "fa"
+  },
   "brand": {
     "name": "HyDroMa Nojin",
     "description": "Parte científica de Eco Nojin; acompañamiento para una mejor comprensión del agua, suelo, vegetación y clima."
@@ -401,6 +404,434 @@
       "unknown": "Not provided",
       "source": "bff:/api/auth/session",
       "method": "HttpOnly session cookie"
+    }
+  },
+  "pageMeta": {
+    "public-audiences-cooperatives": {
+      "title": "Cooperativas",
+      "description": "Solicitudes registradas y los contadores reales del mercado"
+    },
+    "public-audiences-farmers": {
+      "title": "Agricultores",
+      "description": "Solicitudes registradas y los perfiles de terreno presentes en la base de datos"
+    },
+    "public-audiences-government": {
+      "title": "Gobierno",
+      "description": "Solicitudes registradas y los contadores reales de la base de datos"
+    },
+    "public-audiences-investors": {
+      "title": "Inversores",
+      "description": "Solicitudes registradas y contadores reales de proyectos; no se afirma rentabilidad"
+    },
+    "public-audiences-ngos": {
+      "title": "ONG",
+      "description": "Solicitudes registradas y el estado real de los indicadores"
+    },
+    "public-audiences-researchers": {
+      "title": "Investigación",
+      "description": "El registro de modelos y la referencia científica detrás de cada modelo"
+    },
+    "public-channels": {
+      "title": "Canales de acceso",
+      "description": "El estado real de los canales USSD, de voz y de sincronización"
+    },
+    "public-components-api-playground": {
+      "title": "Playground de API",
+      "description": "Consola interactiva para probar endpoints"
+    },
+    "public-components-dispute-resolution": {
+      "title": "Resolución de controversias",
+      "description": "No hay ninguna lista de controversias registrada en el gateway; no se muestra ningún caso ni veredicto"
+    },
+    "public-components-ecowallet": {
+      "title": "EcoWallet",
+      "description": "Demostración de las funciones de la cartera digital"
+    },
+    "public-components-hydroma-engine": {
+      "title": "Motor HydroMa",
+      "description": "Demostración de los módulos del motor científico"
+    },
+    "public-components-land-profiler": {
+      "title": "Perfilador de terreno",
+      "description": "Escenarios de análisis y gestión del terreno"
+    },
+    "public-components-marketplace": {
+      "title": "Mercado",
+      "description": "Demostración de las funciones del mercado"
+    },
+    "public-components-mrv-dashboard": {
+      "title": "Panel MRV",
+      "description": "Demostración de monitorización, reporte y verificación"
+    },
+    "public-components-satellite-view": {
+      "title": "Vista por satélite",
+      "description": "Capas de datos satelitales y visualización"
+    },
+    "public-cta": {
+      "title": "Participa",
+      "description": "Vías disponibles como endpoints reales y un formulario que envía al gateway"
+    },
+    "public-education-advanced-search": {
+      "title": "Búsqueda avanzada",
+      "description": "Búsqueda multicriterio en la biblioteca educativa"
+    },
+    "public-education-certifications": {
+      "title": "Programas de certificación",
+      "description": "No hay ningún registro de certificaciones en el gateway; no se muestra ningún certificado emitido"
+    },
+    "public-education-courses": {
+      "title": "Cursos",
+      "description": "El servicio de cursos no está registrado en el gateway; el contenido publicado se busca en la biblioteca"
+    },
+    "public-education-glossary": {
+      "title": "Glosario bilingüe",
+      "description": "Glosario técnico bilingüe con búsqueda"
+    },
+    "public-education-library": {
+      "title": "Biblioteca educativa",
+      "description": "Buscar el contenido formativo publicado"
+    },
+    "public-education-library-advanced": {
+      "title": "Biblioteca avanzada",
+      "description": "Búsqueda amplia de contenido y los grupos reales de términos científicos"
+    },
+    "public-education-video-player": {
+      "title": "Reproductor de vídeo",
+      "description": "El servicio de vídeo no está registrado en el gateway; no se carga ningún reproductor ni subtítulo"
+    },
+    "public-education-workshops": {
+      "title": "Talleres",
+      "description": "No hay ningún calendario de talleres en el gateway; no se muestran fechas ni aforo"
+    },
+    "public-goals-impact": {
+      "title": "Impacto",
+      "description": "Los contadores reales de solicitudes registradas; no se afirma ninguna métrica verificada"
+    },
+    "public-goals-manifesto": {
+      "title": "Manifiesto",
+      "description": "Las fases registradas y las barreras que hoy condicionan el camino"
+    },
+    "public-goals-mission": {
+      "title": "Misión",
+      "description": "La red de ledger y los contratos devueltos por el gateway"
+    },
+    "public-goals-roadmap": {
+      "title": "Hoja de ruta",
+      "description": "Las barreras de fase y las fases registradas en el registro de herramientas"
+    },
+    "public-goals-values": {
+      "title": "Valores",
+      "description": "El estado real del acceso por teléfonos sencillos según las rutas USSD y de voz"
+    },
+    "public-goals-vision": {
+      "title": "Visión",
+      "description": "Los dominios registrados en el registro de herramientas"
+    },
+    "public-home": {
+      "title": "Plataforma de seguimiento ecológico y toma de decisiones",
+      "description": "Seguimiento de suelo, agua, clima y carbono sobre base científica"
+    },
+    "public-model-count": {
+      "title": "Número de modelos",
+      "description": "Cantidad y estado de los modelos científicos registrados"
+    },
+    "public-policy-accessibility": {
+      "title": "Declaración de accesibilidad",
+      "description": "En legal-texts no hay ningún slug de accesibilidad registrado, por lo que no se muestra estado de conformidad"
+    },
+    "public-policy-cookies": {
+      "title": "Política de cookies",
+      "description": "El texto de la política de cookies se lee del registro legal-texts publicado."
+    },
+    "public-policy-governance": {
+      "title": "Estructura de gobernanza",
+      "description": "En legal-texts no hay ningún slug de gobernanza registrado, por lo que no se muestra ninguna estructura"
+    },
+    "public-policy-licensing": {
+      "title": "Licencias de código abierto",
+      "description": "En legal-texts no hay ningún slug de licencias registrado, por lo que no se muestra inventario de licencias"
+    },
+    "public-policy-privacy": {
+      "title": "Política de privacidad",
+      "description": "El texto de la política de privacidad se lee del registro legal-texts publicado."
+    },
+    "public-policy-terms": {
+      "title": "Términos del servicio",
+      "description": "El texto de los términos y su historial de versiones se leen del servicio legal-texts."
+    },
+    "public-science-benchmarks": {
+      "title": "Referencias comparativas",
+      "description": "Resultados reales de verificación de fórmulas frente a referencias publicadas"
+    },
+    "public-science-case-studies": {
+      "title": "Casos de estudio",
+      "description": "Referencia científica registrada detrás de cada modelo"
+    },
+    "public-science-data-sources": {
+      "title": "Fuentes de datos",
+      "description": "Catálogo de fuentes de datos con estado y licencias"
+    },
+    "public-science-evidence-base": {
+      "title": "Base de evidencia científica",
+      "description": "Evidencia científica curada con DOI y estado de verificación"
+    },
+    "public-science-gap-analysis": {
+      "title": "Análisis de brechas",
+      "description": "Dominio de validez registrado y limitaciones por modelo"
+    },
+    "public-science-limitations": {
+      "title": "Limitaciones",
+      "description": "Limitaciones conocidas de los modelos y los datos"
+    },
+    "public-science-methodology": {
+      "title": "Metodología",
+      "description": "Normas y métodos de cálculo científico"
+    },
+    "public-science-peer-review": {
+      "title": "Revisión por pares",
+      "description": "Referencia científica registrada por modelo; no existe ningún informe de revisión publicado"
+    },
+    "public-science-reproducibility": {
+      "title": "Reproducibilidad",
+      "description": "Ejecuciones compartidas registradas y el estado real de emisión de DOI"
+    },
+    "public-science-uncertainty": {
+      "title": "Incertidumbre",
+      "description": "Limitaciones declaradas y el estado real de verificación de fórmulas"
+    },
+    "public-science-validation": {
+      "title": "Herramientas de validación",
+      "description": "Comprobaciones de calidad de datos y modelos"
+    },
+    "public-science-validation-methods": {
+      "title": "Métodos de validación",
+      "description": "Metodologías científicas de validación de modelos"
+    },
+    "public-services-satellite-intelligence": {
+      "title": "Inteligencia satelital",
+      "description": "Productos de datos satelitales y endpoints"
+    },
+    "public-visit": {
+      "title": "Visita a la finca",
+      "description": "La solicitud de visita se envía al gateway; no se muestra ninguna visita programada"
+    },
+    "public-why": {
+      "title": "Por qué esta plataforma",
+      "description": "El problema, la solución y la evidencia verificable"
+    },
+    "marketplace-market-producers": {
+      "title": "Productores",
+      "description": "Los productores que el mercado ha registrado, con el estado de verificación registrado."
+    },
+    "marketplace-market-stats": {
+      "title": "Estadísticas del mercado",
+      "description": "Contadores leídos del punto de estadísticas, o la constancia de que no se pudo contactar con el servicio."
+    },
+    "marketplace-market-admin-orders": {
+      "title": "Gestión de pedidos",
+      "description": "El registro de pedidos que expone la pasarela, con su estado real y sin filas sintéticas."
+    },
+    "marketplace-market-admin-stats": {
+      "title": "Estadísticas del mercado",
+      "description": "Contadores leídos del punto de conexión de estadísticas, o la constancia explícita de que el servicio no está disponible."
+    },
+    "marketplace-market-marketplaces": {
+      "title": "Mercados",
+      "description": "Los mercados que la pasarela ha registrado, tal como están realmente registrados."
+    },
+    "marketplace-market-marketplaces-marketplace_id": {
+      "title": "Registro de mercado",
+      "description": "Un mercado por identificador: el estado que la pasarela guarda para él, no una descripción de lo que debería ser."
+    },
+    "marketplace-market-marketplaces-marketplace_id-shops": {
+      "title": "Tiendas del mercado",
+      "description": "Tiendas registradas en un mercado, tal como la pasarela las registra realmente."
+    },
+    "marketplace-market-orders-order_id": {
+      "title": "Registro de pedido",
+      "description": "Un pedido por identificador, con la transición de estado registrada por última vez."
+    },
+    "marketplace-market-orders-order_id-status": {
+      "title": "Estado del pedido",
+      "description": "El estado actual de un pedido, leído de la pasarela en el momento de la petición."
+    },
+    "marketplace-market-orders-order_id-timeline": {
+      "title": "Cronología del pedido",
+      "description": "El historial de estados registrado de un pedido, en el orden que devuelve la pasarela."
+    },
+    "marketplace-market-orders-order_id-track": {
+      "title": "Seguimiento del pedido",
+      "description": "El registro de seguimiento que la pasarela guarda para un pedido, con su estado actual."
+    },
+    "marketplace-market-payments-payment_id-escrow": {
+      "title": "Registro de depósito en garantía",
+      "description": "El estado de garantía que la pasarela guarda para un pago, con las transiciones registradas."
+    },
+    "marketplace-market-products": {
+      "title": "Productos",
+      "description": "Los productos que el mercado ha registrado, con el precio y la cantidad que la pasarela informa de cada uno."
+    },
+    "marketplace-market-products-search": {
+      "title": "Búsqueda de productos",
+      "description": "Buscar en el catálogo registrado. Los resultados son los que la pasarela encuentra, sin ordenación inventada aquí."
+    },
+    "marketplace-market-products-product_id": {
+      "title": "Registro de producto",
+      "description": "Un producto por identificador, con los campos que la pasarela guarda para él."
+    },
+    "marketplace-market-products-product_id-carbon-credits": {
+      "title": "Créditos de carbono del producto",
+      "description": "Créditos de carbono atribuidos a un producto, con el método que la pasarela registró."
+    },
+    "marketplace-market-products-product_id-trace": {
+      "title": "Trazabilidad del producto",
+      "description": "La cadena de custodia registrada de un producto, a partir de las entradas que guarda la pasarela."
+    },
+    "marketplace-market-shops-shop_id": {
+      "title": "Registro de tienda",
+      "description": "Una tienda por identificador, con los campos que la pasarela realmente guarda."
+    },
+    "marketplace-market-shops-shop_id-orders": {
+      "title": "Pedidos de la tienda",
+      "description": "Pedidos registrados para una tienda, sin totales ni estados inventados."
+    },
+    "marketplace-market-shops-shop_id-products": {
+      "title": "Productos de la tienda",
+      "description": "Los productos que una tienda ha registrado, con las cantidades que informa la pasarela."
+    },
+    "marketplace-market-shops-shop_id-stats": {
+      "title": "Estadísticas de la tienda",
+      "description": "Contadores leídos del punto de estadísticas para una sola tienda."
+    },
+    "marketplace-market-transactions": {
+      "title": "Transacciones",
+      "description": "El registro de transacciones que expone la pasarela del mercado, tal como está registrado."
+    },
+    "marketplace-market-transactions-transaction_id": {
+      "title": "Registro de transacción",
+      "description": "Una transacción por identificador, con el registro propio de la pasarela."
+    },
+    "marketplace-market-vendors-vendor_id": {
+      "title": "Registro de proveedor",
+      "description": "Un proveedor por identificador, con el estado de verificación que registra la pasarela."
+    },
+    "marketplace-market-vendors-vendor_id-orders": {
+      "title": "Pedidos del proveedor",
+      "description": "Pedidos registrados para un proveedor, en el estado en que realmente están."
+    },
+    "marketplace-market-vendors-vendor_id-products": {
+      "title": "Productos del proveedor",
+      "description": "Los productos que un proveedor ha registrado, con las cantidades que informa la pasarela."
+    },
+    "marketplace-market-wallet": {
+      "title": "Cartera del mercado",
+      "description": "El saldo que informa la pasarela, o la constancia de que no pudo leerse."
+    },
+    "marketplace-market-wallet-balance": {
+      "title": "Saldo de la cartera",
+      "description": "El saldo tal como lo registra la pasarela en el momento de la petición."
+    },
+    "marketplace-market-wallet-history": {
+      "title": "Historial de la cartera",
+      "description": "El historial de movimientos registrado, en el orden que devuelve la pasarela."
+    },
+    "marketplace-market-wallet-methods": {
+      "title": "Métodos de pago",
+      "description": "Los métodos de pago que la pasarela tiene habilitados, tal como están configurados."
+    },
+    "marketplace-market-wallet-methods-method_id": {
+      "title": "Método de pago",
+      "description": "Un método de pago por identificador, con su estado configurado."
+    },
+    "marketplace-market-wallet-payouts": {
+      "title": "Pagos",
+      "description": "Pagos registrados, con los importes y estados que guarda la pasarela."
+    },
+    "marketplace-market-wallet-payouts-payout_id": {
+      "title": "Registro de pago",
+      "description": "Un pago por identificador y el estado registrado por última vez."
+    },
+    "marketplace-market-wallet-payouts-payout_id-status": {
+      "title": "Estado del pago",
+      "description": "El estado actual de un pago, leído en el momento de la petición."
+    },
+    "marketplace-market-wallet-transactions": {
+      "title": "Movimientos de la cartera",
+      "description": "Movimientos tal como los registra la pasarela, sin saldos derivados."
+    },
+    "marketplace-market-wallet-transactions-tx_id": {
+      "title": "Movimiento de cartera",
+      "description": "Un movimiento por identificador y el estado registrado para él."
+    },
+    "marketplace-market-wallet-verification": {
+      "title": "Verificación de la cartera",
+      "description": "El estado de verificación que la pasarela guarda para una cartera, no una afirmación sobre quien la posee."
+    },
+    "marketplace-market-wallet-verification-methods": {
+      "title": "Métodos de verificación",
+      "description": "Los métodos de verificación de identidad que la pasarela tiene configurados."
+    },
+    "marketplace-market-wallet-verification-methods-method_id": {
+      "title": "Método de verificación",
+      "description": "Un método de verificación por identificador y su estado configurado."
+    }
+  },
+  "offline": {
+    "code": "Conexión no disponible",
+    "title": "Modo sin conexión",
+    "description": "Los datos en caché están disponibles; inténtelo de nuevo cuando quiera actualizar.",
+    "retry": "Reintentar"
+  },
+  "admin": {
+    "title": "Administración de la plataforma",
+    "sections": {
+      "overview": "Resumen",
+      "systemHealth": "Estado del sistema",
+      "jobs": "Trabajos y colas",
+      "localization": "Localización",
+      "featureFlags": "Flags de funcionalidad y capacidades",
+      "security": "Seguridad",
+      "content": "Contenido",
+      "users": "Usuarios",
+      "designTokens": "Tokens de diseño"
+    },
+    "leads": {
+      "overview": "Estado en vivo de la plataforma y resumen de capacidades.",
+      "systemHealth": "Estado servicio por servicio, dependencias y últimas comprobaciones.",
+      "jobs": "Capacidades registradas de colas, workers y trabajos.",
+      "localization": "Cobertura de idiomas, traducción automática y versiones publicadas de los textos legales.",
+      "featureFlags": "Registro de capacidades y contratos de configuración.",
+      "security": "Capacidades de seguridad y auditoría con control de roles.",
+      "content": "Contenido publicado y contratos de contenido registrados.",
+      "users": "Gestión de usuarios y contratos de acciones masivas con control de roles.",
+      "designTokens": "Las fuentes de tokens DTCG, CSS y de runtime incluidas en el repositorio."
+    },
+    "grid": {
+      "search": "Buscar",
+      "submit": "Buscar",
+      "clear": "Limpiar filtros",
+      "results": "{filtered} de {total} filas"
+    },
+    "capabilities": {
+      "serviceMatrix": "Matriz de estado de servicios",
+      "adminOverview": "Resumen administrativo",
+      "channelHealth": "Estado de los canales",
+      "jobIndex": "Índice de trabajos",
+      "automationRuns": "Ejecuciones de automatización",
+      "messageCatalogues": "Catálogos de mensajes",
+      "legalLocales": "Idiomas legales",
+      "contentTranslations": "Traducciones de contenido",
+      "capabilityMatrix": "Matriz de capacidades",
+      "settingsIndex": "Índice de configuración",
+      "loginHistory": "Historial de inicio de sesión",
+      "securityAudit": "Auditoría de seguridad",
+      "contentIndex": "Índice de contenido",
+      "contentWrites": "Contrato de escritura de contenido",
+      "usersIndex": "Índice de usuarios",
+      "userBulkActions": "Contrato de acciones masivas de usuarios",
+      "dtcgTokens": "Fuente de tokens DTCG",
+      "cssVariables": "Fuente de variables CSS",
+      "runtimeTokens": "Fuente de tokens de runtime"
     }
   }
 }

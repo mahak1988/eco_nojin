@@ -15,11 +15,14 @@ import rioxarray  # CRITICAL: Must be at module level to register .rio accessor
 import xarray as xr
 from shapely.geometry import Polygon
 
-from ..base import MapFetcher
+from ..base import DataOrigin, MapFetcher
 
 
 class DEMFetcher(MapFetcher):
     """Fetches DEM data with proper caching."""
+
+    DATA_ORIGIN = DataOrigin.SYNTHETIC
+    ORIGIN_DETAIL = "DEMFetcher generates random noise (rng.normal); there is no SRTM/ALOS download"
 
     def __init__(
         self,

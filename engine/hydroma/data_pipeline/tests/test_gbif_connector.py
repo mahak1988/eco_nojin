@@ -130,9 +130,40 @@ class TestGBIFConnector:
 
         assert len(assets) == 1
         assert assets[0].source_id == "gbif"
-        assert "checklist" in assets[0].asset_id
+        # The request type is recorded in `tags`, not in the asset id. The id is
+        # built from the country and a hash, so it has never carried "checklist";
+        # asserting on it here was asserting a naming convention the connector
+        # does not implement. See the note below on what is still wrong here.
+        assert "checklist" in assets[0].tags
+        assert assets[0].asset_id.startswith("gbif_species_list_IR_")
         assert assets[0].metadata["country"] == "IR"
         assert assets[0].metadata["total_species"] == 5000
+
+    @patch("requests.get")
+    def test_checklist_type_calls_the_species_endpoint_not_the_checklist_api(self, mock_get):
+        """Documents a known defect rather than leaving it invisible.
+
+        ``pipeline.py::_fetch_checklist`` queries ``species/search`` and not the
+        GBIF checklist API, so the asset is tagged ``checklist`` while carrying
+        species-search results. The function's own docstring says so. Until the
+        endpoint is corrected, any consumer that trusts the tag is reading a
+        species list and calling it a checklist.
+        """
+        mock_response = MagicMock()
+        mock_response.json.return_value = {
+            "count": 0,
+            "results": [],
+        }
+        mock_response.raise_for_status.return_value = None
+        mock_get.return_value = mock_response
+
+        self.connector.fetch({"type": "checklist", "country": "IR"})
+
+        called_url = mock_get.call_args[0][0] if mock_get.call_args[0] else mock_get.call_args.kwargs.get("url", "")
+        assert "/species/search" in called_url, (
+            "the checklist path no longer calls species/search; if this now hits "
+            "the real checklist API, update the tag and this test together"
+        )
 
     @patch("requests.get")
     def test_fetch_species_by_key(self, mock_get):

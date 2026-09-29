@@ -36,7 +36,7 @@ class TestSettingsDefaults:
 
 class TestProductionGuards:
     def test_production_default_secret_raises(self):
-        with pytest.raises(RuntimeError, match="TELEGRAM_BOT_TOKEN|secret"):
+        with pytest.raises(RuntimeError, match=r"TELEGRAM_BOT_TOKEN|secret"):
             Settings(_env_file=None, environment="production")
 
     def test_production_wildcard_credentials_raises(self):
@@ -54,6 +54,7 @@ class TestProductionGuards:
             _env_file=None,
             environment="production",
             secret_key="k" * 64,
+            jwt_secret="j" * 64,
             cors_origins=["https://app.econojin.org"],
             allow_credentials=True,
             telegram_bot_token="dummy-token",

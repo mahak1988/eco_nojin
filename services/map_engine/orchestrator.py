@@ -10,6 +10,7 @@ import asyncio
 import hashlib
 import json
 from pathlib import Path
+from typing import Any
 
 import xarray as xr
 from shapely.geometry import Polygon
@@ -49,6 +50,11 @@ class MapOrchestrator:
 
     def __init__(self, cache_dir: Path = Path("data/maps/cache")):
         self.cache_dir = Path(cache_dir)
+        #: Provenance of the layers fetched by the most recent
+        #: ``_fetch_layers`` call. Phase 4 group 5: this is what makes the
+        #: synthetic origin of the current data visible to callers instead of
+        #: being lost between the fetcher and the API.
+        self.last_fetch_provenance: list[dict[str, Any]] = []
         self.cache_dir.mkdir(parents=True, exist_ok=True)
 
         # Initialize fetchers registry
@@ -190,7 +196,12 @@ class MapOrchestrator:
         region: Polygon,
         **kwargs,
     ) -> dict[str, xr.DataArray]:
-        """Fetch required base layers concurrently."""
+        """Fetch required base layers concurrently.
+
+        Records the provenance of everything fetched on
+        ``self.last_fetch_provenance`` (see :meth:`provenance_summary`). The
+        return type is unchanged so existing call sites keep working.
+        """
         result = {}
 
         async def fetch_one(name: str):
@@ -204,13 +215,54 @@ class MapOrchestrator:
         tasks = [fetch_one(layer) for layer in layers]
         fetched = await asyncio.gather(*tasks, return_exceptions=True)
 
+        provenance: list[dict[str, Any]] = []
         for item in fetched:
             if isinstance(item, Exception):
                 raise item
             name, data = item
             result[name] = data
+            fetcher = self.fetchers.get(name)
+            if fetcher is not None:
+                provenance.append(type(fetcher).provenance(fetcher))
 
+        self.last_fetch_provenance = provenance
         return result
+
+    def provenance_summary(self) -> dict[str, Any]:
+        """S-HONEST envelope for the layers fetched most recently.
+
+        ``status`` is ``ok`` only when every layer is real. A single synthetic
+        layer makes the whole result ``degraded`` — a partly-invented terrain
+        is not a terrain.
+        """
+        records = list(self.last_fetch_provenance)
+        if not records:
+            return {
+                "status": "ok",
+                "reason": None,
+                "layers": [],
+                "synthetic_layers": [],
+            }
+        synthetic = [r["layer"] for r in records if r.get("synthetic")]
+        if not synthetic:
+            return {
+                "status": "ok",
+                "reason": None,
+                "layers": records,
+                "synthetic_layers": [],
+            }
+        return {
+            "status": "degraded",
+            "reason": (
+                f"{len(synthetic)} of {len(records)} input layers are synthetic, not "
+                "measured: "
+                + ", ".join(str(s) for s in synthetic)
+                + ". Any erosion, runoff or yield figure derived from this run is a "
+                "demonstration of the method, not an estimate of this site."
+            ),
+            "layers": records,
+            "synthetic_layers": synthetic,
+        }
 
     async def _save_metadata(self, result: MapResult) -> None:
         """Save metadata JSON next to COG."""

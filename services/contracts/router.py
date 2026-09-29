@@ -5,7 +5,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.hub import hub
 from services.contracts.schemas import (
+    CompatibilityResult,
     ContractCreate,
+    ContractDiff,
     ContractResponse,
 )
 from services.contracts.service import ContractRegistry

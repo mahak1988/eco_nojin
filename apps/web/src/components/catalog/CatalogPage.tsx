@@ -10,12 +10,14 @@ const PAGE_GATES_DOC = 'docs/frontend/PAGE_GATES.md';
 
 const DOT_STATE: Record<CatalogEntry['status'], DotState> = {
   live: 'ok',
+  static: 'ok',
   capability: 'ok',
   planned: 'warn',
   unavailable: 'down',
 };
 
 const STATUS_LABEL_KEY = {
+  static: 'common.static',
   live: 'common.live',
   capability: 'common.beta',
   planned: 'common.planned',

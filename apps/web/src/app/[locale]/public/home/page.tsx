@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../data-states';
@@ -33,15 +34,6 @@ type PilotStats = {
 
 type ModelsIndex = { count: number };
 
-const TITLES: Record<string, string> = {
-  fa: 'سامانه پایش و تصمیم‌سازی اکولوژیک',
-  en: 'Ecological monitoring and decision platform',
-};
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'پایش خاک، آب، اقلیم و کربن با پشتوانهٔ علمی',
-  en: 'Soil, water, climate, and carbon monitoring on a scientific basis',
-};
-
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
@@ -50,21 +42,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-home');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/home`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/home`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/home`,
-        en: `${BASE_URL}/en/public/home`,
-      },
+      canonical: canonicalFor(locale, '/public/home'),
+      languages: languageAlternates('/public/home'),
     },
   };
 }
@@ -72,10 +62,12 @@ export async function generateMetadata({
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  const meta = await getTranslations('pageMeta.public-home');
   const common = await getTranslations('common');
   const status = await getTranslations('statusLine');
-  const title = TITLES[locale] ?? TITLES.en;
-  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+  const title = meta('title');
+  const description = meta('description');
 
   const [platform, pilot, models] = await Promise.all([
     apiGet<PlatformStats>(PLATFORM_STATS_PATH),
@@ -90,14 +82,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <div className="mx-auto max-w-4xl px-6 pb-12 pt-8">
-        <ProvenanceStamp
-          source={PLATFORM_STATS_PATH}
-          label={title}
-          verified={platform.ok}
-          method={PLATFORM_STATS_PATH}
-        >
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-        </ProvenanceStamp>
+          <ProvenanceStamp
+            source={PLATFORM_STATS_PATH}
+            label={title}
+            verified={platform.ok}
+            method={PLATFORM_STATS_PATH}
+          />
+        </div>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
 
         <section className="mt-8">

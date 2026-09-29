@@ -18,7 +18,7 @@ _LOCAL_FILE = _AUDIT_DIR / "audit.jsonl"
 
 
 def _local_write(kind: str, record: dict[str, Any]) -> None:
-    with open(_LOCAL_FILE, "a", encoding="utf-8") as fh:
+    with _LOCAL_FILE.open("a", encoding="utf-8") as fh:
         fh.write(json.dumps({"kind": kind, **record}, ensure_ascii=False) + "\n")
 
 
@@ -93,7 +93,7 @@ def recent_events(limit: int = 20) -> list:
     """Read recent events from the local store (works offline, deterministic)."""
     events = []
     if _LOCAL_FILE.exists():
-        with open(_LOCAL_FILE, encoding="utf-8") as fh:
+        with _LOCAL_FILE.open(encoding="utf-8") as fh:
             for line in fh:
                 line = line.strip()
                 if line:

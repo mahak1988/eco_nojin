@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
+import { isRtl } from '@/i18n/routing';
 import type { BazaarType, MarketProfile } from '@/types/bazaar-types';
 
 export interface MarketMapProps {
@@ -92,7 +93,7 @@ export function MarketMap({
     };
   }, [bazaars, centerLat, centerLon, onBazaarClick, zoom]);
 
-  const rtl = locale === 'fa' || locale === 'ar';
+  const rtl = isRtl(locale);
 
   return (
     <div className="market-map" dir={rtl ? 'rtl' : 'ltr'}>
@@ -109,7 +110,7 @@ export function MarketMap({
         {!mapReady && (
           <div className="flex items-center justify-center h-full bg-surface text-ink-soft text-sm">
             {locale === 'fa' ? 'در حال بارگذاری نقشه…' : 'Loading map…'}
-            <span className="ml-2 num">({bazaars.length} بازار)</span>
+            <span className="ms-2 num">({bazaars.length} بازار)</span>
           </div>
         )}
       </div>
@@ -117,7 +118,7 @@ export function MarketMap({
       {/* Bazaar popup (scaffold) */}
       {selectedBazaar && (
         <div
-          className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 bg-background border border-line rounded-lg shadow-lg p-4 z-20"
+          className="fixed bottom-4 start-4 end-4 md:start-auto md:end-4 md:w-80 bg-surface border border-line rounded-lg shadow-lg p-4 z-20"
           role="dialog"
           aria-label={selectedBazaar.name}
         >
@@ -146,11 +147,11 @@ export function MarketMap({
       {/* Legend (scaffold) */}
       <div className="mt-2 flex items-center gap-4 text-xs text-ink-soft">
         <span className="flex items-center gap-1">
-          <span className="w-3 h-3 rounded-full bg-primary" />
+          <span className="w-3 h-3 rounded-full bg-forest" />
           {locale === 'fa' ? 'بازارچه' : 'Bazaar'}
         </span>
         <span className="flex items-center gap-1">
-          <span className="w-3 h-3 rounded-sm border border-primary" />
+          <span className="w-3 h-3 rounded-sm border border-forest" />
           {locale === 'fa' ? 'محدوده' : 'Boundary'}
         </span>
         <span className="num">

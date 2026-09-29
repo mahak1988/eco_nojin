@@ -1,6 +1,6 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { MarketplaceTemplatePage } from '@/components/market/MarketplaceTemplatePage';
+import { BazaarStepRenderer } from '@/components/market/BazaarStepRenderer';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,11 +20,23 @@ export async function generateMetadata({
   };
 }
 
+/**
+ * Step 3 of the establishment flow, rendered by `BazaarStepRenderer`.
+ *
+ * The step stays unavailable: no gateway endpoint exists for it, so the renderer
+ * reports its real state rather than collecting input that cannot be persisted.
+ */
 export default async function BazaarWizardStep3Page({
   params,
 }: {
   params: Promise<{ locale: string; id: string }>;
 }) {
-  const { locale, id } = await params;
-  return <MarketplaceTemplatePage locale={locale} group="bazaars" slug={`${id}/wizard/step3`} />;
+  const { locale } = await params;
+  return (
+    <main id="main-content" className="min-h-dvh">
+      <div className="mx-auto max-w-4xl px-6 pb-12 pt-8">
+        <BazaarStepRenderer step={3} locale={locale} />
+      </div>
+    </main>
+  );
 }

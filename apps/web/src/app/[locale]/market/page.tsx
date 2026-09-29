@@ -13,7 +13,7 @@ const STATS_SOURCE = '/api/v1/marketplace/stats';
 
 type NestedMessages = {
   brand?: { name?: string };
-  market?: { lead?: string };
+  market?: { title?: string; lead?: string };
 };
 
 export async function generateMetadata({
@@ -26,7 +26,7 @@ export async function generateMetadata({
   const messages = (await loadMessages(locale)) as NestedMessages;
   const brandName = messages.brand?.name ?? '';
   const marketLead = messages.market?.lead ?? '';
-  const title = marketLead ? `${brandName} · ${marketLead}` : brandName;
+  const title = messages.market?.title ?? brandName;
 
   return {
     title,
@@ -119,7 +119,9 @@ export default async function MarketPage({ params }: { params: Promise<{ locale:
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="text-sm font-semibold text-ink">{p.name}</div>
-                    <div className="mt-1 text-xs text-ink-soft">{p.producer_name}</div>
+                    <div data-testid="producer" className="mt-1 text-xs text-ink-soft">
+                      {p.producer_name}
+                    </div>
                   </div>
                   {p.organic_certified ? (
                     <span className="rounded-full border border-line px-2 py-0.5 text-[10px] text-forest">
@@ -129,10 +131,10 @@ export default async function MarketPage({ params }: { params: Promise<{ locale:
                 </div>
                 <p className="mt-3 text-xs text-ink-soft">{p.description}</p>
                 <div className="mt-3 flex items-center justify-between">
-                  <span className="num text-lg text-ink">
+                  <span data-testid="price" className="num text-lg text-ink">
                     {n.format(p.price_per_kg)} <span className="text-xs text-ink-soft">/ kg</span>
                   </span>
-                  <span className="num text-xs text-ink-soft">
+                  <span data-testid="stock" className="num text-xs text-ink-soft">
                     {n.format(p.quantity_available_kg)} kg
                   </span>
                 </div>

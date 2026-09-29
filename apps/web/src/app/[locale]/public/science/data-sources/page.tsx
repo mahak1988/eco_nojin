@@ -1,9 +1,10 @@
 import { Metadata } from 'next';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
@@ -27,12 +28,6 @@ type DatasetCatalog = {
   note: string;
 };
 
-const TITLES: Record<string, string> = { fa: 'منابع داده', en: 'Data Sources' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'کاتالوگ منابع داده با وضعیت و مجوز',
-  en: 'Data source catalog with status and licensing',
-};
-
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
@@ -41,21 +36,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-science-data-sources');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/science/data-sources`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/science/data-sources`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/science/data-sources`,
-        en: `${BASE_URL}/en/public/science/data-sources`,
-      },
+      canonical: canonicalFor(locale, '/public/science/data-sources'),
+      languages: languageAlternates('/public/science/data-sources'),
     },
   };
 }
@@ -63,8 +56,10 @@ export async function generateMetadata({
 export default async function DataSourcesPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const title = TITLES[locale] ?? TITLES.en;
-  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+
+  const meta = await getTranslations('pageMeta.public-science-data-sources');
+  const title = meta('title');
+  const description = meta('description');
 
   const catalog = await apiGet<DatasetCatalog>(DATASETS_PATH);
   const data = catalog.ok ? catalog.data : null;
@@ -75,14 +70,15 @@ export default async function DataSourcesPage({ params }: { params: Promise<{ lo
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp
-          source={DATASETS_PATH}
-          label={title}
-          verified={catalog.ok}
-          method={DATASETS_PATH}
-        >
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-        </ProvenanceStamp>
+          <ProvenanceStamp
+            source={DATASETS_PATH}
+            label={title}
+            verified={catalog.ok}
+            method={DATASETS_PATH}
+          />
+        </div>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
       </section>
 

@@ -83,7 +83,7 @@ export function BazaarCreateForm() {
         <div className="mt-5 flex flex-wrap justify-center gap-3">
           <Link
             href={`/${locale}/market/bazaars/${createdId}`}
-            className="rounded-md bg-forest px-4 py-2 text-sm font-semibold text-paper"
+            className="rounded-md bg-action px-4 py-2 text-sm font-semibold text-on-action"
           >
             {t('viewCreated')}
           </Link>
@@ -110,7 +110,7 @@ export function BazaarCreateForm() {
           <p className="text-sm text-ink-soft">{t('authRequired')}</p>
           <Link
             href={`/${locale}/auth/login`}
-            className="mt-4 inline-block rounded-md bg-forest px-4 py-2 text-sm font-semibold text-paper"
+            className="mt-4 inline-block rounded-md bg-action px-4 py-2 text-sm font-semibold text-on-action"
           >
             {t('signIn')}
           </Link>

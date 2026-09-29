@@ -14,10 +14,15 @@
     "format:check": "biome format src/",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "i18n:compile": "node scripts/i18n-check.mjs",
-    "check:site-url": "node ../../scripts/check-site-url.mjs",
-    "quality": "pnpm lint && pnpm format:check && pnpm type-check && pnpm test && pnpm i18n:compile && pnpm check:site-url"
+    "test:smoke": "playwright test tests/cover.spec.ts tests/home.spec.ts tests/market.spec.ts tests/security.spec.ts tests/auth-ui.spec.ts tests/i18n.spec.ts --project=chromium",
+    "test:e2e:full": "playwright test",
+    "test:cwv": "node ../../scripts/check-cwv.mjs",
+    "i18n:compile": "node scripts/i18n-check.mjs && node ../../scripts/check-message-usage.mjs && node ../../scripts/check-locale-depth.mjs && node ../../scripts/check-locale-encoding.mjs && node ../../scripts/check-page-meta.mjs && node ../../scripts/check-font-coverage.mjs",
+    "check:site-url": "node ../../scripts/check-site-url.mjs && node ../../scripts/check-ui-kit.mjs && node ../../scripts/check-orphan-components.mjs",
+    "check:tokens": "node ../../scripts/check-token-references.mjs && node ../../scripts/check-colour-utilities.mjs . && node ../../scripts/check-contrast.mjs",
+    "quality": "pnpm lint && pnpm format:check && pnpm type-check && pnpm test && pnpm i18n:compile && pnpm check:site-url && pnpm check:tokens"
   },
   "dependencies": {
     "@eco/api-client": "workspace:*",
@@ -50,7 +55,9 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^6.1.1",
+    "@vitest/coverage-v8": "5.0.1",
     "jsdom": "^30.1.1",
+    "lighthouse": "^13.5.0",
     "tailwindcss": "^4.1.13",
     "typescript": "^5.9.3",
     "vitest": "^5.0.1"

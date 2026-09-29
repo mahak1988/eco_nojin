@@ -1,6 +1,38 @@
 MIT License
 
-Copyright (c) [YEAR] [COPYRIGHT HOLDER]
+Copyright (c) 2026 شرکت کشت و صنعت دشت امید نارون
+                   Dasht-e Omid Narvon Kesht va Sanat Co.
+
+First commit 2026-08-14. Work in this repository is copyright the company
+named above ("the Company"). Individual contributors retain copyright in their
+own contributions and license them to the Company under the same terms; see
+CONTRIBUTING.md for the Contributor Licence Agreement and the sign-off
+procedure.
+
+CONFORMING TRANSLITERATION REQUIRED BEFORE INTERNATIONAL USE
+-----------------------------------------------------------
+The Persian name above is authoritative. The Latin form is a working
+transliteration, NOT the Company's registered Latin name. Before this licence
+is relied on by a funder, acquirer, package registry, or standards body, the
+Latin form must be replaced with the exact registered name from the Company's
+registration documents. A mismatch between the registered name and the licence
+holder is the kind of defect that invalidates an IP-provenance check.
+
+Company registration number: TO BE SUPPLIED by the Company.
+Jurisdiction of registration: TO BE SUPPLIED by the Company.
+
+GIT ATTRIBUTION
+---------------
+Two commit identities appear in this repository's history and both are
+attributable to the Company's work:
+
+  Mahak (Eco Nojin) <mahak@eco-nojin.local>        303 commits
+  mahak1988 <princemahak00@gmail.com>               5 commits
+  dependabot[bot] <49696533+dependabot[bot]@users.noreply.github.com>   2 commits
+
+Housekeeping, not a blocker: `eco-nojin.local` uses the reserved `.local`
+mDNS TLD and cannot receive mail. If it is to be used as the contact address
+on this licence, replace it with a deliverable address.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

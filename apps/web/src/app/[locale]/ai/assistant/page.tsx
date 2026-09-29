@@ -164,7 +164,7 @@ export default function AssistantPage() {
                 <div
                   className={`max-w-[85%] rounded-2xl p-4 text-sm ${
                     message.role === 'user'
-                      ? 'rounded-br-md bg-forest text-paper'
+                      ? 'rounded-br-md bg-action text-on-action'
                       : 'rounded-bl-md border border-line bg-surface text-ink'
                   }`}
                 >
@@ -211,7 +211,7 @@ export default function AssistantPage() {
                 ref={textareaRef}
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
-                className="min-h-[60px] max-h-[200px] flex-1 resize-none rounded-md border border-line bg-background px-4 py-2 text-ink focus:outline-none focus:ring-2 focus:ring-forest"
+                className="min-h-[60px] max-h-[200px] flex-1 resize-none rounded-md border border-line-strong bg-surface px-4 py-2 text-ink focus:outline-none focus:ring-2 focus:ring-focus"
                 rows={1}
                 disabled={isLoading}
                 aria-label={t('audience')}

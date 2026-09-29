@@ -4,6 +4,7 @@ import { FivePart } from '@/components/FivePart';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../data-states';
@@ -27,12 +28,6 @@ type PlatformStats = {
   active_projects: number | null;
 };
 
-const TITLES: Record<string, string> = { fa: 'چرا این سامانه', en: 'Why this platform' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'مسئله، راه‌حل و شواهد قابل بررسی',
-  en: 'The problem, the solution, and the checkable evidence',
-};
-
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
@@ -41,21 +36,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-why');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/why`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/why`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/why`,
-        en: `${BASE_URL}/en/public/why`,
-      },
+      canonical: canonicalFor(locale, '/public/why'),
+      languages: languageAlternates('/public/why'),
     },
   };
 }
@@ -63,10 +56,12 @@ export async function generateMetadata({
 export default async function WhyPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  const meta = await getTranslations('pageMeta.public-why');
   const t = await getTranslations('why');
   const common = await getTranslations('common');
   const status = await getTranslations('statusLine');
-  const title = TITLES[locale] ?? TITLES.en;
+  const title = meta('title');
 
   // The claim behind the "solution" column is only stated when the executed
   // formula-check suite and the database counters actually back it.
@@ -84,19 +79,21 @@ export default async function WhyPage({ params }: { params: Promise<{ locale: st
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp
-          source={VALIDATION_PATH}
-          label={title}
-          verified={report.ok}
-          method={VALIDATION_PATH}
-        >
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-        </ProvenanceStamp>
+          <ProvenanceStamp
+            source={VALIDATION_PATH}
+            label={title}
+            verified={report.ok}
+            method={VALIDATION_PATH}
+          />
+        </div>
         <p className="mt-3 max-w-2xl text-ink-soft">{t('lead')}</p>
       </section>
 
       <section className="mx-auto max-w-5xl px-6 pb-6">
         <FivePart
+          headingLevel={2}
           title={t('whatTitle')}
           lead={t('whatLead')}
           what={t('whatDesc')}

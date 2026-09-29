@@ -5,7 +5,7 @@ import { type RecoveryLinkItem, RecoveryLinks } from '@/components/system/Recove
 import { RefreshStateButton } from '@/components/system/RefreshStateButton';
 import { SupportDirectory, type SupportPersona } from '@/components/system/SupportDirectory';
 import { type HealthRow, SystemHealthMatrix } from '@/components/system/SystemHealthMatrix';
-import { SITE_URL as BASE_URL } from '@/config/site';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { apiGet } from '@/lib/api/client';
 import {
   ENDPOINT_LABEL_KEY,
@@ -57,11 +57,8 @@ export async function generateMetadata({
     title: t('help.title'),
     description: t('help.lead'),
     alternates: {
-      canonical: `${BASE_URL}/${locale}/help`,
-      languages: {
-        fa: `${BASE_URL}/fa/help`,
-        en: `${BASE_URL}/en/help`,
-      },
+      canonical: canonicalFor(locale, '/help'),
+      languages: languageAlternates('/help'),
     },
   };
 }

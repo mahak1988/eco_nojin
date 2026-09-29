@@ -7,6 +7,9 @@
 // Add OpenMP header
 #include <omp.h>
 
+#include <cstddef>
+#include <vector>
+
 namespace hydroma {
 
 namespace {

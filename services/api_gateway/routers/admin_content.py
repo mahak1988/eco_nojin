@@ -7,7 +7,7 @@ from datetime import UTC, datetime
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy import desc, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -46,8 +46,7 @@ class ContentResponse(BaseModel):
     updated_at: str
     published_at: Optional[str] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ContentVersionResponse(BaseModel):
@@ -58,8 +57,7 @@ class ContentVersionResponse(BaseModel):
     body: str
     created_at: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ContentTranslationResponse(BaseModel):
@@ -71,8 +69,7 @@ class ContentTranslationResponse(BaseModel):
     source: str
     is_published: bool
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class TranslateRequest(BaseModel):

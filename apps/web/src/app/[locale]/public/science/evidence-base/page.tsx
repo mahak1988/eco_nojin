@@ -5,6 +5,7 @@ import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
@@ -34,26 +35,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const titles: Record<string, string> = { fa: 'پایه‌های علمی', en: 'Scientific Evidence Base' };
-  const descriptions: Record<string, string> = {
-    fa: 'مجموعه شواهد علمی با DOI و وضعیت تأیید',
-    en: 'Curated scientific evidence with DOI and verification status',
-  };
+  const meta = await getTranslations('pageMeta.public-science-evidence-base');
   return {
-    title: titles[locale] ?? titles.en,
-    description: descriptions[locale] ?? descriptions.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/science/evidence-base`,
-      title: titles[locale] ?? titles.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/science/evidence-base`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/science/evidence-base`,
-        en: `${BASE_URL}/en/public/science/evidence-base`,
-      },
+      canonical: canonicalFor(locale, '/public/science/evidence-base'),
+      languages: languageAlternates('/public/science/evidence-base'),
     },
   };
 }
@@ -65,6 +59,8 @@ export default async function EvidenceBasePage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  const _meta = await getTranslations('pageMeta.public-science-evidence-base');
   const t = await getTranslations('public.science.evidenceBase');
   const common = await getTranslations('common');
   const status = await getTranslations('statusLine');
@@ -77,19 +73,21 @@ export default async function EvidenceBasePage({
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp
-          source={CITATIONS_PATH}
-          label={t('provenanceLabel')}
-          verified={citations.ok}
-          method={CITATIONS_PATH}
-        >
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="display text-4xl font-bold text-ink">{t('title')}</h1>
-        </ProvenanceStamp>
+          <ProvenanceStamp
+            source={CITATIONS_PATH}
+            label={t('provenanceLabel')}
+            verified={citations.ok}
+            method={CITATIONS_PATH}
+          />
+        </div>
         <p className="mt-3 max-w-2xl text-ink-soft">{t('lead')}</p>
       </section>
 
       <section className="mx-auto max-w-5xl px-6 pb-6">
         <FivePart
+          headingLevel={2}
           title={t('whatTitle')}
           lead={t('whatLead')}
           what={t('whatDesc')}

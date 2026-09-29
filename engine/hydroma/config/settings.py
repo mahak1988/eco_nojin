@@ -10,6 +10,13 @@ from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+#: Sentinel distinguishing "key absent" from "key present and explicitly None".
+#: ``values.get("_env_file")`` cannot make this distinction: it returns ``None``
+#: both when the caller passed ``_env_file=None`` and when the caller passed
+#: nothing at all, so the explicit-test branch used to fire in production too.
+_ENV_FILE_ABSENT = object()
+
+
 class Settings(BaseSettings):
     """Application settings - loaded from .env and environment."""
 
@@ -17,19 +24,39 @@ class Settings(BaseSettings):
         """Keep test defaults insecure unless a real production config is explicitly provided.
 
         Unit tests intentionally call ``Settings(_env_file=None)`` to verify the
-        fail-closed defaults. In that mode we must ignore ambient env secrets from
-        the local project .env so the defaults remain insecure and the guard rails
+        fail-closed defaults. In that mode we must ignore ambient secrets from the
+        local project .env so the defaults remain insecure and the guard rails
         trigger as expected.
-        """
-        # Determine if this is a production configuration
-        env_val = (
-            str(values.get("environment") or values.get("app_env") or "development").lower().strip()
-        )
-        is_prod = env_val in ("production", "prod")
 
-        if values.get("_env_file") is None:
-            # Only apply insecure defaults for non-production environments
-            if not is_prod:
+        The insecure defaults are applied **only** when the caller explicitly
+        passed ``_env_file=None``. The previous gate was
+        ``values.get("_env_file") is None``, which cannot distinguish "key absent"
+        from "key present and explicitly None": it returned ``None`` for a plain
+        ``Settings()`` too. Because the defaults were injected as init kwargs, and
+        pydantic-settings ranks ``init_settings`` above both ``env_settings`` and
+        ``dotenv_settings``, a real ``ENVIRONMENT=production`` and a real
+        ``SECRET_KEY`` from the environment were silently discarded. The process
+        then ran with ``debug=True`` and the public literal ``"dev-secret-key"``
+        as its JWT signing key, and ``validate_production_settings`` returned
+        early on every boot.
+
+        Outside explicit test mode nothing is injected, so the environment and
+        the dotenv file resolve normally and the production guards are reached.
+        """
+        if values.get("_env_file", _ENV_FILE_ABSENT) is None:
+            # Determine if this is a production configuration. The explicit init
+            # kwargs are authoritative, but the ambient environment is consulted
+            # too: a machine that declares ENVIRONMENT=production must never be
+            # downgraded, not even through the test-mode branch.
+            env_val = (
+                str(values.get("environment") or values.get("app_env") or "development")
+                .lower()
+                .strip()
+            )
+            ambient_env = str(
+                os.environ.get("ENVIRONMENT") or os.environ.get("APP_ENV") or ""
+            ).lower().strip()
+            if not ({env_val, ambient_env} & {"production", "prod"}):
                 values.setdefault("secret_key", "dev-secret-key")
                 values.setdefault("jwt_secret", values.get("secret_key", "dev-jwt-secret"))
                 values.setdefault("app_secret_key", "change-me-in-production")
@@ -68,10 +95,19 @@ class Settings(BaseSettings):
     # =====================================================================
     enable_debug_routes: bool = os.environ.get("ENABLE_DEBUG_ROUTES", "false").lower() == "true"
 
+    # Offline OAuth fallback (auth_supabase._local_oauth_callback) fabricates a
+    # local account from a caller-supplied `code_verifier` and mints a real
+    # signed session for it. That is a development affordance only: with it on,
+    # anyone who can reach the callback can create an account without proving
+    # anything. Default off, and refused outright in production.
+    enable_local_oauth_fallback: bool = (
+        os.environ.get("ENABLE_LOCAL_OAUTH_FALLBACK", "false").lower() == "true"
+    )
+
     # =====================================================================
     # DATABASE
     # =====================================================================
-    database_url: str = "sqlite:///./econojin.db"
+    database_url: str = "sqlite:///./data/econojin.db"
     engine_name: str = "hydroma"
 
     # =====================================================================
@@ -95,7 +131,10 @@ class Settings(BaseSettings):
     # CORS
     # =====================================================================
     cors_origins: list[str] = os.environ.get(
-        "CORS_ORIGINS", "http://localhost:3000,http://localhost:8000,http://127.0.0.1:3000"
+        "CORS_ORIGINS",
+        "http://localhost:3001,http://127.0.0.1:3001,"
+        "http://localhost:3000,http://127.0.0.1:3000,"
+        "http://localhost:8000",
     ).split(",")
     allow_credentials: bool = True
     cors_allow_credentials: bool = True
@@ -510,9 +549,27 @@ class Settings(BaseSettings):
 
     # C4 FIX: Validate JWT secret is not default
     @property
+    def jwt_signing_key(self) -> str:
+        """The single key used to sign and verify JWTs.
+
+        ``jwt_secret`` is the canonical source and is what
+        ``validate_production_settings`` CHECK 3 audits. The previous code signed
+        with ``secret_key`` instead, which left ``jwt_secret`` inert: an operator
+        who set a strong ``JWT_SECRET`` while leaving ``SECRET_KEY`` at a shared
+        value got a forgeable token, and the guard reported the wrong key as
+        healthy.
+
+        Resolution order is ``jwt_secret`` -> ``secret_key`` -> ``app_secret_key``
+        so existing development setups keep working. In production the guards have
+        already rejected a short or default value, so the fallback chain can only
+        ever resolve to a validated key.
+        """
+        return self.jwt_secret or self.secret_key or self.app_secret_key or ""
+
+    @property
     def jwt_secret_secure(self) -> bool:
         """Check if JWT secret is secure (not default)."""
-        jwt_secret = self.jwt_secret or self.secret_key or self.app_secret_key or ""
+        jwt_secret = self.jwt_signing_key
         insecure = {
             "dev-jwt-secret",
             "CHANGE_ME",
@@ -668,7 +725,7 @@ class Settings(BaseSettings):
         # CHECK 11: Database must be PostgreSQL in production (not SQLite)
         if self.database_url.startswith("sqlite"):
             raise RuntimeError(
-                "Production requires PostgreSQL database. Set DATABASE_URL to postgresql://..."
+                "Production requires PostgreSQL database. Set DATABASE_URL to postgresql+psycopg://..."
             )
 
         # CHECK 12: Redis must be configured in production

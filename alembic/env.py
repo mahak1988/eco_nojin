@@ -1,10 +1,16 @@
 """Alembic environment — wired to the unified database.config (Phase 0)."""
 
+import os
+from importlib import import_module
 from logging.config import fileConfig
 
+from dotenv import load_dotenv
+
 from alembic import context
-from database import models  # noqa: F401  (populates Base.metadata)
-from database.models import Base
+
+load_dotenv()
+models = import_module("database.models")
+Base = models.Base
 
 config = context.config
 
@@ -14,17 +20,21 @@ if config.config_file_name is not None:
 target_metadata = Base.metadata
 
 
+def _database_url() -> str:
+    url = os.getenv("DATABASE_URL") or "sqlite:///./data/econojin.db"
+    if url.startswith("postgres://"):
+        return "postgresql+psycopg://" + url[len("postgres://") :]
+    if url.startswith("postgresql://"):
+        return "postgresql+psycopg://" + url[len("postgresql://") :]
+    return url
+
+
 def _resolve_engine():
     """ساخت موتور از تنظیمات config (sqlalchemy.url)"""
-    import os
-
     from sqlalchemy import engine_from_config
     from sqlalchemy.pool import NullPool
 
-    # دریافت url از config یا متغیر محیطی
-    url = config.get_main_option("sqlalchemy.url")
-    if not url:
-        url = os.getenv("DATABASE_URL", "sqlite:///./data/econojin.db")
+    url = config.get_main_option("sqlalchemy.url") or _database_url()
     cfg = config.get_section(config.config_ini_section, {})
     cfg["sqlalchemy.url"] = url
     return engine_from_config(cfg, prefix="sqlalchemy.", poolclass=NullPool)
@@ -32,9 +42,7 @@ def _resolve_engine():
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode."""
-    url = config.get_main_option("sqlalchemy.url")
-    if not url:
-        url = "sqlite:///./data/econojin.db"
+    url = config.get_main_option("sqlalchemy.url") or _database_url()
     context.configure(
         url=url,
         target_metadata=target_metadata,

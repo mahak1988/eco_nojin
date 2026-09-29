@@ -5,6 +5,7 @@ import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
@@ -22,15 +23,6 @@ type SatelliteHealth = {
 
 type Providers = { providers: string[] };
 
-const TITLES: Record<string, string> = {
-  fa: 'استخبارات ماهواره‌ای',
-  en: 'Satellite Intelligence',
-};
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'محصولات و اندپوینت‌های داده ماهواره',
-  en: 'Satellite data products and endpoints',
-};
-
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
@@ -39,21 +31,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-services-satellite-intelligence');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/services/satellite-intelligence`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/services/satellite-intelligence`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/services/satellite-intelligence`,
-        en: `${BASE_URL}/en/public/services/satellite-intelligence`,
-      },
+      canonical: canonicalFor(locale, '/public/services/satellite-intelligence'),
+      languages: languageAlternates('/public/services/satellite-intelligence'),
     },
   };
 }
@@ -65,6 +55,8 @@ export default async function SatelliteIntelligencePage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  const _meta = await getTranslations('pageMeta.public-services-satellite-intelligence');
   const services = await getTranslations('services');
   const t = await getTranslations('statusLine');
   const template = await getTranslations('market.template');
@@ -81,14 +73,15 @@ export default async function SatelliteIntelligencePage({
       <SiteNav locale={locale} />
 
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp
-          source={HEALTH_PATH}
-          label={services('title')}
-          verified={health.ok}
-          method={HEALTH_PATH}
-        >
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="display text-4xl font-bold text-ink">{services('title')}</h1>
-        </ProvenanceStamp>
+          <ProvenanceStamp
+            source={HEALTH_PATH}
+            label={services('title')}
+            verified={health.ok}
+            method={HEALTH_PATH}
+          />
+        </div>
         <p className="mt-3 max-w-2xl text-ink-soft">{services('lead')}</p>
         <p className="mt-3 max-w-2xl text-sm text-ink-soft">{services('what')}</p>
         <p className="mt-3 max-w-2xl text-sm text-ink-soft">{services('audience')}</p>

@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ListBlock } from '@/components/ListBlock';
 import { SiteNav } from '@/components/SiteNav';
 import { type DotState, StatusDot } from '@/components/StatusDot';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet, type CppStatus } from '@/lib/api/client';
 
@@ -67,11 +68,8 @@ export async function generateMetadata({
       title: t('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/scientific-models`,
-      languages: {
-        fa: `${BASE_URL}/fa/scientific-models`,
-        en: `${BASE_URL}/en/scientific-models`,
-      },
+      canonical: canonicalFor(locale, '/scientific-models'),
+      languages: languageAlternates('/scientific-models'),
     },
   };
 }

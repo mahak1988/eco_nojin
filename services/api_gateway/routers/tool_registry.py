@@ -124,10 +124,48 @@ def _validate_fidelity(fidelity: str | None) -> str | None:
     return fidelity
 
 
+# --- Published response shapes ---
+#
+# Every tool surface serialises through `_to_response`, so one model describes
+# them all. `response_model=dict` published `additionalProperties: true` for 57
+# catalog surfaces, which tells a client nothing it can use; these declarations
+# mirror `_to_response` field for field and are asserted by
+# `tests/contract/test_tool_registry_contract.py`.
+
+
+class ToolResponse(BaseModel):
+    """One tool registry entry, exactly as `_to_response` serialises it."""
+
+    id: int
+    tool_id: str
+    name_fa: str
+    name_en: str
+    domain: str
+    category: str
+    fidelity: str | None = None
+    reference: str | None = None
+    description: str | None = None
+    formula: str | None = None
+    service_slug: str | None = None
+    endpoint_path: str | None = None
+    phase: int | None = None
+    is_active: bool = True
+    created_at: str | None = None
+    updated_at: str | None = None
+
+
+class ToolListResponse(BaseModel):
+    """A filtered page of registry entries."""
+
+    count: int
+    tools: list[ToolResponse] = Field(default_factory=list)
+
+
+
 # --- Public read endpoints ---
 
 
-@router.get("", response_model=dict)
+@router.get("", response_model=ToolListResponse)
 def list_tools(
     domain: str | None = Query(None, max_length=50),
     category: str | None = Query(None, max_length=50),
@@ -183,7 +221,7 @@ def list_phases(db: Session = Depends(get_db)):
     return sorted([row[0] for row in db.execute(stmt).all() if row[0]])
 
 
-@router.get("/{tool_id}", response_model=dict)
+@router.get("/{tool_id}", response_model=ToolResponse)
 def get_tool(tool_id: str, db: Session = Depends(get_db)):
     """Get a specific tool by tool_id."""
     tool = db.execute(
@@ -196,7 +234,7 @@ def get_tool(tool_id: str, db: Session = Depends(get_db)):
     return _to_response(tool)
 
 
-@router.get("/by-service/{service_slug:path}", response_model=dict)
+@router.get("/by-service/{service_slug:path}", response_model=ToolListResponse)
 def get_tool_by_service(service_slug: str, db: Session = Depends(get_db)):
     """Get tool by service slug (e.g., models/et0_hargreaves)."""
     tool = db.execute(
@@ -212,7 +250,7 @@ def get_tool_by_service(service_slug: str, db: Session = Depends(get_db)):
 # --- Admin write endpoints ---
 
 
-@router.post("", response_model=dict, status_code=201)
+@router.post("", response_model=ToolResponse, status_code=201)
 def create_tool(
     payload: ToolRegistryCreate,
     db: Session = Depends(get_db),
@@ -254,7 +292,7 @@ def create_tool(
     return _to_response(tool)
 
 
-@router.patch("/{tool_id}", response_model=dict)
+@router.patch("/{tool_id}", response_model=ToolResponse)
 def update_tool(
     tool_id: str,
     payload: ToolRegistryUpdate,
@@ -302,7 +340,7 @@ def update_tool(
     return _to_response(tool)
 
 
-@router.delete("/{tool_id}", response_model=dict)
+@router.delete("/{tool_id}", response_model=ToolResponse)
 def delete_tool(
     tool_id: str,
     db: Session = Depends(get_db),

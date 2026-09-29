@@ -1,4 +1,3 @@
-import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
@@ -11,22 +10,6 @@ interface MarketplaceTemplatePageProps {
   slug: string;
   /** Real gateway path this route would read, when one already exists. */
   source?: string;
-}
-
-export async function generateMarketplaceMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string; slug: string }>;
-}): Promise<Metadata> {
-  const { locale, slug } = await params;
-  setRequestLocale(locale);
-  const t = await getTranslations('market.template');
-
-  return {
-    title: `${t('title')} · ${slug}`,
-    description: t('description'),
-    robots: { index: false, follow: true },
-  };
 }
 
 /**

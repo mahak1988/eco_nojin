@@ -1,0 +1,359 @@
+# tolerations: مسیرهایی که نتیجه کامل نمی‌دهند
+#
+# هر سطر یعنی: «می‌دانیم این مسیر ناقص است، مالکش را دارد، و تاریخ بازنگری
+# دارد.» فهرست برای S-HONEST (docs/standards/S-HONEST.md).
+#
+# این فهرست ابزار سرکوب نیست: هر سطر یک بدهی ثبت‌شده است. سطری که رفع شد
+# باید حذف شود، نه اینکه تاریخش به‌روز شود.
+#
+# اقلامی که فاز ۱ (۲۰۲۶-۰۹-۲۸) پیاده‌سازی کرد باید از این فهرست خارج شوند.
+# وضعیت فعلی پس از فاز ۱:
+#   - backup: پیاده‌سازی واقعی (SQLite snapshot / pg_dump) → از فهرست خارج شد
+#   - ledger.verify_chain: به NotImplementedError تبدیل شد → خارج شد
+#   - ledger.post_entry / get_balance: به‌جای مقدار جعلی، استثنا → خارج شدند
+#   - traceability.verify_integrity: همچنان TODO → باقی می‌ماند
+#   - nlg fabricated evidence: همچنان TODO → باقی می‌ماند
+#
+# بازبینی فاز ۵ (۲۰۲۶-۰۹-۲۸): هر ۲۲ سطر در برابر کد امروز بررسی شد.
+# نتیجه: هیچ سطری کاملاً برطرف نشده بود، پس چیزی حذف نشد. آنچه عوض شد
+# دقتِ متن است — ۹ سطر باریک‌تر شدند چون ادعای فرعی‌شان دیگر درست نبود:
+#   - map_engine/api/ در فاز ۴ حذف شد و pipelineها حالا واقعاً mount می‌شوند،
+#     پس ادعای «unreachable» افتاد؛ خودِ fetcherها هنوز مصنوعی‌اند.
+#   - compute_ndvi حالا بازهٔ تاریخ درخواستی را برمی‌گرداند (قبلاً ثابت بود).
+#   - شمارش fallbackهای verra از ۸ به ۶ رسید.
+#   - در jobs/service.py درج تکراری JobEvent رفع شد؛ NameError هنوز هست.
+#   - شماره‌خط‌های ارجاعی چند سطر با کد فعلی هم‌راستا شد.
+#
+# آنچه این فهرست پوشش نمی‌دهد (کاندیدا، ثبت‌نشده — عمداً اضافه نشده چون
+# مالک و سطح ریسکشان تأیید نشده): اسکنر G2 در services/ هنوز ۸۶ یافته
+# می‌دهد و فقط ۳۱ مورد آن زیر نامِ همین فهرست می‌افتد. بدترین‌های
+# ثبت‌نشده: services/two_factor.py:28 (verify_totp → False ثابت)،
+# services/security/ssrf.py:55 (validate_url → True ثابت)،
+# services/carbon/compliance/kyc_aml.py:263 (verify_kyc → True ثابت)،
+# services/security/antibot.py:429 (check_solution → False ثابت)،
+# services/telegram_bot/config.py:34 (validate → True ثابت)،
+# services/marketplace/order_management.py:309 (confirm_order → False ثابت).
+
+version: 1
+reviewed: 2026-09-28
+
+tolerations:
+  # ---------------------------------------------------------------- services
+  - id: traceability-verify-integrity
+    path: services/marketplace/traceability.py:116
+    owner: D-2
+    status: not_implemented
+    reason: >-
+      verify_integrity computes a SHA-256 digest, discards it and returns True.
+      A supply-chain integrity function that cannot detect tampering.
+    risk: high
+    review_by: 2026-10-28
+
+  - id: nlg-fabricated-evidence
+    path: services/ai/nlg.py:140
+    owner: D-8
+    status: not_implemented
+    reason: >-
+      When nothing matches, an evidence record is manufactured and the user's
+      own question is echoed back as the answer. Contradicts the honesty
+      contract that carbon/schemas.py states explicitly.
+    risk: high
+    review_by: 2026-10-28
+
+  - id: nlg-no-llm-call
+    path: services/ai/nlg.py:169
+    owner: D-8
+    status: degraded
+    reason: 'provider "local-nlg" is a template string; no LLM is invoked.'
+    risk: medium
+    review_by: 2026-10-28
+
+  - id: trust-score-constant
+    path: services/ecosystem/trust_score.py:164
+    owner: D-3
+    status: not_implemented
+    reason: >-
+      _get_user_events returns [] (comment: "In production: query database"),
+      so every user scores exactly BASE_SCORE = 0.5. record_event builds and
+      discards a dict literal, then returns True.
+    risk: high
+    review_by: 2026-10-28
+
+  - id: reconciliation-two-stubs
+    path: services/finance/reconciliation.py:99
+    owner: D-1
+    status: not_implemented
+    reason: >-
+      reconcile_orders_payments and reconcile_inventory are TODO stubs that
+      return discrepancies_count: 0 unconditionally, and run_full_reconciliation
+      derives overall_ok from them, so a full run reports a clean reconciliation.
+      Narrowed in phase 5: the stubs are no longer silent — each now carries a
+      "note" field saying the check was skipped — but the fabricated zero is
+      still what overall_ok is derived from.
+    risk: high
+    review_by: 2026-10-28
+
+  - id: payment-provider-stripe
+    path: services/finance/payment_provider.py:119
+    owner: D-1
+    status: not_implemented
+    reason: 9 NotImplementedError sites; Stripe PaymentIntent is not created.
+    risk: medium
+    review_by: 2026-11-28
+
+  - id: alerting-evaluator
+    path: services/alerting/service.py:289
+    owner: D-9
+    status: not_implemented
+    reason: >-
+      evaluate_rules is a placeholder returning {"fired": 0, "resolved": 0}.
+      No alert is ever fired or auto-resolved, and every Alertmanager-shaped
+      rule field (condition, for, keep_firing_for, notification_channels) is
+      stored and never read.
+    risk: high
+    review_by: 2026-10-28
+
+  - id: oracle-verification
+    path: services/oracle/service.py:212
+    owner: D-1
+    status: not_implemented
+    reason: >-
+      Satellite/GPS/verification-oracle checks return a constant positive.
+      Nothing is actually verified.
+    risk: high
+    review_by: 2026-10-28
+
+  - id: satellite-service-mock-indices
+    path: services/satellite/service.py:132
+    owner: D-5
+    status: degraded
+    reason: >-
+      compute_ndvi and compute_vegetation_indices return hardcoded values and
+      ignore the imagery entirely (comment: "For demo: return mock data").
+      Narrowed in phase 5: the "fixed 2024-01-01..2024-12-31 date range" claim
+      no longer holds for compute_ndvi, which now echoes the requested range
+      (service.py:140). It still holds for compute_vegetation_indices, which
+      returns a constant date_range and image_count: 24 (service.py:166-167).
+      The hardcoded indices themselves (ndvi 0.68, evi 0.52, savi 0.58,
+      ndwi 0.25, nbr 0.45) are unchanged.
+    risk: high
+    review_by: 2026-10-28
+
+  - id: satellite-detect-changes
+    path: services/satellite/monitoring_service.py:194
+    owner: D-5
+    status: not_implemented
+    reason: 'detect_changes returns change_detected=True, magnitude=0.15 (comment: "# شبیه‌سازی").'
+    risk: medium
+    review_by: 2026-10-28
+
+  - id: openet-stub
+    path: services/satellite/openet_service.py:18
+    owner: D-5
+    status: not_implemented
+    reason: returns Ellipsis as et_ensemble_mm with a hardcoded confidence of 0.89.
+    risk: medium
+    review_by: 2026-11-28
+
+  - id: map-engine-synthetic-fetchers
+    path: services/map_engine/fetchers/
+    owner: D-5
+    status: degraded
+    reason: >-
+      All 6 fetchers produce random data (np.random.normal for DEM, uniform
+      for rainfall/soil/landcover/vegetation); dem_fetcher.py:25 states this
+      in its own ORIGIN_DETAIL. Narrowed in phase 5: the second half of the old
+      reason is FIXED — services/map_engine/api/ was deleted in phase 4 and the
+      pipelines are now reachable (api_gateway/routers/motors.py:12 imports the
+      orchestrator; engine/land/integration/water_adapter.py:215 imports
+      pipelines.runoff). The fetchers are still synthetic, so the entry stays.
+    risk: high
+    review_by: 2026-10-28
+
+  - id: land-profile-fabricated
+    path: services/land/land_profile.py:57
+    owner: D-5
+    status: degraded
+    reason: >-
+      calculate_land_profile returns a fixed elevation range (100-250 m), slope
+      15.5, land_capability_class "III" and dem_source "SRTM" for terrain it
+      invents. Narrowed in phase 5: land/tests/test_land_profile.py now also
+      pins the echoed request fields (project_id, location, area_hectares), but
+      the fabricated terrain values are still only asserted `is not None`, so
+      they remain unverified against any real DEM.
+    risk: high
+    review_by: 2026-10-28
+
+  - id: ussd-mock-data
+    path: services/business_modules/ussd/engine.py:204
+    owner: D-10
+    status: not_implemented
+    reason: >-
+      Mock crop data (engine.py:251), mock trend data (engine.py:297), mock
+      weather data (engine.py:333), and "for research, return mock answer"
+      (engine.py:361). The NDVI reply is derived from the latitude digits
+      (engine.py:205), so it is a function of the input, not a measurement.
+    risk: medium
+    review_by: 2026-11-28
+
+  - id: voice-mock-stt-tts
+    path: services/business_modules/voice/whisper_stt.py:194
+    owner: D-10
+    status: not_implemented
+    reason: >-
+      _mock_transcribe returns hardcoded strings and is the terminal fallback on
+      four paths in WhisperSTTProvider: init failure (:125), neither API client
+      nor local model available (:135), API exception (:166) and local-model
+      exception (:192). Narrowed in phase 5: the old reason also claimed "Azure
+      TTS, Polly TTS, Google STT and Vosk STT all fall back to it" — no such
+      classes exist in this module, so that clause is dropped. The equivalent
+      real debt lives elsewhere: stt_provider.py:113 and tts_provider.py:88 both
+      install a _Mock* instance as the module-level default provider.
+    risk: medium
+    review_by: 2026-11-28
+
+  - id: verra-mock-fallbacks
+    path: services/business_modules/carbon/verra_integration.py:70
+    owner: D-3
+    status: degraded
+    reason: >-
+      6 return self._mock_* fallbacks (was 8); _mock_project still returns
+      "Mock Project {id}" (:193) and _mock_search still returns "Mock Project 1"
+      and "Mock Project 2" (:207, :214). Narrowed in phase 5: two fallbacks were
+      replaced, and the survivors now label themselves ("status": "mock" and a
+      "configure VERRA_API_KEY" note) rather than passing as real registry data.
+    risk: medium
+    review_by: 2026-11-28
+
+  - id: jobs-create-and-update
+    path: services/jobs/service.py:93
+    owner: D-9
+    status: not_implemented
+    reason: >-
+      create_job discards the ComputeJob it builds and then passes a Pydantic
+      schema to db.add() (UnmappedClassError). update_job_status still ends in
+      `await self.db.refresh(data); return data` with no `data` in scope, so
+      every call raises NameError. Narrowed in phase 5: the duplicate JobEvent
+      insert was fixed (see the comment at service.py:337) and is no longer part
+      of this debt; the NameError and the pydantic-to-db.add bug are unchanged.
+    risk: high
+    review_by: 2026-10-28
+
+  - id: auth-session-hardcoded-list
+    path: services/api_gateway/routers/auth.py:1044
+    owner: D-7
+    status: not_implemented
+    reason: >-
+      Session listing matches hardcoded "127.0.0.1" / "Mozilla/5.0";
+      revoke_session (:1069) and revoke_all_sessions (:1077) perform no ownership
+      check and revoke nothing; the rate-limit status route returns the
+      constants 3 / 57 / 45 (auth.py:1136).
+    risk: high
+    review_by: 2026-10-28
+
+  - id: auth-2fa-is-a-flag
+    path: services/api_gateway/routers/auth.py:996
+    owner: D-7
+    status: not_implemented
+    reason: >-
+      The 2FA endpoint writes a boolean flag into a global settings table keyed
+      by user id, with no code challenge and no TOTP verification. It is not
+      two-factor authentication. Narrowed in phase 5: it now also sets
+      current_user.two_factor_enabled and commits, so the flag is duplicated
+      into the user row — still no second factor is ever checked. Related
+      unregistered debt: services/two_factor.py:28 verify_totp returns a
+      constant False, so nothing can verify a TOTP even if a code were issued.
+    risk: high
+    review_by: 2026-10-28
+
+  - id: marketplace-demo-catalog
+    path: services/marketplace/product_catalog.py:20
+    owner: D-2
+    status: degraded
+    reason: >-
+      _initialize_demo_data runs in __init__ with 3 fabricated producers and 5
+      products carrying invented carbon_footprint_kg_co2 and water_footprint_liters.
+      All 3 producers carry verification_status="verified", which is itself a
+      fabricated claim. The gateway wires init_catalog(seller_repo=None,
+      product_repo=None) (api_gateway/main.py:186), so the demo catalog is what
+      every caller sees. The startup log states this rather than claiming
+      initialisation.
+    risk: high
+    review_by: 2026-10-28
+
+  - id: carbon-mrv-double-counting
+    path: services/carbon/integration/credit_bridge.py:121
+    owner: D-3
+    status: degraded
+    reason: >-
+      Double-counting prevention depends on an on-chain registry that is None by
+      default (self._on_chain = on_chain, :121), so every sync_* call reports
+      FAILED with "'NoneType' object has no attribute 'issue_credits'" rather
+      than "not configured". Verified at runtime in phase 5:
+      CreditBridge().sync_transfer(...) returns status=failed. The
+      missing-await defect that blinded the check entirely was fixed in phase 1
+      and that claim still holds — CarbonTokenService.issue_credits
+      (business_modules/carbon/tokenization.py:69) is synchronous, so the
+      unawaited calls at :330/:373/:416 are correct.
+    risk: high
+    review_by: 2026-10-28
+
+  - id: no-content-security-policy
+    path: services/api_gateway/security.py
+    owner: D-7
+    status: degraded
+    reason: >-
+      The mounted SecurityHeadersMiddleware declares no Content-Security-Policy, so
+      the gateway sends no CSP at all. Found in phase 5 by GET
+      /api/v1/security/status, which computes its status from the live middleware
+      stack and reported degraded for exactly this reason. The only CSP in the
+      repository lived in services/security/headers.py, which was never mounted
+      and was removed in phase 5, when it was confirmed to have zero importers. A correct policy cannot be
+      written without the frontend's asset origins, so this is registered rather
+      than guessed.
+    risk: high
+    review_by: 2026-10-28
+  - id: mixed-k-provenance-in-point-chain
+    path: services/scientific_motors/chain_runner.py
+    owner: D-4
+    status: degraded
+    reason: >-
+      rusle_point computes LS from the registry's Foster/Nearing but is handed a K from
+      soilgrids.rusle_k_factor, which is the Williams 1995 multiplicative form. The two K
+      equations disagree by 6.811x for a loam, so the product mixes provenances. Nothing in
+      the tree compares them, so the discrepancy was invisible. Standardising on Renard
+      would move a reference site from 53.7 to 365.9 t/ha/yr and hit rusle_point's 60 t/ha/yr
+      ceiling; standardising on Williams would drop the three Renard raster sites by 5-12x.
+      Both are now registered separately with citations, so neither is silently replaced.
+    risk: high
+    review_by: 2026-10-28
+
+  - id: mccool-ls-branch-discontinuity
+    path: engine/land/erosion_risk.py
+    owner: D-4
+    status: degraded
+    reason: >-
+      The 9% grade branch of the McCool LS function steps by +46.4% at the switch. The two
+      arms disagree because the low-slope arm uses 16.8*sin - 0.045*cos^2 where the
+      published Wischmeier & Smith form uses 16.8*sin - 0.50; the latter is continuous to
+      +0.78%. The branch is also keyed on grade percent but the switch happens at 5.14
+      degrees, not 9. Found by comparing the two arms numerically. Fixing it changes erosion
+      numbers, so it needs the RUSLE2 guide and a scientific decision, not a code edit.
+    risk: high
+    review_by: 2026-10-28
+
+  - id: compliance-router-never-mounted
+    path: services/api_gateway/routers/compliance.py
+    owner: D-3
+    status: not_implemented
+    reason: >-
+      The whole compliance surface - KYC/AML, greenwashing assessment, disclosure and the
+      carbon credit bridge - is unreachable: the router declares prefix /api/v1/compliance
+      and is not included in main.py, and that was already true at HEAD, so this is not a
+      regression. Verified against the running app's OpenAPI schema: 497 paths, zero under
+      that prefix. Phase 1 added admin-only authorisation to these 12 endpoints, which is
+      correct for when it is mounted and irrelevant until then. Mounting needs a migration
+      for the provenance tables and a decision on the bridge's on-chain dependency.
+    risk: high
+    review_by: 2026-10-28
+

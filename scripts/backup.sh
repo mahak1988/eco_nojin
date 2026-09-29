@@ -13,10 +13,20 @@ mkdir -p "$BACKUP_DIR"
 
 echo "Creating backup at: $BACKUP_DIR"
 
-# 1. Backup database
-DB_PATH="$PROJECT_ROOT/hydroma_research.db"
+DB_PATH="$PROJECT_ROOT/data/econojin.db"
 if [ -f "$DB_PATH" ]; then
-    cp "$DB_PATH" "$BACKUP_DIR/hydroma_research.db"
+    python - "$DB_PATH" "$BACKUP_DIR/econojin.db" <<'PY'
+import sqlite3
+import sys
+
+source = sqlite3.connect(sys.argv[1])
+target = sqlite3.connect(sys.argv[2])
+try:
+    source.backup(target)
+finally:
+    target.close()
+    source.close()
+PY
     echo "  [OK] Database backed up"
 else
     echo "  [SKIP] Database not found at $DB_PATH"
@@ -32,9 +42,10 @@ else
 fi
 
 # 3. Backup config files
-for cfg in pyproject.toml requirements.txt docker-compose.yml; do
+for cfg in pyproject.toml requirements.txt alembic.ini deploy/docker-compose.yml; do
     if [ -f "$PROJECT_ROOT/$cfg" ]; then
-        cp "$PROJECT_ROOT/$cfg" "$BACKUP_DIR/"
+        mkdir -p "$BACKUP_DIR/$(dirname "$cfg")"
+        cp "$PROJECT_ROOT/$cfg" "$BACKUP_DIR/$cfg"
     fi
 done
 echo "  [OK] Config files backed up"
@@ -48,11 +59,12 @@ Date: $(date)
 Host: $(hostname)
 
 Contents:
-- hydroma_research.db    (database, may be empty if not found)
+- data/econojin.db       (SQLite database)
 - .env.redacted          (environment with secrets redacted)
 - pyproject.toml         (project config)
 - requirements.txt       (dependencies)
-- docker-compose.yml     (container config, if exists)
+- alembic.ini            (migration config)
+- deploy/docker-compose.yml (optional Podman infrastructure)
 EOF
 
 echo "  [OK] Manifest created"

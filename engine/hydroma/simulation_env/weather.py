@@ -17,7 +17,7 @@ from datetime import date
 import numpy as np
 import pandas as pd
 
-from engine.hydroma.climate.et_calculator import calc_extraterrestrial_radiation
+from engine.hydroma.climate.et_calculator import ClimateData, calc_et0_hargreaves
 from engine.hydroma.simulation_env.contracts import (
     DEFAULT_MONTHLY_PRECT_FRAC,
     Provenance,
@@ -25,12 +25,18 @@ from engine.hydroma.simulation_env.contracts import (
 
 
 def hargreaves_et0(tmin: float, tmax: float, lat: float, doy: int) -> float:
-    """FAO-56 Hargreaves-Samani ET0 (mm/day) from daily min/max temperature."""
-    ra_mj = calc_extraterrestrial_radiation(lat, doy)
-    ra_mm = ra_mj * 0.408  # MJ/m2/day -> mm/day
-    tmean = (tmin + tmax) / 2.0
-    dtr = max(tmax - tmin, 0.1)
-    return max(0.0, 0.0023 * (tmean + 17.8) * (dtr**0.5) * ra_mm)
+    """FAO-56 eq. 52 reference evapotranspiration (mm/day).
+
+    Delegates to ``climate.et_calculator.calc_et0_hargreaves``. This copy carried
+    its own expression with exponent 0.50 where FAO-56 publishes 0.48, and its
+    own MJ-to-mm conversion. Both are now in one place.
+
+    The 0.1 degC floor on the diurnal range is preserved from the original.
+    """
+    return calc_et0_hargreaves(
+        data=ClimateData(tmin=tmin, tmax=tmax, latitude=lat, doy=doy),
+        dtr_floor=0.1,
+    )
 
 
 @dataclass

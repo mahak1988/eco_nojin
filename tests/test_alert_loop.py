@@ -4,6 +4,7 @@ import os
 import pytest
 
 from database import models  # noqa: F401
+from tests.db_support import reset_database
 from database.base import Base
 from database.config import engine
 from database.hub import hub as db_models
@@ -13,8 +14,7 @@ from tests.conftest import TEST_SESSION_FACTORY as SessionLocal
 
 @pytest.fixture
 def db_session():
-    Base.metadata.drop_all(bind=engine)
-    Base.metadata.create_all(bind=engine)
+    reset_database()
     db = SessionLocal()
     yield db
     db.close()

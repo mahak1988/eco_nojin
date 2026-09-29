@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
@@ -16,12 +17,6 @@ type PilotStats = {
   generated_at: string;
 };
 
-const TITLES: Record<string, string> = { fa: 'اثر', en: 'Impact' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'شمار واقعی تقاضاهای ثبت‌شده؛ بدون سنجهٔ تأییدشده',
-  en: 'The real registered-application counters; no verified metric is claimed',
-};
-
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
@@ -30,21 +25,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-goals-impact');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/goals/impact`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/goals/impact`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/goals/impact`,
-        en: `${BASE_URL}/en/public/goals/impact`,
-      },
+      canonical: canonicalFor(locale, '/public/goals/impact'),
+      languages: languageAlternates('/public/goals/impact'),
     },
   };
 }
@@ -52,9 +45,11 @@ export async function generateMetadata({
 export default async function ImpactPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  const meta = await getTranslations('pageMeta.public-goals-impact');
   const status = await getTranslations('statusLine');
-  const title = TITLES[locale] ?? TITLES.en;
-  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+  const title = meta('title');
+  const description = meta('description');
 
   const pilot = await apiGet<PilotStats>('/api/v1/pilot/stats');
   const pilotState = toDataState('/api/v1/pilot/stats', pilot, pilot.ok ? 1 : 0);
@@ -63,14 +58,15 @@ export default async function ImpactPage({ params }: { params: Promise<{ locale:
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <div className="mx-auto max-w-4xl px-6 pb-12 pt-8">
-        <ProvenanceStamp
-          source={'/api/v1/pilot/stats'}
-          label={title}
-          verified={pilot.ok}
-          method={'/api/v1/pilot/stats'}
-        >
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-        </ProvenanceStamp>
+          <ProvenanceStamp
+            source={'/api/v1/pilot/stats'}
+            label={title}
+            verified={pilot.ok}
+            method={'/api/v1/pilot/stats'}
+          />
+        </div>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
 
         <section className="mt-8">

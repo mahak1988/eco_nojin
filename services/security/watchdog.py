@@ -13,6 +13,7 @@ import subprocess
 import sys
 import threading
 import time
+from pathlib import Path
 
 logger = logging.getLogger("econojin.watchdog")
 
@@ -66,7 +67,7 @@ class HealthWatchdog:
         self._stop = False
 
     def start(self) -> None:
-        self.proc = subprocess.Popen(self.cmd, cwd=os.getcwd())
+        self.proc = subprocess.Popen(self.cmd, cwd=str(Path.cwd()))
 
     def stop(self) -> None:
         self._stop = True

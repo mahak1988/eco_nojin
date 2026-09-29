@@ -7,6 +7,8 @@ from datetime import date
 
 from pydantic import BaseModel, Field
 
+from engine.hydroma.climate.et_calculator import calc_et0_hargreaves
+
 logger = logging.getLogger(__name__)
 
 
@@ -52,15 +54,30 @@ class CropWaterRequirementCalculator:
         pass
 
     def _calculate_et0_hargreaves(self, weather: DailyWeather) -> float:
-        """Calculates reference evapotranspiration using Hargreaves method (as a fallback)."""
-        # Reusing the logic from existing codebase if available
-        # This is a simplified version for demonstration
+        """Reference evapotranspiration by the Hargreaves-Samani method.
+
+        Delegates to ``climate.et_calculator.calc_et0_hargreaves``, the single
+        implementation. This copy evaluated its own expression, and it was not
+        eq. 52: it used ``Ra ** 0.5`` where eq. 52 is linear in the
+        millimetre-equivalent Ra, so every seasonal ETc and every irrigation
+        requirement computed through this path was 4.1x too small. Its own
+        comment called it "simplified version for demonstration".
+
+        **Known limitation, unchanged by this fix.** The input field is
+        ``solar_radiation_mj_m2``, measured global radiation Rs, and this method
+        uses it as a stand-in for extraterrestrial radiation Ra. Rs is at most
+        about 0.78 Rso, so this remains an approximation and the result is not
+        eq. 52 evaluated on the right input. What the delegation fixes is the
+        equation and the exponent; the input substitution needs a schema change
+        and is recorded rather than silently altered.
+        """
         t_mean = (weather.t_max_c + weather.t_min_c) / 2
-        # Simplified formula (requires solar radiation Ra in MJ/m2/day)
-        # ET0 ≈ 0.0023 * (Tmax - Tmin)^0.5 * (Tmean + 17.8) * Ra^0.5
-        ra = weather.solar_radiation_mj_m2  # Extraterrestrial radiation approximation
-        et0 = 0.0023 * ((weather.t_max_c - weather.t_min_c) ** 0.5) * (t_mean + 17.8) * (ra**0.5)
-        return max(0, et0)  # Ensure non-negative
+        return calc_et0_hargreaves(
+            t_min=weather.t_min_c,
+            t_max=weather.t_max_c,
+            t_mean=t_mean,
+            ra_mj=weather.solar_radiation_mj_m2,
+        )
 
     def execute(self, input_data: CropWaterReqInput) -> CropWaterReqOutput:
         """Main execution function."""

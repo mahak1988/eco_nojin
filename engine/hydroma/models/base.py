@@ -11,7 +11,7 @@ All scientific models must inherit from ScientificModel and implement:
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 import numpy as np
@@ -28,6 +28,75 @@ class ValidationResult:
     tolerance: float
     relative_error: float
     reference_source: str
+
+
+@dataclass
+class ModelInput:
+    """Inputs handed to a model, keyed by name.
+
+    The expansion models -- MODFLOW6, SWAT+, the Gaussian-process surrogate and
+    the PINN -- all construct a ``ModelInput`` and return a ``ModelOutput``, but
+    neither type was ever defined. Because the modules use
+    ``from __future__ import annotations``, the missing annotation on the return
+    type was invisible at import and the failure only appeared at run time as
+    ``NameError`` on the first line of real work.
+
+    A mapping wrapper rather than a field per input, because the set of inputs
+    differs per model and a shared schema would either be a lowest-common-
+    denominator or a large union that validates nothing.
+    """
+
+    values: dict[str, Any] = field(default_factory=dict)
+
+    def __getitem__(self, key: str) -> Any:
+        return self.values[key]
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        self.values[key] = value
+
+    def __contains__(self, key: object) -> bool:
+        return key in self.values
+
+    def get(self, key: str, default: Any = None) -> Any:
+        return self.values.get(key, default)
+
+    def items(self):
+        return self.values.items()
+
+    def keys(self):
+        return self.values.keys()
+
+
+@dataclass
+class ModelOutput:
+    """A model's result, with the provenance needed to tell a real answer from a
+    fabricated one.
+
+    ``data_source`` and ``model`` are not decoration. Several models in this
+    codebase can return a plausible number without running: a solver falls back to
+    a mock, a surrogate returns noise, and nothing about the returned value
+    distinguishes that from a real result. Requiring both fields here makes the
+    distinction impossible to omit, and a caller can check it without knowing
+    which model it is talking to.
+    """
+
+    success: bool
+    outputs: dict[str, Any] = field(default_factory=dict)
+    data_source: str = "simulated"
+    model: str = ""
+    uncertainty: dict[str, Any] = field(default_factory=dict)
+
+    def __getitem__(self, key: str) -> Any:
+        return self.outputs[key]
+
+    def get(self, key: str, default: Any = None) -> Any:
+        return self.outputs.get(key, default)
+
+    def items(self):
+        return self.outputs.items()
+
+    def __contains__(self, key: object) -> bool:
+        return key in self.outputs
     notes: str = ""
 
     @property

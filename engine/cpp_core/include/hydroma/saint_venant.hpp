@@ -38,7 +38,11 @@ struct SaintVenantResult {
     std::vector<double> time_s;
     double total_volume_initial_m3{0.0};
     double total_volume_final_m3{0.0};
-    double mass_balance{};     ///< final/initial volume
+    double mass_balance{};     ///< conservation residual [m3]: (V_in - V_out) - d(storage)
+double mass_balance_error{};///< |residual| normalised by throughput; 0 is perfect
+double cumulative_inflow_m3{}; ///< boundary volume admitted [m3]
+double cumulative_outflow_m3{};///< boundary volume discharged [m3]
+int dried_cells{};         ///< cells clamped to dry because the update went negative
     bool stable{true};
 };
 

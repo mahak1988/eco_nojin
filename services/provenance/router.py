@@ -1,6 +1,8 @@
 """Data Provenance API Router."""
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from typing import Any
+
+from fastapi import APIRouter, Body, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.hub import hub
@@ -176,7 +178,7 @@ async def create_lineage_edge(
     input_provenance_id: str = Query(..., description="Input provenance record ID"),
     output_provenance_id: str = Query(..., description="Output provenance record ID"),
     transformation_type: str = Query(..., description="Type of transformation"),
-    transformation_params: dict = Query(
+    transformation_params: dict[str, Any] = Body(
         default_factory=dict, description="Transformation parameters"
     ),
     transformation_code_version: str | None = Query(

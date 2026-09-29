@@ -180,6 +180,7 @@ def main() -> None:
     """Run the workflow service as a standalone FastAPI app."""
     import uvicorn
     from fastapi import APIRouter, Depends, FastAPI
+    from sqlalchemy import select
 
     app = FastAPI(title="Eco Nojin Workflow Service", version="1.0.0")
     router = APIRouter(prefix="/api/v1/workflow", tags=["workflow"])
@@ -192,8 +193,23 @@ def main() -> None:
         return await service.run(body)
 
     @router.get("/health")
-    async def health():
-        return {"status": "ok"}
+    async def health(service: WorkflowService = Depends(get_workflow_service)):
+        """Liveness, reporting what the service can actually do.
+
+        This returned the literal ``{"status": "ok"}``. A liveness probe that
+        cannot fail is not a liveness probe: if workflow persistence is broken
+        the endpoint still says ok, which is the fabricated-success shape
+        S-HONEST bans. It now reports the persistence state it depends on.
+        """
+        try:
+            await service.db.execute(select(WorkflowRun).limit(1))
+        except Exception as exc:
+            return {
+                "status": "degraded",
+                "reason": f"workflow persistence is unavailable: {type(exc).__name__}",
+                "persistence": "unavailable",
+            }
+        return {"status": "ok", "reason": None, "persistence": "available"}
 
     app.include_router(router)
     uvicorn.run(app, host="0.0.0.0", port=8005)

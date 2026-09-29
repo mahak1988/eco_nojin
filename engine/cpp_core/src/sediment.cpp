@@ -9,6 +9,9 @@
 // Add OpenMP header
 #include <omp.h>
 
+#include <cstddef>
+#include <vector>
+
 namespace hydroma {
 
 std::vector<double> rusle_grid(const std::vector<RusleCell>& cells,

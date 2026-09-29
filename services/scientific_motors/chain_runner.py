@@ -33,6 +33,7 @@ from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
 
+from services._contracts.formula import erosion_class, ls_factor
 from services.scientific_motors.aquacrop_real import RealAquaCropMotor
 from services.scientific_motors.base import MotorParameters, MotorStatus
 from services.scientific_motors.erosion_rusle import C_FACTORS, P_FACTORS, RUSLEMotor
@@ -47,9 +48,20 @@ logger = logging.getLogger(__name__)
 CACHE_DIR = Path(__file__).resolve().parents[2] / "data" / "motors" / "cache"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
-# Morgan (2005) empirical calibration for RUSLE (kept consistent with the
-# project RUSLE motor): raw RUSLE overestimates; arid regions ~3x.
-RUSLE_CALIBRATION = 0.10
+# RUSLE is applied uncalibrated: A = R * K * LS * C * P.
+#
+# This previously carried RUSLE_CALIBRATION = 0.10 with the comment "Morgan
+# (2005) empirical calibration ... arid regions ~3x". Two problems with that:
+# a value of 0.10 is a 10x reduction while the stated basis is about 3x, so the
+# number and its own justification contradicted each other; and a calibration
+# described as region-specific was applied to every climate uniformly. The
+# matching factor in engine/hydroma/core/core.py was removed for the same reason
+# plus one more -- it cited nothing at all.
+#
+# If a local calibration is wanted it must be an explicit argument, chosen for the
+# region being simulated and justified by a measurement. Baking it in here means
+# a reported erosion rate is 10x the RUSLE value with nothing to show for it.
+RUSLE_CALIBRATION = 1.0
 
 
 # ---------------------------------------------------------------------------
@@ -123,27 +135,28 @@ def rusle_point(
     A = R * K * LS * C * P * calibration
     - R: FAO/Morgan piecewise rainfall erosivity (Wischmeier & Smith)
     - K: SoilGrids EPIC erodibility (passed in)
-    - LS: Wischmeier & Smith slope-length factor
+    - LS: Foster & Nearing steepness factor from the formula registry, times
+      the usual length factor ``(lambda/22.13)**m``. The registry takes slope in
+      **degrees**; this function's argument is a **percentage**, so the
+      conversion is ``degrees(atan(pct/100))``.
     - C: cover-management factor (project crop table)
     - P: conservation-practice factor
+
+    The steepness factor used to be a polynomial in slope *percent* with no
+    angular term at all, and the risk label came from a local copy of the
+    thresholds. Both now come from ``services._contracts/formula.py``, so the
+    risk label is the FAO 5/12/25/50 t/ha/yr classification rather than the
+    local 5/10/20 one.
     """
     motor = RUSLEMotor()
     r = motor._compute_R_factor(annual_rainfall_mm)
-    math.radians(math.atan(slope_pct / 100.0))
-    ls = (slope_length_m / 22.13) ** 0.5 * (0.065 + 0.045 * slope_pct + 0.0065 * slope_pct**2)
+    ls = (slope_length_m / 22.13) ** 0.5 * ls_factor(math.degrees(math.atan(slope_pct / 100.0)))
     c = float(C_FACTORS.get(crop, C_FACTORS.get("default", 0.2)))
     p = float(P_FACTORS.get(practice, 1.0))
     loss = r * k_factor * ls * c * p * RUSLE_CALIBRATION
     loss = min(loss, 60.0)  # realistic upper bound (global observations)
 
-    if loss < 5:
-        risk = "low"
-    elif loss < 10:
-        risk = "moderate"
-    elif loss < 20:
-        risk = "high"
-    else:
-        risk = "severe"
+    risk = erosion_class(loss)
     return {
         "soil_loss_ton_ha_yr": round(loss, 2),
         "risk": risk,

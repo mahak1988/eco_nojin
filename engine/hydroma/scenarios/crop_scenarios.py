@@ -239,13 +239,18 @@ def compare_crops(
     # Sort by gross revenue
     ranked = sorted(results.items(), key=lambda x: x[1]["gross_revenue_usd_ha"], reverse=True)
 
+    # `water_stress_factor` is the AquaCrop water-stress MULTIPLIER, not a stress
+    # intensity: 1.0 is an unstressed crop and 0.0 is a crop that failed for want
+    # of water, because it scales the yield directly. A high value therefore
+    # means the crop loses the least to drought, so the most drought-tolerant crop
+    # is the maximum. The previous form read `min(..., key=lambda x: x[1][...] *
+    # -1)`, which selects that same maximum but presents it as a minimum, so the
+    # name and the sort looked to disagree when they never did.
     return {
         "ranking": [r[0] for r in ranked],
         "details": results,
         "best_economic_choice": ranked[0][0] if ranked else None,
-        "most_drought_tolerant": min(
-            results.items(), key=lambda x: x[1]["water_stress_factor"] * -1
-        )[0]
+        "most_drought_tolerant": max(results.items(), key=lambda x: x[1]["water_stress_factor"])[0]
         if results
         else None,
     }

@@ -5,6 +5,7 @@ import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { type DotState, StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 
@@ -40,11 +41,8 @@ export async function generateMetadata({
       title: t('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/developers/status-api`,
-      languages: {
-        fa: `${BASE_URL}/fa/developers/status-api`,
-        en: `${BASE_URL}/en/developers/status-api`,
-      },
+      canonical: canonicalFor(locale, '/developers/status-api'),
+      languages: languageAlternates('/developers/status-api'),
     },
   };
 }

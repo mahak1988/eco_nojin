@@ -96,7 +96,7 @@ export default function GlossaryPage() {
               type="search"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              className="min-w-[240px] flex-1 rounded-md border border-line bg-background px-4 py-2 text-ink focus:outline-none focus:ring-2 focus:ring-forest"
+              className="min-w-[240px] flex-1 rounded-md border border-line-strong bg-surface px-4 py-2 text-ink focus:outline-none focus:ring-2 focus:ring-focus"
             />
             <Button type="submit" loading={isLoading}>
               {common('view')}

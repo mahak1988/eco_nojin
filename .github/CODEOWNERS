@@ -1,0 +1,107 @@
+# Code owners
+#
+# The integration plan's execution-risk table names "ownership without
+# authority" as a live risk, with the mitigation "add each owner to
+# CODEOWNERS". That mitigation had never been carried out: the ten domain
+# owners (D-1 .. D-10) were used throughout the standards, the toleration
+# ledger and the plan, and nothing connected them to a required review.
+#
+# THE OWNER HANDLES BELOW ARE PLACEHOLDERS. A placeholder like
+# @econojin/platform-team is worse than having no CODEOWNERS at all: GitHub
+# resolves an unknown owner to nobody and requires no review, while the file
+# still looks configured. Replace every handle with a real team or account
+# before relying on this. tests/contract/test_codeowners.py refuses obvious
+# placeholder spellings but cannot tell whether a handle resolves.
+#
+# The D-ids match the source-of-truth table in
+# docs/INTEGRATION_STANDARDIZATION_PLAN_FA_2026-09-28.md and the owner field in
+# docs/standards/tolerated-degradations.yaml. tests/contract/test_codeowners.py
+# checks the three stay in step.
+
+# --- D-6 platform: middleware stack, event bus, caching, resilience, the gates
+/.github/workflows/ci-cd.yml @econojin/platform-team
+/.github/workflows/security.yml @econojin/platform-team
+/pyproject.toml @econojin/platform-team
+/pytest.ini @econojin/platform-team
+/conftest.py @econojin/platform-team
+/scripts/measure_baseline.py @econojin/platform-team
+/scripts/verify_consolidation.py @econojin/platform-team
+/services/api_gateway/main.py @econojin/platform-team
+/services/api_gateway/middleware/ @econojin/platform-team
+/services/api_gateway/security.py @econojin/platform-team
+/services/api_gateway/eventbus/ @econojin/platform-team
+/services/observability/ @econojin/platform-team
+/services/_contracts/ @econojin/platform-team
+/docs/standards/ @econojin/platform-team
+/docs/metrics/ @econojin/platform-team
+
+# --- D-7 security: auth, authz, the firewall, privacy
+/services/security/ @econojin/security-team
+/services/auth/ @econojin/security-team
+/services/privacy/ @econojin/security-team
+/services/api_gateway/auth.py @econojin/security-team
+/services/api_gateway/routers/auth.py @econojin/security-team
+/services/api_gateway/routers/auth_supabase.py @econojin/security-team
+/services/api_gateway/routers/passkey_router.py @econojin/security-team
+/services/api_gateway/routers/security_router.py @econojin/security-team
+/services/session_manager.py @econojin/security-team
+/services/two_factor.py @econojin/security-team
+
+# --- D-4 science: motors, the formula registry, simulation
+/engine/hydroma/ @econojin/science-team
+/engine/land/ @econojin/science-team
+/services/scientific_motors/ @econojin/science-team
+/services/models/ @econojin/science-team
+/services/simulation/ @econojin/science-team
+
+# --- D-5 data: remote sensing, maps, field data
+/services/satellite/ @econojin/data-team
+/services/map_engine/ @econojin/data-team
+/services/land/ @econojin/data-team
+/services/landscape/ @econojin/data-team
+/services/livestock/ @econojin/data-team
+/services/ogc/ @econojin/data-team
+/services/data_manual/ @econojin/data-team
+/services/data_sources/ @econojin/data-team
+
+# --- D-1 finance: the consolidated ledger, wallets, money contract
+/services/finance/ @econojin/finance-team
+/services/ledger/ @econojin/finance-team
+/services/ecowallet/ @econojin/finance-team
+
+# --- D-2 marketplace: trading, orders, inventory
+/services/marketplace/ @econojin/marketplace-team
+/services/commerce/ @econojin/marketplace-team
+/services/inventory/ @econojin/marketplace-team
+/services/logistics/ @econojin/marketplace-team
+
+# --- D-3 carbon: compliance artefacts. Unreviewed changes here are the costly ones.
+/services/carbon/ @econojin/carbon-team
+/services/compliance/ @econojin/carbon-team
+/services/provenance/ @econojin/carbon-team
+/services/mrv/ @econojin/carbon-team
+/services/ecosystem/ @econojin/carbon-team
+/services/dispute_resolution/ @econojin/carbon-team
+
+# --- D-8 ai: models, agents, retrieval
+/services/ai/ @econojin/ai-team
+/services/analysis/ @econojin/ai-team
+/services/content/ @econojin/ai-team
+
+# --- D-9 operations: jobs, scheduling, alerting, backup, reporting
+/services/alerting/ @econojin/operations-team
+/services/jobs/ @econojin/operations-team
+/services/workflow/ @econojin/operations-team
+/services/backup/ @econojin/operations-team
+/services/reporting/ @econojin/operations-team
+/services/notification/ @econojin/operations-team
+/services/analytics/ @econojin/operations-team
+/services/quality/ @econojin/operations-team
+
+# --- D-10 access: bots, telegram, voice and USSD entry points
+/services/bots/ @econojin/access-team
+/services/telegram_bot/ @econojin/access-team
+/services/business_modules/ @econojin/access-team
+
+# --- The integrity gates. A gate nobody owns is a gate nobody maintains.
+/tests/contract/ @econojin/platform-team

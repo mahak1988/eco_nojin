@@ -24,12 +24,12 @@ const baseStyles: CSSProperties = {
 
 const offlineStyles: CSSProperties = {
   background: 'var(--color-copper)',
-  color: 'var(--color-paper)',
+  color: 'var(--color-on-action)',
 };
 
 const reconnectingStyles: CSSProperties = {
   background: 'var(--color-water)',
-  color: 'var(--color-paper)',
+  color: 'var(--color-on-action)',
 };
 
 export const OfflineBanner = forwardRef<HTMLDivElement, OfflineBannerProps>(

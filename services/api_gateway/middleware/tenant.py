@@ -1,7 +1,12 @@
 """Tenant isolation middleware for FastAPI.
 
-Extracts tenant/platform ID from JWT token claims only.
-Sets request.state.tenant_id for downstream use.
+Publishes ``request.state.tenant_id`` for downstream use.
+
+The subject and tenant are resolved exactly once per request by
+``IdentityMiddleware``, which sits outside this middleware. Decoding the JWT a
+second time here would both duplicate work and risk the two middlewares
+disagreeing about the tenant (this one used to read the ``Authorization``
+header only, so cookie-authenticated requests got no tenant at all).
 """
 
 import logging
@@ -14,10 +19,10 @@ logger = logging.getLogger(__name__)
 
 
 class TenantMiddleware(BaseHTTPMiddleware):
-    """Middleware that extracts tenant context from requests."""
+    """Middleware that exposes tenant context to requests."""
 
     async def dispatch(self, request: Request, call_next):
-        tenant_id = self._extract_tenant_id(request)
+        tenant_id = self._tenant_id(request)
         request.state.tenant_id = tenant_id
 
         if tenant_id:
@@ -29,22 +34,11 @@ class TenantMiddleware(BaseHTTPMiddleware):
         # Do not echo tenant ID in response headers (security)
         return response
 
-    def _extract_tenant_id(self, request: Request) -> str | None:
-        """Extract tenant ID from JWT token only."""
-        auth_header = request.headers.get("Authorization", "")
-        if not auth_header.startswith("Bearer "):
-            return None
+    def _tenant_id(self, request: Request) -> str | None:
+        """Return the tenant resolved by ``IdentityMiddleware``.
 
-        token = auth_header[7:].strip()
-        try:
-            # Import locally to avoid circular imports
-            from services.api_gateway.auth import decode_token
-
-            payload = decode_token(token)
-            if payload is None:
-                return None
-            # Prefer platform_id or tenant_id claim; do not fall back to sub
-            tenant = payload.get("platform_id") or payload.get("tenant_id")
-            return tenant if tenant and tenant != "anonymous" else None
-        except Exception:
-            return None
+        Returns ``None`` when the middleware is mounted standalone (for
+        example in a test app) rather than trusting a client-supplied header.
+        """
+        tenant = getattr(request.state, "tenant_id", None)
+        return str(tenant) if tenant else None

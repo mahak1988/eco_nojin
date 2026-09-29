@@ -8,6 +8,7 @@ import {
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { isRtl } from '@/i18n/routing';
 
 interface BazaarStepRendererProps {
   step: number;
@@ -27,11 +28,11 @@ export function BazaarStepRenderer({ step, locale }: BazaarStepRendererProps) {
   return (
     <fieldset
       className="space-y-4"
-      dir={locale === 'fa' || locale === 'ar' ? 'rtl' : 'ltr'}
+      dir={isRtl(locale) ? 'rtl' : 'ltr'}
       aria-labelledby={`step-${safeStep}-legend`}
     >
       <legend id={`step-${safeStep}-legend`} className="text-lg font-semibold text-ink">
-        <span className="num mr-2 text-sm text-ink-faint">{safeStep}</span>
+        <span className="num me-2 text-sm text-ink-faint">{safeStep}</span>
         {t('title')}
       </legend>
       <Card density="cozy">

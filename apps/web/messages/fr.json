@@ -1,5 +1,8 @@
 {
-  "meta": { "machineTranslated": true, "fallbackLocale": "fa" },
+  "meta": {
+    "machineTranslated": true,
+    "fallbackLocale": "fa"
+  },
   "brand": {
     "name": "HyDroMa Nojin",
     "description": "Partie scientifique d'Eco Nojin ; accompagnement pour une meilleure compréhension de l'eau, du sol, de la végétation et du climat."
@@ -402,5 +405,381 @@
       "source": "bff:/api/auth/session",
       "method": "HttpOnly session cookie"
     }
+  },
+  "pageMeta": {
+    "public-audiences-cooperatives": {
+      "title": "Coopératives",
+      "description": "Demandes enregistrées et les compteurs réels de la place de marché"
+    },
+    "public-audiences-farmers": {
+      "title": "Agriculteurs",
+      "description": "Demandes enregistrées et les profils de terrain présents dans la base de données"
+    },
+    "public-audiences-government": {
+      "title": "Gouvernement",
+      "description": "Demandes enregistrées et les compteurs réels de la base de données"
+    },
+    "public-audiences-investors": {
+      "title": "Investisseurs",
+      "description": "Demandes enregistrées et compteurs réels de projets ; aucun rendement n’est revendiqué"
+    },
+    "public-audiences-ngos": {
+      "title": "ONG",
+      "description": "Demandes enregistrées et l’état réel des indicateurs"
+    },
+    "public-audiences-researchers": {
+      "title": "Recherche",
+      "description": "Le registre des modèles et la référence scientifique derrière chaque modèle"
+    },
+    "public-channels": {
+      "title": "Canaux d’accès",
+      "description": "L’état réel des canaux USSD, vocal et de synchronisation"
+    },
+    "public-components-api-playground": {
+      "title": "Terrain de jeu API",
+      "description": "Console interactive pour tester les points de terminaison"
+    },
+    "public-components-dispute-resolution": {
+      "title": "Résolution des litiges",
+      "description": "Aucune liste de litiges n’est enregistrée dans la passerelle ; ni dossier ni verdict n’est affiché"
+    },
+    "public-components-ecowallet": {
+      "title": "EcoWallet",
+      "description": "Démonstration des fonctions du portefeuille numérique"
+    },
+    "public-components-hydroma-engine": {
+      "title": "Moteur HydroMa",
+      "description": "Démonstration des modules du moteur scientifique"
+    },
+    "public-components-land-profiler": {
+      "title": "Profiler de terrain",
+      "description": "Scénarios d’analyse et de gestion du terrain"
+    },
+    "public-components-marketplace": {
+      "title": "Place de marché",
+      "description": "Démonstration des fonctions de la place de marché"
+    },
+    "public-components-mrv-dashboard": {
+      "title": "Tableau de bord MRV",
+      "description": "Démonstration du suivi, du reporting et de la vérification"
+    },
+    "public-components-satellite-view": {
+      "title": "Vue satellitaire",
+      "description": "Couches de données satellitaires et visualisation"
+    },
+    "public-cta": {
+      "title": "Participer",
+      "description": "Chemins disponibles sous forme de points de terminaison réels et formulaire transmis à la passerelle"
+    },
+    "public-education-advanced-search": {
+      "title": "Recherche avancée",
+      "description": "Recherche multicritère dans la bibliothèque éducative"
+    },
+    "public-education-certifications": {
+      "title": "Programmes de certification",
+      "description": "Aucun registre de certification n’est enregistré dans la passerelle ; aucun certificat délivré n’est affiché"
+    },
+    "public-education-courses": {
+      "title": "Cours",
+      "description": "Le service de cours n’est pas enregistré dans la passerelle ; le contenu publié est consultable dans la bibliothèque"
+    },
+    "public-education-glossary": {
+      "title": "Glossaire bilingue",
+      "description": "Glossaire technique bilingue consultable"
+    },
+    "public-education-library": {
+      "title": "Bibliothèque éducative",
+      "description": "Rechercher le contenu pédagogique publié"
+    },
+    "public-education-library-advanced": {
+      "title": "Bibliothèque avancée",
+      "description": "Recherche large de contenu et groupes réels de termes scientifiques"
+    },
+    "public-education-video-player": {
+      "title": "Lecteur vidéo",
+      "description": "Le service vidéo n’est pas enregistré dans la passerelle ; aucun lecteur ni sous-titre n’est chargé"
+    },
+    "public-education-workshops": {
+      "title": "Ateliers",
+      "description": "Aucun calendrier d’ateliers n’est enregistré dans la passerelle ; aucune date ni capacité n’est affichée"
+    },
+    "public-goals-impact": {
+      "title": "Impact",
+      "description": "Les compteurs réels de demandes enregistrées ; aucune métrique vérifiée n’est revendiquée"
+    },
+    "public-goals-manifesto": {
+      "title": "Manifeste",
+      "description": "Les phases enregistrées et les verrous qui conditionnent aujourd’hui le chemin"
+    },
+    "public-goals-mission": {
+      "title": "Mission",
+      "description": "Le réseau du registre et les contrats renvoyés par la passerelle"
+    },
+    "public-goals-roadmap": {
+      "title": "Feuille de route",
+      "description": "Les verrous de phase et les phases enregistrées dans le registre d’outils"
+    },
+    "public-goals-values": {
+      "title": "Valeurs",
+      "description": "L’état réel de l’accès par téléphone simple via les routes USSD et vocales"
+    },
+    "public-goals-vision": {
+      "title": "Vision",
+      "description": "Les domaines enregistrés dans le registre d’outils"
+    },
+    "public-home": {
+      "title": "Plateforme de suivi écologique et d’aide à la décision",
+      "description": "Suivi des sols, de l’eau, du climat et du carbone sur base scientifique"
+    },
+    "public-model-count": {
+      "title": "Nombre de modèles",
+      "description": "Nombre et état des modèles scientifiques enregistrés"
+    },
+    "public-policy-accessibility": {
+      "title": "Déclaration d’accessibilité",
+      "description": "Aucun slug d’accessibilité n’est enregistré dans legal-texts ; aucun état de conformité n’est donc affiché"
+    },
+    "public-policy-cookies": {
+      "title": "Politique relative aux cookies",
+      "description": "Le texte de la politique relative aux cookies est lu depuis l’enregistrement legal-texts publié."
+    },
+    "public-policy-governance": {
+      "title": "Structure de gouvernance",
+      "description": "Aucun slug de gouvernance n’est enregistré dans legal-texts ; aucune structure n’est donc affichée"
+    },
+    "public-policy-licensing": {
+      "title": "Licences open source",
+      "description": "Aucun slug de licences n’est enregistré dans legal-texts ; aucun inventaire de licences n’est donc affiché"
+    },
+    "public-policy-privacy": {
+      "title": "Politique de confidentialité",
+      "description": "Le texte de la politique de confidentialité est lu depuis l’enregistrement legal-texts publié."
+    },
+    "public-policy-terms": {
+      "title": "Conditions d’utilisation",
+      "description": "Le texte des conditions et son historique de versions sont lus depuis le service legal-texts."
+    },
+    "public-science-benchmarks": {
+      "title": "Références",
+      "description": "Résultats réels de vérification des formules face aux références publiées"
+    },
+    "public-science-case-studies": {
+      "title": "Études de cas",
+      "description": "Référence scientifique enregistrée derrière chaque modèle"
+    },
+    "public-science-data-sources": {
+      "title": "Sources de données",
+      "description": "Catalogue des sources de données avec statut et licences"
+    },
+    "public-science-evidence-base": {
+      "title": "Base de preuves scientifiques",
+      "description": "Preuves scientifiques triées avec DOI et statut de vérification"
+    },
+    "public-science-gap-analysis": {
+      "title": "Analyse des écarts",
+      "description": "Domaine de validité enregistré et limites par modèle"
+    },
+    "public-science-limitations": {
+      "title": "Limites",
+      "description": "Limites connues des modèles et des données"
+    },
+    "public-science-methodology": {
+      "title": "Méthodologie",
+      "description": "Normes et méthodes de calcul scientifique"
+    },
+    "public-science-peer-review": {
+      "title": "Évaluation par les pairs",
+      "description": "Référence scientifique enregistrée par modèle ; aucun compte rendu d’évaluation publié n’existe"
+    },
+    "public-science-reproducibility": {
+      "title": "Reproductibilité",
+      "description": "Exécutions partagées enregistrées et état réel d’attribution des DOI"
+    },
+    "public-science-uncertainty": {
+      "title": "Incertitude",
+      "description": "Limites déclarées et état réel de vérification des formules"
+    },
+    "public-science-validation": {
+      "title": "Outils de validation",
+      "description": "Contrôles de qualité des données et des modèles"
+    },
+    "public-science-validation-methods": {
+      "title": "Méthodes de validation",
+      "description": "Méthodes scientifiques de validation des modèles"
+    },
+    "public-services-satellite-intelligence": {
+      "title": "Intelligence satellitaire",
+      "description": "Produits de données satellitaires et points de terminaison"
+    },
+    "public-visit": {
+      "title": "Visite de ferme",
+      "description": "La demande de visite est transmise à la passerelle ; aucune visite programmée n’est affichée"
+    },
+    "public-why": {
+      "title": "Pourquoi cette plateforme",
+      "description": "Le problème, la solution et les preuves vérifiables"
+    },
+    "marketplace-market-producers": {
+      "title": "Producteurs",
+      "description": "Les producteurs que le marché a enregistrés, avec l’état de vérification enregistré."
+    },
+    "marketplace-market-stats": {
+      "title": "Statistiques du marché",
+      "description": "Compteurs lus depuis le point de terminaison des statistiques, ou la constatation que le service n’a pas répondu."
+    },
+    "marketplace-market-admin-orders": {
+      "title": "Gestion des commandes",
+      "description": "Le registre des commandes exposé par la passerelle, avec son état réel et aucune ligne fabriquée."
+    },
+    "marketplace-market-admin-stats": {
+      "title": "Statistiques de la place de marché",
+      "description": "Compteurs lus depuis le point de terminaison des statistiques, ou la constatation explicite que le service est injoignable."
+    },
+    "marketplace-market-marketplaces": {
+      "title": "Places de marché",
+      "description": "Les places de marché que la passerelle a enregistrées, telles qu’elles le sont réellement."
+    },
+    "marketplace-market-marketplaces-marketplace_id": {
+      "title": "Fiche de place de marché",
+      "description": "Une place de marché par identifiant : l’état que la passerelle lui porte, pas une description de ce qu’elle devrait être."
+    },
+    "marketplace-market-marketplaces-marketplace_id-shops": {
+      "title": "Boutiques de la place",
+      "description": "Les boutiques enregistrées pour une place de marché, telles que la passerelle les enregistre réellement."
+    },
+    "marketplace-market-orders-order_id": {
+      "title": "Fiche de commande",
+      "description": "Une commande par identifiant, avec la transition d’état enregistrée en dernier."
+    },
+    "marketplace-market-orders-order_id-status": {
+      "title": "État de la commande",
+      "description": "L’état actuel d’une commande, lu depuis la passerelle au moment de la requête."
+    },
+    "marketplace-market-orders-order_id-timeline": {
+      "title": "Historique de la commande",
+      "description": "L’historique d’états enregistré d’une commande, dans l’ordre renvoyé par la passerelle."
+    },
+    "marketplace-market-orders-order_id-track": {
+      "title": "Suivi de commande",
+      "description": "Le suivi que la passerelle tient pour une commande, avec son état actuel."
+    },
+    "marketplace-market-payments-payment_id-escrow": {
+      "title": "Fiche de séquestre",
+      "description": "L’état de séquestre que la passerelle tient pour un paiement, avec les transitions enregistrées."
+    },
+    "marketplace-market-products": {
+      "title": "Produits",
+      "description": "Les produits que la place de marché a enregistrés, avec le prix et la quantité que la passerelle en rapporte."
+    },
+    "marketplace-market-products-search": {
+      "title": "Recherche de produits",
+      "description": "Chercher dans le catalogue enregistré. Les résultats sont ceux que la passerelle trouve, sans classement inventé ici."
+    },
+    "marketplace-market-products-product_id": {
+      "title": "Fiche produit",
+      "description": "Un produit par identifiant, avec les champs que la passerelle tient pour lui."
+    },
+    "marketplace-market-products-product_id-carbon-credits": {
+      "title": "Crédits carbone du produit",
+      "description": "Crédits carbone attribués à un produit, avec la méthode enregistrée par la passerelle."
+    },
+    "marketplace-market-products-product_id-trace": {
+      "title": "Traçabilité du produit",
+      "description": "La chaîne de possession enregistrée d’un produit, à partir des entrées que tient la passerelle."
+    },
+    "marketplace-market-shops-shop_id": {
+      "title": "Fiche de boutique",
+      "description": "Une boutique par identifiant, avec les champs que la passerelle tient réellement."
+    },
+    "marketplace-market-shops-shop_id-orders": {
+      "title": "Commandes de la boutique",
+      "description": "Commandes enregistrées pour une boutique, sans totaux ni états fabriqués."
+    },
+    "marketplace-market-shops-shop_id-products": {
+      "title": "Produits de la boutique",
+      "description": "Les produits qu’une boutique a enregistrés, avec les quantités que rapporte la passerelle."
+    },
+    "marketplace-market-shops-shop_id-stats": {
+      "title": "Statistiques de la boutique",
+      "description": "Compteurs lus depuis le point de statistiques pour une seule boutique."
+    },
+    "marketplace-market-transactions": {
+      "title": "Transactions",
+      "description": "Le registre des transactions exposé par la passerelle du marché, tel qu’enregistré."
+    },
+    "marketplace-market-transactions-transaction_id": {
+      "title": "Fiche de transaction",
+      "description": "Une transaction par identifiant, avec l’enregistrement propre de la passerelle."
+    },
+    "marketplace-market-vendors-vendor_id": {
+      "title": "Fiche fournisseur",
+      "description": "Un fournisseur par identifiant, avec l’état de vérification enregistré par la passerelle."
+    },
+    "marketplace-market-vendors-vendor_id-orders": {
+      "title": "Commandes du fournisseur",
+      "description": "Commandes enregistrées pour un fournisseur, dans l’état où elles se trouvent réellement."
+    },
+    "marketplace-market-vendors-vendor_id-products": {
+      "title": "Produits du fournisseur",
+      "description": "Les produits qu’un fournisseur a enregistrés, avec les quantités que rapporte la passerelle."
+    },
+    "marketplace-market-wallet": {
+      "title": "Portefeuille du marché",
+      "description": "Le solde que rapporte la passerelle, ou la constatation qu’il n’a pas pu être lu."
+    },
+    "marketplace-market-wallet-balance": {
+      "title": "Solde du portefeuille",
+      "description": "Le solde tel que la passerelle l’enregistre au moment de la requête."
+    },
+    "marketplace-market-wallet-history": {
+      "title": "Historique du portefeuille",
+      "description": "L’historique des mouvements enregistré, dans l’ordre renvoyé par la passerelle."
+    },
+    "marketplace-market-wallet-methods": {
+      "title": "Moyens de paiement",
+      "description": "Les moyens de paiement que la passerelle a activés, tels que configurés."
+    },
+    "marketplace-market-wallet-methods-method_id": {
+      "title": "Moyen de paiement",
+      "description": "Un moyen de paiement par identifiant, avec son état configuré."
+    },
+    "marketplace-market-wallet-payouts": {
+      "title": "Versements",
+      "description": "Versements enregistrés, avec les montants et les états que tient la passerelle."
+    },
+    "marketplace-market-wallet-payouts-payout_id": {
+      "title": "Fiche de versement",
+      "description": "Un versement par identifiant et l’état enregistré en dernier."
+    },
+    "marketplace-market-wallet-payouts-payout_id-status": {
+      "title": "État du versement",
+      "description": "L’état actuel d’un versement, lu au moment de la requête."
+    },
+    "marketplace-market-wallet-transactions": {
+      "title": "Mouvements du portefeuille",
+      "description": "Mouvements tels que la passerelle les enregistre, sans soldes dérivés."
+    },
+    "marketplace-market-wallet-transactions-tx_id": {
+      "title": "Mouvement de portefeuille",
+      "description": "Un mouvement par identifiant et l’état enregistré pour lui."
+    },
+    "marketplace-market-wallet-verification": {
+      "title": "Vérification du portefeuille",
+      "description": "L’état de vérification que la passerelle porte sur un portefeuille, et non une affirmation sur son titulaire."
+    },
+    "marketplace-market-wallet-verification-methods": {
+      "title": "Méthodes de vérification",
+      "description": "Les méthodes de vérification d’identité que la passerelle a configurées."
+    },
+    "marketplace-market-wallet-verification-methods-method_id": {
+      "title": "Méthode de vérification",
+      "description": "Une méthode de vérification par identifiant et son état configuré."
+    }
+  },
+  "offline": {
+    "code": "Connexion indisponible",
+    "title": "Mode hors ligne",
+    "description": "Les données en cache sont disponibles ; réessayez pour actualiser.",
+    "retry": "Réessayer"
   }
 }

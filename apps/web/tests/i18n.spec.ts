@@ -28,7 +28,7 @@ test.describe('i18n - All 14 locales', () => {
 
   test('Locale switcher shows all 14 locales', async ({ page }) => {
     await page.goto('/fa/home');
-    const switcher = page.getByRole('button', { name: 'زبان' });
+    const switcher = page.getByRole('navigation', { name: 'زبان' }).getByRole('button');
     await expect(switcher).toBeVisible();
     await switcher.click();
     const options = page.locator('[role="option"]');
@@ -41,7 +41,7 @@ test.describe('i18n - All 14 locales', () => {
 
   test('Locale change persists via URL', async ({ page }) => {
     await page.goto('/fa/home');
-    await page.getByRole('button', { name: 'زبان' }).click();
+    await page.getByRole('navigation', { name: 'زبان' }).getByRole('button').click();
     await page.locator('[role="option"][lang="en"]').click();
     await expect(page).toHaveURL(/\/en\/home/);
     await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');

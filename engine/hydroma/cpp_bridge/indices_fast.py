@@ -140,37 +140,56 @@ def _nbr_fast(nir: np.ndarray, swir: np.ndarray) -> np.ndarray:
 # ============================================================================
 
 
+def _prepare(*arrays: np.ndarray) -> tuple[list[np.ndarray], bool]:
+    """Coerce inputs to contiguous 2-D float64 for the Numba kernels.
+
+    The kernels index ``arr[i, j]`` and unpack ``rows, cols = arr.shape``, so
+    they only compile for a 2-D layout. A 1-D array -- the normal shape of a
+    satellite reflectance time series -- previously raised
+    ``numba.core.errors.TypingError`` at the first call.
+
+    Returns the prepared arrays and whether the caller must flatten the result
+    back to the original rank.
+    """
+    prepared = [np.ascontiguousarray(a, dtype=np.float64) for a in arrays]
+    rank = prepared[0].ndim
+    if rank == 1:
+        prepared = [a.reshape(-1, 1) for a in prepared]
+    elif rank != 2:
+        raise ValueError(f"expected a 1-D or 2-D array, got {rank}-D")
+    return prepared, rank == 1
+
+
 def ndvi_fast(red: np.ndarray, nir: np.ndarray) -> np.ndarray:
     """Calculate NDVI with Numba acceleration.
 
     Falls back to NumPy if Numba is unavailable.
-    Input arrays should be 2D float64.
+    Accepts 1-D (time series) or 2-D (raster) input; the output keeps the rank.
     """
-    red = np.ascontiguousarray(red, dtype=np.float64)
-    nir = np.ascontiguousarray(nir, dtype=np.float64)
-    return _ndvi_fast(red, nir)
+    (red, nir), flatten = _prepare(red, nir)
+    result = _ndvi_fast(red, nir)
+    return result.reshape(-1) if flatten else result
 
 
 def evi_fast(red: np.ndarray, nir: np.ndarray, blue: np.ndarray) -> np.ndarray:
-    """Calculate EVI with Numba acceleration."""
-    red = np.ascontiguousarray(red, dtype=np.float64)
-    nir = np.ascontiguousarray(nir, dtype=np.float64)
-    blue = np.ascontiguousarray(blue, dtype=np.float64)
-    return _evi_fast(red, nir, blue)
+    """Calculate EVI with Numba acceleration. Accepts 1-D or 2-D input."""
+    (red, nir, blue), flatten = _prepare(red, nir, blue)
+    result = _evi_fast(red, nir, blue)
+    return result.reshape(-1) if flatten else result
 
 
 def savi_fast(red: np.ndarray, nir: np.ndarray, L: float = 0.5) -> np.ndarray:
-    """Calculate SAVI with Numba acceleration."""
-    red = np.ascontiguousarray(red, dtype=np.float64)
-    nir = np.ascontiguousarray(nir, dtype=np.float64)
-    return _savi_fast(red, nir, float(L))
+    """Calculate SAVI with Numba acceleration. Accepts 1-D or 2-D input."""
+    (red, nir), flatten = _prepare(red, nir)
+    result = _savi_fast(red, nir, float(L))
+    return result.reshape(-1) if flatten else result
 
 
 def nbr_fast(nir: np.ndarray, swir: np.ndarray) -> np.ndarray:
-    """Calculate NBR with Numba acceleration."""
-    nir = np.ascontiguousarray(nir, dtype=np.float64)
-    swir = np.ascontiguousarray(swir, dtype=np.float64)
-    return _nbr_fast(nir, swir)
+    """Calculate NBR with Numba acceleration. Accepts 1-D or 2-D input."""
+    (nir, swir), flatten = _prepare(nir, swir)
+    result = _nbr_fast(nir, swir)
+    return result.reshape(-1) if flatten else result
 
 
 def is_numba_available() -> bool:

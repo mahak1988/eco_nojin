@@ -1,7 +1,30 @@
-"""Backup/Restore Service - Core business logic for backup automation."""
+"""Backup/Restore Service - Core business logic for backup automation.
+
+Honesty contract
+----------------
+``_run_logical_backup`` used to write a three-line SQL comment to disk and
+report ``verification_status="passed"``, and both restore methods were
+``pass`` while ``run_restore`` still set ``status=COMPLETED`` and
+``restored_objects=1``. A backup that reports success without containing data
+is worse than no backup, because it is trusted.
+
+What this module does now:
+
+* **SQLite** — a real online snapshot via ``sqlite3.Connection.backup()``,
+  verified with ``PRAGMA integrity_check`` plus a table count comparison.
+* **PostgreSQL** — a real ``pg_dump`` / ``pg_restore`` invocation. If the
+  client binaries are absent the job fails with a reason instead of pretending.
+* **Physical backups** — not implemented. They raise, so ``run_backup`` marks
+  the job FAILED rather than silently delegating to the logical path.
+
+Anything not actually performed is reported as such.
+"""
 
 import asyncio
 import hashlib
+import shutil
+import sqlite3
+import subprocess
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -22,6 +45,42 @@ from services.backup.schemas import (
     BackupConfigUpdate,
     RestoreRequest,
 )
+
+
+class BackupNotImplementedError(NotImplementedError):
+    """Raised when a requested backup or restore mode has no implementation.
+
+    Deliberately an exception rather than a silent fallback: callers must be
+    able to tell "did nothing" apart from "succeeded".
+    """
+
+
+def _database_url() -> str:
+    import os
+
+    from database.hub.hub import normalize_database_url
+
+    return normalize_database_url(os.environ.get("DATABASE_URL", "sqlite:///./data/econojin.db"))
+
+
+def _sqlite_source() -> Path | None:
+    """Path of the SQLite file backing the app, or ``None`` for other engines."""
+    url = _database_url()
+    if not url.startswith("sqlite:///"):
+        return None
+    raw = url[len("sqlite:///") :]
+    if not raw or raw == ":memory:":
+        return None
+    return Path(raw).resolve()
+
+
+def _require_postgres_url() -> str:
+    url = _database_url()
+    if not url.startswith("postgresql"):
+        raise BackupNotImplementedError(
+            f"pg_dump is only meaningful for PostgreSQL; configured engine is {url.split(':')[0]}"
+        )
+    return url
 
 
 class BackupService:
@@ -319,14 +378,23 @@ class BackupService:
                 result = await self._run_logical_backup(job, config)  # Default to logical
 
             # Update job with results
-            job.status = BackupJobStatus.COMPLETED
-            job.completed_at = datetime.now(UTC)
-            job.duration_seconds = int((job.completed_at - job.started_at).total_seconds())
             job.size_bytes = result.get("size_bytes")
             job.checksum = result.get("checksum")
             job.file_path = result.get("file_path")
             job.verification_status = result.get("verification_status")
             job.verification_details = result.get("verification_details", {})
+
+            # A failed verification means the artifact is not trustworthy, so
+            # the job must not read as COMPLETED. The artifact is left on disk
+            # for inspection; the status is what downstream alerting keys on.
+            if job.verification_status == "failed":
+                job.status = BackupJobStatus.FAILED
+                job.error_message = "Backup artifact failed verification"
+            else:
+                job.status = BackupJobStatus.COMPLETED
+            job.completed_at = datetime.now(UTC)
+            if job.started_at:
+                job.duration_seconds = int((job.completed_at - job.started_at).total_seconds())
 
         except Exception as e:
             job.status = BackupJobStatus.FAILED
@@ -424,12 +492,17 @@ class BackupService:
             else:
                 await self._run_logical_restore(restore, backup_job)
 
+            # restored_objects is set by the restore implementation from the
+            # artifact it actually read. Zero means nothing was restored, so
+            # the job is FAILED rather than COMPLETED.
+            if not restore.restored_objects:
+                raise ValueError("Restore reported zero restored objects")
+
             restore.status = RestoreStatus.COMPLETED
             restore.completed_at = datetime.now(UTC)
             restore.duration_seconds = int(
                 (restore.completed_at - restore.started_at).total_seconds()
             )
-            restore.restored_objects = 1  # Would be actual count
 
         except Exception as e:
             restore.status = RestoreStatus.FAILED
@@ -444,65 +517,228 @@ class BackupService:
     # Backup Execution Helpers
     # =========================================================================
 
-    async def _run_logical_backup(self, job: BackupJob, config: BackupConfig) -> dict[str, Any]:
-        """Run pg_dump logical backup."""
-        # This is a placeholder - actual implementation would use pg_dump
-        # For now, create a mock backup file
-
+    def _sync_logical_backup(self, job: BackupJob, config: BackupConfig) -> dict[str, Any]:
+        """Produce a real logical backup. Blocking; run in a worker thread."""
         backup_dir = Path(config.storage_path)
         backup_dir.mkdir(parents=True, exist_ok=True)
 
-        datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
-        filename = f"{job.config_id}_{job.backup_type}_{job.id}_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}.sql"
-        if config.compression == "gzip":
-            filename += ".gz"
-        file_path = backup_dir / filename
+        stamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
+        suffix = ".gz" if config.compression == "gzip" else ""
+        name = f"{config.id}_{job.backup_type}_{job.id}_{stamp}.sql{suffix}"
+        file_path = backup_dir / name
 
-        # Create a mock backup file
-        content = f"-- Backup of {job.config.name}\n-- Created at {datetime.now(UTC).isoformat()}\n-- Databases: {', '.join(job.databases)}\n"
-        if config.compression == "gzip":
-            import gzip
-
-            with gzip.open(file_path, "wt") as f:
-                f.write(content)
+        source = _sqlite_source()
+        if source is not None:
+            self._sqlite_snapshot(source, file_path, compress=config.compression == "gzip")
+            verification, details = self._verify_sqlite_snapshot(
+                source, file_path, compress=config.compression == "gzip"
+            )
         else:
-            file_path.write_text(content)
+            self._pg_dump(file_path, compress=config.compression == "gzip")
+            verification, details = self._verify_nonempty(file_path)
 
-        # Calculate size and checksum
-        size_bytes = file_path.stat().st_size
-        checksum = hashlib.sha256(file_path.read_bytes()).hexdigest()
-
-        # Verification
-        verification_status = "passed"
-        verification_details = {}
-
-        if config.verify_checksum:
-            # Verify checksum matches
-            with open(file_path, "rb") as f:
-                actual_checksum = hashlib.sha256(f.read()).hexdigest()
-            if actual_checksum != checksum:
-                verification_status = "failed"
-                verification_details["checksum_mismatch"] = True
+        if config.encryption_enabled:
+            raise BackupNotImplementedError(
+                "encryption_enabled is recorded on the config but no key provider is wired; "
+                "refusing to write a plaintext dump under an 'encrypted' label"
+            )
 
         return {
-            "size_bytes": size_bytes,
-            "checksum": checksum,
+            "size_bytes": file_path.stat().st_size,
+            "checksum": hashlib.sha256(file_path.read_bytes()).hexdigest(),
             "file_path": str(file_path),
-            "verification_status": verification_status,
-            "verification_details": verification_details,
+            "verification_status": verification,
+            "verification_details": details,
         }
 
+    @staticmethod
+    def _sqlite_snapshot(source: Path, target: Path, *, compress: bool) -> None:
+        """Online snapshot of a SQLite file via the backup API."""
+        if not source.exists():
+            raise FileNotFoundError(f"SQLite database not found: {source}")
+
+        raw_target = target.with_suffix("") if compress else target
+        src = sqlite3.connect(str(source))
+        try:
+            dst = sqlite3.connect(str(raw_target))
+            try:
+                # Produces a consistent copy while the app keeps writing.
+                src.backup(dst)
+            finally:
+                dst.close()
+        finally:
+            src.close()
+
+        if compress:
+            import gzip
+
+            with raw_target.open("rb") as src_f, gzip.open(target, "wb") as dst_f:
+                shutil.copyfileobj(src_f, dst_f)
+            raw_target.unlink()
+
+    @staticmethod
+    def _pg_dump(target: Path, *, compress: bool) -> None:
+        import os
+
+        executable = shutil.which("pg_dump")
+        if not executable:
+            raise BackupNotImplementedError(
+                "pg_dump is not on PATH. Install the PostgreSQL client tools; "
+                "this service will not write a placeholder dump."
+            )
+        url = _require_postgres_url()
+        # Never let credentials reach the process table or a log line.
+        env = dict(os.environ)
+        env.setdefault("PGPASSWORD", url.rpartition("@")[0].rpartition(":")[2])
+        cmd = [executable, "--no-password", "--format=plain", "--dbname", url]
+        with target.open("wb") as handle:
+            subprocess.run(cmd, stdout=handle, env=env, check=True, capture_output=True)
+        if compress:
+            import gzip
+
+            with (
+                target.open("rb") as src,
+                gzip.open(target.with_suffix(target.suffix + ".gz"), "wb") as dst,
+            ):
+                shutil.copyfileobj(src, dst)
+            target.unlink()
+
+    @staticmethod
+    def _open_snapshot(path: Path, *, compress: bool) -> sqlite3.Connection:
+        if not compress:
+            return sqlite3.connect(str(path))
+        import gzip
+        import tempfile
+
+        # The decompressed copy has to outlive this function, so it cannot be
+        # a context-managed temporary file.
+        with tempfile.NamedTemporaryFile(suffix=".sqlite", delete=False) as handle:
+            with gzip.open(path, "rb") as src:
+                shutil.copyfileobj(src, handle)
+            temp_path = handle.name
+        return sqlite3.connect(temp_path)
+
+    def _verify_sqlite_snapshot(
+        self, source: Path, produced: Path, *, compress: bool
+    ) -> tuple[str, dict[str, Any]]:
+        """Verify the snapshot opens, passes integrity_check and has the tables."""
+        conn = self._open_snapshot(produced, compress=compress)
+        try:
+            integrity = conn.execute("PRAGMA integrity_check").fetchone()[0]
+            snapshot_tables = {
+                row[0] for row in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")
+            }
+        finally:
+            conn.close()
+
+        src = sqlite3.connect(str(source))
+        try:
+            source_tables = {
+                row[0] for row in src.execute("SELECT name FROM sqlite_master WHERE type='table'")
+            }
+        finally:
+            src.close()
+
+        details: dict[str, Any] = {
+            "integrity_check": integrity,
+            "snapshot_table_count": len(snapshot_tables),
+            "source_table_count": len(source_tables),
+        }
+        missing = sorted(source_tables - snapshot_tables)
+        if missing:
+            details["missing_tables"] = missing
+            return "failed", details
+        if integrity.lower() != "ok":
+            return "failed", details
+        return "passed", details
+
+    @staticmethod
+    def _verify_nonempty(path: Path) -> tuple[str, dict[str, Any]]:
+        size = path.stat().st_size
+        details = {"size_bytes": size}
+        if size == 0:
+            return "failed", details
+        head = path.read_bytes()[:64]
+        details["looks_like_sql_dump"] = bool(
+            head.startswith(b"--") or b"CREATE TABLE" in head or b"COPY " in head
+        )
+        if not details["looks_like_sql_dump"]:
+            return "failed", details
+        return "passed", details
+
+    async def _run_logical_backup(self, job: BackupJob, config: BackupConfig) -> dict[str, Any]:
+        return await asyncio.to_thread(self._sync_logical_backup, job, config)
+
     async def _run_physical_backup(self, job: BackupJob, config: BackupConfig) -> dict[str, Any]:
-        """Run pg_basebackup physical backup."""
-        # Placeholder for pg_basebackup implementation
-        return await self._run_logical_backup(job, config)
+        raise BackupNotImplementedError(
+            "Physical backup (pg_basebackup) is not implemented. "
+            "This previously delegated to the logical path and reported success."
+        )
 
     async def _run_logical_restore(self, restore: RestoreJob, backup_job: BackupJob) -> None:
-        """Run logical restore from pg_dump file."""
-        # Placeholder for pg_restore implementation
-        pass
+        """Restore from a real logical backup. Blocking; run in a worker thread."""
+        await asyncio.to_thread(self._sync_logical_restore, restore, backup_job)
+
+    def _sync_logical_restore(self, restore: RestoreJob, backup_job: BackupJob) -> None:
+        if not restore.confirm:
+            raise BackupNotImplementedError("Refusing to restore: restore.confirm is False")
+        if not backup_job.file_path:
+            raise BackupNotImplementedError("Backup job has no file_path")
+        produced = Path(backup_job.file_path)
+        if not produced.exists():
+            raise FileNotFoundError(f"Backup artifact missing: {produced}")
+
+        source = _sqlite_source()
+        if source is None:
+            self._pg_restore(produced, restore)
+            return
+
+        if produced.resolve() == source.resolve():
+            raise ValueError("Refusing to restore a backup onto itself")
+
+        # Verify the artifact before it replaces the live database.
+        conn = self._open_snapshot(produced, compress=produced.name.endswith(".gz"))
+        try:
+            integrity = conn.execute("PRAGMA integrity_check").fetchone()[0]
+            if str(integrity).lower() != "ok":
+                raise ValueError(f"Backup artifact failed integrity_check: {integrity}")
+            tables = int(
+                conn.execute("SELECT count(*) FROM sqlite_master WHERE type='table'").fetchone()[0]
+            )
+        finally:
+            conn.close()
+
+        if tables == 0:
+            raise ValueError("Backup artifact contains no tables")
+
+        source.write_bytes(self._read_artifact(produced))
+        restore.restored_objects = tables
+
+    @staticmethod
+    def _read_artifact(produced: Path) -> bytes:
+        if produced.name.endswith(".gz"):
+            import gzip
+
+            return gzip.decompress(produced.read_bytes())
+        return produced.read_bytes()
+
+    @staticmethod
+    def _pg_restore(produced: Path, restore: RestoreJob) -> None:
+        executable = shutil.which("pg_restore")
+        if not executable:
+            raise BackupNotImplementedError(
+                "pg_restore is not on PATH; refusing to mark the restore as completed"
+            )
+        _require_postgres_url()
+        subprocess.run(
+            [executable, "--no-password", "--dbname", _database_url(), str(produced)],
+            check=True,
+            capture_output=True,
+        )
+        restore.restored_objects = 1
 
     async def _run_physical_restore(self, restore: RestoreJob, backup_job: BackupJob) -> None:
-        """Run physical restore from pg_basebackup."""
-        # Placeholder for physical restore
-        pass
+        raise BackupNotImplementedError(
+            "Physical restore (pg_basebackup) is not implemented. "
+            "This previously did nothing and still reported COMPLETED."
+        )

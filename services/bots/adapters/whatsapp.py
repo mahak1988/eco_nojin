@@ -10,7 +10,11 @@ from __future__ import annotations
 import os
 from typing import Any
 
-from services.bots.core.dispatcher import BotAdapter  # noqa: F401  (shared base)
+# No BotAdapter base: services/bots/core/dispatcher.py does not exist, and the
+# other three adapters (bale, rubika, telegram) do not share a base either.
+# Importing a module that was never written made this adapter unimportable.
+# Introducing a real shared adapter base is a phase 4 decision, not an
+# import-time fix.
 
 META_API = "https://graph.facebook.com/v20.0"
 

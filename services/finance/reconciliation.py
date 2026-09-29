@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models import (
     EcoWallet,
+    FinAccount,
     FinJournalBatch,
     FinJournalEntry,
 )
@@ -66,10 +67,16 @@ class ReconciliationService:
 
         The wallet balance represents ECO tokens owned by the user, which corresponds
         to the platform's REWARD_LIABILITY account (credits = platform owes user).
+
+        The join to the chart of accounts previously used
+        ``FinJournalEntry.account_id == FinAccount.id`` — a String column
+        against an Integer primary key, so it never matched and every wallet
+        reconciled against a ledger balance of zero. See
+        ``services/finance/account_ref.py``.
         """
         from sqlalchemy import case
 
-        from database.models import FinAccount
+        from services.finance.account_ref import account_join_condition
 
         result = await self.db.execute(
             select(
@@ -80,7 +87,7 @@ class ReconciliationService:
             )
             .select_from(FinJournalEntry)
             .join(FinJournalBatch, FinJournalEntry.batch_id == FinJournalBatch.id)
-            .join(FinAccount, FinJournalEntry.account_id == FinAccount.id)
+            .join(FinAccount, account_join_condition())
             .where(
                 FinJournalBatch.created_by == user_id,
                 FinAccount.code == "REWARD_LIABILITY",

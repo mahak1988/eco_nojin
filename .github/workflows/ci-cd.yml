@@ -117,6 +117,56 @@ jobs:
           pytest tests/test_contract.py -v --tb=short
 
   # =============================================================================
+  # INTEGRITY GATES (phase 3)
+  #
+  # G1 import smoke      - every services/ module must import
+  # G2 no fabricated OK  - S-HONEST registry truthful, no new fabrications
+  # G3 coverage floor    - fail_under in pyproject.toml, never lowered
+  # G4 dead-code ratchet - vulture findings may fall, never rise
+  # G5 layering contract - routers must not query the DB
+  # G6 scientific gate   - a new motor needs a numeric conformance test
+  #
+  # The gates are ratchets, not zero-bars: they are configured against
+  # docs/metrics/baseline.json, so existing debt is allowed and growth is not.
+  # =============================================================================
+  integrity-gates:
+    name: Integrity Gates (G1-G6)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install pytest pytest-cov vulture
+
+      - name: Verify the ratchet baseline is reproducible
+        # Catches someone editing baseline.json to silence a gate: the recorded
+        # values must match what the scanners actually measure on this tree.
+        run: python scripts/measure_baseline.py --check
+
+      - name: Run the gates
+        run: |
+          pytest tests/contract -v --tb=short \
+            -k "g1 or g2 or g3 or g5 or g6 or s_honest or s_money or s_sci"
+
+      - name: Upload gate report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integrity-gate-baseline
+          path: docs/metrics/baseline.json
+          retention-days: 30
+
+  # =============================================================================
   # MUTATION TESTING (mutmut)
   # =============================================================================
   mutation-testing:
@@ -251,6 +301,158 @@ jobs:
       - name: Run C++ Bridge Parity Tests
         run: |
           pytest engine/hydroma/cpp_bridge/tests/test_parity.py -v --tb=short
+
+  # =============================================================================
+  # ENGINE STRICT TESTS (S00-S14)
+  # =============================================================================
+  # The 916-test strict suite protects the numerical kernel: 108 registered
+  # defects, each with its file:line, its governing standard and the measured
+  # magnitude of the error. Until this job existed nothing ran it, so a merge
+  # could regress FAO-56 conformance or the C++/Python parity with a green
+  # pipeline.
+  #
+  # It builds the C++ core because 20 of the tests compare the Python engine
+  # against it and have no Python fallback to compare with. Without the build
+  # they skip, and the run is green while asserting less -- which is why the
+  # copy step and the availability check below are not optional.
+  engine-strict:
+    name: Engine Strict Tests (S00-S14)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake \
+            build-essential \
+            libopenmp-dev \
+            ninja-build \
+            python3-dev
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          # pybind11 is only in the `dev` extra, and hypothesis is in no extra
+          # at all, so both are named explicitly. scipy is only in `ml`, which
+          # would drag in scikit-learn and transformers for one expi() call.
+          pip install -e ".[dev]"
+          pip install pybind11==2.13.6 hypothesis scipy
+
+      - name: Configure C++ core
+        working-directory: engine/cpp_core
+        run: |
+          cmake -B build -S . \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DHYDROMA_BUILD_TESTS=OFF \
+            -DHYDROMA_BUILD_PYTHON_BINDINGS=ON \
+            -DHYDROMA_BUILD_BENCHMARKS=OFF \
+            -G Ninja
+
+      - name: Build C++ core
+        working-directory: engine/cpp_core
+        run: cmake --build build --parallel 4
+
+      - name: Place the extension where the bridge looks for it
+        run: |
+          # cpp_bridge/__init__.py appends only its own directory to sys.path and
+          # then does a flat `import hydroma_core`. It never looks in the CMake
+          # build tree, so the module has to be copied next to __init__.py. Copy
+          # rather than rename: the ABI tag in the filename is load-bearing.
+          ls -l engine/cpp_core/build/hydroma_core*.so
+          cp engine/cpp_core/build/hydroma_core*.so engine/hydroma/cpp_bridge/
+
+      - name: Fail if the C++ core did not build
+        run: |
+          python -c "
+          from engine.hydroma.cpp_bridge import get_module
+          assert get_module() is not None, 'hydroma_core did not load'
+          print('C++ core available')
+          "
+
+      - name: Run strict suite
+        run: |
+          pytest engine/strict_tests -q \
+            --hypothesis-profile=strict-engine-ci \
+            -o addopts=--strict-markers
+
+      - name: Run engine tests with coverage
+        run: |
+          pytest \
+            engine/strict_tests \
+            engine/land \
+            engine/hydroma/cpp_bridge/tests \
+            engine/hydroma/soil/tests \
+            engine/hydroma/watershed/tests \
+            engine/hydroma/biofertilizer/tests \
+            engine/hydroma/groundwater/tests \
+            engine/hydroma/plant_neuro/tests \
+            engine/hydroma/data_pipeline/tests \
+            -q --tb=short --benchmark-disable \
+            --cov=engine --cov-branch \
+            --cov-report=term:skip-covered \
+            --cov-report=xml
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: engine-coverage
+          path: coverage.xml
+          retention-days: 7
+
+  # =============================================================================
+  # SERVICES COVERAGE (phase 5)
+  #
+  # `services/` is ~30% of the codebase and until now no CI job measured it at
+  # all: the only coverage job above scopes to `engine`. Measured for the first
+  # time in phase 5, `services` sits at 41%, so the floor starts at 38 — three
+  # points of headroom for normal variation, and a ratchet that makes any
+  # decline fail the build. Raise it as coverage genuinely improves; never lower
+  # it to make a build pass.
+  #
+  # Enforced by tests/contract/test_g3_g4_coverage_and_deadcode.py.
+  # =============================================================================
+  services-coverage:
+    name: Services Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install pytest pytest-cov pytest-xdist
+
+      - name: Run services tests with coverage
+        run: |
+          pytest services -q --tb=short -n 4 \
+            --cov=services --cov-branch \
+            --cov-report=term:skip-covered \
+            --cov-report=xml \
+            --cov-fail-under=38
+
+      - name: Upload services coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: services-coverage
+          path: coverage.xml
+          retention-days: 7
 
   # =============================================================================
   # LOAD TESTING (Locust)
@@ -448,7 +650,7 @@ jobs:
     name: Build & Push Docker Image
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    needs: [lint, frontend, contract-tests, mutation-testing, contract-expansion, numerical-regression, load-testing, unit-tests, integration-tests, db-migration, db-migration-postgres]
+    needs: [lint, frontend, contract-tests, mutation-testing, contract-expansion, numerical-regression, engine-strict, load-testing, unit-tests, integration-tests, db-migration, db-migration-postgres]
     permissions:
       contents: read
       packages: write

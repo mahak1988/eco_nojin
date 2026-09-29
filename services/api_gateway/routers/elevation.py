@@ -19,6 +19,7 @@ from typing import Any
 import httpx
 from fastapi import APIRouter, HTTPException, Query
 
+from services._contracts.formula import k_factor_epic, ls_factor
 from services.data_manual import manual
 
 router = APIRouter(prefix="/api/v1/elevation", tags=["elevation"])
@@ -193,24 +194,36 @@ def erosion_effect(
     # R â€” real annual rainfall (mean of the site's weather history)
     ann = manual.weather_annual(site_id)
     annual_rain = float(ann["precip_mm"].mean()) if not ann.empty else 300.0
+    # Still a local linear approximation, NOT the registry's Fournier R: the
+    # registry form is 0.0534*P^2 and would move this endpoint's R by ~30x at
+    # 300 mm/yr, so it needs its own decision rather than a mechanical swap.
     r_factor = 0.5 * annual_rain  # Wischmeier-style approximation for semi-arid
 
-    # K â€” from texture class + organic carbon (EPIC-style approximation)
+    # K â€” EPIC erodibility from the formula registry, using the region's real
+    # clay/silt/organic-carbon. The registry takes organic carbon in g/kg and
+    # this table stores it as a percent, so it is multiplied by 10 on the way in
+    # (1 % == 10 g/kg). The texture-class string was the old input; the class
+    # name is still echoed below for the operator, but the erodibility now comes
+    # from the measured fractions rather than from parsing Persian text.
     province = None
     sites_df = manual.sites()
     row = sites_df[sites_df["site_id"] == site_id]
     if not row.empty and "province" in row.columns:
         province = row.iloc[0].get("province")
     soil = manual.soil_regions(province=province)
+    # 0.32 is a no-data placeholder kept from before, used only when the region
+    # table has no texture breakdown to give the registry.
     k_factor, om_pct, texture_fa, mean_slope = 0.32, None, None, 3.0
     if not soil.empty:
         s0 = soil.iloc[0]
         om_pct = s0.get("organic_carbon_pct")
         texture_fa = (s0.get("texture_class_fa") or "").strip()
-        # sandy soils erode less per-unit but shard more; clay binds â€” mid classes worst
-        base_k = 0.34 if "ظ„ظˆظ…" in texture_fa else (0.28 if "ط±ط³غŒ" in texture_fa else 0.24)
-        om_adj = max(0.0, (2.0 - (om_pct or 2.0)) * 0.02)  # low OM raises K slightly
-        k_factor = round(min(0.45, base_k + om_adj), 3)
+        clay_pct, silt_pct = s0.get("clay_pct"), s0.get("silt_pct")
+        erodibility_inputs = (om_pct, clay_pct, silt_pct)
+        if all(v is not None and math.isfinite(float(v)) for v in erodibility_inputs):
+            k_factor = round(
+                k_factor_epic(float(om_pct) * 10.0, float(clay_pct), float(silt_pct)), 3
+            )
 
     # LS â€” from the REAL cached DEM slope (mean slope degrees of the 2km grid)
     cache = _cache_path(site_id, 129, 2000)
@@ -225,14 +238,13 @@ def erosion_effect(
                 dzdy = (grid[y + 1][x] - grid[y - 1][x]) / (2 * cell)
                 slopes.append(math.degrees(math.atan(math.sqrt(dzdx**2 + dzdy**2))))
         mean_slope = sum(slopes) / len(slopes) if slopes else 3.0
-    ls_factor = (
-        round(
-            (slope_length_m / 22.13) ** 0.5
-            * (0.76 + 0.53 * math.sin(math.radians(mean_slope)) / math.sin(math.radians(5))),
-            3,
-        )
-        if mean_slope > 0
-        else 0.5
+    # mean_slope is already in degrees, which is what the registry takes. The
+    # steepness relation it replaces was a sine normalised to a 5 deg reference
+    # and was badly behaved near zero: at 1 deg it returned 1.84, at 10 deg only
+    # 3.86, so erosion barely rose with slope across the range Iranian sites
+    # actually occupy. The registry relation gives 0.350 and 6.014 there.
+    ls_value = (
+        round((slope_length_m / 22.13) ** 0.5 * ls_factor(mean_slope), 3) if mean_slope > 0 else 0.5
     )
 
     # C â€” cover factor by crop (FAO-ish defaults)
@@ -242,7 +254,7 @@ def erosion_effect(
     p_after = _OP_P_FACTOR[op_type]
 
     def rusle(p: float) -> float:
-        return round(r_factor * k_factor * ls_factor * c_factor * p, 3)
+        return round(r_factor * k_factor * ls_value * c_factor * p, 3)
 
     a_before = rusle(p_before)
     a_after = rusle(p_after)
@@ -255,7 +267,7 @@ def erosion_effect(
         "rusle": {
             "R": round(r_factor, 1),
             "K": k_factor,
-            "LS": ls_factor,
+            "LS": ls_value,
             "C": c_factor,
             "P_before": p_before,
             "P_after": p_after,

@@ -35,6 +35,8 @@ from typing import Any
 import numpy as np
 import xarray as xr
 
+from services._contracts.formula import ls_factor
+
 from .base import (
     AbstractScientificMotor,
     MotorInput,
@@ -135,7 +137,7 @@ class RUSLEMotor(AbstractScientificMotor):
 
     @property
     def motor_type(self) -> MotorType:
-        return MotorType.BIOFERTILIZER
+        return MotorType.EROSION_RUSLE
 
     @property
     def display_name(self) -> str:
@@ -209,14 +211,21 @@ class RUSLEMotor(AbstractScientificMotor):
             P = P_FACTORS.get(practice, 1.0)
 
             # === Compute soil loss ===
-            # RUSLE empirical calibration: raw formula overestimates in
-            # extreme conditions. Global calibration factor (Morgan, 2005):
-            # - Arid regions: overestimate ~3x
-            # - Humid regions: overestimate ~5x
-            # - Tropical: overestimate ~8x
-            # We apply a conservative calibration factor
-            calibration_factor = 0.10  # Empirical adjustment (Morgan 2005)
-            soil_loss = R * K * LS * C * P * calibration_factor  # ton/ha/year
+            # RUSLE is applied uncalibrated: A = R * K * LS * C * P, t/ha/yr.
+            #
+            # This previously applied a single global `calibration_factor` of 0.10
+            # under a comment giving three different regional bases (arid ~3x,
+            # humid ~5x, tropical ~8x) and calling the result "conservative". A
+            # 10x reduction honours none of the three, and applying a *larger*
+            # reduction in wetter climates is the opposite of conservative: the
+            # humid case would be cut by twice the factor its own basis states.
+            #
+            # The matching factor in engine/hydroma/core/core.py and the
+            # RUSLE_CALIBRATION in chain_runner.py were removed for the same
+            # reason, and core.py's for one more: it cited nothing at all.
+            # The native kernel at engine/cpp_core/src/erosion.cpp:19 has always
+            # been the plain product, so the Python paths were the outliers.
+            soil_loss = R * K * LS * C * P  # ton/ha/year
 
             # Apply realistic upper bound (global observations)
             soil_loss = self._realistic_bound(soil_loss)
@@ -411,6 +420,13 @@ class RUSLEMotor(AbstractScientificMotor):
         """Soil Erodibility Factor (Wischmeier & Smith nomograph approximation).
 
         Typical values: 0.01 (organic) to 0.69 (silt loam)
+
+        Not routed through the formula registry: the registry's EPIC K wants
+        clay and silt as percentages and organic carbon in g/kg, and this motor
+        is handed a USDA texture *class* code and an organic-matter percentage,
+        so it cannot supply them without inventing values. The numeric soil
+        profile path for the registry K is the chain runner, which receives the
+        real SoilGrids K.
         """
         # Simplified nomograph: K depends on texture and OM
         # Higher K = more erodible
@@ -440,26 +456,38 @@ class RUSLEMotor(AbstractScientificMotor):
         return np.clip(K, 0.01, 0.70)
 
     def _compute_LS_factor(self, slope: np.ndarray, length_m: float) -> np.ndarray:
-        """Slope Length-Steepness factor (USDA standard, conservative).
+        """Slope Length-Steepness factor.
 
-        S = 10.8 × sinθ + 0.03  (for slope < 9%)
-        S = 16.8 × sinθ - 0.50  (for slope ≥ 9%)
+        S = 65.41*sin(b)^2 + 4.56*sin(b) + 0.065
+            (Foster & Nearing, from the formula registry)
+        L = (lambda/22.13)^m
 
-        L = (λ/22.13)^m
+        ``slope`` is a percentage, as everywhere else in this class, and the
+        registry takes degrees, so the conversion is degrees(arctan(pct/100)).
+
+        This replaces the two-branch USDA S factor (10.8*sin + 0.03 below 9 %,
+        16.8*sin - 0.50 at or above 9 %). That form was discontinuous at its
+        branch point -- S jumps 0.998 to 1.006 there, carrying LS from 2.119 to
+        2.138 (+0.89 %) for no physical reason -- where the reference relation is
+        continuous in slope and monotonic across the whole range. The result
+        does change: at 10 degrees of slope the steepness factor goes from 2.417
+        to 2.829, so LS at a 100 m slope length goes from 5.139 to 6.014.
         """
-        slope_rad = np.arctan(slope / 100)
-        sin_slope = np.sin(slope_rad)
-
-        # S factor (two-part formula from USDA)
-        S_factor = np.where(slope < 9, 10.8 * sin_slope + 0.03, 16.8 * sin_slope - 0.50)
+        slope = np.asarray(slope)
+        slope_deg = np.degrees(np.arctan(slope / 100))
 
         # Length factor exponent m (varies with slope)
         m = np.where(slope < 1, 0.2, np.where(slope < 3, 0.3, np.where(slope < 5, 0.4, 0.5)))
 
         L_factor = (length_m / 22.13) ** m
 
+        S_factor = np.vectorize(ls_factor, otypes=[float])(slope_deg)
+
         LS = L_factor * np.maximum(S_factor, 0.01)
-        return np.clip(LS, 0.05, 15)
+        # The registry call promotes to float64; keep the input raster's own
+        # floating dtype so the downstream soil-loss product does not change.
+        out_dtype = slope.dtype if np.issubdtype(slope.dtype, np.floating) else np.dtype(np.float64)
+        return np.clip(LS, 0.05, 15).astype(out_dtype, copy=False)
 
     def _compute_tolerance(self, texture: np.ndarray, om: np.ndarray) -> np.ndarray:
         """Soil loss tolerance (T) - standard values 5-11 t/ha/yr.
@@ -494,7 +522,14 @@ class RUSLEMotor(AbstractScientificMotor):
         return np.clip(soil_loss, 0, 800)
 
     def _classify_risk(self, soil_loss: np.ndarray) -> np.ndarray:
-        """Classify erosion risk."""
+        """Classify erosion risk.
+
+        The 5/12/25/50 t/ha/yr boundaries are the FAO ones now held in
+        ``services._contracts.formula.erosion_class``, so the two agree. The
+        *labels* cannot come from there: that function returns strings, this
+        returns the 1-5 code that ``ErosionRisk`` and ``_risk_name`` map onto
+        the motor's own vocabulary.
+        """
         risk = np.ones_like(soil_loss, dtype=np.int8)
         risk[soil_loss >= 5] = 2  # Moderate
         risk[soil_loss >= 12] = 3  # High

@@ -29,6 +29,19 @@ double ndwi(double green, double nir);
 /// NBR = (NIR - SWIR) / (NIR + SWIR), clipped to [-1, 1].
 double nbr(double nir, double swir);
 
+/// Raw-buffer versions. These are the single implementation of the index math:
+/// the std::vector overloads below delegate to them, and the pybind11 binding
+/// calls them directly so a NumPy input is read and written in place with no
+/// intermediate container. `n` is the element count; pointers must be valid for
+/// n elements. No aliasing between an input and `out` is assumed.
+void ndvi_array_raw(const double* red, const double* nir, double* out, std::size_t n);
+void evi_array_raw(const double* red, const double* nir, const double* blue,
+                   double* out, std::size_t n);
+void savi_array_raw(const double* red, const double* nir, double L, double* out,
+                    std::size_t n);
+void ndwi_array_raw(const double* green, const double* nir, double* out, std::size_t n);
+void nbr_array_raw(const double* nir, const double* swir, double* out, std::size_t n);
+
 /// Vector versions (element-wise, NaN-free by construction).
 std::vector<double> ndvi_array(const std::vector<double>& red,
                                const std::vector<double>& nir);

@@ -49,7 +49,7 @@ const baseStyles: CSSProperties = {
   gap: 'var(--space-3)',
   padding: 'var(--space-4)',
   borderRadius: 'var(--radius-12)',
-  borderLeft: '4px solid',
+  borderInlineStart: '4px solid',
   boxShadow: 'var(--shadow-pop)',
   minWidth: '320px',
   maxWidth: '480px',
@@ -111,7 +111,7 @@ export const Toast = forwardRef<HTMLDivElement, ToastProps>(
     const combinedStyle: CSSProperties = {
       ...baseStyles,
       backgroundColor: bg,
-      borderLeftColor: border,
+      borderInlineStartColor: border,
       ...style,
     };
 
@@ -162,7 +162,9 @@ export const Toast = forwardRef<HTMLDivElement, ToastProps>(
             </p>
           )}
         </div>
-        {action && <div style={{ flexShrink: 0, marginLeft: 'var(--space-2)' }}>{action}</div>}
+        {action && (
+          <div style={{ flexShrink: 0, marginInlineStart: 'var(--space-2)' }}>{action}</div>
+        )}
         <button
           type="button"
           onClick={() => {

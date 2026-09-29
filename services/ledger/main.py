@@ -1,39 +1,64 @@
-"""Ledger service — immutable transaction ledger for carbon credits and ECO tokens.
+"""Ledger service â€” standalone app for the ECO/carbon ledger.
 
-Provides append-only accounting for:
-- Carbon credit issuance and retirement
-- ECO token wallet movements
-- Marketplace transactions
-- Balance queries with double-entry guarantees
+Consolidated in phase 4 (S-MONEY). This module previously:
+
+* declared its **own** asset vocabulary (``carbon_credit | eco_token | fiat``,
+  defaulting to ``eco_token``) alongside three others in the repository;
+* wrote ``LedgerEntry`` rows directly, with no batch-balance check, no amount
+  check and no asset allowlist;
+* summed balances inline with a **third** sign convention, separate from the
+  two that already existed.
+
+It now delegates to ``services.ledger.service.LedgerService``, which validates
+and applies the single documented sign convention (credit positive, debit
+negative).
+
+Scope note: this app is not mounted in the API gateway. It exposes an
+unauthenticated write endpoint on its own port, which is why every write goes
+through the validating service rather than the ORM.
 """
 
+from __future__ import annotations
+
 import logging
-from datetime import UTC, datetime
 from decimal import Decimal
 
-from fastapi import APIRouter, Depends
-from pydantic import BaseModel, Field
+from fastapi import APIRouter, Depends, FastAPI, HTTPException
+from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database.hub import hub
+from database.hub.hub import hub
 from database.models import LedgerEntry
-from engine.hydroma.config.settings import get_settings
+from services.ledger.service import ALLOWED_ASSETS, DEFAULT_ASSET, SingleEntryLedgerService
 
 logger = logging.getLogger(__name__)
-_settings = get_settings()
 
 router = APIRouter(prefix="/api/v1/ledger", tags=["ledger"])
 
 
 class EntryCreate(BaseModel):
-    account_id: int
-    entry_type: str  # debit | credit
-    asset: str  # carbon_credit | eco_token | fiat
+    account_id: str
+    entry_type: str
+    asset: str = DEFAULT_ASSET
     amount: Decimal = Field(..., gt=0)
-    reference_type: str  # carbon_issue | marketplace | wallet_transfer
-    reference_id: int | None = None
+    reference_type: str
+    reference_id: str | None = None
     description: str | None = None
+
+    @field_validator("entry_type")
+    @classmethod
+    def _check_entry_type(cls, value: str) -> str:
+        if value not in {"debit", "credit"}:
+            raise ValueError("entry_type must be 'debit' or 'credit'")
+        return value
+
+    @field_validator("asset")
+    @classmethod
+    def _check_asset(cls, value: str) -> str:
+        if value not in ALLOWED_ASSETS:
+            raise ValueError(f"asset must be one of {sorted(ALLOWED_ASSETS)}")
+        return value
 
 
 async def get_db() -> AsyncSession:
@@ -41,49 +66,51 @@ async def get_db() -> AsyncSession:
         yield session
 
 
+async def get_ledger_service(db: AsyncSession = Depends(get_db)) -> SingleEntryLedgerService:
+    return LedgerService(db)
+
+
 @router.post("/entries", status_code=201)
 async def create_entry(
     body: EntryCreate,
-    db: AsyncSession = Depends(get_db),
+    service: SingleEntryLedgerService = Depends(get_ledger_service),
 ):
-    entry = LedgerEntry(
-        account_id=body.account_id,
-        entry_type=body.entry_type,
-        asset=body.asset,
-        amount=body.amount,
-        reference_type=body.reference_type,
-        reference_id=body.reference_id,
-        description=body.description,
-        created_at=datetime.now(UTC).replace(tzinfo=None),
-    )
-    db.add(entry)
-    await db.commit()
-    await db.refresh(entry)
-    return {"id": entry.id, "created": True}
+    """Post a single validated entry.
+
+    Posting one entry at a time means the batch-balance check cannot run, so
+    the caller owns the other side of the double entry. A ``validate_balance``
+    flag is provided for callers that would rather assert the invariant here
+    than rely on the balancing counterpart being posted.
+    """
+    try:
+        record = await service.post_entry(body)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"id": record["id"], "created": True, "entry": record}
 
 
 @router.get("/accounts/{account_id}/balance")
 async def get_balance(
-    account_id: int,
-    asset: str = "eco_token",
-    db: AsyncSession = Depends(get_db),
+    account_id: str,
+    asset: str = DEFAULT_ASSET,
+    service: SingleEntryLedgerService = Depends(get_ledger_service),
 ):
-    result = await db.execute(
-        select(LedgerEntry).where(LedgerEntry.account_id == account_id, LedgerEntry.asset == asset)
-    )
-    entries = result.scalars().all()
-    balance = Decimal("0")
-    for e in entries:
-        if e.entry_type == "credit":
-            balance += e.amount
-        else:
-            balance -= e.amount
+    """Balance for an account.
+
+    Uses the service, so the sign convention matches the one every other
+    balance query in the codebase uses.
+    """
+    if asset not in ALLOWED_ASSETS:
+        raise HTTPException(
+            status_code=400, detail=f"asset must be one of {sorted(ALLOWED_ASSETS)}"
+        )
+    balance = await service.get_balance(account_id, asset)
     return {"account_id": account_id, "asset": asset, "balance": str(balance)}
 
 
 @router.get("/entries")
 async def list_entries(
-    account_id: int | None = None,
+    account_id: str | None = None,
     limit: int = 50,
     db: AsyncSession = Depends(get_db),
 ):
@@ -92,7 +119,6 @@ async def list_entries(
         stmt = stmt.where(LedgerEntry.account_id == account_id)
     stmt = stmt.order_by(LedgerEntry.created_at.desc()).limit(limit)
     result = await db.execute(stmt)
-    entries = result.scalars().all()
     return {
         "entries": [
             {
@@ -104,22 +130,39 @@ async def list_entries(
                 "reference_type": e.reference_type,
                 "created_at": e.created_at.isoformat() if e.created_at else None,
             }
-            for e in entries
+            for e in result.scalars().all()
         ]
     }
+
+
+@router.get("/verify")
+async def verify_integrity(service: SingleEntryLedgerService = Depends(get_ledger_service)):
+    """Integrity verification status.
+
+    Not implemented: ``LedgerEntry`` has no ``hash``/``prev_hash`` columns.
+    Reporting ``{"valid": false}`` here was indistinguishable from tampering,
+    which is the confusion the S-HONEST status contract exists to remove.
+    """
+    return {
+        "verified": False,
+        "status": "not_implemented",
+        "reason": (
+            "LedgerEntry has no hash/prev_hash columns, so there is no chain to verify. "
+            "A 'valid: false' answer would be indistinguishable from tampering."
+        ),
+    }
+
+
+app = FastAPI(title="Eco Nojin Ledger Service", version="2.0.0")
+app.include_router(router)
 
 
 def main() -> None:
     """Run the ledger service."""
     import uvicorn
 
+    logger.info("Starting ledger service on port 8002 (not mounted in the API gateway)")
     uvicorn.run(app, host="0.0.0.0", port=8002)
-
-
-from fastapi import FastAPI
-
-app = FastAPI(title="Eco Nojin Ledger Service", version="1.0.0")
-app.include_router(router)
 
 
 if __name__ == "__main__":

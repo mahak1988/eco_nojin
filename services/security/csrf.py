@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import secrets
 
 from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -13,6 +14,19 @@ logger = logging.getLogger(__name__)
 SAFE_METHODS = {"GET", "HEAD", "OPTIONS", "TRACE"}
 CSRF_HEADER = "x-csrf-token"
 CSRF_COOKIE = "econojin_csrf"
+
+# The cookie that carries the ambient authority a CSRF attack would borrow.
+# Kept as a literal to avoid importing the auth module (which imports settings
+# and this module) from inside the middleware.
+ACCESS_COOKIE = "econojin_access_token"
+
+TOKEN_BYTES = 32  # 256 bits; not a credential, but must not be guessable
+
+
+def new_csrf_token() -> str:
+    """Mint a double-submit CSRF token."""
+    return secrets.token_urlsafe(TOKEN_BYTES)
+
 
 # H4 FIX: minimal public auth and operational endpoints that must validate
 # themselves without a CSRF token before any route logic executes.
@@ -45,8 +59,17 @@ EXEMPT_PREFIXES = (
 class CSRFMiddleware(BaseHTTPMiddleware):
     """Enforce CSRF token on unsafe methods when cookie-based session is used.
 
-    Bearer-only APIs are exempt. This middleware is a no-op for pure JWT
-    clients, but protects any future cookie-session endpoints.
+    Bearer-token clients are exempt: they carry no ambient authority, so a
+    cross-site request cannot borrow it.
+
+    The check also applies only when the request actually carries a session
+    cookie. Without one there is nothing for a cross-site attacker to ride, and
+    rejecting it served no security purpose while breaking every non-Bearer
+    client outright.
+
+    History: the ``econojin_csrf`` cookie was read here but never written
+    anywhere, so every cookie-authenticated unsafe request failed with 403. The
+    cookie is now issued by ``auth.set_auth_cookies`` alongside the session.
     """
 
     async def dispatch(self, request: Request, call_next):
@@ -62,9 +85,17 @@ class CSRFMiddleware(BaseHTTPMiddleware):
         if auth_header.lower().startswith("bearer "):
             return await call_next(request)
 
+        # No ambient authority: not a CSRF target.
+        if not request.cookies.get(ACCESS_COOKIE):
+            return await call_next(request)
+
         csrf_token = request.headers.get(CSRF_HEADER)
         cookie_token = request.cookies.get(CSRF_COOKIE)
-        if not csrf_token or not cookie_token or csrf_token != cookie_token:
+        if (
+            not csrf_token
+            or not cookie_token
+            or not secrets.compare_digest(csrf_token, cookie_token)
+        ):
             logger.warning("CSRF check failed: %s %s", request.method, request.url.path)
             return JSONResponse(
                 status_code=403,

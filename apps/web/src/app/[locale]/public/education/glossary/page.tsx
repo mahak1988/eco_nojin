@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../../data-states';
@@ -23,12 +24,6 @@ type AgrovocResult = {
   stats: Record<string, number>;
 };
 
-const TITLES: Record<string, string> = { fa: 'واژه‌نامه دوزبانه', en: 'Bilingual Glossary' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'واژه‌نامه تخصصی قابل جستجو',
-  en: 'Searchable bilingual technical glossary',
-};
-
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
@@ -37,21 +32,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-education-glossary');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/education/glossary`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/education/glossary`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/education/glossary`,
-        en: `${BASE_URL}/en/public/education/glossary`,
-      },
+      canonical: canonicalFor(locale, '/public/education/glossary'),
+      languages: languageAlternates('/public/education/glossary'),
     },
   };
 }
@@ -59,10 +52,12 @@ export async function generateMetadata({
 export default async function GlossaryPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  const meta = await getTranslations('pageMeta.public-education-glossary');
   const learn = await getTranslations('learn');
   const template = await getTranslations('market.template');
-  const title = TITLES[locale] ?? TITLES.en;
-  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+  const title = meta('title');
+  const description = meta('description');
 
   // The gateway exposes a curated bilingual term map through AGROVOC search;
   // an empty query returns the real concept counts per group.
@@ -82,9 +77,8 @@ export default async function GlossaryPage({ params }: { params: Promise<{ local
           label={title}
           verified={glossary.ok}
           method={AGROVOC_PATH}
-        >
-          <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-        </ProvenanceStamp>
+        />
+        <h1 className="display text-4xl font-bold text-ink">{title}</h1>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
       </section>
 

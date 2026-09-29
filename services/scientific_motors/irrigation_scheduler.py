@@ -78,7 +78,7 @@ class IrrigationSchedulerMotor(AbstractScientificMotor):
 
     @property
     def motor_type(self) -> MotorType:
-        return MotorType.BIOFERTILIZER
+        return MotorType.IRRIGATION
 
     @property
     def display_name(self) -> str:

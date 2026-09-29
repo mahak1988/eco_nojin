@@ -247,7 +247,7 @@ export default function VoicePage() {
               id="voice-language"
               value={selectedLanguage}
               onChange={(event) => setSelectedLanguage(event.target.value)}
-              className="rounded-md border border-line bg-background px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-forest"
+              className="rounded-md border border-line-strong bg-surface px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-focus"
               disabled={!languagesReachable}
             >
               {languagesReachable ? (
@@ -281,7 +281,7 @@ export default function VoicePage() {
                 <div
                   className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm ${
                     message.role === 'user'
-                      ? 'rounded-br-md bg-forest text-paper'
+                      ? 'rounded-br-md bg-action text-on-action'
                       : 'rounded-bl-md border border-line bg-surface text-ink'
                   }`}
                 >

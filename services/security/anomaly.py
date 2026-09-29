@@ -11,13 +11,34 @@ import threading
 import time
 from collections import defaultdict, deque
 
+PROFILE_TTL = 300.0
+
 
 class AnomalyDetector:
-    def __init__(self) -> None:
+    # A caller that rotates source addresses (botnet, IPv6 prefix rotation)
+    # would otherwise add a permanent entry per address. Idle profiles are
+    # evicted once they fall outside the window, which keeps the resident set
+    # proportional to *active* callers rather than to lifetime traffic.
+    def __init__(self, max_profiles: int = 10_000) -> None:
         self._lock = threading.Lock()
         self._vol: dict[str, deque[float]] = defaultdict(deque)
         self._err4xx: dict[str, int] = defaultdict(int)
         self._flags: dict[str, float] = {}
+        self._max_profiles = max_profiles
+
+    def _evict_idle(self, now: float) -> None:
+        stale = [ip for ip, dq in self._vol.items() if not dq or now - dq[-1] > PROFILE_TTL]
+        for ip in stale:
+            self._vol.pop(ip, None)
+            self._err4xx.pop(ip, None)
+            self._flags.pop(ip, None)
+        overflow = len(self._vol) - self._max_profiles
+        if overflow > 0:
+            oldest = sorted(self._vol.items(), key=lambda kv: kv[1][-1] if kv[1] else 0.0)
+            for ip, _dq in oldest[:overflow]:
+                self._vol.pop(ip, None)
+                self._err4xx.pop(ip, None)
+                self._flags.pop(ip, None)
 
     @staticmethod
     def _entropy(s: str) -> float:
@@ -33,6 +54,7 @@ class AnomalyDetector:
         """Increment profile and return the anomaly score (0-100)."""
         with self._lock:
             now = time.time()
+            self._evict_idle(now)
             dq = self._vol[ip]
             while dq and now - dq[0] > 60:
                 dq.popleft()

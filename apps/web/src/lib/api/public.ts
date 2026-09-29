@@ -379,12 +379,6 @@ export const publicApi = {
       | { ok: boolean; data: PolicyDocument; status: number }
       | { ok: false; error: string; status: number }
     > => apiGet<PolicyDocument>('/api/v1/public/policy/governance'),
-    versions: (
-      documentId: string,
-    ): Promise<
-      | { ok: boolean; data: PolicyDocument[]; status: number }
-      | { ok: false; error: string; status: number }
-    > => apiGet<PolicyDocument[]>(`/api/v1/public/policy/${documentId}/versions`),
   },
 
   components: {

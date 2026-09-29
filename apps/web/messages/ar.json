@@ -1,5 +1,8 @@
 {
-  "meta": { "machineTranslated": false, "fallbackLocale": null },
+  "meta": {
+    "machineTranslated": false,
+    "fallbackLocale": null
+  },
   "brand": {
     "name": "هيدروما نوجين",
     "description": "القسم العلمي في إيكو نوجين؛ مرافقة لفهم أفضل للماء، التربة، الغطاء النباتي والمناخ."
@@ -402,5 +405,769 @@
       "source": "bff:/api/auth/session",
       "method": "HttpOnly session cookie"
     }
+  },
+  "pageMeta": {
+    "public-audiences-cooperatives": {
+      "title": "التعاونية",
+      "description": "الطلبات المسجّلة وعدّادات السوق الحقيقية"
+    },
+    "public-audiences-farmers": {
+      "title": "المزارعون",
+      "description": "الطلبات المسجّلة وملفات الأراضي الموجودة في قاعدة البيانات"
+    },
+    "public-audiences-government": {
+      "title": "الحكومة",
+      "description": "الطلبات المسجّلة وعدّادات قاعدة البيانات الحقيقية"
+    },
+    "public-audiences-investors": {
+      "title": "المستثمرون",
+      "description": "الطلبات المسجّلة وعدّادات المشاريع الحقيقية؛ لا يُدَّعى أي عائد"
+    },
+    "public-audiences-ngos": {
+      "title": "المنظمات غير الحكومية",
+      "description": "الطلبات المسجّلة وحالة المؤشرات الحقيقية"
+    },
+    "public-audiences-researchers": {
+      "title": "البحث العلمي",
+      "description": "سجل النماذج والمرجع العلمي وراء كل نموذج"
+    },
+    "public-channels": {
+      "title": "قنوات الوصول",
+      "description": "الحالة الحقيقية لقنوات USSD والصوت والمزامنة"
+    },
+    "public-components-api-playground": {
+      "title": "ساحة تجربة API",
+      "description": "وحدة تحكم تفاعلية لاختبار نقاط النهاية"
+    },
+    "public-components-dispute-resolution": {
+      "title": "عرض تسوية النزاعات",
+      "description": "لا توجد قائمة نزاعات مسجّلة في البوابة؛ لا يُعرض أي ملف أو حكم"
+    },
+    "public-components-ecowallet": {
+      "title": "EcoWallet",
+      "description": "عرض ميزات المحفظة الرقمية"
+    },
+    "public-components-hydroma-engine": {
+      "title": "محرّك HydroMa",
+      "description": "عرض وحدات المحرّك العلمي"
+    },
+    "public-components-land-profiler": {
+      "title": "محلّل الأراضي",
+      "description": "سيناريوهات تحليل وإدارة الأرض"
+    },
+    "public-components-marketplace": {
+      "title": "السوق",
+      "description": "عرض ميزات السوق"
+    },
+    "public-components-mrv-dashboard": {
+      "title": "لوحة MRV",
+      "description": "عرض الرصد والإبلاغ والتحقّق"
+    },
+    "public-components-satellite-view": {
+      "title": "عرض الأقمار الصناعية",
+      "description": "طبقات البيانات الفضائية والتصيير"
+    },
+    "public-cta": {
+      "title": "شارِك",
+      "description": "المسارات المتاحة كنقاط نهاية حقيقية ونموذج يُرسَل إلى البوابة"
+    },
+    "public-education-advanced-search": {
+      "title": "بحث متقدّم",
+      "description": "بحث متعدّد المعايير في المكتبة التعليمية"
+    },
+    "public-education-certifications": {
+      "title": "برامج الشهادات",
+      "description": "لا يوجد سجل شهادات مسجّل في البوابة؛ لا يُعرض أي شهادة صادرة"
+    },
+    "public-education-courses": {
+      "title": "الدورات",
+      "description": "خدمة الدورات غير مسجّلة في البوابة؛ المحتوى المنشور قابل للبحث في المكتبة"
+    },
+    "public-education-glossary": {
+      "title": "مسرد ثنائي اللغة",
+      "description": "مسرد فني ثنائي اللغة قابل للبحث"
+    },
+    "public-education-library": {
+      "title": "المكتبة التعليمية",
+      "description": "ابحث في المحتوى التعليمي المنشور"
+    },
+    "public-education-library-advanced": {
+      "title": "مكتبة متقدّمة",
+      "description": "بحث واسع في المحتوى ومجموعات المصطلحات العلمية الحقيقية"
+    },
+    "public-education-video-player": {
+      "title": "مشغّل الفيديو",
+      "description": "خدمة الفيديو غير مسجّلة في البوابة؛ لا يُحمَّل أي مشغّل أو ترجمة"
+    },
+    "public-education-workshops": {
+      "title": "ورش العمل",
+      "description": "لا يوجد تقويم للورش مسجّل في البوابة؛ لا تُعرض أي تواريخ أو سعات"
+    },
+    "public-goals-impact": {
+      "title": "الأثر",
+      "description": "عدّادات الطلبات المسجّلة الحقيقية؛ لا يُدَّعى أي مقياس موثّق"
+    },
+    "public-goals-manifesto": {
+      "title": "الإ بيان",
+      "description": "المراحل المسجّلة والبوابات التي تقيّد المسار اليوم"
+    },
+    "public-goals-mission": {
+      "title": "الرسالة",
+      "description": "شبكة السجل والعقود التي تعيدها البوابة"
+    },
+    "public-goals-roadmap": {
+      "title": "خارطة الطريق",
+      "description": "بوابات المراحل والمراحل المسجّلة في سجل الأدوات"
+    },
+    "public-goals-values": {
+      "title": "القيم",
+      "description": "حالة الوصول الحقيقية عبر الهاتف البسيط من مسارات USSD والصوت"
+    },
+    "public-goals-vision": {
+      "title": "الرؤية",
+      "description": "النطاقات المسجّلة في سجل الأدوات"
+    },
+    "public-home": {
+      "title": "منصة الرصد البيئي ودعم القرار",
+      "description": "رصد التربة والماء والمناخ الكربوني على أساس علمي"
+    },
+    "public-model-count": {
+      "title": "عدد النماذج",
+      "description": "عدد النماذج العلمية المسجّلة وحالتها"
+    },
+    "public-policy-accessibility": {
+      "title": "بيان إمكانية الوصول",
+      "description": "لا يوجد معرّف نصّي لإمكانية الوصول في legal-texts، لذلك لا تُعرض حالة المطابقة"
+    },
+    "public-policy-cookies": {
+      "title": "سياسة ملفات تعريف الارتباط",
+      "description": "تُقرأ نص سياسة ملفات تعريف الارتباط من سجل legal-texts المنشور."
+    },
+    "public-policy-governance": {
+      "title": "هيكل الحوكمة",
+      "description": "لا يوجد معرّف نصّي للحوكمة في legal-texts، لذلك لا يُعرض أي هيكل"
+    },
+    "public-policy-licensing": {
+      "title": "تراخيص المصادر المفتوحة",
+      "description": "لا يوجد معرّف نصّي للتراخيص في legal-texts، لذلك لا تُعرض قائمة التراخيص"
+    },
+    "public-policy-privacy": {
+      "title": "سياسة الخصوصية",
+      "description": "تُقرأ نص سياسة الخصوصية من سجل legal-texts المنشور."
+    },
+    "public-policy-terms": {
+      "title": "شروط الخدمة",
+      "description": "يُقرأ نص الشروط وسجلّ إصداراته من خدمة legal-texts."
+    },
+    "public-science-benchmarks": {
+      "title": "مرجعيات الأداء",
+      "description": "نتائج تحقّق حقيقية من المعادلات مقابل مراجع منشورة"
+    },
+    "public-science-case-studies": {
+      "title": "دراسات حالة",
+      "description": "المرجع العلمي المسجّل وراء كل نموذج"
+    },
+    "public-science-data-sources": {
+      "title": "مصادر البيانات",
+      "description": "دليل مصادر البيانات مع الحالة والترخيص"
+    },
+    "public-science-evidence-base": {
+      "title": "قاعدة الأدلة العلمية",
+      "description": "أدلة علمية منتقاة مع DOI وحالة التحقّق"
+    },
+    "public-science-gap-analysis": {
+      "title": "تحليل الفجوات",
+      "description": "نطاق الصلاحية المسجّل والقيود لكل نموذج"
+    },
+    "public-science-limitations": {
+      "title": "القيود",
+      "description": "القيود المعروفة للنماذج والبيانات"
+    },
+    "public-science-methodology": {
+      "title": "المنهجية",
+      "description": "المعايير وطرق الحساب العلمي"
+    },
+    "public-science-peer-review": {
+      "title": "مراجعة الأقران",
+      "description": "مرجع علمي مسجّل لكل نموذج؛ لا يوجد أي تقرير مراجعة منشور"
+    },
+    "public-science-reproducibility": {
+      "title": "قابلية إعادة الإنتاج",
+      "description": "التشغيلات المشتركة المسجّلة وحالة إصدار DOI الحقيقية"
+    },
+    "public-science-uncertainty": {
+      "title": "عدم اليقين",
+      "description": "القيود المعلنة وحالة تحقّق المعادلات الحقيقية"
+    },
+    "public-science-validation": {
+      "title": "أدوات التحقّق",
+      "description": "فحوص جودة البيانات والنماذج"
+    },
+    "public-science-validation-methods": {
+      "title": "طرق التحقّق",
+      "description": "منهجيات علمية للتحقّق من النماذج"
+    },
+    "public-services-satellite-intelligence": {
+      "title": "استخبارات الأقمار الصناعية",
+      "description": "منتجات بيانات فضائية ونقاط نهاية"
+    },
+    "public-visit": {
+      "title": "زيارة المزرعة",
+      "description": "يُرسَل طلب الزيارة إلى البوابة؛ لا تُعرض أي زيارة مجدولة"
+    },
+    "public-why": {
+      "title": "لماذا هذه المنصّة",
+      "description": "المشكلة والحل والأدلة القابلة للتحقّق"
+    },
+    "public-trust-blockchain-phasegate-status": {
+      "title": "حالة بوابة الطور",
+      "description": "هل بوابة الطور مفتوحة، كما تُبلّغ عنها نقطة النهاية في لحظة الطلب."
+    },
+    "public-trust-blockchain-treasury-balance": {
+      "title": "رصيد الخزينة",
+      "description": "رصيد الخزينة كما تسجّله السلسلة، مع ارتفاع الكتلة التي قُرئ عنده."
+    },
+    "marketplace-market-admin-orders": {
+      "title": "إدارة الطلبات",
+      "description": "سجل الطلبات الذي يعرضه البوابة، بحالته الفعلية ودون أي صفوف مُختلَقة."
+    },
+    "marketplace-market-admin-stats": {
+      "title": "إحصاءات السوق",
+      "description": "أعداد تُقرأ من نقطة نهاية إحصاءات السوق، أو بيان صريح بأن الخدمة غير متاحة."
+    },
+    "marketplace-market-marketplaces-marketplace_id": {
+      "title": "سجل السوق",
+      "description": "سوق واحدة بالمعرّف: الحالة التي يحتفظ بها البوابة له، لا وصفًا لما ينبغي أن يكون."
+    },
+    "marketplace-market-marketplaces-marketplace_id-shops": {
+      "title": "متاجر السوق",
+      "description": "المتاجر المسجّلة لسوق، كما سجّلها البوابة فعلًا."
+    },
+    "marketplace-market-orders-order_id-track": {
+      "title": "تتبّع الطلب",
+      "description": "سجل التتبّع الذي يحتفظ به البوابة لطلب، مع حالته الحالية."
+    },
+    "marketplace-market-payments-payment_id-escrow": {
+      "title": "سند الضمان",
+      "description": "حالة الضمان التي يحتفظ بها البوابة لمدفوعة، مع الانتقالات التي سجّلها."
+    },
+    "marketplace-market-products": {
+      "title": "المنتجات",
+      "description": "المنتجات التي سجّلها السوق، بالسعر والكمية التي تُبلّغ عنهما البوابة لكل منها."
+    },
+    "marketplace-market-products-search": {
+      "title": "البحث عن المنتجات",
+      "description": "البحث في الفهرس المسجّل. النتائج ما طابقته البوابة، دون ترتيب مُختلَق."
+    },
+    "marketplace-market-products-product_id": {
+      "title": "سجل المنتج",
+      "description": "منتج واحد بالمعرّف، بالحقول التي يحتفظ بها البوابة له."
+    },
+    "marketplace-market-products-product_id-carbon-credits": {
+      "title": "ائتمانات كربون المنتج",
+      "description": "ائتمانات الكربون المنسوبة إلى منتج، بالطريقة التي سجّلها البوابة."
+    },
+    "marketplace-market-products-product_id-trace": {
+      "title": "تتبّع المنتج",
+      "description": "سلسلة الحيازة المسجّلة لمنتج، من المدخلات التي يحتفظ بها البوابة."
+    },
+    "marketplace-market-vendors-vendor_id": {
+      "title": "سجل المورّد",
+      "description": "مورّد واحد بالمعرّف، بحالة التحقق التي يسجّلها البوابة."
+    },
+    "marketplace-market-vendors-vendor_id-orders": {
+      "title": "طلبات المورّد",
+      "description": "الطلبات المسجّلة لمورّد، في الحالة التي هي فيها فعلًا."
+    },
+    "marketplace-market-vendors-vendor_id-products": {
+      "title": "منتجات المورّد",
+      "description": "المنتجات التي سجّلها مورّد، بالكميات التي تُبلّغ عنها البوابة."
+    },
+    "marketplace-market-villages-b2b-demands-my": {
+      "title": "احتياجاتي",
+      "description": "احتياجات الشراء المسجّلة للقرى التي تنتمي إليها، كما يحتفظ بها البوابة."
+    },
+    "marketplace-market-villages-b2b-matches-village_id": {
+      "title": "مطابقات القرى",
+      "description": "الموردون الذين طُوبق بهم أحد احتياجات الشراء، بالدرجة التي حسبها البوابة."
+    },
+    "marketplace-market-villages-entrepreneurs": {
+      "title": "رياديو القرى",
+      "description": "رياديون سجّلهم البوابة لقرية، كما هم مسجّلون."
+    },
+    "marketplace-market-villages-entrepreneurs-me": {
+      "title": "سجل رائد الأعمال",
+      "description": "سجل رائد الأعمال الذي تحتفظ به الخدمة لحسابك."
+    },
+    "marketplace-market-villages-investments": {
+      "title": "استثمارات القرى",
+      "description": "الاستثمارات المسجّلة للقرى، بالمبالغ التي تُبلّغ عنها البوابة."
+    },
+    "marketplace-market-villages-nomadic-communities": {
+      "title": "المجتمعات البدوية",
+      "description": "المجتمعات البدوية التي سجّلها البوابة، مع المستوطنات التي تسجّلها لها."
+    },
+    "marketplace-market-villages-opportunities": {
+      "title": "فرص القرى",
+      "description": "الفرص التي نشرها البوابة للقرى، بحالتها المسجّلة."
+    },
+    "marketplace-market-villages-opportunities-opportunity_id-team": {
+      "title": "فريق الفرصة",
+      "description": "الفريق المسجّل لفرصة، بالدور الذي يحتفظ به البوابة لكل عضو."
+    },
+    "marketplace-market-villages-projects-project_id-engaged": {
+      "title": "القرى المشاركة",
+      "description": "القرى المسجّلة كمشاركات في مشروع، بدور كل منها."
+    },
+    "marketplace-market-villages-village_id": {
+      "title": "سند القرية",
+      "description": "قرية واحدة بالمعرّف، بالحقول التي يسجّلها البوابة لها."
+    },
+    "hydroma-hydroma-carbon-credits-token_id-history": {
+      "title": "سجل ائتمان الكربون",
+      "description": "حركة ائتمان الكربون، بالترتيب الذي يسجّله دفتر الحساب."
+    },
+    "hydroma-hydroma-carbon-verra-standards": {
+      "title": "معايير السجل",
+      "description": "معايير السجل التي ينفّذها المحرّك، بالإصدار الذي يُبلّغ عنه لكل منها."
+    },
+    "hydroma-hydroma-climate": {
+      "title": "النماذج المناخية",
+      "description": "النماذج المناخية التي نفّذها المحرّك، بالإصدار والنطاق الموثّق لكل منها."
+    },
+    "hydroma-hydroma-db-stats": {
+      "title": "قاعدة بيانات المحرّك",
+      "description": "ما يُبلّغ عنه المحرّك عن تخزينه: الوسيط، إمكانية الوصول، وعدد السجلات."
+    },
+    "hydroma-hydroma-economics": {
+      "title": "النماذج الاقتصادية",
+      "description": "النماذج الاقتصادية التي نفّذها المحرّك، وأساس التكلفة الذي يفترضه كل منها."
+    },
+    "hydroma-hydroma-farms": {
+      "title": "المزارع",
+      "description": "المزارع التي سجّلها المحرّك، بالمساحة والموقع اللذين يحتفظ بهما لكل منها."
+    },
+    "admin-admin-content-item_id-versions": {
+      "title": "إصدارات المحتوى",
+      "description": "كل إصدار لمحتوى، مع التغيير المسجّل لكل إصدار."
+    },
+    "admin-admin-errors-summary": {
+      "title": "ملخّص الأخطاء",
+      "description": "عدّ للأخطاء المسجّلة بحسب الشدّة، محسوبًا من الأخطاء التي يحتفظ بها البوابة فعلًا."
+    },
+    "admin-admin-models": {
+      "title": "النماذج المسجّلة",
+      "description": "النماذج التي سجّلها البوابة، بالإصدار والتوثيق الذي ينشره كل منها."
+    },
+    "admin-admin-overview": {
+      "title": "نظرة عامة على المنصّة",
+      "description": "عدّادات المنصّة المقروءة من البوابة، دون أي قيمة لم تبلّغ عنها الخدمة."
+    },
+    "admin-admin-overview-health": {
+      "title": "حالة الخدمات",
+      "description": "ما تبلّغ عنه كل خدمة عن إتاحتها، في لحظة الطلب."
+    },
+    "admin-admin-overview-metrics": {
+      "title": "مقاييس المنصّة",
+      "description": "مقاييس المنصّة المسمّاة كما تُبلّغ عنها البوابة، بوحداتها."
+    },
+    "admin-admin-security-audit": {
+      "title": "تدقيق أمني",
+      "description": "أحداث التدقيق التي سجّلها البوابة، بالفاعل والإجراء لكل منها."
+    },
+    "admin-admin-security-logins": {
+      "title": "سجلات الدخول",
+      "description": "محاولات الدخول التي سجّلها البوابة، بالنتيجة والعنوان الذي جاءت منه كل منها."
+    },
+    "system-system-dashboard-recommendations-farm_id": {
+      "title": "توصيات المزرعة",
+      "description": "التوصيات التي حسبها المحرّك لمزرعة، مع الافتراضات التي استخدمها لكل منها."
+    },
+    "system-system-iot-devices": {
+      "title": "الأجهزة الموصولة",
+      "description": "الأجهزة التي سجّلها البوابة، بوقت آخر قراءة تحتفظ به لكل منها."
+    },
+    "system-system-iot-devices-device_id": {
+      "title": "سجل الجهاز",
+      "description": "جهاز واحد بالمعرّف، بالحالة التي يسجّلها البوابة له."
+    },
+    "system-system-iot-devices-device_id-readings": {
+      "title": "قراءات الجهاز",
+      "description": "القراءات التي أبلغ عنها جهاز، بترتيب حفظ البوابة لها، بوحداتها."
+    },
+    "workspace-workspace-disputes-dispute_id": {
+      "title": "سند النزاع",
+      "description": "نزاع واحد بالمعرّف، بالأدلة المرفقة والحالة التي بلغها."
+    },
+    "workspace-workspace-finance-accounts": {
+      "title": "الحسابات المالية",
+      "description": "الحسابات المالية التي يحتفظ بها مساحة العمل هذه، بالحالة التي يسجّلها البوابة لكل منها."
+    },
+    "workspace-workspace-finance-idempotency-keys": {
+      "title": "مفاتيح التفرّد",
+      "description": "مفاتيح التفرّد التي استخدمتها مساحة العمل هذه، ليُعرف الطلب المكرّر على أنه واحد."
+    },
+    "workspace-workspace-finance-ledger-accounts-account_id-balance": {
+      "title": "رصيد الحساب",
+      "description": "الرصيد الذي يحتفظ به دفتر الأستاذ لحساب عند القيد الذي قُرئ عنده."
+    },
+    "workspace-workspace-finance-ledger-entries": {
+      "title": "قيود دفتر الأستاذ",
+      "description": "كل قيد تحتفظ به مساحة العمل، بالترتيب، بمبلغ كل قيد واتجاهه."
+    },
+    "workspace-workspace-finance-ledger-profit-and-loss": {
+      "title": "الربح والخسارة",
+      "description": "الإيراد والمصروف، مستندًا إلى قيود الدفتر نفسها، عن الفترة المذكورة."
+    },
+    "workspace-workspace-finance-ledger-trial-balance": {
+      "title": "ميزان المراجعة",
+      "description": "المدينون والدائنون مجمَّعة من قيود الدفتر، وهل يتساوى الطرفان."
+    },
+    "workspace-workspace-finance-wallet": {
+      "title": "محفظة مساحة العمل",
+      "description": "محفظة مساحة العمل كما يسجّلها الدفتر، بالقيود التي يقوم عليها الرصيد."
+    },
+    "inclusive-auth-2fa-status": {
+      "title": "حالة التحقّق بخطوتين",
+      "description": "هل المصادقة الثنائية مفعّلة لهذا الحساب، كما تُبلّغ عنها خدمة الحساب."
+    },
+    "inclusive-auth-account-status": {
+      "title": "حالة الحساب",
+      "description": "الحالة التي تحتفظ بها خدمة الحساب لهذا الحساب، بما فيها أي قيد فرضته."
+    },
+    "inclusive-auth-achievements": {
+      "title": "الإنجازات",
+      "description": "الإنجازات المسجّلة لهذا الحساب، بمعيار مُنحت من أجله كل منها."
+    },
+    "inclusive-auth-activity-history": {
+      "title": "سجل النشاط",
+      "description": "ما سجّلته خدمة الحساب نشاطًا على هذا الحساب، بترتيب حدوثه."
+    },
+    "inclusive-auth-api-keys": {
+      "title": "مفاتيح API",
+      "description": "مفاتيح API التي يحتفظ بها هذا الحساب، بنطاقاتها وتواريخ الإنشاء المسجّلة."
+    },
+    "inclusive-auth-assets": {
+      "title": "محتويات الحساب",
+      "description": "الأصول التي أرفقتها خدمة الحساب بهذا الحساب."
+    },
+    "inclusive-auth-billing-subscription": {
+      "title": "الاشتراك",
+      "description": "حالة الاشتراك التي تسجّلها خدمة الفوترة، مع خطّته وفترته الحالية."
+    },
+    "inclusive-auth-legacy": {
+      "title": "بيانات الحساب القديم",
+      "description": "بيانات من نظام الحسابات السابق، لمراجعة الترحيل لا للاستخدام اليومي."
+    },
+    "inclusive-auth-me": {
+      "title": "حسابي",
+      "description": "سجل الحساب الذي تحتفظ به الخدمة لهذه الهوية، تمامًا كما تخزّنه."
+    },
+    "inclusive-auth-notifications": {
+      "title": "الإشعارات",
+      "description": "الإشعارات الموجَّهة إلى هذا الحساب، بترتيب حفظ الخدمة لها."
+    },
+    "inclusive-auth-oauth-connections": {
+      "title": "الخدمات الموصولة",
+      "description": "خدمات الطرف الثالث الموصولة بهذا الحساب، بالنطاقات التي مُنحت لكل منها."
+    },
+    "inclusive-auth-preferences": {
+      "title": "التفضيلات",
+      "description": "التفضيلات التي سجّلتها خدمة الحساب لهذا الحساب."
+    },
+    "inclusive-auth-preferences-extended": {
+      "title": "تفضيلات موسّعة",
+      "description": "مجموعة التفضيلات الكاملة، بما فيها المفاتيح التي تحجزها الخدمة لاستخدام مستقبلي."
+    },
+    "inclusive-auth-profile-public": {
+      "title": "الملف العلني",
+      "description": "الجزء من ملفك الذي يراه الآخرون، كما تنشره الخدمة."
+    },
+    "inclusive-auth-rate-limit": {
+      "title": "حدّ الاستخدام",
+      "description": "ما زال بإمكانك إرساله وما تبقّى من نافذتك، كما تحسبه الخدمة."
+    },
+    "learning-learn-legal": {
+      "title": "النصوص القانونية",
+      "description": "النصوص القانونية التي تنشرها المنصّة، بلغة وإصدار كل منها."
+    },
+    "learning-learn-legal-locales": {
+      "title": "لغات النصوص القانونية",
+      "description": "اللغات التي نُشرت إليها النصوص القانونية، كما هي مسجّلة."
+    },
+    "learning-learn-legal-slugs": {
+      "title": "المستندات القانونية",
+      "description": "المستندات القانونية التي تحتفظ بها المنصّة، مسرودة بمعرّفاتها."
+    },
+    "learning-learn-legal-locale-slug": {
+      "title": "نص قانوني",
+      "description": "نص قانوني بلغة واحدة، بالإصدار الذي يحمله السجل."
+    },
+    "learning-learn-legal-locale-slug-versions": {
+      "title": "سجل الإصدارات",
+      "description": "كل إصدار لنص قانوني، مع التغيير المسجّل لكل إصدار."
+    },
+    "marketplace-market-producers": {
+      "title": "المنتجون",
+      "description": "المنتجون الذين سجّلهم السوق، بحالة التحقق المسجّلة."
+    },
+    "marketplace-market-stats": {
+      "title": "إحصاءات السوق",
+      "description": "أعداد تُقرأ من نقطة نهاية الإحصاءات، أو بيان بأن الخدمة لم تستجب."
+    },
+    "marketplace-market-marketplaces": {
+      "title": "الأسواق",
+      "description": "الأسواق التي سجلها البوابة، كما سُجلت فعلًا."
+    },
+    "marketplace-market-orders-order_id": {
+      "title": "سجل الطلب",
+      "description": "طلب واحد بالمعرّف، مع آخر انتقال حالة سُجّل."
+    },
+    "marketplace-market-orders-order_id-status": {
+      "title": "حالة الطلب",
+      "description": "الحالة الحالية لطلب، تُقرأ من البوابة في لحظة الطلب."
+    },
+    "marketplace-market-orders-order_id-timeline": {
+      "title": "سجلّ الطلب الزمني",
+      "description": "سجلّ الحالات المسجّل لطلب، بالترتيب الذي يعيده البوابة."
+    },
+    "marketplace-market-shops-shop_id": {
+      "title": "سجل المتجر",
+      "description": "متجر واحد بالمعرّف، بالحقول التي يحتفظ بها البوابة فعلًا."
+    },
+    "marketplace-market-shops-shop_id-orders": {
+      "title": "طلبات المتجر",
+      "description": "الطلبات المسجّلة لمتجر، دون مجاميع أو حالات مُختلَقة."
+    },
+    "marketplace-market-shops-shop_id-products": {
+      "title": "منتجات المتجر",
+      "description": "المنتجات التي سجّلها متجر، بالكميات التي تُبلّغ عنها البوابة."
+    },
+    "marketplace-market-shops-shop_id-stats": {
+      "title": "إحصاءات المتجر",
+      "description": "أعداد تُقرأ من نقطة نهاية الإحصاءات لمتجر واحد."
+    },
+    "marketplace-market-transactions": {
+      "title": "المعاملات",
+      "description": "سجل المعاملات الذي تعرضه بوابة السوق، كما سُجّل."
+    },
+    "marketplace-market-transactions-transaction_id": {
+      "title": "سجل المعاملة",
+      "description": "معاملة واحدة بالمعرّف، بسجل البوابة نفسه."
+    },
+    "marketplace-market-wallet": {
+      "title": "محفظة السوق",
+      "description": "الرصيد الذي تُبلّغ عنه البوابة، أو بيان بأنه لم يتيسّر قراءته."
+    },
+    "marketplace-market-wallet-balance": {
+      "title": "رصيد المحفظة",
+      "description": "الرصيد كما يسجّله البوابة في لحظة الطلب."
+    },
+    "marketplace-market-wallet-history": {
+      "title": "سجلّ المحفظة",
+      "description": "سجلّ الحركات المسجّل، بالترتيب الذي يعيده البوابة."
+    },
+    "marketplace-market-wallet-methods": {
+      "title": "طرق الدفع",
+      "description": "طرق الدفع التي فعّلها البوابة، حسب الإعداد."
+    },
+    "marketplace-market-wallet-methods-method_id": {
+      "title": "طريقة الدفع",
+      "description": "طريقة دفع واحدة بالمعرّف، بحالتها المهيّأة."
+    },
+    "marketplace-market-wallet-payouts": {
+      "title": "المدفوعات",
+      "description": "مدفوعات مسجّلة، بالمبالغ والحالات التي يحتفظ بها البوابة."
+    },
+    "marketplace-market-wallet-payouts-payout_id": {
+      "title": "سجل المدفوعة",
+      "description": "مدفوعة واحدة بالمعرّف والحالة المسجّلة آخر مرة."
+    },
+    "marketplace-market-wallet-payouts-payout_id-status": {
+      "title": "حالة المدفوعة",
+      "description": "الحالة الحالية لمدفوعة، تُقرأ في لحظة الطلب."
+    },
+    "marketplace-market-wallet-transactions": {
+      "title": "حركات المحفظة",
+      "description": "الحركات كما يسجّلها البوابة، دون أرصدة مشتقّة."
+    },
+    "marketplace-market-wallet-transactions-tx_id": {
+      "title": "حركة محفظة",
+      "description": "حركة واحدة بالمعرّف والحالة المسجّلة لها."
+    },
+    "marketplace-market-wallet-verification": {
+      "title": "التحقّق من المحفظة",
+      "description": "حالة التحقّق التي يحتفظ بها البوابة لمحفظة، لا دعوى عن صاحبها."
+    },
+    "marketplace-market-wallet-verification-methods": {
+      "title": "طرق التحقّق",
+      "description": "طرق التحقّق من الهوية التي هيّأها البوابة."
+    },
+    "marketplace-market-wallet-verification-methods-method_id": {
+      "title": "طريقة التحقّق",
+      "description": "طريقة تحقّق واحدة بالمعرّف وحالتها المهيّأة."
+    },
+    "hydroma-hydroma-carbon-verra-registry_id": {
+      "title": "سجلّ السجلّ",
+      "description": "سجلّ واحد بالمعرّف، مع الحالة التي يبلّغ عنها المحرّك."
+    },
+    "hydroma-hydroma-climate-model_id-run": {
+      "title": "تنفيذ مناخي",
+      "description": "تنفيذ مناخي والمدخلات التي سجّلها المحرّك له."
+    },
+    "hydroma-hydroma-climate-scenarios": {
+      "title": "سيناريوهات المناخ",
+      "description": "السيناريوهات التي يستطيع المحرّك تنفيذها، مع المفروضات الموثّقة لكل منها."
+    },
+    "hydroma-hydroma-economics-model_id-run": {
+      "title": "تنفيذ اقتصادي",
+      "description": "نتيجة اقتصادية والمفروضات التي سجّلها المحرّك لها."
+    },
+    "hydroma-hydroma-elevation-grid-site_id": {
+      "title": "شبكة الارتفاع",
+      "description": "بيانات ارتفاع لموقع، مع المصدر والتفكقيق اللذين يسجّلهما المحرّك."
+    },
+    "hydroma-hydroma-hydrology-model_id-run": {
+      "title": "تنفيذ هيدرولوجي",
+      "description": "نتيجة هيدرولوجية والمدخلات التي سجّلها المحرّك لها."
+    },
+    "hydroma-hydroma-soil-model_id-run": {
+      "title": "تنفيذ تربة",
+      "description": "نتيجة تربة والمدخلات التي سجّلها المحرّك لها."
+    },
+    "hydroma-hydroma-analyses-crop-water-req": {
+      "title": "احتياج المحصول من الماء",
+      "description": "تقدير لاحتياج المحصول من الماء، بالطريقة والمدخلات التي يسجّلها النموذج."
+    },
+    "hydroma-hydroma-analyses-groundwater": {
+      "title": "تحليل المياه الجوفية",
+      "description": "نتائج المياه الجوفية مع إصدار النموذج وعدم اليقين الذي يبلّغ عنه المحرّك."
+    },
+    "hydroma-hydroma-analyses-irrigation-design": {
+      "title": "تصميم الري",
+      "description": "نتيجة تصميم ري، مع المفروضات التي سجّلها المحرّك لها."
+    },
+    "hydroma-hydroma-analyses-runoff": {
+      "title": "تحليل الجريان السطحي",
+      "description": "تقدير للجريان مع إصدار النموذج والمدخلات التي يحتفظ بها المحرّك."
+    },
+    "hydroma-hydroma-analyses-structure-design": {
+      "title": "تصميم المنشأة",
+      "description": "نتيجة تصميم منشأة وعوامل الأمان التي طبّقها المحرّك."
+    },
+    "hydroma-hydroma-analyses-topography": {
+      "title": "التحليل الطبوغرافي",
+      "description": "نتائج طبوغرافية كما يحسبها المحرّك، مع التفكيق المسجّل."
+    },
+    "hydroma-hydroma-carbon": {
+      "title": "محاسبة الكربون",
+      "description": "تقديرات الكربون من المحرّك، مع إصدار الطريقة وعدم اليقين معروضَين."
+    },
+    "hydroma-hydroma-carbon-credits-balance": {
+      "title": "رصيد الاعتمادات الكربونية",
+      "description": "رصيد الاعتمادات الذي يبلّغ عنه المحرّك، مع المشاريع المنسوبة إليه."
+    },
+    "hydroma-hydroma-carbon-credits-retire": {
+      "title": "إبطال الاعتمادات",
+      "description": "سجلات الإبطال التي يحتفظ بها المحرّك، مع الكمية المنسوبة لكل منها."
+    },
+    "hydroma-hydroma-carbon-credits-token_id-verify": {
+      "title": "راستی‌آزمایی اعتبار",
+      "description": "حالة التحقّق التي يسجّلها المحرّك لاعتبار، مع الطريقة التي استعملها."
+    },
+    "hydroma-hydroma-carbon-credits-transfer": {
+      "title": "نقل الاعتمادات",
+      "description": "سجلات النقل بين الحسابات المسجّلة، كما سجّلها المحرّك."
+    },
+    "hydroma-hydroma-carbon-methods": {
+      "title": "طرق الكربون",
+      "description": "طرق محاسبة الكربون التي ينفّذها المحرّك، مع إصدارها ومرجع توثيقها."
+    },
+    "hydroma-hydroma-climate-model_id": {
+      "title": "نموذج مناخي",
+      "description": "نموذج مناخي واحد بالمعرّف، مع إصداره ونطاقه الموثّق."
+    },
+    "hydroma-hydroma-economics-model_id": {
+      "title": "نموذج اقتصادي",
+      "description": "نموذج اقتصادي واحد بالمعرّف، مع أساس التكلفة الذي يفترضه."
+    },
+    "hydroma-hydroma-elevation-model_id": {
+      "title": "نموذج ارتفاع",
+      "description": "نموذج ارتفاع واحد بالمعرّف، مع التفكيق والامتداد اللذين يغطّيه."
+    },
+    "hydroma-hydroma-hydrology-model_id": {
+      "title": "نموذج هيدرولوجي",
+      "description": "نموذج هيدرولوجي واحد بالمعرّف، مع الإصدار والمعايرة التي يبلّغ عنها المحرّك."
+    },
+    "hydroma-hydroma-provenance-dataset_id": {
+      "title": "من مصدر مجموعة البيانات",
+      "description": "من أين جاءت المجموعة، ومتى obtainedها، وأي خدمة أنتجتها."
+    },
+    "hydroma-hydroma-soil-model_id": {
+      "title": "نموذج تربة",
+      "description": "نموذج تربة واحد بالمعرّف، مع المعاملات والمعايرة التي يستعملها."
+    },
+    "system-system-analytics-activity-timeline": {
+      "title": "الخط الزمني للنشاط",
+      "description": "النشاط الذي سجّله البوابة، بالترتيب الذي وقع فيه."
+    },
+    "system-system-analytics-carbon-summary": {
+      "title": "ملخّص الكربون",
+      "description": "عدّادات الكربن كما حسبتها خدمة التحليل، مع نافذتها المعلنة."
+    },
+    "system-system-analytics-ndvi-trends": {
+      "title": "اتجاهات NDVI",
+      "description": "اتجاهات المؤشر النباتي كما تحتفظ بها خدمة التحليل، مع المدة التي يغطيها كل منها."
+    },
+    "system-system-analytics-overview": {
+      "title": "نظرة تحليلية عامة",
+      "description": "عدّادات التحليل التي يبلّغ عنها السرویس، والنافذة التي تغطيها."
+    },
+    "system-system-analytics-performance-metrics": {
+      "title": "سنجهات الأداء",
+      "description": "زمن الاستجابة والعبرية كما قاستهما الخدمة، مع حجم العينة المعلنة."
+    },
+    "system-system-analytics-scenario-impact": {
+      "title": "أثر السيناريو",
+      "description": "ما حسبته خدمة التحليل لسيناريو، مع المفروضات التي استعملتها."
+    },
+    "system-system-analytics-soil-trends": {
+      "title": "اتجاهات التربة",
+      "description": "قياسات التربة عبر الزمن، كما تحتفظ بها خدمة التحليل."
+    },
+    "system-system-automation-agent-run": {
+      "title": "تنفيذ وكيل",
+      "description": "تنفيذ وكيل واحد وما سجّله، بما في ذلك تنفيذ فاشل."
+    },
+    "system-system-automation-health": {
+      "title": "صحة الأتمتة",
+      "description": "هل خدمات الأتمتة متاحة، في لحظة الطلب."
+    },
+    "system-system-dashboard-data": {
+      "title": "بيانات لوحة النظام",
+      "description": "العدّادات التي تعرضها اللوحة، كلٌّ منها قابل للتتبع إلى الخدمة التي أنتجته."
+    },
+    "system-system-events": {
+      "title": "أحداث النظام",
+      "description": "الأحداث التي سجّلتها البوابة، بنوعها وزمنها."
+    },
+    "system-system-jobs": {
+      "title": "المهام الخلفية",
+      "description": "المهام الخلفية التي شغّلتها البوابة، بالحالة التي انتهت إليها كل منها."
+    },
+    "system-system-jobs-job_id": {
+      "title": "مهمة خلفية",
+      "description": "مهمة واحدة بالمعرّف، بمخرجاتها المسجّلة أو فشلها المسجّل."
+    },
+    "system-system-logs": {
+      "title": "سجلّات النظام",
+      "description": "سجلّات البوابة، بشدّة كل سجلّ والمسار الذي أُصدر لأجله."
+    }
+  },
+  "offline": {
+    "code": "الاتصال غير متاح",
+    "title": "وضع عدم الاتصال",
+    "description": "البيانات المخزّنة متاحة؛ أعد المحاولة حين تريد التحديث.",
+    "retry": "أعد المحاولة"
   }
 }

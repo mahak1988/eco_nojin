@@ -430,13 +430,6 @@ export function findAdminSection(id: string): AdminSection | undefined {
   return ADMIN_SECTIONS.find((section) => section.id === id);
 }
 
-export function findAdminCapability(
-  section: AdminSection,
-  capabilityId: string,
-): AdminCapability | undefined {
-  return section.capabilities.find((capability) => capability.id === capabilityId);
-}
-
 /** A capability has a data source only when a contract or a real local file backs it. */
 export function isAdminCapabilitySourced(capability: AdminCapability): boolean {
   return capability.endpoint !== null || capability.localSource !== null;

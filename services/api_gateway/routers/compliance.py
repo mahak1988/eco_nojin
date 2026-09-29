@@ -4,18 +4,34 @@ Endpoints for:
 - KYC/AML verification and screening
 - Greenwashing assessment and disclosure
 - Credit bridge reconciliation (off-chain / on-chain)
+
+Authorization model
+-------------------
+Every route is reachable by an ordinary authenticated user, so the previous
+``require_user``-only wiring meant any account could read another account's AML
+history and date of birth, mark another account VERIFIED, or file a `critical`
+greenwashing flag against a competitor's project. The rules applied here:
+
+* **Admin-only** — decisions and writes that carry a compliance verdict or
+  affect token issuance: ``kyc/verify``, ``kyc/reject``,
+  ``greenwashing/assess``, ``greenwashing/disclosure``, ``bridge/correlate``,
+  ``bridge/sync/issuance``.
+* **Self or admin** — anything that returns a specific person's KYC/AML data:
+  ``kyc/register``, ``kyc/{user_id}``, ``aml/check``.
+* **Authenticated read** — aggregate credit-bridge and flag reads, which
+  expose no personal data.
 """
 
 import logging
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from sqlalchemy.orm import Session
 
 from database.hub import hub
 from database.models import User
-from services.api_gateway.auth import require_user
+from services.api_gateway.auth import ADMIN_ROLES, require_admin, require_user
 from services.carbon.compliance.greenwashing_guard import (
     DisclosureStatus,
     GreenwashingGuard,
@@ -25,6 +41,7 @@ from services.carbon.compliance.kyc_aml import (
     KYCStatus,
 )
 from services.carbon.integration.credit_bridge import (
+    TOKEN_ELIGIBLE_DATA_MODES,
     CreditBridge,
 )
 
@@ -45,15 +62,34 @@ def get_kyc_service():
 
 
 def get_greenwashing_guard():
-    from services.carbon.compliance.greenwashing_guard import GreenwashingGuard
+    """Return the shared guard.
 
-    return GreenwashingGuard()
+    The guard was previously constructed per request, so its flag and
+    disclosure stores started empty on every call: ``get_flags`` always
+    returned ``[]`` and ``public_disclosure`` always reported ``CLEAR``. It
+    also built a private ``KYCService``, so records written through
+    ``/kyc/register`` were invisible to ``verify_project_owner``.
+    """
+    from services.carbon.compliance.greenwashing_guard import get_greenwashing_guard as _get
+
+    return _get(get_kyc_service())
 
 
 def get_credit_bridge():
     from services.carbon.integration.credit_bridge import get_credit_bridge as _get
 
     return _get()
+
+
+def _ensure_self_or_admin(actor: User, target_user_id: str) -> None:
+    """Allow access to a person's own compliance record, or for an admin."""
+    if actor.role in ADMIN_ROLES:
+        return
+    if str(actor.id) != str(target_user_id):
+        raise HTTPException(
+            status_code=403,
+            detail="You may only access your own compliance record.",
+        )
 
 
 # --------------------------------------------------------------------------- #
@@ -117,8 +153,21 @@ class BridgeSyncIssuanceRequest(BaseModel):
     project_id: str = Field(..., min_length=1)
     amount: float = Field(..., gt=0)
     holder_id: str = Field(..., min_length=1)
-    data_mode: str = "modelled_estimate"
+    # The previous default was "modelled_estimate", which is precisely the
+    # value CreditBridge rejects: TOKEN_ELIGIBLE_DATA_MODES contains only
+    # "field_verified", so omitting the field always produced a 500. The
+    # eligible set is imported so the two cannot drift apart again.
+    data_mode: str = "field_verified"
     correlation_id: str | None = None
+
+    @field_validator("data_mode")
+    @classmethod
+    def _reject_ineligible_data_mode(cls, value: str) -> str:
+        if value not in TOKEN_ELIGIBLE_DATA_MODES:
+            raise ValueError(
+                f"data_mode must be one of {sorted(TOKEN_ELIGIBLE_DATA_MODES)}, got {value!r}"
+            )
+        return value
 
 
 # --------------------------------------------------------------------------- #
@@ -133,14 +182,20 @@ def kyc_register(
     db: Session = Depends(get_db),
     kyc_svc: KYCService = Depends(get_kyc_service),
 ):
-    """Register a KYC record for a user."""
+    """Register a KYC record for the calling user (or, for an admin, anyone)."""
+    _ensure_self_or_admin(user, payload.user_id)
     try:
-        record = kyc_svc.register_user(payload.user_id, **payload.model_dump(exclude_unset=True))
+        # user_id is a required field of the payload, so it is already present
+        # in model_dump(); passing it positionally as well raised
+        # TypeError: got multiple values for argument 'user_id'.
+        record = kyc_svc.register_user(
+            payload.user_id, **payload.model_dump(exclude_unset=True, exclude={"user_id"})
+        )
         return {
             "user_id": record.user_id,
             "kyc_level": record.kyc_level,
             "status": record.status.value,
-            "risk_level": record.risk_level.value,
+            "risk_level": record.risk_level.label,
         }
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
@@ -152,7 +207,8 @@ def kyc_get(
     user: User = Depends(require_user),
     kyc_svc: KYCService = Depends(get_kyc_service),
 ):
-    """Get KYC record for a user."""
+    """Get KYC record for a user (own record, or any for an admin)."""
+    _ensure_self_or_admin(user, user_id)
     record = kyc_svc.get_record(user_id)
     if record is None:
         raise HTTPException(status_code=404, detail="KYC record not found")
@@ -160,12 +216,12 @@ def kyc_get(
         "user_id": record.user_id,
         "kyc_level": record.kyc_level,
         "status": record.status.value,
-        "risk_level": record.risk_level.value,
+        "risk_level": record.risk_level.label,
         "aml_checks": [
             {
                 "check_type": c.check_type,
                 "status": c.status,
-                "risk_level": c.risk_level.value,
+                "risk_level": c.risk_level.label,
                 "details": c.details,
                 "timestamp": c.timestamp.isoformat(),
             }
@@ -175,26 +231,26 @@ def kyc_get(
     }
 
 
-@router.post("/kyc/verify")
+@router.post("/kyc/verify", dependencies=[Depends(require_admin)])
 def kyc_verify(
     payload: KYCVerifyRequest,
-    user: User = Depends(require_user),
+    user: User = Depends(require_admin),
     kyc_svc: KYCService = Depends(get_kyc_service),
 ):
-    """Mark KYC record as verified."""
+    """Mark KYC record as verified. Compliance decision: admin only."""
     success = kyc_svc.verify_kyc(payload.user_id)
     if not success:
         raise HTTPException(status_code=404, detail="KYC record not found")
     return {"user_id": payload.user_id, "status": KYCStatus.VERIFIED.value}
 
 
-@router.post("/kyc/reject")
+@router.post("/kyc/reject", dependencies=[Depends(require_admin)])
 def kyc_reject(
     payload: KYCRejectRequest,
-    user: User = Depends(require_user),
+    user: User = Depends(require_admin),
     kyc_svc: KYCService = Depends(get_kyc_service),
 ):
-    """Reject KYC record."""
+    """Reject KYC record. Compliance decision: admin only."""
     success = kyc_svc.reject_kyc(payload.user_id, payload.reason)
     if not success:
         raise HTTPException(status_code=404, detail="KYC record not found")
@@ -211,7 +267,8 @@ def aml_check(
     user: User = Depends(require_user),
     kyc_svc: KYCService = Depends(get_kyc_service),
 ):
-    """Run AML checks for a user."""
+    """Run AML checks for a user (own record, or any for an admin)."""
+    _ensure_self_or_admin(user, payload.user_id)
     try:
         checks = kyc_svc.run_aml_checks(payload.user_id)
         risk = kyc_svc.assess_risk(payload.user_id)
@@ -223,7 +280,7 @@ def aml_check(
                 {
                     "check_type": c.check_type,
                     "status": c.status,
-                    "risk_level": c.risk_level.value,
+                    "risk_level": c.risk_level.label,
                     "details": c.details,
                 }
                 for c in checks
@@ -238,13 +295,18 @@ def aml_check(
 # --------------------------------------------------------------------------- #
 
 
-@router.post("/greenwashing/assess")
+@router.post("/greenwashing/assess", dependencies=[Depends(require_admin)])
 def greenwashing_assess(
     payload: GreenwashingAssessRequest,
-    user: User = Depends(require_user),
+    user: User = Depends(require_admin),
     guard: GreenwashingGuard = Depends(get_greenwashing_guard),
 ):
-    """Run greenwashing assessment for a project."""
+    """Run greenwashing assessment for a project.
+
+    Admin-only: ``claimed_tonnes`` and ``actual_tonnes`` come from the request
+    body, so an unprivileged caller could manufacture a ``critical`` flag
+    against any project id.
+    """
     result = guard.run_full_assessment(
         project_id=payload.project_id,
         claimed_tonnes=payload.claimed_tonnes,
@@ -270,13 +332,17 @@ def greenwashing_flags(
     return guard.get_flags(project_id)
 
 
-@router.post("/greenwashing/disclosure")
+@router.post("/greenwashing/disclosure", dependencies=[Depends(require_admin)])
 def create_disclosure(
     payload: DisclosureCreateRequest,
-    user: User = Depends(require_user),
+    user: User = Depends(require_admin),
     guard: GreenwashingGuard = Depends(get_greenwashing_guard),
 ):
-    """Create a disclosure record."""
+    """Create a disclosure record.
+
+    Admin-only: there is no project-participant model to authorize the
+    disclosing party against, and a disclosure is a compliance artifact.
+    """
     record = guard.create_disclosure(
         project_id=payload.project_id,
         credit_id=payload.credit_id,
@@ -347,13 +413,17 @@ def verify_project_owner(
 # --------------------------------------------------------------------------- #
 
 
-@router.post("/bridge/correlate")
+@router.post("/bridge/correlate", dependencies=[Depends(require_admin)])
 def bridge_correlate(
     payload: BridgeRegisterRequest,
-    user: User = Depends(require_user),
+    user: User = Depends(require_admin),
     bridge: CreditBridge = Depends(get_credit_bridge),
 ):
-    """Register correlation between off-chain credit and on-chain token."""
+    """Register correlation between off-chain credit and on-chain token.
+
+    Admin-only: a correlation is the record that prevents double counting, so
+    an unprivileged caller could suppress a genuine double-counting finding.
+    """
     bridge.register_correlation(
         credit_id=payload.credit_id,
         token_id=payload.token_id,
@@ -379,13 +449,13 @@ def bridge_correlation(
     return corr
 
 
-@router.post("/bridge/sync/issuance")
+@router.post("/bridge/sync/issuance", dependencies=[Depends(require_admin)])
 def bridge_sync_issuance(
     payload: BridgeSyncIssuanceRequest,
-    user: User = Depends(require_user),
+    user: User = Depends(require_admin),
     bridge: CreditBridge = Depends(get_credit_bridge),
 ):
-    """Synchronize issuance across off-chain and on-chain."""
+    """Synchronize issuance across off-chain and on-chain. Admin-only."""
     event = bridge.sync_issuance(
         credit_id=payload.credit_id,
         token_id=payload.token_id,
@@ -404,13 +474,13 @@ def bridge_sync_issuance(
 
 
 @router.get("/bridge/reconcile/{credit_id}")
-def bridge_reconcile(
+async def bridge_reconcile(
     credit_id: str,
     user: User = Depends(require_user),
     bridge: CreditBridge = Depends(get_credit_bridge),
 ):
     """Check double-counting risk for a credit."""
-    result = bridge.check_double_counting_risk(credit_id)
+    result = await bridge.check_double_counting_risk(credit_id)
     return {
         "credit_id": result.credit_id,
         "risk": result.risk.value,
@@ -423,13 +493,13 @@ def bridge_reconcile(
 
 
 @router.get("/bridge/reconcile/project/{project_id}")
-def bridge_reconcile_project(
+async def bridge_reconcile_project(
     project_id: str,
     user: User = Depends(require_user),
     bridge: CreditBridge = Depends(get_credit_bridge),
 ):
     """Reconcile all credits for a project."""
-    return bridge.reconcile_project(project_id)
+    return await bridge.reconcile_project(project_id)
 
 
 @router.get("/bridge/events/{credit_id}")

@@ -27,13 +27,27 @@ async function getLocaleMetadata(locale: string): Promise<Metadata> {
   const messages = await getMessages();
   const localeUrl = `${BASE_URL}/${locale}`;
 
+  // The title template and the root description used to be Persian literals, so
+  // every locale's `<title>` ended in `· هیدروما نوژین` and every locale's
+  // fallback description was Persian — visible to a reader of `/zh/public/why` as
+  // a correct page heading followed by a Persian document description. Both now
+  // come from the catalogue, which every locale fills in.
+  const brandName =
+    typeof messages.brand?.name === 'string' && messages.brand.name
+      ? messages.brand.name
+      : 'Hydroma Nojin';
+  const brandDescription =
+    typeof messages.brand?.description === 'string' && messages.brand.description
+      ? messages.brand.description
+      : undefined;
+
   return {
     metadataBase: new URL(BASE_URL),
     title: {
-      default: messages.brand?.name ?? 'HyDroMa / هیدروما نوژین',
-      template: '%s · هیدروما نوژین',
+      default: brandName,
+      template: `%s · ${brandName}`,
     },
-    description: 'مدیریت هوشمند مَنظر برای احیای آب، خاک و معیشت',
+    description: brandDescription,
     applicationName: 'Eco Nojin',
     formatDetection: { telephone: false },
     alternates: {
@@ -100,10 +114,15 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} dir={isRtl(locale) ? 'rtl' : 'ltr'}>
       <head>
+        {/*
+          Only `x-default` belongs here. A layout cannot know the path it is
+          rendering, so a per-locale cluster emitted from this level advertised
+          the *home* page as the alternate for every deep URL — 240 of the 241
+          pages were declaring their translations as `/{locale}`. Each page now
+          supplies its own cluster through `languageAlternates`, and
+          `check-page-meta.mjs` fails if a page hand-writes a two-locale one.
+        */}
         <link rel="alternate" hrefLang="x-default" href={BASE_URL} />
-        {routing.locales.map((loc) => (
-          <link key={loc} rel="alternate" hrefLang={loc} href={`${BASE_URL}/${loc}`} />
-        ))}
       </head>
       <body className="flex min-h-dvh flex-col">
         <a href="#main-content" className="skip-link">

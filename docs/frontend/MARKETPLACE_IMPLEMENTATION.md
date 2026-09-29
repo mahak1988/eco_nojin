@@ -265,3 +265,19 @@ These are not frontend work and are not resolved by any change in `apps/web`.
 - the marketplace surface measures 74 `page.tsx` files today against the 73 recorded at `2177450`; the delta is stated in [`PAGE_GATES.md`](PAGE_GATES.md) rather than rewritten here, so the 2026-09-25 record stays intact.
 - the four-bucket partition (10 baseline, 14 implementable orphan, 22 requiring mapping, 27 without endpoint) is recorded above. Its sum of 73 is one below the current measured 74, and the 74th file is unassigned.
 - nothing in this note changes a page status, a gate, or a blocker. The route matrices in this document remain authoritative for individual pages; the buckets are inventory only.
+
+## Cluster status — 2026-09-29
+
+The marketplace agent (`docs/frontend/agents/agent-4-marketplace.md`) processes one cluster of [`CONTRACT_REQUEST_154.md`](CONTRACT_REQUEST_154.md) per run and either binds the cluster's routes to live endpoints or records the cluster as `awaiting contract`. This run processed `market/bazaars`.
+
+| Check (2026-09-29) | Result |
+|---|---|
+| Requested endpoints | 19 — `/market/bazaars/{id}/analytics`, `/disputes`, `/finances`, `/governance`, `/map`, `/settings`, `/stores`, `/supervision`, `/wizard`, `/wizard/step1` … `/wizard/step10` |
+| Running gateway `openapi.json` | 0 / 19 paths present |
+| Repository `openapi.json` | 0 / 19 paths present |
+| Page-catalogue declarations | all `endpoint: null` (consistent) |
+| **Status** | **`awaiting contract`** («منتظر قرارداد») |
+
+**Page states at this check (no page was changed by this run).** `/{locale}/market/bazaars` and `/{locale}/market/bazaars/{id}` read the published `GET /api/v1/marketplace/marketplaces[/{marketplace_id}]`; `/{locale}/market/bazaars/create` posts to the same collection. The nineteen `{id}/*` routes keep honest states — the seven template routes render the route and its unavailable status, and the map, wizard and ten step routes render their purpose-built states and post nothing. MKT-G6 holds for these routes: noindex, and no number, date, or partner name that is not returned by a live call.
+
+**Queue.** Remaining clusters for later runs: `market/product`, `market/search`, `market/categories`, `market/stores`. Each will be recorded here when its run completes.

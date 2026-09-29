@@ -1,0 +1,5041 @@
+{
+ "baseline_id": "R18",
+ "case_names": [
+  "soil_retention",
+  "soil_table_backends",
+  "land_soil_integrator",
+  "climate_et0",
+  "runoff",
+  "runoff_watershed_helper",
+  "watershed_design",
+  "watershed_network",
+  "groundwater",
+  "carbon",
+  "irrigation",
+  "salinity",
+  "remote_sensing_indices",
+  "terrain",
+  "erosion"
+ ],
+ "cases": {
+  "carbon": {
+   "afforestation_arid_100ha_10y": {
+    "annual_rate_tonnes": 408.0,
+    "annual_revenue_usd": 4080.0,
+    "area_ha": 100.0,
+    "confidence": "medium",
+    "duration_years": 10,
+    "estimated_revenue_usd": 40800.0,
+    "methodology": "IPCC AR6 afforestation methodology",
+    "permanence_years": 100,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "afforestation",
+    "region": "arid",
+    "total_carbon_max": 7650.0,
+    "total_carbon_min": 2040.0,
+    "total_carbon_tonnes": 4080.0
+   },
+   "afforestation_arid_1ha_1y": {
+    "annual_rate_tonnes": 4.08,
+    "annual_revenue_usd": 41.0,
+    "area_ha": 1.0,
+    "confidence": "medium",
+    "duration_years": 1,
+    "estimated_revenue_usd": 41.0,
+    "methodology": "IPCC AR6 afforestation methodology",
+    "permanence_years": 100,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "afforestation",
+    "region": "arid",
+    "total_carbon_max": 7.65,
+    "total_carbon_min": 2.04,
+    "total_carbon_tonnes": 4.08
+   },
+   "afforestation_arid_2500ha_30y": {
+    "annual_rate_tonnes": 10200.0,
+    "annual_revenue_usd": 102000.0,
+    "area_ha": 2500.0,
+    "confidence": "medium",
+    "duration_years": 30,
+    "estimated_revenue_usd": 3060000.0,
+    "methodology": "IPCC AR6 afforestation methodology",
+    "permanence_years": 100,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "afforestation",
+    "region": "arid",
+    "total_carbon_max": 573750.0,
+    "total_carbon_min": 153000.0,
+    "total_carbon_tonnes": 306000.0
+   },
+   "afforestation_temperate_100ha_10y": {
+    "annual_rate_tonnes": 680.0,
+    "annual_revenue_usd": 6800.0,
+    "area_ha": 100.0,
+    "confidence": "medium",
+    "duration_years": 10,
+    "estimated_revenue_usd": 68000.0,
+    "methodology": "IPCC AR6 afforestation methodology",
+    "permanence_years": 100,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "afforestation",
+    "region": "temperate",
+    "total_carbon_max": 12750.0,
+    "total_carbon_min": 3400.0,
+    "total_carbon_tonnes": 6800.0
+   },
+   "afforestation_temperate_1ha_1y": {
+    "annual_rate_tonnes": 6.8,
+    "annual_revenue_usd": 68.0,
+    "area_ha": 1.0,
+    "confidence": "medium",
+    "duration_years": 1,
+    "estimated_revenue_usd": 68.0,
+    "methodology": "IPCC AR6 afforestation methodology",
+    "permanence_years": 100,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "afforestation",
+    "region": "temperate",
+    "total_carbon_max": 12.75,
+    "total_carbon_min": 3.4,
+    "total_carbon_tonnes": 6.8
+   },
+   "afforestation_temperate_2500ha_30y": {
+    "annual_rate_tonnes": 17000.0,
+    "annual_revenue_usd": 170000.0,
+    "area_ha": 2500.0,
+    "confidence": "medium",
+    "duration_years": 30,
+    "estimated_revenue_usd": 5100000.0,
+    "methodology": "IPCC AR6 afforestation methodology",
+    "permanence_years": 100,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "afforestation",
+    "region": "temperate",
+    "total_carbon_max": 956250.0,
+    "total_carbon_min": 255000.0,
+    "total_carbon_tonnes": 510000.0
+   },
+   "afforestation_tropical_100ha_10y": {
+    "annual_rate_tonnes": 884.0,
+    "annual_revenue_usd": 8840.0,
+    "area_ha": 100.0,
+    "confidence": "medium",
+    "duration_years": 10,
+    "estimated_revenue_usd": 88400.0,
+    "methodology": "IPCC AR6 afforestation methodology",
+    "permanence_years": 100,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "afforestation",
+    "region": "tropical",
+    "total_carbon_max": 16575.0,
+    "total_carbon_min": 4420.0,
+    "total_carbon_tonnes": 8840.0
+   },
+   "afforestation_tropical_1ha_1y": {
+    "annual_rate_tonnes": 8.84,
+    "annual_revenue_usd": 88.0,
+    "area_ha": 1.0,
+    "confidence": "medium",
+    "duration_years": 1,
+    "estimated_revenue_usd": 88.0,
+    "methodology": "IPCC AR6 afforestation methodology",
+    "permanence_years": 100,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "afforestation",
+    "region": "tropical",
+    "total_carbon_max": 16.57,
+    "total_carbon_min": 4.42,
+    "total_carbon_tonnes": 8.84
+   },
+   "afforestation_tropical_2500ha_30y": {
+    "annual_rate_tonnes": 22100.0,
+    "annual_revenue_usd": 221000.0,
+    "area_ha": 2500.0,
+    "confidence": "medium",
+    "duration_years": 30,
+    "estimated_revenue_usd": 6630000.0,
+    "methodology": "IPCC AR6 afforestation methodology",
+    "permanence_years": 100,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "afforestation",
+    "region": "tropical",
+    "total_carbon_max": 1243125.0,
+    "total_carbon_min": 331500.0,
+    "total_carbon_tonnes": 663000.0
+   },
+   "agroforestry_arid_100ha_10y": {
+    "annual_rate_tonnes": 229.5,
+    "annual_revenue_usd": 2295.0,
+    "area_ha": 100.0,
+    "confidence": "medium",
+    "duration_years": 10,
+    "estimated_revenue_usd": 22950.0,
+    "methodology": "IPCC AR6 agroforestry methodology",
+    "permanence_years": 50,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "agroforestry",
+    "region": "arid",
+    "total_carbon_max": 4080.0,
+    "total_carbon_min": 1020.0,
+    "total_carbon_tonnes": 2295.0
+   },
+   "agroforestry_arid_1ha_1y": {
+    "annual_rate_tonnes": 2.29,
+    "annual_revenue_usd": 23.0,
+    "area_ha": 1.0,
+    "confidence": "medium",
+    "duration_years": 1,
+    "estimated_revenue_usd": 23.0,
+    "methodology": "IPCC AR6 agroforestry methodology",
+    "permanence_years": 50,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "agroforestry",
+    "region": "arid",
+    "total_carbon_max": 4.08,
+    "total_carbon_min": 1.02,
+    "total_carbon_tonnes": 2.29
+   },
+   "agroforestry_arid_2500ha_30y": {
+    "annual_rate_tonnes": 5737.5,
+    "annual_revenue_usd": 57375.0,
+    "area_ha": 2500.0,
+    "confidence": "medium",
+    "duration_years": 30,
+    "estimated_revenue_usd": 1721250.0,
+    "methodology": "IPCC AR6 agroforestry methodology",
+    "permanence_years": 50,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "agroforestry",
+    "region": "arid",
+    "total_carbon_max": 306000.0,
+    "total_carbon_min": 76500.0,
+    "total_carbon_tonnes": 172125.0
+   },
+   "agroforestry_temperate_100ha_10y": {
+    "annual_rate_tonnes": 382.5,
+    "annual_revenue_usd": 3825.0,
+    "area_ha": 100.0,
+    "confidence": "medium",
+    "duration_years": 10,
+    "estimated_revenue_usd": 38250.0,
+    "methodology": "IPCC AR6 agroforestry methodology",
+    "permanence_years": 50,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "agroforestry",
+    "region": "temperate",
+    "total_carbon_max": 6800.0,
+    "total_carbon_min": 1700.0,
+    "total_carbon_tonnes": 3825.0
+   },
+   "agroforestry_temperate_1ha_1y": {
+    "annual_rate_tonnes": 3.82,
+    "annual_revenue_usd": 38.0,
+    "area_ha": 1.0,
+    "confidence": "medium",
+    "duration_years": 1,
+    "estimated_revenue_usd": 38.0,
+    "methodology": "IPCC AR6 agroforestry methodology",
+    "permanence_years": 50,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "agroforestry",
+    "region": "temperate",
+    "total_carbon_max": 6.8,
+    "total_carbon_min": 1.7,
+    "total_carbon_tonnes": 3.82
+   },
+   "agroforestry_temperate_2500ha_30y": {
+    "annual_rate_tonnes": 9562.5,
+    "annual_revenue_usd": 95625.0,
+    "area_ha": 2500.0,
+    "confidence": "medium",
+    "duration_years": 30,
+    "estimated_revenue_usd": 2868750.0,
+    "methodology": "IPCC AR6 agroforestry methodology",
+    "permanence_years": 50,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "agroforestry",
+    "region": "temperate",
+    "total_carbon_max": 510000.0,
+    "total_carbon_min": 127500.0,
+    "total_carbon_tonnes": 286875.0
+   },
+   "agroforestry_tropical_100ha_10y": {
+    "annual_rate_tonnes": 497.25,
+    "annual_revenue_usd": 4972.0,
+    "area_ha": 100.0,
+    "confidence": "medium",
+    "duration_years": 10,
+    "estimated_revenue_usd": 49725.0,
+    "methodology": "IPCC AR6 agroforestry methodology",
+    "permanence_years": 50,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "agroforestry",
+    "region": "tropical",
+    "total_carbon_max": 8840.0,
+    "total_carbon_min": 2210.0,
+    "total_carbon_tonnes": 4972.5
+   },
+   "agroforestry_tropical_1ha_1y": {
+    "annual_rate_tonnes": 4.97,
+    "annual_revenue_usd": 50.0,
+    "area_ha": 1.0,
+    "confidence": "medium",
+    "duration_years": 1,
+    "estimated_revenue_usd": 50.0,
+    "methodology": "IPCC AR6 agroforestry methodology",
+    "permanence_years": 50,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "agroforestry",
+    "region": "tropical",
+    "total_carbon_max": 8.84,
+    "total_carbon_min": 2.21,
+    "total_carbon_tonnes": 4.97
+   },
+   "agroforestry_tropical_2500ha_30y": {
+    "annual_rate_tonnes": 12431.25,
+    "annual_revenue_usd": 124313.0,
+    "area_ha": 2500.0,
+    "confidence": "medium",
+    "duration_years": 30,
+    "estimated_revenue_usd": 3729375.0,
+    "methodology": "IPCC AR6 agroforestry methodology",
+    "permanence_years": 50,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "agroforestry",
+    "region": "tropical",
+    "total_carbon_max": 663000.0,
+    "total_carbon_min": 165750.0,
+    "total_carbon_tonnes": 372937.5
+   },
+   "biochar_arid_100ha_10y": {
+    "annual_rate_tonnes": 15.3,
+    "annual_revenue_usd": 153.0,
+    "area_ha": 100.0,
+    "confidence": "medium",
+    "duration_years": 10,
+    "estimated_revenue_usd": 1530.0,
+    "methodology": "IPCC AR6 biochar methodology",
+    "permanence_years": 500,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "biochar",
+    "region": "arid",
+    "total_carbon_max": 255.0,
+    "total_carbon_min": 102.0,
+    "total_carbon_tonnes": 153.0
+   },
+   "biochar_arid_1ha_1y": {
+    "annual_rate_tonnes": 1.53,
+    "annual_revenue_usd": 15.0,
+    "area_ha": 1.0,
+    "confidence": "medium",
+    "duration_years": 1,
+    "estimated_revenue_usd": 15.0,
+    "methodology": "IPCC AR6 biochar methodology",
+    "permanence_years": 500,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "biochar",
+    "region": "arid",
+    "total_carbon_max": 2.55,
+    "total_carbon_min": 1.02,
+    "total_carbon_tonnes": 1.53
+   },
+   "biochar_arid_2500ha_30y": {
+    "annual_rate_tonnes": 127.5,
+    "annual_revenue_usd": 1275.0,
+    "area_ha": 2500.0,
+    "confidence": "medium",
+    "duration_years": 30,
+    "estimated_revenue_usd": 38250.0,
+    "methodology": "IPCC AR6 biochar methodology",
+    "permanence_years": 500,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "biochar",
+    "region": "arid",
+    "total_carbon_max": 6375.0,
+    "total_carbon_min": 2550.0,
+    "total_carbon_tonnes": 3825.0
+   },
+   "biochar_temperate_100ha_10y": {
+    "annual_rate_tonnes": 25.5,
+    "annual_revenue_usd": 255.0,
+    "area_ha": 100.0,
+    "confidence": "medium",
+    "duration_years": 10,
+    "estimated_revenue_usd": 2550.0,
+    "methodology": "IPCC AR6 biochar methodology",
+    "permanence_years": 500,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "biochar",
+    "region": "temperate",
+    "total_carbon_max": 425.0,
+    "total_carbon_min": 170.0,
+    "total_carbon_tonnes": 255.0
+   },
+   "biochar_temperate_1ha_1y": {
+    "annual_rate_tonnes": 2.55,
+    "annual_revenue_usd": 26.0,
+    "area_ha": 1.0,
+    "confidence": "medium",
+    "duration_years": 1,
+    "estimated_revenue_usd": 26.0,
+    "methodology": "IPCC AR6 biochar methodology",
+    "permanence_years": 500,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "biochar",
+    "region": "temperate",
+    "total_carbon_max": 4.25,
+    "total_carbon_min": 1.7,
+    "total_carbon_tonnes": 2.55
+   },
+   "biochar_temperate_2500ha_30y": {
+    "annual_rate_tonnes": 212.5,
+    "annual_revenue_usd": 2125.0,
+    "area_ha": 2500.0,
+    "confidence": "medium",
+    "duration_years": 30,
+    "estimated_revenue_usd": 63750.0,
+    "methodology": "IPCC AR6 biochar methodology",
+    "permanence_years": 500,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "biochar",
+    "region": "temperate",
+    "total_carbon_max": 10625.0,
+    "total_carbon_min": 4250.0,
+    "total_carbon_tonnes": 6375.0
+   },
+   "biochar_tropical_100ha_10y": {
+    "annual_rate_tonnes": 33.15,
+    "annual_revenue_usd": 332.0,
+    "area_ha": 100.0,
+    "confidence": "medium",
+    "duration_years": 10,
+    "estimated_revenue_usd": 3315.0,
+    "methodology": "IPCC AR6 biochar methodology",
+    "permanence_years": 500,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "biochar",
+    "region": "tropical",
+    "total_carbon_max": 552.5,
+    "total_carbon_min": 221.0,
+    "total_carbon_tonnes": 331.5
+   },
+   "biochar_tropical_1ha_1y": {
+    "annual_rate_tonnes": 3.32,
+    "annual_revenue_usd": 33.0,
+    "area_ha": 1.0,
+    "confidence": "medium",
+    "duration_years": 1,
+    "estimated_revenue_usd": 33.0,
+    "methodology": "IPCC AR6 biochar methodology",
+    "permanence_years": 500,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "biochar",
+    "region": "tropical",
+    "total_carbon_max": 5.52,
+    "total_carbon_min": 2.21,
+    "total_carbon_tonnes": 3.32
+   },
+   "biochar_tropical_2500ha_30y": {
+    "annual_rate_tonnes": 276.25,
+    "annual_revenue_usd": 2762.0,
+    "area_ha": 2500.0,
+    "confidence": "medium",
+    "duration_years": 30,
+    "estimated_revenue_usd": 82875.0,
+    "methodology": "IPCC AR6 biochar methodology",
+    "permanence_years": 500,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "biochar",
+    "region": "tropical",
+    "total_carbon_max": 13812.5,
+    "total_carbon_min": 5525.0,
+    "total_carbon_tonnes": 8287.5
+   },
+   "grassland_restoration_arid_100ha_10y": {
+    "annual_rate_tonnes": 76.5,
+    "annual_revenue_usd": 765.0,
+    "area_ha": 100.0,
+    "confidence": "medium",
+    "duration_years": 10,
+    "estimated_revenue_usd": 7650.0,
+    "methodology": "IPCC AR6 grassland_restoration methodology",
+    "permanence_years": 40,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "grassland_restoration",
+    "region": "arid",
+    "total_carbon_max": 1530.0,
+    "total_carbon_min": 255.0,
+    "total_carbon_tonnes": 765.0
+   },
+   "grassland_restoration_arid_1ha_1y": {
+    "annual_rate_tonnes": 0.76,
+    "annual_revenue_usd": 8.0,
+    "area_ha": 1.0,
+    "confidence": "medium",
+    "duration_years": 1,
+    "estimated_revenue_usd": 8.0,
+    "methodology": "IPCC AR6 grassland_restoration methodology",
+    "permanence_years": 40,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "grassland_restoration",
+    "region": "arid",
+    "total_carbon_max": 1.53,
+    "total_carbon_min": 0.26,
+    "total_carbon_tonnes": 0.76
+   },
+   "grassland_restoration_arid_2500ha_30y": {
+    "annual_rate_tonnes": 1912.5,
+    "annual_revenue_usd": 19125.0,
+    "area_ha": 2500.0,
+    "confidence": "medium",
+    "duration_years": 30,
+    "estimated_revenue_usd": 573750.0,
+    "methodology": "IPCC AR6 grassland_restoration methodology",
+    "permanence_years": 40,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "grassland_restoration",
+    "region": "arid",
+    "total_carbon_max": 114750.0,
+    "total_carbon_min": 19125.0,
+    "total_carbon_tonnes": 57375.0
+   },
+   "grassland_restoration_temperate_100ha_10y": {
+    "annual_rate_tonnes": 127.5,
+    "annual_revenue_usd": 1275.0,
+    "area_ha": 100.0,
+    "confidence": "medium",
+    "duration_years": 10,
+    "estimated_revenue_usd": 12750.0,
+    "methodology": "IPCC AR6 grassland_restoration methodology",
+    "permanence_years": 40,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "grassland_restoration",
+    "region": "temperate",
+    "total_carbon_max": 2550.0,
+    "total_carbon_min": 425.0,
+    "total_carbon_tonnes": 1275.0
+   },
+   "grassland_restoration_temperate_1ha_1y": {
+    "annual_rate_tonnes": 1.27,
+    "annual_revenue_usd": 13.0,
+    "area_ha": 1.0,
+    "confidence": "medium",
+    "duration_years": 1,
+    "estimated_revenue_usd": 13.0,
+    "methodology": "IPCC AR6 grassland_restoration methodology",
+    "permanence_years": 40,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "grassland_restoration",
+    "region": "temperate",
+    "total_carbon_max": 2.55,
+    "total_carbon_min": 0.42,
+    "total_carbon_tonnes": 1.27
+   },
+   "grassland_restoration_temperate_2500ha_30y": {
+    "annual_rate_tonnes": 3187.5,
+    "annual_revenue_usd": 31875.0,
+    "area_ha": 2500.0,
+    "confidence": "medium",
+    "duration_years": 30,
+    "estimated_revenue_usd": 956250.0,
+    "methodology": "IPCC AR6 grassland_restoration methodology",
+    "permanence_years": 40,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "grassland_restoration",
+    "region": "temperate",
+    "total_carbon_max": 191250.0,
+    "total_carbon_min": 31875.0,
+    "total_carbon_tonnes": 95625.0
+   },
+   "grassland_restoration_tropical_100ha_10y": {
+    "annual_rate_tonnes": 165.75,
+    "annual_revenue_usd": 1658.0,
+    "area_ha": 100.0,
+    "confidence": "medium",
+    "duration_years": 10,
+    "estimated_revenue_usd": 16575.0,
+    "methodology": "IPCC AR6 grassland_restoration methodology",
+    "permanence_years": 40,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "grassland_restoration",
+    "region": "tropical",
+    "total_carbon_max": 3315.0,
+    "total_carbon_min": 552.5,
+    "total_carbon_tonnes": 1657.5
+   },
+   "grassland_restoration_tropical_1ha_1y": {
+    "annual_rate_tonnes": 1.66,
+    "annual_revenue_usd": 17.0,
+    "area_ha": 1.0,
+    "confidence": "medium",
+    "duration_years": 1,
+    "estimated_revenue_usd": 17.0,
+    "methodology": "IPCC AR6 grassland_restoration methodology",
+    "permanence_years": 40,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "grassland_restoration",
+    "region": "tropical",
+    "total_carbon_max": 3.32,
+    "total_carbon_min": 0.55,
+    "total_carbon_tonnes": 1.66
+   },
+   "grassland_restoration_tropical_2500ha_30y": {
+    "annual_rate_tonnes": 4143.75,
+    "annual_revenue_usd": 41438.0,
+    "area_ha": 2500.0,
+    "confidence": "medium",
+    "duration_years": 30,
+    "estimated_revenue_usd": 1243125.0,
+    "methodology": "IPCC AR6 grassland_restoration methodology",
+    "permanence_years": 40,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "grassland_restoration",
+    "region": "tropical",
+    "total_carbon_max": 248625.0,
+    "total_carbon_min": 41437.5,
+    "total_carbon_tonnes": 124312.5
+   },
+   "reforestation_arid_100ha_10y": {
+    "annual_rate_tonnes": 306.0,
+    "annual_revenue_usd": 3060.0,
+    "area_ha": 100.0,
+    "confidence": "medium",
+    "duration_years": 10,
+    "estimated_revenue_usd": 30600.0,
+    "methodology": "IPCC AR6 reforestation methodology",
+    "permanence_years": 80,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "reforestation",
+    "region": "arid",
+    "total_carbon_max": 6120.0,
+    "total_carbon_min": 1530.0,
+    "total_carbon_tonnes": 3060.0
+   },
+   "reforestation_arid_1ha_1y": {
+    "annual_rate_tonnes": 3.06,
+    "annual_revenue_usd": 31.0,
+    "area_ha": 1.0,
+    "confidence": "medium",
+    "duration_years": 1,
+    "estimated_revenue_usd": 31.0,
+    "methodology": "IPCC AR6 reforestation methodology",
+    "permanence_years": 80,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "reforestation",
+    "region": "arid",
+    "total_carbon_max": 6.12,
+    "total_carbon_min": 1.53,
+    "total_carbon_tonnes": 3.06
+   },
+   "reforestation_arid_2500ha_30y": {
+    "annual_rate_tonnes": 7650.0,
+    "annual_revenue_usd": 76500.0,
+    "area_ha": 2500.0,
+    "confidence": "medium",
+    "duration_years": 30,
+    "estimated_revenue_usd": 2295000.0,
+    "methodology": "IPCC AR6 reforestation methodology",
+    "permanence_years": 80,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "reforestation",
+    "region": "arid",
+    "total_carbon_max": 459000.0,
+    "total_carbon_min": 114750.0,
+    "total_carbon_tonnes": 229500.0
+   },
+   "reforestation_temperate_100ha_10y": {
+    "annual_rate_tonnes": 510.0,
+    "annual_revenue_usd": 5100.0,
+    "area_ha": 100.0,
+    "confidence": "medium",
+    "duration_years": 10,
+    "estimated_revenue_usd": 51000.0,
+    "methodology": "IPCC AR6 reforestation methodology",
+    "permanence_years": 80,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "reforestation",
+    "region": "temperate",
+    "total_carbon_max": 10200.0,
+    "total_carbon_min": 2550.0,
+    "total_carbon_tonnes": 5100.0
+   },
+   "reforestation_temperate_1ha_1y": {
+    "annual_rate_tonnes": 5.1,
+    "annual_revenue_usd": 51.0,
+    "area_ha": 1.0,
+    "confidence": "medium",
+    "duration_years": 1,
+    "estimated_revenue_usd": 51.0,
+    "methodology": "IPCC AR6 reforestation methodology",
+    "permanence_years": 80,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "reforestation",
+    "region": "temperate",
+    "total_carbon_max": 10.2,
+    "total_carbon_min": 2.55,
+    "total_carbon_tonnes": 5.1
+   },
+   "reforestation_temperate_2500ha_30y": {
+    "annual_rate_tonnes": 12750.0,
+    "annual_revenue_usd": 127500.0,
+    "area_ha": 2500.0,
+    "confidence": "medium",
+    "duration_years": 30,
+    "estimated_revenue_usd": 3825000.0,
+    "methodology": "IPCC AR6 reforestation methodology",
+    "permanence_years": 80,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "reforestation",
+    "region": "temperate",
+    "total_carbon_max": 765000.0,
+    "total_carbon_min": 191250.0,
+    "total_carbon_tonnes": 382500.0
+   },
+   "reforestation_tropical_100ha_10y": {
+    "annual_rate_tonnes": 663.0,
+    "annual_revenue_usd": 6630.0,
+    "area_ha": 100.0,
+    "confidence": "medium",
+    "duration_years": 10,
+    "estimated_revenue_usd": 66300.0,
+    "methodology": "IPCC AR6 reforestation methodology",
+    "permanence_years": 80,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "reforestation",
+    "region": "tropical",
+    "total_carbon_max": 13260.0,
+    "total_carbon_min": 3315.0,
+    "total_carbon_tonnes": 6630.0
+   },
+   "reforestation_tropical_1ha_1y": {
+    "annual_rate_tonnes": 6.63,
+    "annual_revenue_usd": 66.0,
+    "area_ha": 1.0,
+    "confidence": "medium",
+    "duration_years": 1,
+    "estimated_revenue_usd": 66.0,
+    "methodology": "IPCC AR6 reforestation methodology",
+    "permanence_years": 80,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "reforestation",
+    "region": "tropical",
+    "total_carbon_max": 13.26,
+    "total_carbon_min": 3.32,
+    "total_carbon_tonnes": 6.63
+   },
+   "reforestation_tropical_2500ha_30y": {
+    "annual_rate_tonnes": 16575.0,
+    "annual_revenue_usd": 165750.0,
+    "area_ha": 2500.0,
+    "confidence": "medium",
+    "duration_years": 30,
+    "estimated_revenue_usd": 4972500.0,
+    "methodology": "IPCC AR6 reforestation methodology",
+    "permanence_years": 80,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "reforestation",
+    "region": "tropical",
+    "total_carbon_max": 994500.0,
+    "total_carbon_min": 248625.0,
+    "total_carbon_tonnes": 497250.0
+   },
+   "soil_carbon_compost_arid_100ha_10y": {
+    "annual_rate_tonnes": 61.2,
+    "annual_revenue_usd": 612.0,
+    "area_ha": 100.0,
+    "confidence": "medium",
+    "duration_years": 10,
+    "estimated_revenue_usd": 6120.0,
+    "methodology": "IPCC AR6 soil_carbon_compost methodology",
+    "permanence_years": 30,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_compost",
+    "region": "arid",
+    "total_carbon_max": 1020.0,
+    "total_carbon_min": 255.0,
+    "total_carbon_tonnes": 612.0
+   },
+   "soil_carbon_compost_arid_1ha_1y": {
+    "annual_rate_tonnes": 0.61,
+    "annual_revenue_usd": 6.0,
+    "area_ha": 1.0,
+    "confidence": "medium",
+    "duration_years": 1,
+    "estimated_revenue_usd": 6.0,
+    "methodology": "IPCC AR6 soil_carbon_compost methodology",
+    "permanence_years": 30,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_compost",
+    "region": "arid",
+    "total_carbon_max": 1.02,
+    "total_carbon_min": 0.26,
+    "total_carbon_tonnes": 0.61
+   },
+   "soil_carbon_compost_arid_2500ha_30y": {
+    "annual_rate_tonnes": 1530.0,
+    "annual_revenue_usd": 15300.0,
+    "area_ha": 2500.0,
+    "confidence": "medium",
+    "duration_years": 30,
+    "estimated_revenue_usd": 459000.0,
+    "methodology": "IPCC AR6 soil_carbon_compost methodology",
+    "permanence_years": 30,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_compost",
+    "region": "arid",
+    "total_carbon_max": 76500.0,
+    "total_carbon_min": 19125.0,
+    "total_carbon_tonnes": 45900.0
+   },
+   "soil_carbon_compost_temperate_100ha_10y": {
+    "annual_rate_tonnes": 102.0,
+    "annual_revenue_usd": 1020.0,
+    "area_ha": 100.0,
+    "confidence": "medium",
+    "duration_years": 10,
+    "estimated_revenue_usd": 10200.0,
+    "methodology": "IPCC AR6 soil_carbon_compost methodology",
+    "permanence_years": 30,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_compost",
+    "region": "temperate",
+    "total_carbon_max": 1700.0,
+    "total_carbon_min": 425.0,
+    "total_carbon_tonnes": 1020.0
+   },
+   "soil_carbon_compost_temperate_1ha_1y": {
+    "annual_rate_tonnes": 1.02,
+    "annual_revenue_usd": 10.0,
+    "area_ha": 1.0,
+    "confidence": "medium",
+    "duration_years": 1,
+    "estimated_revenue_usd": 10.0,
+    "methodology": "IPCC AR6 soil_carbon_compost methodology",
+    "permanence_years": 30,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_compost",
+    "region": "temperate",
+    "total_carbon_max": 1.7,
+    "total_carbon_min": 0.42,
+    "total_carbon_tonnes": 1.02
+   },
+   "soil_carbon_compost_temperate_2500ha_30y": {
+    "annual_rate_tonnes": 2550.0,
+    "annual_revenue_usd": 25500.0,
+    "area_ha": 2500.0,
+    "confidence": "medium",
+    "duration_years": 30,
+    "estimated_revenue_usd": 765000.0,
+    "methodology": "IPCC AR6 soil_carbon_compost methodology",
+    "permanence_years": 30,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_compost",
+    "region": "temperate",
+    "total_carbon_max": 127500.0,
+    "total_carbon_min": 31875.0,
+    "total_carbon_tonnes": 76500.0
+   },
+   "soil_carbon_compost_tropical_100ha_10y": {
+    "annual_rate_tonnes": 132.6,
+    "annual_revenue_usd": 1326.0,
+    "area_ha": 100.0,
+    "confidence": "medium",
+    "duration_years": 10,
+    "estimated_revenue_usd": 13260.0,
+    "methodology": "IPCC AR6 soil_carbon_compost methodology",
+    "permanence_years": 30,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_compost",
+    "region": "tropical",
+    "total_carbon_max": 2210.0,
+    "total_carbon_min": 552.5,
+    "total_carbon_tonnes": 1326.0
+   },
+   "soil_carbon_compost_tropical_1ha_1y": {
+    "annual_rate_tonnes": 1.33,
+    "annual_revenue_usd": 13.0,
+    "area_ha": 1.0,
+    "confidence": "medium",
+    "duration_years": 1,
+    "estimated_revenue_usd": 13.0,
+    "methodology": "IPCC AR6 soil_carbon_compost methodology",
+    "permanence_years": 30,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_compost",
+    "region": "tropical",
+    "total_carbon_max": 2.21,
+    "total_carbon_min": 0.55,
+    "total_carbon_tonnes": 1.33
+   },
+   "soil_carbon_compost_tropical_2500ha_30y": {
+    "annual_rate_tonnes": 3315.0,
+    "annual_revenue_usd": 33150.0,
+    "area_ha": 2500.0,
+    "confidence": "medium",
+    "duration_years": 30,
+    "estimated_revenue_usd": 994500.0,
+    "methodology": "IPCC AR6 soil_carbon_compost methodology",
+    "permanence_years": 30,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_compost",
+    "region": "tropical",
+    "total_carbon_max": 165750.0,
+    "total_carbon_min": 41437.5,
+    "total_carbon_tonnes": 99450.0
+   },
+   "soil_carbon_cover_crop_arid_100ha_10y": {
+    "annual_rate_tonnes": 25.5,
+    "annual_revenue_usd": 255.0,
+    "area_ha": 100.0,
+    "confidence": "medium",
+    "duration_years": 10,
+    "estimated_revenue_usd": 2550.0,
+    "methodology": "IPCC AR6 soil_carbon_cover_crop methodology",
+    "permanence_years": 20,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_cover_crop",
+    "region": "arid",
+    "total_carbon_max": 510.0,
+    "total_carbon_min": 102.0,
+    "total_carbon_tonnes": 255.0
+   },
+   "soil_carbon_cover_crop_arid_1ha_1y": {
+    "annual_rate_tonnes": 0.26,
+    "annual_revenue_usd": 3.0,
+    "area_ha": 1.0,
+    "confidence": "medium",
+    "duration_years": 1,
+    "estimated_revenue_usd": 3.0,
+    "methodology": "IPCC AR6 soil_carbon_cover_crop methodology",
+    "permanence_years": 20,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_cover_crop",
+    "region": "arid",
+    "total_carbon_max": 0.51,
+    "total_carbon_min": 0.1,
+    "total_carbon_tonnes": 0.26
+   },
+   "soil_carbon_cover_crop_arid_2500ha_30y": {
+    "annual_rate_tonnes": 637.5,
+    "annual_revenue_usd": 6375.0,
+    "area_ha": 2500.0,
+    "confidence": "medium",
+    "duration_years": 30,
+    "estimated_revenue_usd": 191250.0,
+    "methodology": "IPCC AR6 soil_carbon_cover_crop methodology",
+    "permanence_years": 20,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_cover_crop",
+    "region": "arid",
+    "total_carbon_max": 38250.0,
+    "total_carbon_min": 7650.0,
+    "total_carbon_tonnes": 19125.0
+   },
+   "soil_carbon_cover_crop_temperate_100ha_10y": {
+    "annual_rate_tonnes": 42.5,
+    "annual_revenue_usd": 425.0,
+    "area_ha": 100.0,
+    "confidence": "medium",
+    "duration_years": 10,
+    "estimated_revenue_usd": 4250.0,
+    "methodology": "IPCC AR6 soil_carbon_cover_crop methodology",
+    "permanence_years": 20,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_cover_crop",
+    "region": "temperate",
+    "total_carbon_max": 850.0,
+    "total_carbon_min": 170.0,
+    "total_carbon_tonnes": 425.0
+   },
+   "soil_carbon_cover_crop_temperate_1ha_1y": {
+    "annual_rate_tonnes": 0.42,
+    "annual_revenue_usd": 4.0,
+    "area_ha": 1.0,
+    "confidence": "medium",
+    "duration_years": 1,
+    "estimated_revenue_usd": 4.0,
+    "methodology": "IPCC AR6 soil_carbon_cover_crop methodology",
+    "permanence_years": 20,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_cover_crop",
+    "region": "temperate",
+    "total_carbon_max": 0.85,
+    "total_carbon_min": 0.17,
+    "total_carbon_tonnes": 0.42
+   },
+   "soil_carbon_cover_crop_temperate_2500ha_30y": {
+    "annual_rate_tonnes": 1062.5,
+    "annual_revenue_usd": 10625.0,
+    "area_ha": 2500.0,
+    "confidence": "medium",
+    "duration_years": 30,
+    "estimated_revenue_usd": 318750.0,
+    "methodology": "IPCC AR6 soil_carbon_cover_crop methodology",
+    "permanence_years": 20,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_cover_crop",
+    "region": "temperate",
+    "total_carbon_max": 63750.0,
+    "total_carbon_min": 12750.0,
+    "total_carbon_tonnes": 31875.0
+   },
+   "soil_carbon_cover_crop_tropical_100ha_10y": {
+    "annual_rate_tonnes": 55.25,
+    "annual_revenue_usd": 552.0,
+    "area_ha": 100.0,
+    "confidence": "medium",
+    "duration_years": 10,
+    "estimated_revenue_usd": 5525.0,
+    "methodology": "IPCC AR6 soil_carbon_cover_crop methodology",
+    "permanence_years": 20,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_cover_crop",
+    "region": "tropical",
+    "total_carbon_max": 1105.0,
+    "total_carbon_min": 221.0,
+    "total_carbon_tonnes": 552.5
+   },
+   "soil_carbon_cover_crop_tropical_1ha_1y": {
+    "annual_rate_tonnes": 0.55,
+    "annual_revenue_usd": 6.0,
+    "area_ha": 1.0,
+    "confidence": "medium",
+    "duration_years": 1,
+    "estimated_revenue_usd": 6.0,
+    "methodology": "IPCC AR6 soil_carbon_cover_crop methodology",
+    "permanence_years": 20,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_cover_crop",
+    "region": "tropical",
+    "total_carbon_max": 1.1,
+    "total_carbon_min": 0.22,
+    "total_carbon_tonnes": 0.55
+   },
+   "soil_carbon_cover_crop_tropical_2500ha_30y": {
+    "annual_rate_tonnes": 1381.25,
+    "annual_revenue_usd": 13812.0,
+    "area_ha": 2500.0,
+    "confidence": "medium",
+    "duration_years": 30,
+    "estimated_revenue_usd": 414375.0,
+    "methodology": "IPCC AR6 soil_carbon_cover_crop methodology",
+    "permanence_years": 20,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_cover_crop",
+    "region": "tropical",
+    "total_carbon_max": 82875.0,
+    "total_carbon_min": 16575.0,
+    "total_carbon_tonnes": 41437.5
+   },
+   "soil_carbon_no_till_arid_100ha_10y": {
+    "annual_rate_tonnes": 40.8,
+    "annual_revenue_usd": 408.0,
+    "area_ha": 100.0,
+    "confidence": "medium",
+    "duration_years": 10,
+    "estimated_revenue_usd": 4080.0,
+    "methodology": "IPCC AR6 soil_carbon_no_till methodology",
+    "permanence_years": 25,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_no_till",
+    "region": "arid",
+    "total_carbon_max": 765.0,
+    "total_carbon_min": 153.0,
+    "total_carbon_tonnes": 408.0
+   },
+   "soil_carbon_no_till_arid_1ha_1y": {
+    "annual_rate_tonnes": 0.41,
+    "annual_revenue_usd": 4.0,
+    "area_ha": 1.0,
+    "confidence": "medium",
+    "duration_years": 1,
+    "estimated_revenue_usd": 4.0,
+    "methodology": "IPCC AR6 soil_carbon_no_till methodology",
+    "permanence_years": 25,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_no_till",
+    "region": "arid",
+    "total_carbon_max": 0.76,
+    "total_carbon_min": 0.15,
+    "total_carbon_tonnes": 0.41
+   },
+   "soil_carbon_no_till_arid_2500ha_30y": {
+    "annual_rate_tonnes": 1020.0,
+    "annual_revenue_usd": 10200.0,
+    "area_ha": 2500.0,
+    "confidence": "medium",
+    "duration_years": 30,
+    "estimated_revenue_usd": 306000.0,
+    "methodology": "IPCC AR6 soil_carbon_no_till methodology",
+    "permanence_years": 25,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_no_till",
+    "region": "arid",
+    "total_carbon_max": 57375.0,
+    "total_carbon_min": 11475.0,
+    "total_carbon_tonnes": 30600.0
+   },
+   "soil_carbon_no_till_temperate_100ha_10y": {
+    "annual_rate_tonnes": 68.0,
+    "annual_revenue_usd": 680.0,
+    "area_ha": 100.0,
+    "confidence": "medium",
+    "duration_years": 10,
+    "estimated_revenue_usd": 6800.0,
+    "methodology": "IPCC AR6 soil_carbon_no_till methodology",
+    "permanence_years": 25,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_no_till",
+    "region": "temperate",
+    "total_carbon_max": 1275.0,
+    "total_carbon_min": 255.0,
+    "total_carbon_tonnes": 680.0
+   },
+   "soil_carbon_no_till_temperate_1ha_1y": {
+    "annual_rate_tonnes": 0.68,
+    "annual_revenue_usd": 7.0,
+    "area_ha": 1.0,
+    "confidence": "medium",
+    "duration_years": 1,
+    "estimated_revenue_usd": 7.0,
+    "methodology": "IPCC AR6 soil_carbon_no_till methodology",
+    "permanence_years": 25,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_no_till",
+    "region": "temperate",
+    "total_carbon_max": 1.27,
+    "total_carbon_min": 0.26,
+    "total_carbon_tonnes": 0.68
+   },
+   "soil_carbon_no_till_temperate_2500ha_30y": {
+    "annual_rate_tonnes": 1700.0,
+    "annual_revenue_usd": 17000.0,
+    "area_ha": 2500.0,
+    "confidence": "medium",
+    "duration_years": 30,
+    "estimated_revenue_usd": 510000.0,
+    "methodology": "IPCC AR6 soil_carbon_no_till methodology",
+    "permanence_years": 25,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_no_till",
+    "region": "temperate",
+    "total_carbon_max": 95625.0,
+    "total_carbon_min": 19125.0,
+    "total_carbon_tonnes": 51000.0
+   },
+   "soil_carbon_no_till_tropical_100ha_10y": {
+    "annual_rate_tonnes": 88.4,
+    "annual_revenue_usd": 884.0,
+    "area_ha": 100.0,
+    "confidence": "medium",
+    "duration_years": 10,
+    "estimated_revenue_usd": 8840.0,
+    "methodology": "IPCC AR6 soil_carbon_no_till methodology",
+    "permanence_years": 25,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_no_till",
+    "region": "tropical",
+    "total_carbon_max": 1657.5,
+    "total_carbon_min": 331.5,
+    "total_carbon_tonnes": 884.0
+   },
+   "soil_carbon_no_till_tropical_1ha_1y": {
+    "annual_rate_tonnes": 0.88,
+    "annual_revenue_usd": 9.0,
+    "area_ha": 1.0,
+    "confidence": "medium",
+    "duration_years": 1,
+    "estimated_revenue_usd": 9.0,
+    "methodology": "IPCC AR6 soil_carbon_no_till methodology",
+    "permanence_years": 25,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_no_till",
+    "region": "tropical",
+    "total_carbon_max": 1.66,
+    "total_carbon_min": 0.33,
+    "total_carbon_tonnes": 0.88
+   },
+   "soil_carbon_no_till_tropical_2500ha_30y": {
+    "annual_rate_tonnes": 2210.0,
+    "annual_revenue_usd": 22100.0,
+    "area_ha": 2500.0,
+    "confidence": "medium",
+    "duration_years": 30,
+    "estimated_revenue_usd": 663000.0,
+    "methodology": "IPCC AR6 soil_carbon_no_till methodology",
+    "permanence_years": 25,
+    "price_per_tonne_usd": 10.0,
+    "project_type": "soil_carbon_no_till",
+    "region": "tropical",
+    "total_carbon_max": 124312.5,
+    "total_carbon_min": 24862.5,
+    "total_carbon_tonnes": 66300.0
+   }
+  },
+  "climate_et0": {
+   "auto_select": 4.6025507242,
+   "delta": [
+    0.0108152647,
+    0.0444503829,
+    0.1447401881,
+    0.1886818268,
+    0.3930704274
+   ],
+   "es_table": [
+    0.1246191118,
+    0.421176492,
+    0.6108,
+    1.2279626193,
+    2.3382812709,
+    3.1677777175,
+    4.2430650588,
+    7.3756135931
+   ],
+   "gamma": [
+    0.0673645,
+    0.066582133,
+    0.0635258853,
+    0.0598663723,
+    0.0530589501,
+    0.0413196508
+   ],
+   "hargreaves_copy_crop_water": {
+    "daily_et_crop": [
+     1.28,
+     1.28,
+     1.28
+    ],
+    "seasonal_water_requirement": 3.84
+   },
+   "hargreaves_copy_simulation_env": 4.6025507242,
+   "hargreaves_copy_weather_source": 4.6025507242,
+   "hargreaves_core": [
+    4.9835918308,
+    6.3683931285,
+    5.5555244609,
+    8.5452456364
+   ],
+   "penman_monteith": [
+    5.9354306705,
+    6.5560843805,
+    6.9246134333,
+    5.1678345186
+   ],
+   "ra": {
+    "-30_1": 43.7923950054,
+    "-30_172": 18.4470005083,
+    "-30_265": 32.750049392,
+    "-30_355": 43.9286191894,
+    "-30_80": 32.9131715807,
+    "-60_1": 43.5731570601,
+    "-60_172": 1.9827840668,
+    "-60_265": 19.3305315926,
+    "-60_355": 44.1051802124,
+    "-60_80": 19.1835957796,
+    "0_1": 35.7460258921,
+    "0_172": 33.3664017083,
+    "0_265": 37.3970649811,
+    "0_355": 35.6073478614,
+    "0_80": 37.8242131076,
+    "30_1": 19.9859207319,
+    "30_172": 41.1645278932,
+    "30_265": 32.0252108861,
+    "30_355": 19.686360328,
+    "30_80": 32.6005895016,
+    "45_1": 10.7504085372,
+    "45_172": 41.9104609408,
+    "45_265": 25.9331931238,
+    "45_355": 10.4405849744,
+    "45_80": 26.5250988209,
+    "60_1": 2.3391340693,
+    "60_172": 41.3306957199,
+    "60_265": 18.0750744732,
+    "60_355": 2.1163561744,
+    "60_80": 18.642187737
+   }
+  },
+  "erosion": {
+   "g0.02": {
+    "ls": [
+     [
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03
+     ],
+     [
+      0.03,
+      0.2499716424,
+      0.2499716424,
+      0.2499716424,
+      0.2499716424,
+      0.2499716424,
+      0.2499716424,
+      0.2499716424,
+      0.2499716424,
+      0.2499716424,
+      0.2499716424,
+      0.03
+     ],
+     [
+      0.03,
+      0.2497249671,
+      0.2497249671,
+      0.2497249671,
+      0.2497249671,
+      0.2497249671,
+      0.2497249671,
+      0.2497249671,
+      0.2497249671,
+      0.2497249671,
+      0.2497249671,
+      0.03
+     ],
+     [
+      0.03,
+      0.2494612812,
+      0.2494612812,
+      0.2494612812,
+      0.2494612812,
+      0.2494612812,
+      0.2494612812,
+      0.2494612812,
+      0.2494612812,
+      0.2494612812,
+      0.2494612812,
+      0.03
+     ],
+     [
+      0.03,
+      0.2491771197,
+      0.2491771197,
+      0.2491771197,
+      0.2491771197,
+      0.2491771197,
+      0.2491771197,
+      0.2491771197,
+      0.2491771197,
+      0.2491771197,
+      0.2491771197,
+      0.03
+     ],
+     [
+      0.03,
+      0.2488676994,
+      0.2488676994,
+      0.2488676994,
+      0.2488676994,
+      0.2488676994,
+      0.2488676994,
+      0.2488676994,
+      0.2488676994,
+      0.2488676994,
+      0.2488676994,
+      0.03
+     ],
+     [
+      0.03,
+      0.2485260991,
+      0.2485260991,
+      0.2485260991,
+      0.2485260991,
+      0.2485260991,
+      0.2485260991,
+      0.2485260991,
+      0.2485260991,
+      0.2485260991,
+      0.2485260991,
+      0.03
+     ],
+     [
+      0.03,
+      0.248141647,
+      0.248141647,
+      0.248141647,
+      0.248141647,
+      0.248141647,
+      0.248141647,
+      0.248141647,
+      0.248141647,
+      0.248141647,
+      0.248141647,
+      0.03
+     ],
+     [
+      0.03,
+      0.247696317,
+      0.247696317,
+      0.247696317,
+      0.247696317,
+      0.247696317,
+      0.247696317,
+      0.247696317,
+      0.247696317,
+      0.247696317,
+      0.247696317,
+      0.03
+     ],
+     [
+      0.03,
+      0.247154949,
+      0.247154949,
+      0.247154949,
+      0.247154949,
+      0.247154949,
+      0.247154949,
+      0.247154949,
+      0.247154949,
+      0.247154949,
+      0.247154949,
+      0.03
+     ],
+     [
+      0.03,
+      0.2464276839,
+      0.2464276839,
+      0.2464276839,
+      0.2464276839,
+      0.2464276839,
+      0.2464276839,
+      0.2464276839,
+      0.2464276839,
+      0.2464276839,
+      0.2464276839,
+      0.03
+     ],
+     [
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03
+     ]
+    ],
+    "slope_deg_mean": 0.7956686376
+   },
+   "g0.05": {
+    "ls": [
+     [
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03
+     ],
+     [
+      0.03,
+      0.5924750385,
+      0.5924750385,
+      0.5924750385,
+      0.5924750385,
+      0.5924750385,
+      0.5924750385,
+      0.5924750385,
+      0.5924750385,
+      0.5924750385,
+      0.5924750385,
+      0.03
+     ],
+     [
+      0.03,
+      0.5910462982,
+      0.5910462982,
+      0.5910462982,
+      0.5910462982,
+      0.5910462982,
+      0.5910462982,
+      0.5910462982,
+      0.5910462982,
+      0.5910462982,
+      0.5910462982,
+      0.03
+     ],
+     [
+      0.03,
+      0.5895201065,
+      0.5895201065,
+      0.5895201065,
+      0.5895201065,
+      0.5895201065,
+      0.5895201065,
+      0.5895201065,
+      0.5895201065,
+      0.5895201065,
+      0.5895201065,
+      0.03
+     ],
+     [
+      0.03,
+      0.5878766247,
+      0.5878766247,
+      0.5878766247,
+      0.5878766247,
+      0.5878766247,
+      0.5878766247,
+      0.5878766247,
+      0.5878766247,
+      0.5878766247,
+      0.5878766247,
+      0.03
+     ],
+     [
+      0.03,
+      0.5860884631,
+      0.5860884631,
+      0.5860884631,
+      0.5860884631,
+      0.5860884631,
+      0.5860884631,
+      0.5860884631,
+      0.5860884631,
+      0.5860884631,
+      0.5860884631,
+      0.03
+     ],
+     [
+      0.03,
+      0.584115986,
+      0.584115986,
+      0.584115986,
+      0.584115986,
+      0.584115986,
+      0.584115986,
+      0.584115986,
+      0.584115986,
+      0.584115986,
+      0.584115986,
+      0.03
+     ],
+     [
+      0.03,
+      0.5818980723,
+      0.5818980723,
+      0.5818980723,
+      0.5818980723,
+      0.5818980723,
+      0.5818980723,
+      0.5818980723,
+      0.5818980723,
+      0.5818980723,
+      0.5818980723,
+      0.03
+     ],
+     [
+      0.03,
+      0.5793314557,
+      0.5793314557,
+      0.5793314557,
+      0.5793314557,
+      0.5793314557,
+      0.5793314557,
+      0.5793314557,
+      0.5793314557,
+      0.5793314557,
+      0.5793314557,
+      0.03
+     ],
+     [
+      0.03,
+      0.5762146406,
+      0.5762146406,
+      0.5762146406,
+      0.5762146406,
+      0.5762146406,
+      0.5762146406,
+      0.5762146406,
+      0.5762146406,
+      0.5762146406,
+      0.5762146406,
+      0.03
+     ],
+     [
+      0.03,
+      0.5720322856,
+      0.5720322856,
+      0.5720322856,
+      0.5720322856,
+      0.5720322856,
+      0.5720322856,
+      0.5720322856,
+      0.5720322856,
+      0.5720322856,
+      0.5720322856,
+      0.03
+     ],
+     [
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03
+     ]
+    ],
+    "slope_deg_mean": 1.987781407
+   },
+   "g0.15": {
+    "ls": [
+     [
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03
+     ],
+     [
+      0.03,
+      2.7448060916,
+      2.7448060916,
+      2.7448060916,
+      2.7448060916,
+      2.7448060916,
+      2.7448060916,
+      2.7448060916,
+      2.7448060916,
+      2.7448060916,
+      2.7448060916,
+      0.03
+     ],
+     [
+      0.03,
+      2.7262413783,
+      2.7262413783,
+      2.7262413783,
+      2.7262413783,
+      2.7262413783,
+      2.7262413783,
+      2.7262413783,
+      2.7262413783,
+      2.7262413783,
+      2.7262413783,
+      0.03
+     ],
+     [
+      0.03,
+      2.7064520483,
+      2.7064520483,
+      2.7064520483,
+      2.7064520483,
+      2.7064520483,
+      2.7064520483,
+      2.7064520483,
+      2.7064520483,
+      2.7064520483,
+      2.7064520483,
+      0.03
+     ],
+     [
+      0.03,
+      2.6851892512,
+      2.6851892512,
+      2.6851892512,
+      2.6851892512,
+      2.6851892512,
+      2.6851892512,
+      2.6851892512,
+      2.6851892512,
+      2.6851892512,
+      2.6851892512,
+      0.03
+     ],
+     [
+      0.03,
+      2.6621093684,
+      2.6621093684,
+      2.6621093684,
+      2.6621093684,
+      2.6621093684,
+      2.6621093684,
+      2.6621093684,
+      2.6621093684,
+      2.6621093684,
+      2.6621093684,
+      0.03
+     ],
+     [
+      0.03,
+      2.6367150402,
+      2.6367150402,
+      2.6367150402,
+      2.6367150402,
+      2.6367150402,
+      2.6367150402,
+      2.6367150402,
+      2.6367150402,
+      2.6367150402,
+      2.6367150402,
+      0.03
+     ],
+     [
+      0.03,
+      2.6082389989,
+      2.6082389989,
+      2.6082389989,
+      2.6082389989,
+      2.6082389989,
+      2.6082389989,
+      2.6082389989,
+      2.6082389989,
+      2.6082389989,
+      2.6082389989,
+      0.03
+     ],
+     [
+      0.03,
+      2.5753840796,
+      2.5753840796,
+      2.5753840796,
+      2.5753840796,
+      2.5753840796,
+      2.5753840796,
+      2.5753840796,
+      2.5753840796,
+      2.5753840796,
+      2.5753840796,
+      0.03
+     ],
+     [
+      0.03,
+      2.5356163874,
+      2.5356163874,
+      2.5356163874,
+      2.5356163874,
+      2.5356163874,
+      2.5356163874,
+      2.5356163874,
+      2.5356163874,
+      2.5356163874,
+      2.5356163874,
+      0.03
+     ],
+     [
+      0.03,
+      2.482440641,
+      2.482440641,
+      2.482440641,
+      2.482440641,
+      2.482440641,
+      2.482440641,
+      2.482440641,
+      2.482440641,
+      2.482440641,
+      2.482440641,
+      0.03
+     ],
+     [
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03
+     ]
+    ],
+    "slope_deg_mean": 5.9241427847
+   },
+   "g0.3": {
+    "ls": [
+     [
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03
+     ],
+     [
+      0.03,
+      5.9518614561,
+      5.9518614561,
+      5.9518614561,
+      5.9518614561,
+      5.9518614561,
+      5.9518614561,
+      5.9518614561,
+      5.9518614561,
+      5.9518614561,
+      5.9518614561,
+      0.03
+     ],
+     [
+      0.03,
+      5.8776275193,
+      5.8776275193,
+      5.8776275193,
+      5.8776275193,
+      5.8776275193,
+      5.8776275193,
+      5.8776275193,
+      5.8776275193,
+      5.8776275193,
+      5.8776275193,
+      0.03
+     ],
+     [
+      0.03,
+      5.798704672,
+      5.798704672,
+      5.798704672,
+      5.798704672,
+      5.798704672,
+      5.798704672,
+      5.798704672,
+      5.798704672,
+      5.798704672,
+      5.798704672,
+      0.03
+     ],
+     [
+      0.03,
+      5.714142956,
+      5.714142956,
+      5.714142956,
+      5.714142956,
+      5.714142956,
+      5.714142956,
+      5.714142956,
+      5.714142956,
+      5.714142956,
+      5.714142956,
+      0.03
+     ],
+     [
+      0.03,
+      5.6226305503,
+      5.6226305503,
+      5.6226305503,
+      5.6226305503,
+      5.6226305503,
+      5.6226305503,
+      5.6226305503,
+      5.6226305503,
+      5.6226305503,
+      5.6226305503,
+      0.03
+     ],
+     [
+      0.03,
+      5.5222683035,
+      5.5222683035,
+      5.5222683035,
+      5.5222683035,
+      5.5222683035,
+      5.5222683035,
+      5.5222683035,
+      5.5222683035,
+      5.5222683035,
+      5.5222683035,
+      0.03
+     ],
+     [
+      0.03,
+      5.4101252,
+      5.4101252,
+      5.4101252,
+      5.4101252,
+      5.4101252,
+      5.4101252,
+      5.4101252,
+      5.4101252,
+      5.4101252,
+      5.4101252,
+      0.03
+     ],
+     [
+      0.03,
+      5.2812421826,
+      5.2812421826,
+      5.2812421826,
+      5.2812421826,
+      5.2812421826,
+      5.2812421826,
+      5.2812421826,
+      5.2812421826,
+      5.2812421826,
+      5.2812421826,
+      0.03
+     ],
+     [
+      0.03,
+      5.1259184637,
+      5.1259184637,
+      5.1259184637,
+      5.1259184637,
+      5.1259184637,
+      5.1259184637,
+      5.1259184637,
+      5.1259184637,
+      5.1259184637,
+      5.1259184637,
+      0.03
+     ],
+     [
+      0.03,
+      4.9192126646,
+      4.9192126646,
+      4.9192126646,
+      4.9192126646,
+      4.9192126646,
+      4.9192126646,
+      4.9192126646,
+      4.9192126646,
+      4.9192126646,
+      4.9192126646,
+      0.03
+     ],
+     [
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03
+     ]
+    ],
+    "slope_deg_mean": 11.5966973847
+   },
+   "g0.6": {
+    "ls": [
+     [
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03
+     ],
+     [
+      0.03,
+      12.9874384323,
+      12.9874384323,
+      12.9874384323,
+      12.9874384323,
+      12.9874384323,
+      12.9874384323,
+      12.9874384323,
+      12.9874384323,
+      12.9874384323,
+      12.9874384323,
+      0.03
+     ],
+     [
+      0.03,
+      12.7007681612,
+      12.7007681612,
+      12.7007681612,
+      12.7007681612,
+      12.7007681612,
+      12.7007681612,
+      12.7007681612,
+      12.7007681612,
+      12.7007681612,
+      12.7007681612,
+      0.03
+     ],
+     [
+      0.03,
+      12.3972069393,
+      12.3972069393,
+      12.3972069393,
+      12.3972069393,
+      12.3972069393,
+      12.3972069393,
+      12.3972069393,
+      12.3972069393,
+      12.3972069393,
+      12.3972069393,
+      0.03
+     ],
+     [
+      0.03,
+      12.0733586802,
+      12.0733586802,
+      12.0733586802,
+      12.0733586802,
+      12.0733586802,
+      12.0733586802,
+      12.0733586802,
+      12.0733586802,
+      12.0733586802,
+      12.0733586802,
+      0.03
+     ],
+     [
+      0.03,
+      11.7245347086,
+      11.7245347086,
+      11.7245347086,
+      11.7245347086,
+      11.7245347086,
+      11.7245347086,
+      11.7245347086,
+      11.7245347086,
+      11.7245347086,
+      11.7245347086,
+      0.03
+     ],
+     [
+      0.03,
+      11.3439471987,
+      11.3439471987,
+      11.3439471987,
+      11.3439471987,
+      11.3439471987,
+      11.3439471987,
+      11.3439471987,
+      11.3439471987,
+      11.3439471987,
+      11.3439471987,
+      0.03
+     ],
+     [
+      0.03,
+      10.9211167877,
+      10.9211167877,
+      10.9211167877,
+      10.9211167877,
+      10.9211167877,
+      10.9211167877,
+      10.9211167877,
+      10.9211167877,
+      10.9211167877,
+      10.9211167877,
+      0.03
+     ],
+     [
+      0.03,
+      10.4382967171,
+      10.4382967171,
+      10.4382967171,
+      10.4382967171,
+      10.4382967171,
+      10.4382967171,
+      10.4382967171,
+      10.4382967171,
+      10.4382967171,
+      10.4382967171,
+      0.03
+     ],
+     [
+      0.03,
+      9.8606987742,
+      9.8606987742,
+      9.8606987742,
+      9.8606987742,
+      9.8606987742,
+      9.8606987742,
+      9.8606987742,
+      9.8606987742,
+      9.8606987742,
+      9.8606987742,
+      0.03
+     ],
+     [
+      0.03,
+      9.0984290775,
+      9.0984290775,
+      9.0984290775,
+      9.0984290775,
+      9.0984290775,
+      9.0984290775,
+      9.0984290775,
+      9.0984290775,
+      9.0984290775,
+      9.0984290775,
+      0.03
+     ],
+     [
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03,
+      0.03
+     ]
+    ],
+    "slope_deg_mean": 21.5026087028
+   }
+  },
+  "groundwater": {
+   "aquifer": {
+    "a10000.0": {
+     "hydraulic_conductivity_m_s": 1e-05,
+     "notes": "This is a simplified estimation. A detailed hydrogeological survey is required for accurate values.",
+     "specific_yield": 0.25,
+     "storage_coefficient": 0.25,
+     "volume_available_liters": 1250000.0,
+     "volume_available_m3": 1250.0
+    },
+    "a1000000.0": {
+     "hydraulic_conductivity_m_s": 1e-05,
+     "notes": "This is a simplified estimation. A detailed hydrogeological survey is required for accurate values.",
+     "specific_yield": 0.05,
+     "storage_coefficient": 0.05,
+     "volume_available_liters": 500000000.0,
+     "volume_available_m3": 500000.0
+    }
+   },
+   "bucket_derived_recharge": {
+    "baseflow_series_mm": [
+     3.0,
+     3.81,
+     4.5957,
+     5.3578,
+     6.0971,
+     6.8142,
+     7.5098,
+     8.1845,
+     8.8389,
+     9.4738,
+     10.0895,
+     10.6869
+    ],
+    "data_source": "simulated",
+    "final_storage_mm": 375.5419,
+    "model": "Groundwater bucket (linear reservoir)",
+    "pumping_series_mm": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "recharge_series_mm": [
+     30.0,
+     30.0,
+     30.0,
+     30.0,
+     30.0,
+     30.0,
+     30.0,
+     30.0,
+     30.0,
+     30.0,
+     30.0,
+     30.0
+    ],
+    "storage_series_mm": [
+     127.0,
+     153.19,
+     178.5943,
+     203.2365,
+     227.1394,
+     250.3252,
+     272.8154,
+     294.631,
+     315.792,
+     336.3183,
+     356.2287,
+     375.5419
+    ],
+    "total_baseflow_mm": 84.4582,
+    "total_pumping_mm": 0.0,
+    "total_recharge_mm": 360.0,
+    "total_unmet_pumping_mm": 0.0,
+    "unmet_pumping_series_mm": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "bucket_dry": {
+    "baseflow_series_mm": [
+     0.15,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "data_source": "simulated",
+    "final_storage_mm": 0.0,
+    "model": "Groundwater bucket (linear reservoir)",
+    "pumping_series_mm": [
+     4.85,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "recharge_series_mm": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "storage_series_mm": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "total_baseflow_mm": 0.15,
+    "total_pumping_mm": 4.85,
+    "total_recharge_mm": 0.0,
+    "total_unmet_pumping_mm": 595.15,
+    "unmet_pumping_series_mm": [
+     45.15,
+     50.0,
+     50.0,
+     50.0,
+     50.0,
+     50.0,
+     50.0,
+     50.0,
+     50.0,
+     50.0,
+     50.0,
+     50.0
+    ]
+   },
+   "bucket_overdraft": {
+    "baseflow_series_mm": [
+     6.0,
+     5.52,
+     5.0544,
+     4.6028,
+     4.1647,
+     3.7397,
+     3.3276,
+     2.9277,
+     2.5399,
+     2.1637,
+     1.7988,
+     1.4448,
+     1.1015,
+     0.7684,
+     0.4454,
+     0.132,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "data_source": "simulated",
+    "final_storage_mm": 0.0,
+    "model": "Groundwater bucket (linear reservoir)",
+    "pumping_series_mm": [
+     10.0,
+     10.0,
+     10.0,
+     10.0,
+     10.0,
+     10.0,
+     10.0,
+     10.0,
+     10.0,
+     10.0,
+     10.0,
+     10.0,
+     10.0,
+     10.0,
+     10.0,
+     4.2686,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "recharge_series_mm": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "storage_series_mm": [
+     184.0,
+     168.48,
+     153.4256,
+     138.8228,
+     124.6581,
+     110.9184,
+     97.5909,
+     84.6631,
+     72.1232,
+     59.9595,
+     48.1607,
+     36.7159,
+     25.6144,
+     14.846,
+     4.4006,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "total_baseflow_mm": 45.7314,
+    "total_pumping_mm": 154.2686,
+    "total_recharge_mm": 0.0,
+    "total_unmet_pumping_mm": 85.7314,
+    "unmet_pumping_series_mm": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     5.7314,
+     10.0,
+     10.0,
+     10.0,
+     10.0,
+     10.0,
+     10.0,
+     10.0,
+     10.0
+    ]
+   },
+   "bucket_sustainable": {
+    "baseflow_series_mm": [
+     6.0,
+     5.91,
+     5.8227,
+     5.738,
+     5.6559,
+     5.5762,
+     5.4989,
+     5.4239,
+     5.3512,
+     5.2807,
+     5.2123,
+     5.1459,
+     5.0815,
+     5.0191,
+     4.9585,
+     4.8998,
+     4.8428,
+     4.7875,
+     4.7339,
+     4.6818,
+     4.6314,
+     4.5824,
+     4.535,
+     4.4889
+    ],
+    "data_source": "simulated",
+    "final_storage_mm": 148.1417,
+    "model": "Groundwater bucket (linear reservoir)",
+    "pumping_series_mm": [
+     2.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0
+    ],
+    "recharge_series_mm": [
+     5.0,
+     5.0,
+     5.0,
+     5.0,
+     5.0,
+     5.0,
+     5.0,
+     5.0,
+     5.0,
+     5.0,
+     5.0,
+     5.0,
+     5.0,
+     5.0,
+     5.0,
+     5.0,
+     5.0,
+     5.0,
+     5.0,
+     5.0,
+     5.0,
+     5.0,
+     5.0,
+     5.0
+    ],
+    "storage_series_mm": [
+     197.0,
+     194.09,
+     191.2673,
+     188.5293,
+     185.8734,
+     183.2972,
+     180.7983,
+     178.3743,
+     176.0231,
+     173.7424,
+     171.5301,
+     169.3842,
+     167.3027,
+     165.2836,
+     163.3251,
+     161.4254,
+     159.5826,
+     157.7951,
+     156.0613,
+     154.3794,
+     152.7481,
+     151.1656,
+     149.6306,
+     148.1417
+    ],
+    "total_baseflow_mm": 123.8583,
+    "total_pumping_mm": 48.0,
+    "total_recharge_mm": 120.0,
+    "total_unmet_pumping_mm": 0.0,
+    "unmet_pumping_series_mm": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "theis": {
+    "t0.5": 0.2852086353,
+    "t1.0": 0.3061683369,
+    "t100.0": 0.4454254271,
+    "t10000.0": 0.5846831842,
+    "t16.0": 0.3900092271,
+    "t4.0": 0.3480885906
+   }
+  },
+  "irrigation": {
+   "application_depth": {
+    "e2.0_eff0.5": 4.0,
+    "e2.0_eff0.6": 3.3333333333,
+    "e2.0_eff0.8": 2.5,
+    "e2.0_eff0.95": 2.1052631579,
+    "e2.0_eff1.0": 2.0,
+    "e5.0_eff0.5": 10.0,
+    "e5.0_eff0.6": 8.3333333333,
+    "e5.0_eff0.8": 6.25,
+    "e5.0_eff0.95": 5.2631578947,
+    "e5.0_eff1.0": 5.0,
+    "e8.0_eff0.5": 16.0,
+    "e8.0_eff0.6": 13.3333333333,
+    "e8.0_eff0.8": 10.0,
+    "e8.0_eff0.95": 8.4210526316,
+    "e8.0_eff1.0": 8.0
+   },
+   "application_depth_with_rain": {
+    "rain0.0": 7.5,
+    "rain1.0": 6.25,
+    "rain3.0": 3.75,
+    "rain6.0": 0.0
+   },
+   "interval": {
+    "e2.0_r100.0_p0.3": 15,
+    "e2.0_r100.0_p0.55": 28,
+    "e2.0_r100.0_p0.7": 35,
+    "e2.0_r180.0_p0.3": 27,
+    "e2.0_r180.0_p0.55": 50,
+    "e2.0_r180.0_p0.7": 63,
+    "e2.0_r50.0_p0.3": 8,
+    "e2.0_r50.0_p0.55": 14,
+    "e2.0_r50.0_p0.7": 18,
+    "e4.0_r100.0_p0.3": 8,
+    "e4.0_r100.0_p0.55": 14,
+    "e4.0_r100.0_p0.7": 18,
+    "e4.0_r180.0_p0.3": 14,
+    "e4.0_r180.0_p0.55": 25,
+    "e4.0_r180.0_p0.7": 31,
+    "e4.0_r50.0_p0.3": 4,
+    "e4.0_r50.0_p0.55": 7,
+    "e4.0_r50.0_p0.7": 9,
+    "e5.0_r100.0_p0.3": 6,
+    "e5.0_r100.0_p0.55": 11,
+    "e5.0_r100.0_p0.7": 14,
+    "e5.0_r180.0_p0.3": 11,
+    "e5.0_r180.0_p0.55": 20,
+    "e5.0_r180.0_p0.7": 25,
+    "e5.0_r50.0_p0.3": 3,
+    "e5.0_r50.0_p0.55": 6,
+    "e5.0_r50.0_p0.7": 7,
+    "e6.0_r100.0_p0.3": 5,
+    "e6.0_r100.0_p0.55": 9,
+    "e6.0_r100.0_p0.7": 12,
+    "e6.0_r180.0_p0.3": 9,
+    "e6.0_r180.0_p0.55": 17,
+    "e6.0_r180.0_p0.7": 21,
+    "e6.0_r50.0_p0.3": 2,
+    "e6.0_r50.0_p0.55": 5,
+    "e6.0_r50.0_p0.7": 6,
+    "e8.0_r100.0_p0.3": 4,
+    "e8.0_r100.0_p0.55": 7,
+    "e8.0_r100.0_p0.7": 9,
+    "e8.0_r180.0_p0.3": 7,
+    "e8.0_r180.0_p0.55": 12,
+    "e8.0_r180.0_p0.7": 16,
+    "e8.0_r50.0_p0.3": 2,
+    "e8.0_r50.0_p0.55": 3,
+    "e8.0_r50.0_p0.7": 4
+   }
+  },
+  "land_soil_integrator": {
+   "clay": {
+    "alpha": 0.008,
+    "n": 1.09,
+    "theta_r": 0.068,
+    "theta_s": 0.38
+   },
+   "clay_loam": {
+    "alpha": 0.019,
+    "n": 1.31,
+    "theta_r": 0.095,
+    "theta_s": 0.41
+   },
+   "loam": {
+    "alpha": 0.036,
+    "n": 1.56,
+    "theta_r": 0.078,
+    "theta_s": 0.43
+   },
+   "loamy_sand": {
+    "alpha": 0.124,
+    "n": 2.28,
+    "theta_r": 0.057,
+    "theta_s": 0.41
+   },
+   "sand": {
+    "alpha": 0.145,
+    "n": 2.68,
+    "theta_r": 0.045,
+    "theta_s": 0.43
+   },
+   "sandy_clay": {
+    "alpha": 0.027,
+    "n": 1.23,
+    "theta_r": 0.1,
+    "theta_s": 0.38
+   },
+   "sandy_clay_loam": {
+    "alpha": 0.059,
+    "n": 1.48,
+    "theta_r": 0.1,
+    "theta_s": 0.39
+   },
+   "sandy_loam": {
+    "alpha": 0.075,
+    "n": 1.89,
+    "theta_r": 0.065,
+    "theta_s": 0.41
+   },
+   "silt": {
+    "alpha": 0.016,
+    "n": 1.37,
+    "theta_r": 0.034,
+    "theta_s": 0.46
+   },
+   "silt_loam": {
+    "alpha": 0.02,
+    "n": 1.41,
+    "theta_r": 0.067,
+    "theta_s": 0.45
+   },
+   "silty_clay": {
+    "alpha": 0.005,
+    "n": 1.09,
+    "theta_r": 0.07,
+    "theta_s": 0.36
+   },
+   "silty_clay_loam": {
+    "alpha": 0.01,
+    "n": 1.23,
+    "theta_r": 0.089,
+    "theta_s": 0.43
+   }
+  },
+  "remote_sensing_indices": {
+   "evi_crop": [
+    0.859375,
+    0.6626506024,
+    0.2083333333
+   ],
+   "evi_satellite": [
+    0.859375,
+    0.6626506024,
+    0.2083333333
+   ],
+   "ndvi_crop": [
+    0.8461538462,
+    0.8918918919,
+    0.3333333333,
+    0.0,
+    0.0
+   ],
+   "ndvi_satellite": [
+    0.8461538462,
+    0.8918918919,
+    0.3333333333,
+    0.0,
+    0.0
+   ]
+  },
+  "runoff": {
+   "Rational_cn35_p12": {
+    "peak_flow_m3s": 0.05,
+    "volume_m3": 180.0
+   },
+   "Rational_cn35_p120": {
+    "peak_flow_m3s": 0.5,
+    "volume_m3": 1800.0
+   },
+   "Rational_cn35_p50": {
+    "peak_flow_m3s": 0.2083333333,
+    "volume_m3": 750.0
+   },
+   "Rational_cn50_p12": {
+    "peak_flow_m3s": 0.05,
+    "volume_m3": 180.0
+   },
+   "Rational_cn50_p120": {
+    "peak_flow_m3s": 0.5,
+    "volume_m3": 1800.0
+   },
+   "Rational_cn50_p50": {
+    "peak_flow_m3s": 0.2083333333,
+    "volume_m3": 750.0
+   },
+   "Rational_cn70_p12": {
+    "peak_flow_m3s": 0.05,
+    "volume_m3": 180.0
+   },
+   "Rational_cn70_p120": {
+    "peak_flow_m3s": 0.5,
+    "volume_m3": 1800.0
+   },
+   "Rational_cn70_p50": {
+    "peak_flow_m3s": 0.2083333333,
+    "volume_m3": 750.0
+   },
+   "Rational_cn85_p12": {
+    "peak_flow_m3s": 0.05,
+    "volume_m3": 180.0
+   },
+   "Rational_cn85_p120": {
+    "peak_flow_m3s": 0.5,
+    "volume_m3": 1800.0
+   },
+   "Rational_cn85_p50": {
+    "peak_flow_m3s": 0.2083333333,
+    "volume_m3": 750.0
+   },
+   "SCS-CN_cn35_p12": {
+    "peak_flow_m3s": 0.0,
+    "volume_m3": 0.0
+   },
+   "SCS-CN_cn35_p120": {
+    "peak_flow_m3s": 0.0091912221,
+    "volume_m3": 33.0883994223
+   },
+   "SCS-CN_cn35_p50": {
+    "peak_flow_m3s": 0.0,
+    "volume_m3": 0.0
+   },
+   "SCS-CN_cn50_p12": {
+    "peak_flow_m3s": 0.0,
+    "volume_m3": 0.0
+   },
+   "SCS-CN_cn50_p120": {
+    "peak_flow_m3s": 0.1028912266,
+    "volume_m3": 370.4084158416
+   },
+   "SCS-CN_cn50_p50": {
+    "peak_flow_m3s": 0.0,
+    "volume_m3": 0.0
+   },
+   "SCS-CN_cn70_p12": {
+    "peak_flow_m3s": 0.0,
+    "volume_m3": 0.0
+   },
+   "SCS-CN_cn70_p120": {
+    "peak_flow_m3s": 0.3235661069,
+    "volume_m3": 1164.8379848628
+   },
+   "SCS-CN_cn70_p50": {
+    "peak_flow_m3s": 0.0403666872,
+    "volume_m3": 145.3200738403
+   },
+   "SCS-CN_cn85_p12": {
+    "peak_flow_m3s": 0.0013368327,
+    "volume_m3": 4.8125976054
+   },
+   "SCS-CN_cn85_p120": {
+    "peak_flow_m3s": 0.5493235383,
+    "volume_m3": 1977.5647378517
+   },
+   "SCS-CN_cn85_p50": {
+    "peak_flow_m3s": 0.1361970421,
+    "volume_m3": 490.3093514742
+   },
+   "rational_sweep": {
+    "0.1": {
+     "peak_flow_m3s": 0.0138888889,
+     "volume_m3": 50.0
+    },
+    "0.2": {
+     "peak_flow_m3s": 0.0277777778,
+     "volume_m3": 100.0
+    },
+    "0.4": {
+     "peak_flow_m3s": 0.0555555556,
+     "volume_m3": 200.0
+    },
+    "0.6": {
+     "peak_flow_m3s": 0.0833333333,
+     "volume_m3": 300.0
+    },
+    "0.8": {
+     "peak_flow_m3s": 0.1111111111,
+     "volume_m3": 400.0
+    },
+    "1.0": {
+     "peak_flow_m3s": 0.1388888889,
+     "volume_m3": 500.0
+    }
+   }
+  },
+  "runoff_watershed_helper": {
+   "10000_10.0": 70.0,
+   "10000_200.0": 1400.0,
+   "10000_80.0": 560.0,
+   "1000_10.0": 7.0,
+   "1000_200.0": 140.0,
+   "1000_80.0": 56.0,
+   "500000_10.0": 3500.0,
+   "500000_200.0": 70000.0,
+   "500000_80.0": 28000.0
+  },
+  "salinity": {
+   "classify": {
+    "0.3": {
+     "classification": "non_saline",
+     "crop_recommendations": {
+      "limitation": "None",
+      "suitable_crops": [
+       "Most crops",
+       "Sensitive vegetables",
+       "Fruits"
+      ]
+     },
+     "description": "No salinity problem",
+     "ec": 0.3,
+     "management": {
+      "action": "no_action_needed",
+      "description": "Maintain current practices",
+      "monitoring": "Regular EC monitoring"
+     },
+     "unit": "dS/m"
+    },
+    "1.0": {
+     "classification": "non_saline",
+     "crop_recommendations": {
+      "limitation": "None",
+      "suitable_crops": [
+       "Most crops",
+       "Sensitive vegetables",
+       "Fruits"
+      ]
+     },
+     "description": "No salinity problem",
+     "ec": 1.0,
+     "management": {
+      "action": "no_action_needed",
+      "description": "Maintain current practices",
+      "monitoring": "Regular EC monitoring"
+     },
+     "unit": "dS/m"
+    },
+    "10.0": {
+     "classification": "strongly_saline",
+     "crop_recommendations": {
+      "avoid": [
+       "Most field crops",
+       "Vegetables"
+      ],
+      "limitation": "Severe limitation",
+      "suitable_crops": [
+       "Barley",
+       "Cotton",
+       "Sugar beet",
+       "Some grasses"
+      ]
+     },
+     "description": "Only tolerant crops yield satisfactorily",
+     "ec": 10.0,
+     "management": {
+      "action": "major_remediation",
+      "description": "Significant remediation required",
+      "practices": [
+       "Install subsurface drainage",
+       "Heavy leaching applications",
+       "Chemical amendments (gypsum)",
+       "Consider salt-tolerant crops"
+      ]
+     },
+     "unit": "dS/m"
+    },
+    "18.0": {
+     "classification": "very_strongly_saline",
+     "crop_recommendations": {
+      "avoid": [
+       "All conventional crops"
+      ],
+      "limitation": "Extreme limitation",
+      "suitable_crops": [
+       "Salt-tolerant grasses",
+       "Some halophytes"
+      ]
+     },
+     "description": "Only very tolerant crops yield",
+     "ec": 18.0,
+     "management": {
+      "action": "major_remediation",
+      "description": "Significant remediation required",
+      "practices": [
+       "Install subsurface drainage",
+       "Heavy leaching applications",
+       "Chemical amendments (gypsum)",
+       "Consider salt-tolerant crops"
+      ]
+     },
+     "unit": "dS/m"
+    },
+    "2.5": {
+     "classification": "slightly_saline",
+     "crop_recommendations": {
+      "avoid": [
+       "Very sensitive crops",
+       "Strawberry"
+      ],
+      "limitation": "Sensitive crops may show reduced yield",
+      "suitable_crops": [
+       "Wheat",
+       "Corn",
+       "Tomato",
+       "Lettuce"
+      ]
+     },
+     "description": "Yield of sensitive crops may be affected",
+     "ec": 2.5,
+     "management": {
+      "action": "monitor_and_manage",
+      "description": "Monitor EC and adjust irrigation",
+      "practices": [
+       "Ensure good drainage",
+       "Use quality irrigation water",
+       "Avoid over-irrigation"
+      ]
+     },
+     "unit": "dS/m"
+    },
+    "30.0": {
+     "classification": "very_strongly_saline",
+     "crop_recommendations": {
+      "avoid": [
+       "All conventional crops"
+      ],
+      "limitation": "Extreme limitation",
+      "suitable_crops": [
+       "Salt-tolerant grasses",
+       "Some halophytes"
+      ]
+     },
+     "description": "Only very tolerant crops yield",
+     "ec": 30.0,
+     "management": {
+      "action": "major_remediation",
+      "description": "Significant remediation required",
+      "practices": [
+       "Install subsurface drainage",
+       "Heavy leaching applications",
+       "Chemical amendments (gypsum)",
+       "Consider salt-tolerant crops"
+      ]
+     },
+     "unit": "dS/m"
+    },
+    "5.0": {
+     "classification": "moderately_saline",
+     "crop_recommendations": {
+      "avoid": [
+       "Sensitive vegetables",
+       "Most fruits"
+      ],
+      "limitation": "Only moderately tolerant crops",
+      "suitable_crops": [
+       "Barley",
+       "Cotton",
+       "Sugar beet",
+       "Date palm"
+      ]
+     },
+     "description": "Yield of many crops is restricted",
+     "ec": 5.0,
+     "management": {
+      "action": "leaching_required",
+      "description": "Leaching may be needed",
+      "practices": [
+       "Apply excess irrigation for leaching",
+       "Install or improve drainage",
+       "Consider gypsum application if sodic"
+      ]
+     },
+     "unit": "dS/m"
+    }
+   },
+   "leaching": {
+    "s15.0_w3.0": {
+     "current_ec": 15.0,
+     "interpretation": "Apply 17.6% extra water for leaching",
+     "leaching_fraction": 0.176,
+     "leaching_percentage": 17.6,
+     "leaching_required": true,
+     "target_ec": 4.0,
+     "water_ec": 3.0
+    },
+    "s25.0_w8.0": {
+     "current_ec": 25.0,
+     "interpretation": "Apply 66.7% extra water for leaching",
+     "leaching_fraction": 0.667,
+     "leaching_percentage": 66.7,
+     "leaching_required": true,
+     "target_ec": 4.0,
+     "water_ec": 8.0
+    },
+    "s4.0_w6.0": {
+     "leaching_required": false,
+     "reason": "Soil EC is not higher than water EC"
+    },
+    "s8.0_w1.0": {
+     "current_ec": 8.0,
+     "interpretation": "Apply 5.3% extra water for leaching",
+     "leaching_fraction": 0.053,
+     "leaching_percentage": 5.3,
+     "leaching_required": true,
+     "target_ec": 4.0,
+     "water_ec": 1.0
+    }
+   },
+   "sodic": {
+    "esp10.0": {
+     "esp": 10.0,
+     "gypsum_kg_per_ha": 0.0,
+     "gypsum_rate": 0.0,
+     "gypsum_required": true,
+     "gypsum_unit": "tons/100m²",
+     "interpretation": "Apply 0 kg/ha of gypsum",
+     "soil_depth": 15.0
+    },
+    "esp15.0": {
+     "esp": 15.0,
+     "gypsum_kg_per_ha": 5000.0,
+     "gypsum_rate": 0.5,
+     "gypsum_required": true,
+     "gypsum_unit": "tons/100m²",
+     "interpretation": "Apply 5000 kg/ha of gypsum",
+     "soil_depth": 15.0
+    },
+    "esp25.0": {
+     "esp": 25.0,
+     "gypsum_kg_per_ha": 15000.0,
+     "gypsum_rate": 1.5,
+     "gypsum_required": true,
+     "gypsum_unit": "tons/100m²",
+     "interpretation": "Apply 15000 kg/ha of gypsum",
+     "soil_depth": 15.0
+    },
+    "esp40.0": {
+     "esp": 40.0,
+     "gypsum_kg_per_ha": 30000.0,
+     "gypsum_rate": 3.0,
+     "gypsum_required": true,
+     "gypsum_unit": "tons/100m²",
+     "interpretation": "Apply 30000 kg/ha of gypsum",
+     "soil_depth": 15.0
+    },
+    "esp5.0": {
+     "gypsum_required": false,
+     "reason": "ESP (5.0) is below amendment threshold (10)"
+    }
+   }
+  },
+  "soil_retention": {
+   "FC_HEAD_CM": 33.0,
+   "PWP_HEAD_CM": 15000.0,
+   "available_water_mm": [
+    {
+     "available_water_capacity": 0.15,
+     "awc_unit": "cm/cm",
+     "interpretation": {
+      "description": "Moderate water holding",
+      "rating": "moderate"
+     },
+     "root_depth": 50.0,
+     "total_available_water": 7.5,
+     "total_available_water_mm": 75.0,
+     "total_available_water_unit": "cm"
+    },
+    {
+     "available_water_capacity": 0.23,
+     "awc_unit": "cm/cm",
+     "interpretation": {
+      "description": "High water holding capacity",
+      "rating": "high"
+     },
+     "root_depth": 100.0,
+     "total_available_water": 23.0,
+     "total_available_water_mm": 230.0,
+     "total_available_water_unit": "cm"
+    },
+    {
+     "available_water_capacity": 0.15,
+     "awc_unit": "cm/cm",
+     "interpretation": {
+      "description": "Moderate water holding",
+      "rating": "moderate"
+     },
+     "root_depth": 30.0,
+     "total_available_water": 4.5,
+     "total_available_water_mm": 45.0,
+     "total_available_water_unit": "cm"
+    }
+   ],
+   "awc_cm3_cm3": {
+    "clay": 0.1039353855,
+    "clay_loam": 0.2296868145,
+    "loam": 0.2503079518,
+    "loamy_sand": 0.0568459277,
+    "sand": 0.0274899372,
+    "sandy_clay": 0.1787599889,
+    "sandy_clay_loam": 0.1788770956,
+    "sandy_loam": 0.1417736532,
+    "silt": 0.3316766017,
+    "silt_loam": 0.2998130375,
+    "silty_clay": 0.0903925743,
+    "silty_clay_loam": 0.2191178846
+   },
+   "brooks_corey": [
+    [
+     0.43,
+     0.0538,
+     0.050038
+    ]
+   ],
+   "campbell": [
+    [
+     0.43,
+     0.1146476626,
+     0.0609982113
+    ]
+   ],
+   "k_at_head": {
+    "clay": [
+     4.8,
+     0.5970441919,
+     0.2059141502,
+     0.0782497191,
+     0.0201868139,
+     0.0026803427,
+     0.0002864215,
+     7.692e-07
+    ],
+    "clay_loam": [
+     6.2,
+     3.1030790401,
+     1.0665900651,
+     0.2826865774,
+     0.0356132388,
+     0.0018925117,
+     9.54363e-05,
+     5.35e-08
+    ],
+    "loam": [
+     25.0,
+     17.8278168795,
+     5.3860308858,
+     0.7314773881,
+     0.0339768834,
+     0.0006914451,
+     1.63737e-05,
+     1.7e-09
+    ],
+    "loamy_sand": [
+     350.2,
+     302.9527768212,
+     14.7662772246,
+     0.0674825614,
+     0.0002262072,
+     4.578e-07,
+     1.4e-09,
+     0.0
+    ],
+    "sand": [
+     712.8,
+     657.3073230046,
+     15.1264528198,
+     0.0165746826,
+     1.76273e-05,
+     1.08e-08,
+     0.0,
+     0.0
+    ],
+    "sandy_clay": [
+     2.9,
+     0.925479748,
+     0.2312661026,
+     0.0487919361,
+     0.0056144765,
+     0.0003337664,
+     2.04505e-05,
+     1.96e-08
+    ],
+    "sandy_clay_loam": [
+     31.4,
+     17.3483010998,
+     2.8954576835,
+     0.2426658751,
+     0.0101610738,
+     0.000242654,
+     7.0895e-06,
+     1.2e-09
+    ],
+    "sandy_loam": [
+     106.1,
+     85.9093946711,
+     13.4676048592,
+     0.3846447103,
+     0.0045515672,
+     3.03387e-05,
+     2.813e-07,
+     0.0
+    ],
+    "silt": [
+     6.0,
+     3.6831021882,
+     1.5020686197,
+     0.4531890664,
+     0.0603231087,
+     0.0029352152,
+     0.0001275042,
+     4.77e-08
+    ],
+    "silt_loam": [
+     10.8,
+     6.8929481999,
+     2.6367940273,
+     0.6765400965,
+     0.0703622333,
+     0.0027487992,
+     0.0001037207,
+     2.93e-08
+    ],
+    "silty_clay": [
+     1.92,
+     0.2763702767,
+     0.1092156517,
+     0.0481953635,
+     0.015266428,
+     0.0025262479,
+     0.0003040298,
+     8.72e-07
+    ],
+    "silty_clay_loam": [
+     2.9,
+     1.2380324313,
+     0.5026052001,
+     0.1880643152,
+     0.0401667817,
+     0.0035820247,
+     0.0002506749,
+     2.52e-07
+    ]
+   },
+   "table": {
+    "clay": {
+     "Ks": 4.8,
+     "alpha": 0.008,
+     "n": 1.09,
+     "theta_r": 0.068,
+     "theta_s": 0.38
+    },
+    "clay_loam": {
+     "Ks": 6.2,
+     "alpha": 0.019,
+     "n": 1.31,
+     "theta_r": 0.095,
+     "theta_s": 0.41
+    },
+    "loam": {
+     "Ks": 25.0,
+     "alpha": 0.036,
+     "n": 1.56,
+     "theta_r": 0.078,
+     "theta_s": 0.43
+    },
+    "loamy_sand": {
+     "Ks": 350.2,
+     "alpha": 0.124,
+     "n": 2.28,
+     "theta_r": 0.057,
+     "theta_s": 0.41
+    },
+    "sand": {
+     "Ks": 712.8,
+     "alpha": 0.145,
+     "n": 2.68,
+     "theta_r": 0.045,
+     "theta_s": 0.43
+    },
+    "sandy_clay": {
+     "Ks": 2.9,
+     "alpha": 0.027,
+     "n": 1.23,
+     "theta_r": 0.1,
+     "theta_s": 0.38
+    },
+    "sandy_clay_loam": {
+     "Ks": 31.4,
+     "alpha": 0.059,
+     "n": 1.48,
+     "theta_r": 0.1,
+     "theta_s": 0.39
+    },
+    "sandy_loam": {
+     "Ks": 106.1,
+     "alpha": 0.075,
+     "n": 1.89,
+     "theta_r": 0.065,
+     "theta_s": 0.41
+    },
+    "silt": {
+     "Ks": 6.0,
+     "alpha": 0.016,
+     "n": 1.37,
+     "theta_r": 0.034,
+     "theta_s": 0.46
+    },
+    "silt_loam": {
+     "Ks": 10.8,
+     "alpha": 0.02,
+     "n": 1.41,
+     "theta_r": 0.067,
+     "theta_s": 0.45
+    },
+    "silty_clay": {
+     "Ks": 1.92,
+     "alpha": 0.005,
+     "n": 1.09,
+     "theta_r": 0.07,
+     "theta_s": 0.36
+    },
+    "silty_clay_loam": {
+     "Ks": 2.9,
+     "alpha": 0.01,
+     "n": 1.23,
+     "theta_r": 0.089,
+     "theta_s": 0.43
+    }
+   },
+   "theta_at_head": {
+    "clay": [
+     0.38,
+     0.3798669167,
+     0.3784123825,
+     0.3746264421,
+     0.3654372337,
+     0.3469497086,
+     0.3246489399,
+     0.2706910565
+    ],
+    "clay_loam": [
+     0.41,
+     0.4095868779,
+     0.4020842827,
+     0.3792935412,
+     0.3321596707,
+     0.2696927184,
+     0.2208196048,
+     0.1496067268
+    ],
+    "loam": [
+     0.43,
+     0.4292956461,
+     0.4073889379,
+     0.3386926443,
+     0.2421317847,
+     0.1653770863,
+     0.1252533086,
+     0.0883846925
+    ],
+    "loamy_sand": [
+     0.41,
+     0.4083128375,
+     0.2619872293,
+     0.1138689845,
+     0.071041473,
+     0.0600510239,
+     0.0577382285,
+     0.0570230568
+    ],
+    "sand": [
+     0.43,
+     0.4286413461,
+     0.2143441034,
+     0.072490889,
+     0.0493067775,
+     0.045579763,
+     0.0450900248,
+     0.0450009518
+    ],
+    "sandy_clay": [
+     0.38,
+     0.3793882962,
+     0.3706237329,
+     0.3491308703,
+     0.3123087242,
+     0.267245245,
+     0.2307817279,
+     0.1703708814
+    ],
+    "sandy_clay_loam": [
+     0.39,
+     0.3885877671,
+     0.3566184681,
+     0.2900421052,
+     0.2209363066,
+     0.1694661432,
+     0.1409309876,
+     0.1111650096
+    ],
+    "sandy_loam": [
+     0.41,
+     0.40879154,
+     0.3430967259,
+     0.2074378442,
+     0.1218232891,
+     0.0848181239,
+     0.0723953055,
+     0.065664191
+    ],
+    "silt": [
+     0.46,
+     0.4596022766,
+     0.4511100962,
+     0.421738414,
+     0.3534263321,
+     0.2581858032,
+     0.1858050571,
+     0.0900618123
+    ],
+    "silt_loam": [
+     0.45,
+     0.4495532234,
+     0.4391985969,
+     0.4037565733,
+     0.3296880917,
+     0.2402423206,
+     0.1786711657,
+     0.1039435358
+    ],
+    "silty_clay": [
+     0.36,
+     0.359925807,
+     0.359104105,
+     0.3568732137,
+     0.3509238597,
+     0.3369539027,
+     0.3176098463,
+     0.2664806394
+    ],
+    "silty_clay_loam": [
+     0.43,
+     0.4297793598,
+     0.4263711215,
+     0.4157848722,
+     0.3885464777,
+     0.3382683599,
+     0.2876588444,
+     0.1966669875
+    ]
+   },
+   "upper_module": {
+    "clay": {
+     "fc33": 0.3746,
+     "wp": 0.2707
+    },
+    "clay_loam": {
+     "fc33": 0.3793,
+     "wp": 0.1496
+    },
+    "loam": {
+     "fc33": 0.3387,
+     "wp": 0.0884
+    },
+    "loamy_sand": {
+     "fc33": 0.1139,
+     "wp": 0.057
+    },
+    "sand": {
+     "fc33": 0.0725,
+     "wp": 0.045
+    },
+    "sandy_clay": {
+     "fc33": 0.3491,
+     "wp": 0.1704
+    },
+    "sandy_clay_loam": {
+     "fc33": 0.29,
+     "wp": 0.1112
+    },
+    "sandy_loam": {
+     "fc33": 0.2074,
+     "wp": 0.0657
+    },
+    "silt": {
+     "fc33": 0.4217,
+     "wp": 0.0901
+    },
+    "silt_loam": {
+     "fc33": 0.4038,
+     "wp": 0.1039
+    },
+    "silty_clay": {
+     "fc33": 0.3569,
+     "wp": 0.2665
+    },
+    "silty_clay_loam": {
+     "fc33": 0.4158,
+     "wp": 0.1967
+    }
+   }
+  },
+  "soil_table_backends": {
+   "numba_cm_per_hour": {
+    "clay": {
+     "Ks": 0.2,
+     "alpha": 0.008,
+     "n": 1.09,
+     "theta_r": 0.068,
+     "theta_s": 0.38
+    },
+    "clay_loam": {
+     "Ks": 0.2583333333,
+     "alpha": 0.019,
+     "n": 1.31,
+     "theta_r": 0.095,
+     "theta_s": 0.41
+    },
+    "loam": {
+     "Ks": 1.0416666667,
+     "alpha": 0.036,
+     "n": 1.56,
+     "theta_r": 0.078,
+     "theta_s": 0.43
+    },
+    "loamy_sand": {
+     "Ks": 14.5916666667,
+     "alpha": 0.124,
+     "n": 2.28,
+     "theta_r": 0.057,
+     "theta_s": 0.41
+    },
+    "sand": {
+     "Ks": 29.7,
+     "alpha": 0.145,
+     "n": 2.68,
+     "theta_r": 0.045,
+     "theta_s": 0.43
+    },
+    "sandy_clay": {
+     "Ks": 0.1208333333,
+     "alpha": 0.027,
+     "n": 1.23,
+     "theta_r": 0.1,
+     "theta_s": 0.38
+    },
+    "sandy_clay_loam": {
+     "Ks": 1.3083333333,
+     "alpha": 0.059,
+     "n": 1.48,
+     "theta_r": 0.1,
+     "theta_s": 0.39
+    },
+    "sandy_loam": {
+     "Ks": 4.4208333333,
+     "alpha": 0.075,
+     "n": 1.89,
+     "theta_r": 0.065,
+     "theta_s": 0.41
+    },
+    "silt": {
+     "Ks": 0.25,
+     "alpha": 0.016,
+     "n": 1.37,
+     "theta_r": 0.034,
+     "theta_s": 0.46
+    },
+    "silt_loam": {
+     "Ks": 0.45,
+     "alpha": 0.02,
+     "n": 1.41,
+     "theta_r": 0.067,
+     "theta_s": 0.45
+    },
+    "silty_clay": {
+     "Ks": 0.08,
+     "alpha": 0.005,
+     "n": 1.09,
+     "theta_r": 0.07,
+     "theta_s": 0.36
+    },
+    "silty_clay_loam": {
+     "Ks": 0.1208333333,
+     "alpha": 0.01,
+     "n": 1.23,
+     "theta_r": 0.089,
+     "theta_s": 0.43
+    }
+   },
+   "physics": {
+    "clay": {
+     "Ks": 4.8,
+     "alpha": 0.008,
+     "n": 1.09,
+     "theta_r": 0.068,
+     "theta_s": 0.38
+    },
+    "clay_loam": {
+     "Ks": 6.2,
+     "alpha": 0.019,
+     "n": 1.31,
+     "theta_r": 0.095,
+     "theta_s": 0.41
+    },
+    "loam": {
+     "Ks": 25.0,
+     "alpha": 0.036,
+     "n": 1.56,
+     "theta_r": 0.078,
+     "theta_s": 0.43
+    },
+    "loamy_sand": {
+     "Ks": 350.2,
+     "alpha": 0.124,
+     "n": 2.28,
+     "theta_r": 0.057,
+     "theta_s": 0.41
+    },
+    "sand": {
+     "Ks": 712.8,
+     "alpha": 0.145,
+     "n": 2.68,
+     "theta_r": 0.045,
+     "theta_s": 0.43
+    },
+    "sandy_clay": {
+     "Ks": 2.9,
+     "alpha": 0.027,
+     "n": 1.23,
+     "theta_r": 0.1,
+     "theta_s": 0.38
+    },
+    "sandy_clay_loam": {
+     "Ks": 31.4,
+     "alpha": 0.059,
+     "n": 1.48,
+     "theta_r": 0.1,
+     "theta_s": 0.39
+    },
+    "sandy_loam": {
+     "Ks": 106.1,
+     "alpha": 0.075,
+     "n": 1.89,
+     "theta_r": 0.065,
+     "theta_s": 0.41
+    },
+    "silt": {
+     "Ks": 6.0,
+     "alpha": 0.016,
+     "n": 1.37,
+     "theta_r": 0.034,
+     "theta_s": 0.46
+    },
+    "silt_loam": {
+     "Ks": 10.8,
+     "alpha": 0.02,
+     "n": 1.41,
+     "theta_r": 0.067,
+     "theta_s": 0.45
+    },
+    "silty_clay": {
+     "Ks": 1.92,
+     "alpha": 0.005,
+     "n": 1.09,
+     "theta_r": 0.07,
+     "theta_s": 0.36
+    },
+    "silty_clay_loam": {
+     "Ks": 2.9,
+     "alpha": 0.01,
+     "n": 1.23,
+     "theta_r": 0.089,
+     "theta_s": 0.43
+    }
+   },
+   "shared_with_provenance": {
+    "clay": {
+     "Ks": 4.8,
+     "alpha": 0.008,
+     "disputed": true,
+     "ks_admissible_max": 1.92,
+     "ks_admissible_min": 0.0,
+     "ks_interval_empty": false,
+     "ks_outside_interval": true,
+     "n": 1.09,
+     "provenance": "DISPUTED: the other two copies carry 2.88 and 2.9 cm/day for this row; this value also breaks fineness monotonicity against silty_clay",
+     "status": "design_assumption_disputed",
+     "theta_r": 0.068,
+     "theta_s": 0.38
+    },
+    "clay_loam": {
+     "Ks": 6.2,
+     "alpha": 0.019,
+     "disputed": false,
+     "ks_admissible_max": 31.4,
+     "ks_admissible_min": 2.9,
+     "ks_interval_empty": false,
+     "ks_outside_interval": false,
+     "n": 1.31,
+     "provenance": "unverified; formerly attributed to Carsel & Parrish 1988",
+     "status": "design_assumption",
+     "theta_r": 0.095,
+     "theta_s": 0.41
+    },
+    "loam": {
+     "Ks": 25.0,
+     "alpha": 0.036,
+     "disputed": false,
+     "ks_admissible_max": 106.1,
+     "ks_admissible_min": 10.8,
+     "ks_interval_empty": false,
+     "ks_outside_interval": false,
+     "n": 1.56,
+     "provenance": "unverified; formerly attributed to Carsel & Parrish 1988",
+     "status": "design_assumption",
+     "theta_r": 0.078,
+     "theta_s": 0.43
+    },
+    "loamy_sand": {
+     "Ks": 350.2,
+     "alpha": 0.124,
+     "disputed": false,
+     "ks_admissible_max": 712.8,
+     "ks_admissible_min": 106.1,
+     "ks_interval_empty": false,
+     "ks_outside_interval": false,
+     "n": 2.28,
+     "provenance": "unverified; formerly attributed to Carsel & Parrish 1988",
+     "status": "design_assumption",
+     "theta_r": 0.057,
+     "theta_s": 0.41
+    },
+    "sand": {
+     "Ks": 712.8,
+     "alpha": 0.145,
+     "disputed": false,
+     "ks_admissible_max": "Infinity",
+     "ks_admissible_min": 350.2,
+     "ks_interval_empty": false,
+     "ks_outside_interval": false,
+     "n": 2.68,
+     "provenance": "unverified; formerly attributed to Carsel & Parrish 1988",
+     "status": "design_assumption",
+     "theta_r": 0.045,
+     "theta_s": 0.43
+    },
+    "sandy_clay": {
+     "Ks": 2.9,
+     "alpha": 0.027,
+     "disputed": false,
+     "ks_admissible_max": 2.9,
+     "ks_admissible_min": 1.92,
+     "ks_interval_empty": false,
+     "ks_outside_interval": false,
+     "n": 1.23,
+     "provenance": "unverified; formerly attributed to Carsel & Parrish 1988",
+     "status": "design_assumption",
+     "theta_r": 0.1,
+     "theta_s": 0.38
+    },
+    "sandy_clay_loam": {
+     "Ks": 31.4,
+     "alpha": 0.059,
+     "disputed": true,
+     "ks_admissible_max": 6.0,
+     "ks_admissible_min": 6.2,
+     "ks_interval_empty": true,
+     "ks_outside_interval": true,
+     "n": 1.48,
+     "provenance": "DISPUTED: Ks and n both break fineness monotonicity; no other copy carries this row",
+     "status": "design_assumption_disputed",
+     "theta_r": 0.1,
+     "theta_s": 0.39
+    },
+    "sandy_loam": {
+     "Ks": 106.1,
+     "alpha": 0.075,
+     "disputed": false,
+     "ks_admissible_max": 350.2,
+     "ks_admissible_min": 25.0,
+     "ks_interval_empty": false,
+     "ks_outside_interval": false,
+     "n": 1.89,
+     "provenance": "unverified; formerly attributed to Carsel & Parrish 1988",
+     "status": "design_assumption",
+     "theta_r": 0.065,
+     "theta_s": 0.41
+    },
+    "silt": {
+     "Ks": 6.0,
+     "alpha": 0.016,
+     "disputed": false,
+     "ks_admissible_max": 10.8,
+     "ks_admissible_min": 31.4,
+     "ks_interval_empty": true,
+     "ks_outside_interval": true,
+     "n": 1.37,
+     "provenance": "unverified; formerly attributed to Carsel & Parrish 1988",
+     "status": "design_assumption",
+     "theta_r": 0.034,
+     "theta_s": 0.46
+    },
+    "silt_loam": {
+     "Ks": 10.8,
+     "alpha": 0.02,
+     "disputed": false,
+     "ks_admissible_max": 25.0,
+     "ks_admissible_min": 6.0,
+     "ks_interval_empty": false,
+     "ks_outside_interval": false,
+     "n": 1.41,
+     "provenance": "unverified; formerly attributed to Carsel & Parrish 1988",
+     "status": "design_assumption",
+     "theta_r": 0.067,
+     "theta_s": 0.45
+    },
+    "silty_clay": {
+     "Ks": 1.92,
+     "alpha": 0.005,
+     "disputed": false,
+     "ks_admissible_max": 2.9,
+     "ks_admissible_min": 4.8,
+     "ks_interval_empty": true,
+     "ks_outside_interval": true,
+     "n": 1.09,
+     "provenance": "unverified; formerly attributed to Carsel & Parrish 1988",
+     "status": "design_assumption",
+     "theta_r": 0.07,
+     "theta_s": 0.36
+    },
+    "silty_clay_loam": {
+     "Ks": 2.9,
+     "alpha": 0.01,
+     "disputed": false,
+     "ks_admissible_max": 6.2,
+     "ks_admissible_min": 2.9,
+     "ks_interval_empty": false,
+     "ks_outside_interval": false,
+     "n": 1.23,
+     "provenance": "unverified; formerly attributed to Carsel & Parrish 1988",
+     "status": "design_assumption",
+     "theta_r": 0.089,
+     "theta_s": 0.43
+    }
+   }
+  },
+  "terrain": {
+   "aspect": [
+    [
+     "NaN",
+     "NaN",
+     "NaN",
+     "NaN"
+    ],
+    [
+     "NaN",
+     315.0,
+     243.4349488229,
+     "NaN"
+    ],
+    [
+     "NaN",
+     26.5650511771,
+     135.0,
+     "NaN"
+    ],
+    [
+     "NaN",
+     "NaN",
+     "NaN",
+     "NaN"
+    ]
+   ],
+   "slope": [
+    [
+     "NaN",
+     "NaN",
+     "NaN",
+     "NaN"
+    ],
+    [
+     "NaN",
+     2.6989509089,
+     4.2626930452,
+     "NaN"
+    ],
+    [
+     "NaN",
+     4.2626930452,
+     2.6989509089,
+     "NaN"
+    ],
+    [
+     "NaN",
+     "NaN",
+     "NaN",
+     "NaN"
+    ]
+   ]
+  },
+  "watershed_design": {
+   "check_dam": {
+    "a50000000_s1": {
+     "achieved_retention_years": 15.2,
+     "annual_sediment_m3": 3846.15,
+     "assumed_trap_efficiency": 0.8,
+     "channel_width_m": 5.0,
+     "dam_height_m": 60.8,
+     "dam_length_m": 10.0,
+     "dam_volume_m3": 58498.2,
+     "design_head_m": 24.322,
+     "design_life_years": 10,
+     "design_standard": "FAO Watershed Management Field Manual (check dam)",
+     "estimated_cost_usd": 8774735.0,
+     "exceeds_check_dam_band": true,
+     "freeboard_m": 0.5,
+     "materials": [
+      "stone",
+      "gabion"
+     ],
+     "peak_flow_m3s": 166.6667,
+     "runoff_volume_m3": 3600000.0,
+     "spacing_m": 50.0,
+     "spillway_width_m": 0.817,
+     "storage_deficit_m3": 0.0,
+     "storage_provided_m3": 58498.2,
+     "storage_required_m3": 30769.2,
+     "structure_type": "check_dam",
+     "top_width_m": 187.41,
+     "trap_efficiency": 0.95,
+     "unit_cost_usd_m3": 150.0
+    },
+    "a50000000_s5": {
+     "achieved_retention_years": 15.6,
+     "annual_sediment_m3": 19230.77,
+     "assumed_trap_efficiency": 0.8,
+     "channel_width_m": 5.0,
+     "dam_height_m": 139.93,
+     "dam_length_m": 10.0,
+     "dam_volume_m3": 300695.9,
+     "design_head_m": 55.971,
+     "design_life_years": 10,
+     "design_standard": "FAO Watershed Management Field Manual (check dam)",
+     "estimated_cost_usd": 45104383.0,
+     "exceeds_check_dam_band": true,
+     "freeboard_m": 0.5,
+     "materials": [
+      "stone",
+      "gabion"
+     ],
+     "peak_flow_m3s": 166.6667,
+     "runoff_volume_m3": 3600000.0,
+     "spacing_m": 50.0,
+     "spillway_width_m": 0.234,
+     "storage_deficit_m3": 0.0,
+     "storage_provided_m3": 300695.9,
+     "storage_required_m3": 153846.2,
+     "structure_type": "check_dam",
+     "top_width_m": 424.79,
+     "trap_efficiency": 0.95,
+     "unit_cost_usd_m3": 150.0
+    },
+    "a50000000_s50": {
+     "achieved_retention_years": 15.9,
+     "annual_sediment_m3": 192307.69,
+     "assumed_trap_efficiency": 0.8,
+     "channel_width_m": 5.0,
+     "dam_height_m": 449.59,
+     "dam_length_m": 10.0,
+     "dam_volume_m3": 3054443.6,
+     "design_head_m": 179.836,
+     "design_life_years": 10,
+     "design_standard": "FAO Watershed Management Field Manual (check dam)",
+     "estimated_cost_usd": 458166538.0,
+     "exceeds_check_dam_band": true,
+     "freeboard_m": 0.5,
+     "materials": [
+      "stone",
+      "gabion"
+     ],
+     "peak_flow_m3s": 166.6667,
+     "runoff_volume_m3": 3600000.0,
+     "spacing_m": 50.0,
+     "spillway_width_m": 0.041,
+     "storage_deficit_m3": 0.0,
+     "storage_provided_m3": 3054443.6,
+     "storage_required_m3": 1538461.5,
+     "structure_type": "check_dam",
+     "top_width_m": 1353.77,
+     "trap_efficiency": 0.95,
+     "unit_cost_usd_m3": 150.0
+    },
+    "a5000000_s1": {
+     "achieved_retention_years": 13.8,
+     "annual_sediment_m3": 384.62,
+     "assumed_trap_efficiency": 0.8,
+     "channel_width_m": 5.0,
+     "dam_height_m": 17.19,
+     "dam_length_m": 10.0,
+     "dam_volume_m3": 5294.2,
+     "design_head_m": 6.878,
+     "design_life_years": 10,
+     "design_standard": "FAO Watershed Management Field Manual (check dam)",
+     "estimated_cost_usd": 794123.0,
+     "exceeds_check_dam_band": true,
+     "freeboard_m": 0.5,
+     "materials": [
+      "stone",
+      "gabion"
+     ],
+     "peak_flow_m3s": 16.6667,
+     "runoff_volume_m3": 360000.0,
+     "spacing_m": 50.0,
+     "spillway_width_m": 0.544,
+     "storage_deficit_m3": 0.0,
+     "storage_provided_m3": 5294.2,
+     "storage_required_m3": 3076.9,
+     "structure_type": "check_dam",
+     "top_width_m": 56.58,
+     "trap_efficiency": 0.95,
+     "unit_cost_usd_m3": 150.0
+    },
+    "a5000000_s5": {
+     "achieved_retention_years": 14.9,
+     "annual_sediment_m3": 1923.08,
+     "assumed_trap_efficiency": 0.8,
+     "channel_width_m": 5.0,
+     "dam_height_m": 42.08,
+     "dam_length_m": 10.0,
+     "dam_volume_m3": 28665.2,
+     "design_head_m": 16.832,
+     "design_life_years": 10,
+     "design_standard": "FAO Watershed Management Field Manual (check dam)",
+     "estimated_cost_usd": 4299783.0,
+     "exceeds_check_dam_band": true,
+     "freeboard_m": 0.5,
+     "materials": [
+      "stone",
+      "gabion"
+     ],
+     "peak_flow_m3s": 16.6667,
+     "runoff_volume_m3": 360000.0,
+     "spacing_m": 50.0,
+     "spillway_width_m": 0.142,
+     "storage_deficit_m3": 0.0,
+     "storage_provided_m3": 28665.2,
+     "storage_required_m3": 15384.6,
+     "structure_type": "check_dam",
+     "top_width_m": 131.24,
+     "trap_efficiency": 0.95,
+     "unit_cost_usd_m3": 150.0
+    },
+    "a5000000_s50": {
+     "achieved_retention_years": 15.6,
+     "annual_sediment_m3": 19230.77,
+     "assumed_trap_efficiency": 0.8,
+     "channel_width_m": 5.0,
+     "dam_height_m": 139.93,
+     "dam_length_m": 10.0,
+     "dam_volume_m3": 300695.9,
+     "design_head_m": 55.971,
+     "design_life_years": 10,
+     "design_standard": "FAO Watershed Management Field Manual (check dam)",
+     "estimated_cost_usd": 45104383.0,
+     "exceeds_check_dam_band": true,
+     "freeboard_m": 0.5,
+     "materials": [
+      "stone",
+      "gabion"
+     ],
+     "peak_flow_m3s": 16.6667,
+     "runoff_volume_m3": 360000.0,
+     "spacing_m": 50.0,
+     "spillway_width_m": 0.023,
+     "storage_deficit_m3": 0.0,
+     "storage_provided_m3": 300695.9,
+     "storage_required_m3": 153846.2,
+     "structure_type": "check_dam",
+     "top_width_m": 424.79,
+     "trap_efficiency": 0.95,
+     "unit_cost_usd_m3": 150.0
+    },
+    "a500000_s1": {
+     "achieved_retention_years": 10.9,
+     "annual_sediment_m3": 38.46,
+     "assumed_trap_efficiency": 0.8,
+     "channel_width_m": 5.0,
+     "dam_height_m": 3.89,
+     "dam_length_m": 10.0,
+     "dam_volume_m3": 421.0,
+     "design_head_m": 1.555,
+     "design_life_years": 10,
+     "design_standard": "FAO Watershed Management Field Manual (check dam)",
+     "estimated_cost_usd": 63153.0,
+     "exceeds_check_dam_band": false,
+     "freeboard_m": 0.5,
+     "materials": [
+      "stone",
+      "gabion"
+     ],
+     "peak_flow_m3s": 1.6667,
+     "runoff_volume_m3": 36000.0,
+     "spacing_m": 50.0,
+     "spillway_width_m": 0.506,
+     "storage_deficit_m3": 0.0,
+     "storage_provided_m3": 421.0,
+     "storage_required_m3": 307.7,
+     "structure_type": "check_dam",
+     "top_width_m": 16.66,
+     "trap_efficiency": 0.95,
+     "unit_cost_usd_m3": 150.0
+    },
+    "a500000_s5": {
+     "achieved_retention_years": 13.0,
+     "annual_sediment_m3": 192.31,
+     "assumed_trap_efficiency": 0.8,
+     "channel_width_m": 5.0,
+     "dam_height_m": 11.37,
+     "dam_length_m": 10.0,
+     "dam_volume_m3": 2508.3,
+     "design_head_m": 4.549,
+     "design_life_years": 10,
+     "design_standard": "FAO Watershed Management Field Manual (check dam)",
+     "estimated_cost_usd": 376250.0,
+     "exceeds_check_dam_band": true,
+     "freeboard_m": 0.5,
+     "materials": [
+      "stone",
+      "gabion"
+     ],
+     "peak_flow_m3s": 1.6667,
+     "runoff_volume_m3": 36000.0,
+     "spacing_m": 50.0,
+     "spillway_width_m": 0.101,
+     "storage_deficit_m3": 0.0,
+     "storage_provided_m3": 2508.3,
+     "storage_required_m3": 1538.5,
+     "structure_type": "check_dam",
+     "top_width_m": 39.12,
+     "trap_efficiency": 0.95,
+     "unit_cost_usd_m3": 150.0
+    },
+    "a500000_s50": {
+     "achieved_retention_years": 14.9,
+     "annual_sediment_m3": 1923.08,
+     "assumed_trap_efficiency": 0.8,
+     "channel_width_m": 5.0,
+     "dam_height_m": 42.08,
+     "dam_length_m": 10.0,
+     "dam_volume_m3": 28665.2,
+     "design_head_m": 16.832,
+     "design_life_years": 10,
+     "design_standard": "FAO Watershed Management Field Manual (check dam)",
+     "estimated_cost_usd": 4299783.0,
+     "exceeds_check_dam_band": true,
+     "freeboard_m": 0.5,
+     "materials": [
+      "stone",
+      "gabion"
+     ],
+     "peak_flow_m3s": 1.6667,
+     "runoff_volume_m3": 36000.0,
+     "spacing_m": 50.0,
+     "spillway_width_m": 0.014,
+     "storage_deficit_m3": 0.0,
+     "storage_provided_m3": 28665.2,
+     "storage_required_m3": 15384.6,
+     "structure_type": "check_dam",
+     "top_width_m": 131.24,
+     "trap_efficiency": 0.95,
+     "unit_cost_usd_m3": 150.0
+    },
+    "a50000_s1": {
+     "achieved_retention_years": 8.6,
+     "annual_sediment_m3": 3.85,
+     "assumed_trap_efficiency": 0.8,
+     "channel_width_m": 5.0,
+     "dam_height_m": 0.57,
+     "dam_length_m": 10.0,
+     "dam_volume_m3": 33.2,
+     "design_head_m": 0.227,
+     "design_life_years": 10,
+     "design_standard": "FAO Watershed Management Field Manual (check dam)",
+     "estimated_cost_usd": 4977.0,
+     "exceeds_check_dam_band": false,
+     "freeboard_m": 0.3,
+     "materials": [
+      "stone",
+      "gabion"
+     ],
+     "peak_flow_m3s": 0.1667,
+     "runoff_volume_m3": 3600.0,
+     "spacing_m": 11.3,
+     "spillway_width_m": 0.907,
+     "storage_deficit_m3": 0.0,
+     "storage_provided_m3": 33.2,
+     "storage_required_m3": 30.8,
+     "structure_type": "check_dam",
+     "top_width_m": 6.7,
+     "trap_efficiency": 0.946,
+     "unit_cost_usd_m3": 150.0
+    },
+    "a50000_s5": {
+     "achieved_retention_years": 10.0,
+     "annual_sediment_m3": 19.23,
+     "assumed_trap_efficiency": 0.8,
+     "channel_width_m": 5.0,
+     "dam_height_m": 2.29,
+     "dam_length_m": 10.0,
+     "dam_volume_m3": 193.2,
+     "design_head_m": 0.916,
+     "design_life_years": 10,
+     "design_standard": "FAO Watershed Management Field Manual (check dam)",
+     "estimated_cost_usd": 28977.0,
+     "exceeds_check_dam_band": false,
+     "freeboard_m": 0.3,
+     "materials": [
+      "stone",
+      "gabion"
+     ],
+     "peak_flow_m3s": 0.1667,
+     "runoff_volume_m3": 3600.0,
+     "spacing_m": 45.8,
+     "spillway_width_m": 0.112,
+     "storage_deficit_m3": 0.0,
+     "storage_provided_m3": 193.2,
+     "storage_required_m3": 153.8,
+     "structure_type": "check_dam",
+     "top_width_m": 11.87,
+     "trap_efficiency": 0.95,
+     "unit_cost_usd_m3": 150.0
+    },
+    "a50000_s50": {
+     "achieved_retention_years": 13.0,
+     "annual_sediment_m3": 192.31,
+     "assumed_trap_efficiency": 0.8,
+     "channel_width_m": 5.0,
+     "dam_height_m": 11.37,
+     "dam_length_m": 10.0,
+     "dam_volume_m3": 2508.3,
+     "design_head_m": 4.549,
+     "design_life_years": 10,
+     "design_standard": "FAO Watershed Management Field Manual (check dam)",
+     "estimated_cost_usd": 376250.0,
+     "exceeds_check_dam_band": true,
+     "freeboard_m": 0.5,
+     "materials": [
+      "stone",
+      "gabion"
+     ],
+     "peak_flow_m3s": 0.1667,
+     "runoff_volume_m3": 3600.0,
+     "spacing_m": 50.0,
+     "spillway_width_m": 0.01,
+     "storage_deficit_m3": 0.0,
+     "storage_provided_m3": 2508.3,
+     "storage_required_m3": 1538.5,
+     "structure_type": "check_dam",
+     "top_width_m": 39.12,
+     "trap_efficiency": 0.95,
+     "unit_cost_usd_m3": 150.0
+    },
+    "a5000_s1": {
+     "achieved_retention_years": 74.8,
+     "annual_sediment_m3": 0.38,
+     "assumed_trap_efficiency": 0.8,
+     "channel_width_m": 5.0,
+     "dam_height_m": 0.5,
+     "dam_length_m": 10.0,
+     "dam_volume_m3": 28.8,
+     "design_head_m": 0.2,
+     "design_life_years": 10,
+     "design_standard": "FAO Watershed Management Field Manual (check dam)",
+     "estimated_cost_usd": 4312.0,
+     "exceeds_check_dam_band": false,
+     "freeboard_m": 0.3,
+     "materials": [
+      "stone",
+      "gabion"
+     ],
+     "peak_flow_m3s": 0.0167,
+     "runoff_volume_m3": 360.0,
+     "spacing_m": 10.0,
+     "spillway_width_m": 0.11,
+     "storage_deficit_m3": 0.0,
+     "storage_provided_m3": 28.8,
+     "storage_required_m3": 3.1,
+     "structure_type": "check_dam",
+     "top_width_m": 6.5,
+     "trap_efficiency": 0.95,
+     "unit_cost_usd_m3": 150.0
+    },
+    "a5000_s5": {
+     "achieved_retention_years": 15.0,
+     "annual_sediment_m3": 1.92,
+     "assumed_trap_efficiency": 0.8,
+     "channel_width_m": 5.0,
+     "dam_height_m": 0.5,
+     "dam_length_m": 10.0,
+     "dam_volume_m3": 28.8,
+     "design_head_m": 0.2,
+     "design_life_years": 10,
+     "design_standard": "FAO Watershed Management Field Manual (check dam)",
+     "estimated_cost_usd": 4312.0,
+     "exceeds_check_dam_band": false,
+     "freeboard_m": 0.3,
+     "materials": [
+      "stone",
+      "gabion"
+     ],
+     "peak_flow_m3s": 0.0167,
+     "runoff_volume_m3": 360.0,
+     "spacing_m": 10.0,
+     "spillway_width_m": 0.11,
+     "storage_deficit_m3": 0.0,
+     "storage_provided_m3": 28.8,
+     "storage_required_m3": 15.4,
+     "structure_type": "check_dam",
+     "top_width_m": 6.5,
+     "trap_efficiency": 0.95,
+     "unit_cost_usd_m3": 150.0
+    },
+    "a5000_s50": {
+     "achieved_retention_years": 10.0,
+     "annual_sediment_m3": 19.23,
+     "assumed_trap_efficiency": 0.8,
+     "channel_width_m": 5.0,
+     "dam_height_m": 2.29,
+     "dam_length_m": 10.0,
+     "dam_volume_m3": 193.2,
+     "design_head_m": 0.916,
+     "design_life_years": 10,
+     "design_standard": "FAO Watershed Management Field Manual (check dam)",
+     "estimated_cost_usd": 28977.0,
+     "exceeds_check_dam_band": false,
+     "freeboard_m": 0.3,
+     "materials": [
+      "stone",
+      "gabion"
+     ],
+     "peak_flow_m3s": 0.0167,
+     "runoff_volume_m3": 360.0,
+     "spacing_m": 45.8,
+     "spillway_width_m": 0.011,
+     "storage_deficit_m3": 0.0,
+     "storage_provided_m3": 193.2,
+     "storage_required_m3": 153.8,
+     "structure_type": "check_dam",
+     "top_width_m": 11.87,
+     "trap_efficiency": 0.95,
+     "unit_cost_usd_m3": 150.0
+    }
+   },
+   "check_dam_sweep": {
+    "a10000": {
+     "achieved_retention_years": 8.6,
+     "annual_sediment_m3": 3.85,
+     "assumed_trap_efficiency": 0.8,
+     "channel_width_m": 5.0,
+     "dam_height_m": 0.57,
+     "dam_length_m": 10.0,
+     "dam_volume_m3": 33.2,
+     "design_head_m": 0.227,
+     "design_life_years": 10,
+     "design_standard": "FAO Watershed Management Field Manual (check dam)",
+     "estimated_cost_usd": 4977.0,
+     "exceeds_check_dam_band": false,
+     "freeboard_m": 0.3,
+     "materials": [
+      "stone",
+      "gabion"
+     ],
+     "peak_flow_m3s": 0.0556,
+     "runoff_volume_m3": 1200.0,
+     "spacing_m": 3.8,
+     "spillway_width_m": 0.302,
+     "storage_deficit_m3": 0.0,
+     "storage_provided_m3": 33.2,
+     "storage_required_m3": 30.8,
+     "structure_type": "check_dam",
+     "top_width_m": 6.7,
+     "trap_efficiency": 0.946,
+     "unit_cost_usd_m3": 150.0
+    },
+    "a100000": {
+     "achieved_retention_years": 10.9,
+     "annual_sediment_m3": 38.46,
+     "assumed_trap_efficiency": 0.8,
+     "channel_width_m": 5.0,
+     "dam_height_m": 3.89,
+     "dam_length_m": 10.0,
+     "dam_volume_m3": 421.0,
+     "design_head_m": 1.555,
+     "design_life_years": 10,
+     "design_standard": "FAO Watershed Management Field Manual (check dam)",
+     "estimated_cost_usd": 63153.0,
+     "exceeds_check_dam_band": false,
+     "freeboard_m": 0.5,
+     "materials": [
+      "stone",
+      "gabion"
+     ],
+     "peak_flow_m3s": 0.5556,
+     "runoff_volume_m3": 12000.0,
+     "spacing_m": 25.9,
+     "spillway_width_m": 0.169,
+     "storage_deficit_m3": 0.0,
+     "storage_provided_m3": 421.0,
+     "storage_required_m3": 307.7,
+     "structure_type": "check_dam",
+     "top_width_m": 16.66,
+     "trap_efficiency": 0.95,
+     "unit_cost_usd_m3": 150.0
+    },
+    "a1000000": {
+     "achieved_retention_years": 13.8,
+     "annual_sediment_m3": 384.62,
+     "assumed_trap_efficiency": 0.8,
+     "channel_width_m": 5.0,
+     "dam_height_m": 17.19,
+     "dam_length_m": 10.0,
+     "dam_volume_m3": 5294.2,
+     "design_head_m": 6.878,
+     "design_life_years": 10,
+     "design_standard": "FAO Watershed Management Field Manual (check dam)",
+     "estimated_cost_usd": 794123.0,
+     "exceeds_check_dam_band": true,
+     "freeboard_m": 0.5,
+     "materials": [
+      "stone",
+      "gabion"
+     ],
+     "peak_flow_m3s": 5.5556,
+     "runoff_volume_m3": 120000.0,
+     "spacing_m": 50.0,
+     "spillway_width_m": 0.181,
+     "storage_deficit_m3": 0.0,
+     "storage_provided_m3": 5294.2,
+     "storage_required_m3": 3076.9,
+     "structure_type": "check_dam",
+     "top_width_m": 56.58,
+     "trap_efficiency": 0.95,
+     "unit_cost_usd_m3": 150.0
+    }
+   },
+   "contour_trench": {
+    "s1.0": {
+     "bottom_width_m": 0.3,
+     "cross_section_m2": 0.2,
+     "depth_m": 0.4,
+     "design_standard": "FAO Watershed Management Field Manual (contour trench)",
+     "estimated_cost_usd": 240333.0,
+     "infiltration_efficiency": 0.7,
+     "infiltration_gain_m3": 4205.8,
+     "infiltration_note": "design assumption - calibrate on site",
+     "materials": [
+      "excavated_soil"
+     ],
+     "spacing_m": 30.0,
+     "structure_type": "contour_trench",
+     "total_length_m": 30042.0,
+     "trench_volume_m3": 6008.3,
+     "unit_cost_usd_m": 8.0,
+     "vertical_interval_m": 30.0
+    },
+    "s10.0": {
+     "bottom_width_m": 0.3,
+     "cross_section_m2": 0.2,
+     "depth_m": 0.4,
+     "design_standard": "FAO Watershed Management Field Manual (contour trench)",
+     "estimated_cost_usd": 240333.0,
+     "infiltration_efficiency": 0.7,
+     "infiltration_gain_m3": 4205.8,
+     "infiltration_note": "design assumption - calibrate on site",
+     "materials": [
+      "excavated_soil"
+     ],
+     "spacing_m": 5.0,
+     "structure_type": "contour_trench",
+     "total_length_m": 30042.0,
+     "trench_volume_m3": 6008.3,
+     "unit_cost_usd_m": 8.0,
+     "vertical_interval_m": 5.0
+    },
+    "s20.0": {
+     "bottom_width_m": 0.3,
+     "cross_section_m2": 0.2,
+     "depth_m": 0.4,
+     "design_standard": "FAO Watershed Management Field Manual (contour trench)",
+     "estimated_cost_usd": 240333.0,
+     "infiltration_efficiency": 0.7,
+     "infiltration_gain_m3": 4205.8,
+     "infiltration_note": "design assumption - calibrate on site",
+     "materials": [
+      "excavated_soil"
+     ],
+     "spacing_m": 5.0,
+     "structure_type": "contour_trench",
+     "total_length_m": 30042.0,
+     "trench_volume_m3": 6008.3,
+     "unit_cost_usd_m": 8.0,
+     "vertical_interval_m": 5.0
+    },
+    "s3.0": {
+     "bottom_width_m": 0.3,
+     "cross_section_m2": 0.2,
+     "depth_m": 0.4,
+     "design_standard": "FAO Watershed Management Field Manual (contour trench)",
+     "estimated_cost_usd": 240333.0,
+     "infiltration_efficiency": 0.7,
+     "infiltration_gain_m3": 4205.8,
+     "infiltration_note": "design assumption - calibrate on site",
+     "materials": [
+      "excavated_soil"
+     ],
+     "spacing_m": 10.0,
+     "structure_type": "contour_trench",
+     "total_length_m": 30042.0,
+     "trench_volume_m3": 6008.3,
+     "unit_cost_usd_m": 8.0,
+     "vertical_interval_m": 10.0
+    },
+    "s35.0": {
+     "bottom_width_m": 0.3,
+     "cross_section_m2": 0.2,
+     "depth_m": 0.4,
+     "design_standard": "FAO Watershed Management Field Manual (contour trench)",
+     "estimated_cost_usd": 240333.0,
+     "infiltration_efficiency": 0.7,
+     "infiltration_gain_m3": 4205.8,
+     "infiltration_note": "design assumption - calibrate on site",
+     "materials": [
+      "excavated_soil"
+     ],
+     "spacing_m": 5.0,
+     "structure_type": "contour_trench",
+     "total_length_m": 30042.0,
+     "trench_volume_m3": 6008.3,
+     "unit_cost_usd_m": 8.0,
+     "vertical_interval_m": 5.0
+    },
+    "s5.0": {
+     "bottom_width_m": 0.3,
+     "cross_section_m2": 0.2,
+     "depth_m": 0.4,
+     "design_standard": "FAO Watershed Management Field Manual (contour trench)",
+     "estimated_cost_usd": 240333.0,
+     "infiltration_efficiency": 0.7,
+     "infiltration_gain_m3": 4205.8,
+     "infiltration_note": "design assumption - calibrate on site",
+     "materials": [
+      "excavated_soil"
+     ],
+     "spacing_m": 6.0,
+     "structure_type": "contour_trench",
+     "total_length_m": 30042.0,
+     "trench_volume_m3": 6008.3,
+     "unit_cost_usd_m": 8.0,
+     "vertical_interval_m": 6.0
+    }
+   },
+   "gully_plug": {
+    "g1.0": {
+     "cross_section_m2": 0.21,
+     "estimated_cost_usd": 202.0,
+     "gully_width_m": 1.0,
+     "materials": [
+      "stone",
+      "gabion",
+      "excavated_soil"
+     ],
+     "n_plugs": 16,
+     "plug_bottom_width_m": 1.0,
+     "plug_height_m": 0.3,
+     "plug_length_m": 1.0,
+     "plug_spacing_m": 20,
+     "plug_top_width_m": 0.4,
+     "runoff_volume_m3": 7000.0,
+     "sediment_retention_m3": null,
+     "sediment_retention_note": "not computed: a sediment retention needs a site sediment yield, which this function does not take. The plugs are sized against the runoff volume below.",
+     "structure_type": "gully_plug",
+     "total_volume_m3": 3.4,
+     "volume_per_plug_m3": 0.21
+    },
+    "g2.0": {
+     "cross_section_m2": 0.84,
+     "estimated_cost_usd": 806.0,
+     "gully_width_m": 2.0,
+     "materials": [
+      "stone",
+      "gabion",
+      "excavated_soil"
+     ],
+     "n_plugs": 16,
+     "plug_bottom_width_m": 2.0,
+     "plug_height_m": 0.6,
+     "plug_length_m": 1.0,
+     "plug_spacing_m": 20,
+     "plug_top_width_m": 0.8,
+     "runoff_volume_m3": 7000.0,
+     "sediment_retention_m3": null,
+     "sediment_retention_note": "not computed: a sediment retention needs a site sediment yield, which this function does not take. The plugs are sized against the runoff volume below.",
+     "structure_type": "gully_plug",
+     "total_volume_m3": 13.4,
+     "volume_per_plug_m3": 0.84
+    },
+    "g5.0": {
+     "cross_section_m2": 5.25,
+     "estimated_cost_usd": 5040.0,
+     "gully_width_m": 5.0,
+     "materials": [
+      "stone",
+      "gabion",
+      "excavated_soil"
+     ],
+     "n_plugs": 16,
+     "plug_bottom_width_m": 5.0,
+     "plug_height_m": 1.5,
+     "plug_length_m": 1.0,
+     "plug_spacing_m": 20,
+     "plug_top_width_m": 2.0,
+     "runoff_volume_m3": 7000.0,
+     "sediment_retention_m3": null,
+     "sediment_retention_note": "not computed: a sediment retention needs a site sediment yield, which this function does not take. The plugs are sized against the runoff volume below.",
+     "structure_type": "gully_plug",
+     "total_volume_m3": 84.0,
+     "volume_per_plug_m3": 5.25
+    }
+   },
+   "half_moon": {
+    "a500": {
+     "diameter_m": 3.0,
+     "estimated_cost_usd": 160,
+     "materials": [
+      "excavated_soil"
+     ],
+     "n_structures": 32,
+     "structure_type": "half_moon",
+     "total_volume_m3": 45.2,
+     "volume_per_structure_m3": 1.41
+    },
+    "a5000": {
+     "diameter_m": 3.0,
+     "estimated_cost_usd": 1565,
+     "materials": [
+      "excavated_soil"
+     ],
+     "n_structures": 313,
+     "structure_type": "half_moon",
+     "total_volume_m3": 442.5,
+     "volume_per_structure_m3": 1.41
+    },
+    "a50000": {
+     "diameter_m": 3.0,
+     "estimated_cost_usd": 15625,
+     "materials": [
+      "excavated_soil"
+     ],
+     "n_structures": 3125,
+     "structure_type": "half_moon",
+     "total_volume_m3": 4417.9,
+     "volume_per_structure_m3": 1.41
+    }
+   },
+   "terrace": {
+    "s10.0_a200": {
+     "channel_depth_m": 0.3,
+     "channel_volume_m3": 1.9,
+     "erosion_reduction_pct": 0.0,
+     "estimated_cost_usd": 170.0,
+     "materials": [
+      "excavated_soil",
+      "stone_outlet"
+     ],
+     "n_rows": 1,
+     "spacing_m": 35,
+     "structure_type": "terrace",
+     "total_length_m": 14.0
+    },
+    "s10.0_a5000": {
+     "channel_depth_m": 0.3,
+     "channel_volume_m3": 28.6,
+     "erosion_reduction_pct": 35,
+     "estimated_cost_usd": 2546.0,
+     "materials": [
+      "excavated_soil",
+      "stone_outlet"
+     ],
+     "n_rows": 3,
+     "spacing_m": 35,
+     "structure_type": "terrace",
+     "total_length_m": 212.0
+    },
+    "s10.0_a500000": {
+     "channel_depth_m": 0.3,
+     "channel_volume_m3": 2004.6,
+     "erosion_reduction_pct": 67,
+     "estimated_cost_usd": 178191.0,
+     "materials": [
+      "excavated_soil",
+      "stone_outlet"
+     ],
+     "n_rows": 21,
+     "spacing_m": 35,
+     "structure_type": "terrace",
+     "total_length_m": 14849.0
+    },
+    "s2.0_a200": {
+     "channel_depth_m": 0.3,
+     "channel_volume_m3": 1.9,
+     "erosion_reduction_pct": 0.0,
+     "estimated_cost_usd": 170.0,
+     "materials": [
+      "excavated_soil",
+      "stone_outlet"
+     ],
+     "n_rows": 1,
+     "spacing_m": 50,
+     "structure_type": "terrace",
+     "total_length_m": 14.0
+    },
+    "s2.0_a5000": {
+     "channel_depth_m": 0.3,
+     "channel_volume_m3": 19.1,
+     "erosion_reduction_pct": 21,
+     "estimated_cost_usd": 1697.0,
+     "materials": [
+      "excavated_soil",
+      "stone_outlet"
+     ],
+     "n_rows": 2,
+     "spacing_m": 50,
+     "structure_type": "terrace",
+     "total_length_m": 141.0
+    },
+    "s2.0_a500000": {
+     "channel_depth_m": 0.3,
+     "channel_volume_m3": 1431.9,
+     "erosion_reduction_pct": 65,
+     "estimated_cost_usd": 127279.0,
+     "materials": [
+      "excavated_soil",
+      "stone_outlet"
+     ],
+     "n_rows": 15,
+     "spacing_m": 50,
+     "structure_type": "terrace",
+     "total_length_m": 10607.0
+    },
+    "s22.0_a200": {
+     "channel_depth_m": 0.3,
+     "channel_volume_m3": 1.9,
+     "erosion_reduction_pct": 0.0,
+     "estimated_cost_usd": 170.0,
+     "materials": [
+      "excavated_soil",
+      "stone_outlet"
+     ],
+     "n_rows": 1,
+     "spacing_m": 25,
+     "structure_type": "terrace",
+     "total_length_m": 14.0
+    },
+    "s22.0_a5000": {
+     "channel_depth_m": 0.3,
+     "channel_volume_m3": 28.6,
+     "erosion_reduction_pct": 45,
+     "estimated_cost_usd": 2546.0,
+     "materials": [
+      "excavated_soil",
+      "stone_outlet"
+     ],
+     "n_rows": 3,
+     "spacing_m": 25,
+     "structure_type": "terrace",
+     "total_length_m": 212.0
+    },
+    "s22.0_a500000": {
+     "channel_depth_m": 0.3,
+     "channel_volume_m3": 2768.3,
+     "erosion_reduction_pct": 68,
+     "estimated_cost_usd": 246073.0,
+     "materials": [
+      "excavated_soil",
+      "stone_outlet"
+     ],
+     "n_rows": 29,
+     "spacing_m": 25,
+     "structure_type": "terrace",
+     "total_length_m": 20506.0
+    },
+    "s40.0_a200": {
+     "channel_depth_m": 0.3,
+     "channel_volume_m3": 1.9,
+     "erosion_reduction_pct": 0.0,
+     "estimated_cost_usd": 170.0,
+     "materials": [
+      "excavated_soil",
+      "stone_outlet"
+     ],
+     "n_rows": 1,
+     "spacing_m": 15,
+     "structure_type": "terrace",
+     "total_length_m": 14.0
+    },
+    "s40.0_a5000": {
+     "channel_depth_m": 0.3,
+     "channel_volume_m3": 47.7,
+     "erosion_reduction_pct": 55,
+     "estimated_cost_usd": 4243.0,
+     "materials": [
+      "excavated_soil",
+      "stone_outlet"
+     ],
+     "n_rows": 5,
+     "spacing_m": 15,
+     "structure_type": "terrace",
+     "total_length_m": 354.0
+    },
+    "s40.0_a500000": {
+     "channel_depth_m": 0.3,
+     "channel_volume_m3": 4582.1,
+     "erosion_reduction_pct": 69,
+     "estimated_cost_usd": 407294.0,
+     "materials": [
+      "excavated_soil",
+      "stone_outlet"
+     ],
+     "n_rows": 48,
+     "spacing_m": 15,
+     "structure_type": "terrace",
+     "total_length_m": 33941.0
+    }
+   }
+  },
+  "watershed_network": {
+   "horton": {
+    "chain5": {
+     "Ra": 0,
+     "Rb": 0.6666666667,
+     "Rl": 3.0,
+     "order_counts": {
+      "1": 2,
+      "2": 3
+     },
+     "order_lengths": {
+      "1": 300.0,
+      "2": 900.0
+     }
+    },
+    "triangle": {
+     "Ra": 0,
+     "Rb": 2.0,
+     "Rl": 1.0,
+     "order_counts": {
+      "1": 2,
+      "2": 1
+     },
+     "order_lengths": {
+      "1": 300.0,
+      "2": 300.0
+     }
+    }
+   },
+   "kirpich": {
+    "100.0_0.005": 5.1991357815,
+    "100.0_0.02": 3.0488640752,
+    "100.0_0.1": 1.6407205262,
+    "100.0_0.4": 0.9621471875,
+    "1000.0_0.005": 30.614781183,
+    "1000.0_0.02": 17.9530426672,
+    "1000.0_0.1": 9.6612787207,
+    "1000.0_0.4": 5.6655426689,
+    "500.0_0.005": 17.9530426672,
+    "500.0_0.02": 10.5279779426,
+    "500.0_0.1": 5.6655426689,
+    "500.0_0.4": 3.3223732243,
+    "5000.0_0.005": 105.7153526893,
+    "5000.0_0.02": 61.9933301522,
+    "5000.0_0.1": 33.3611885476,
+    "5000.0_0.4": 19.5635839383
+   },
+   "muskingum_stable": [
+    0.0,
+    2.3076923077,
+    11.6863905325,
+    19.6199362767,
+    13.7584468331,
+    5.8673338846,
+    1.3540001272
+   ],
+   "muskingum_stable_wide": [
+    0.0,
+    2.0,
+    11.4,
+    20.28,
+    14.056,
+    5.8112,
+    1.16224
+   ],
+   "muskingum_unstable_rejected": {
+    "message": "unstable Muskingum time step: dt=10.0 h falls outside the stable window 0.4000 <= dt <= 1.6000 h for K=1.0 h and x=0.2 (2 K x <= dt <= 2 K (1 - x)). Outside it the coefficients C0=0.8276, C1=0.8966, C2=-0.7241 go negative, the recurrence is a difference rather than a weighted average, and it can emit negative discharge. Sub-step the hydrograph to fall inside the window.",
+    "raised": "ValueError"
+   },
+   "muskingum_window": {
+    "K0.5_x0.0": {
+     "dt_max": 1.0,
+     "dt_min": 0.0
+    },
+    "K1.0_x0.2": {
+     "dt_max": 1.6,
+     "dt_min": 0.4
+    },
+    "K2.0_x0.25": {
+     "dt_max": 3.0,
+     "dt_min": 1.0
+    }
+   },
+   "strahler": {
+    "chain5": {
+     "max_order": 2,
+     "orders": {
+      "a": 1,
+      "b": 1,
+      "c": 2,
+      "d": 2,
+      "e": 2
+     },
+     "stream_count": 5
+    },
+    "triangle": {
+     "max_order": 2,
+     "orders": {
+      "a": 1,
+      "b": 1,
+      "c": 2
+     },
+     "stream_count": 3
+    }
+   }
+  }
+ },
+ "rel_tolerance": 1e-09,
+ "schema_version": 1
+}

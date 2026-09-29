@@ -12,6 +12,8 @@
 // The Python counterpart lives in engine/hydroma/climate/et_calculator.py.
 #pragma once
 
+#include <vector>
+
 namespace hydroma {
 
 /// Hargreaves-Samani ET0 (temperature-only method, FAO-56 recommended

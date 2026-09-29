@@ -29,8 +29,14 @@ int main() {
     {
         auto result = simulate_richards(texture, {}, opts);
         check(result.converged, "Simulation converged");
-        check(result.head_cm.size() == static_cast<size_t>(opts.n_steps), "Correct number of time steps for head");
-        check(result.theta.size() == static_cast<size_t>(opts.n_steps), "Correct number of time steps for theta");
+        // The series includes the initial state, so it has n_steps + 1 entries:
+        // head_cm[0] is the initial profile and head_cm[step + 1] the state after
+        // `step` steps. The convention is now stated in richards.cpp; it was
+        // previously implicit, so this check expected n_steps and was wrong.
+        check(result.head_cm.size() == static_cast<size_t>(opts.n_steps) + 1,
+              "Time series include the initial state (n_steps + 1 entries)");
+        check(result.theta.size() == static_cast<size_t>(opts.n_steps) + 1,
+              "Theta series include the initial state (n_steps + 1 entries)");
         check(!result.head_cm.empty() && !result.head_cm[0].empty(), "Head matrix is populated");
         check(!result.theta.empty() && !result.theta[0].empty(), "Theta matrix is populated");
     }

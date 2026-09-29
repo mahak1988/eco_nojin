@@ -51,14 +51,15 @@ export default async function APIAccessPage({ params }: { params: Promise<{ loca
       <SiteNav locale={locale} />
 
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp
-          source={TOOL_REGISTRY_PATH}
-          label={developers('title')}
-          verified={registry.ok}
-          method={TOOL_REGISTRY_PATH}
-        >
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="display text-4xl font-bold text-ink">{developers('title')}</h1>
-        </ProvenanceStamp>
+          <ProvenanceStamp
+            source={TOOL_REGISTRY_PATH}
+            label={developers('title')}
+            verified={registry.ok}
+            method={TOOL_REGISTRY_PATH}
+          />
+        </div>
         <p className="mt-3 max-w-2xl text-ink-soft">{developers('lead')}</p>
         <p className="mt-3 max-w-2xl text-sm text-ink-soft">{developers('what')}</p>
         <p className="mt-3 max-w-2xl text-sm text-ink-soft">{developers('audience')}</p>

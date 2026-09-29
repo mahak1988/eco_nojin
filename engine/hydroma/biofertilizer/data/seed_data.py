@@ -5,7 +5,15 @@ Reference data for strains and formulations.
 Auto-generated on 2026-08-24T00:15:57.513648
 """
 
-from datetime import datetime
+from datetime import date as date_type, datetime
+# The call sites below are spelled date_type(...) because this module was
+# written assuming ``import datetime``. Importing the class under its own
+# name and using it directly is the same expression without the ambiguity:
+# ``from datetime import datetime`` binds the CLASS, and ``datetime.date``
+# then resolves to the class descriptor, which raises
+#   TypeError: descriptor 'date' for 'datetime.datetime' objects
+#            doesn't apply to a 'int' object
+# on the very first record, so the module has never been importable.
 
 STRAINS = [
     {
@@ -15,7 +23,7 @@ STRAINS = [
         "function": "Free-living nitrogen fixation, produces IAA and gibberellins",
         "source": "Soil isolate - Isfahan region",
         "isolation_location": "Isfahan, Iran",
-        "isolation_date": datetime.date(2023, 3, 15),
+        "isolation_date": date_type(2023, 3, 15),
         "genetic_markers": "nifH, nifD, nifK genes",
         "biosafety_level": 1,
         "efficacy_data": '{"n_fixation_mg_per_g_soil": 2.5, "iaa_production_ug_per_ml": 45}',
@@ -31,7 +39,7 @@ STRAINS = [
         "function": "Associative N-fixation, ACC deaminase, IAA production",
         "source": "Rhizosphere isolate - wheat fields",
         "isolation_location": "Khuzestan, Iran",
-        "isolation_date": datetime.date(2023, 5, 20),
+        "isolation_date": date_type(2023, 5, 20),
         "genetic_markers": "nifH, acdS genes",
         "biosafety_level": 1,
         "efficacy_data": '{"n_fixation_mg_per_g_soil": 1.8, "acd_activity": "high"}',
@@ -47,7 +55,7 @@ STRAINS = [
         "function": "Symbiotic N-fixation in legume root nodules",
         "source": "Nodule isolate - clover",
         "isolation_location": "Mazandaran, Iran",
-        "isolation_date": datetime.date(2023, 4, 10),
+        "isolation_date": date_type(2023, 4, 10),
         "genetic_markers": "nifH, nodA, nodC genes",
         "biosafety_level": 1,
         "efficacy_data": '{"n_fixation_mg_per_plant": 120, "nodulation_rate": 0.85}',
@@ -63,7 +71,7 @@ STRAINS = [
         "function": "P-solubilization, siderophore production, biocontrol",
         "source": "Rhizosphere isolate - corn fields",
         "isolation_location": "Fars, Iran",
-        "isolation_date": datetime.date(2023, 6, 5),
+        "isolation_date": date_type(2023, 6, 5),
         "genetic_markers": "pqq, pvd genes",
         "biosafety_level": 1,
         "efficacy_data": '{"p_solubilization_mg_per_l": 285, "siderophore_units": 85}',
@@ -79,7 +87,7 @@ STRAINS = [
         "function": "P and K solubilization, IAA production, biocontrol, ACC deaminase",
         "source": "Soil isolate - organic farm",
         "isolation_location": "Gilan, Iran",
-        "isolation_date": datetime.date(2023, 7, 12),
+        "isolation_date": date_type(2023, 7, 12),
         "genetic_markers": "16S rRNA confirmed, ituD, fenA genes",
         "biosafety_level": 1,
         "efficacy_data": '{"p_sol_mg_per_l": 320, "k_sol_mg_per_l": 180, "iaa_ug_per_ml": 55}',
@@ -95,7 +103,7 @@ STRAINS = [
         "function": "P-solubilization via organic acid production",
         "source": "Phosphatic soil isolate",
         "isolation_location": "Yazd, Iran",
-        "isolation_date": datetime.date(2023, 8, 18),
+        "isolation_date": date_type(2023, 8, 18),
         "genetic_markers": "gcd, pqq genes",
         "biosafety_level": 1,
         "efficacy_data": '{"p_solubilization_mg_per_l": 410, "organic_acids": "gluconic, citric"}',
@@ -111,7 +119,7 @@ STRAINS = [
         "function": "Endophytic N-fixation in sugarcane and cereals",
         "source": "Sugarcane stem isolate",
         "isolation_location": "Khuzestan, Iran",
-        "isolation_date": datetime.date(2023, 9, 5),
+        "isolation_date": date_type(2023, 9, 5),
         "genetic_markers": "nifH, nifD genes",
         "biosafety_level": 1,
         "efficacy_data": '{"n_fixation_mg_per_g_fw": 3.2, "iaa_production": "high"}',
@@ -127,7 +135,7 @@ STRAINS = [
         "function": "P-solubilization, rock phosphate dissolution",
         "source": "Rock phosphate deposit isolate",
         "isolation_location": "Kerman, Iran",
-        "isolation_date": datetime.date(2023, 10, 15),
+        "isolation_date": date_type(2023, 10, 15),
         "genetic_markers": "pqq, gcd genes",
         "biosafety_level": 2,
         "efficacy_data": '{"p_sol_mg_per_l": 380, "rock_phosphate_sol": "excellent"}',
@@ -143,7 +151,7 @@ STRAINS = [
         "function": "Biocontrol, P-solubilization, mycoparasitism",
         "source": "Forest soil isolate",
         "isolation_location": "Golestan, Iran",
-        "isolation_date": datetime.date(2023, 11, 8),
+        "isolation_date": date_type(2023, 11, 8),
         "genetic_markers": "ITS region, ech42 gene",
         "biosafety_level": 1,
         "efficacy_data": '{"biocontrol_efficiency": 0.75, "p_sol_mg_per_l": 180}',
@@ -159,7 +167,7 @@ STRAINS = [
         "function": "Symbiotic N-fixation in soybean root nodules",
         "source": "Soybean nodule isolate",
         "isolation_location": "Mazandaran, Iran",
-        "isolation_date": datetime.date(2023, 12, 1),
+        "isolation_date": date_type(2023, 12, 1),
         "genetic_markers": "nifH, nodA, nodZ genes",
         "biosafety_level": 1,
         "efficacy_data": '{"n_fixation_mg_per_plant": 180, "nodulation_rate": 0.90}',
@@ -175,7 +183,7 @@ STRAINS = [
         "function": "ACC deaminase production, stress tolerance",
         "source": "Plant surface isolate (avirulent strain)",
         "isolation_location": "Tehran, Iran",
-        "isolation_date": datetime.date(2024, 1, 20),
+        "isolation_date": date_type(2024, 1, 20),
         "genetic_markers": "acdS gene",
         "biosafety_level": 1,
         "efficacy_data": '{"acd_activity_units": 12.5, "stress_tolerance_improvement": 0.40}',
@@ -191,7 +199,7 @@ STRAINS = [
         "function": "K-solubilization from feldspar and mica minerals",
         "source": "Potash mine soil isolate",
         "isolation_location": "Semnan, Iran",
-        "isolation_date": datetime.date(2024, 2, 10),
+        "isolation_date": date_type(2024, 2, 10),
         "genetic_markers": "16S rRNA confirmed",
         "biosafety_level": 1,
         "efficacy_data": '{"k_sol_mg_per_l": 95, "feldspar_dissolution": "good"}',

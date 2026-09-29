@@ -8,6 +8,8 @@ Integrates 6-layer soil profiles (0-200cm) with land analysis.
 import logging
 import time
 
+from engine.data.soil_table import get_params
+
 from .models import (
     DeepSoilProfile,
     SalinityClass,
@@ -166,41 +168,45 @@ class SoilIntegrator:
 
         Returns:
             Dict with theta_r, theta_s, alpha, n
+
+        The values come from engine/data/soil_vg_table.csv, the table every
+        backend shares. This method used to carry a second, private copy with
+        different theta_s in all twelve rows — a different dataset, not a
+        different rounding. Dataset B was internally better behaved, rising
+        monotonically with fineness where the canonical table has six
+        inversions, so it was a plausible candidate for the truth. Adopting it
+        would have moved every water-holding number the integrator reports, and
+        nothing offline can establish which dataset is the published one. The
+        conflict is recorded in engine/data/SOIL_TABLE_CONFLICTS.md; the shared
+        table is used here so that the two datasets can no longer diverge
+        silently, and the choice is now visible in one place.
         """
-        if self._soil_modules and "pedotransfer" in self._soil_modules:
-            try:
-                # Try to use pedotransfer module
-                pass  # Module-specific implementation
-            except Exception:
-                pass
+        # The previous guard here was
+        #     if self._soil_modules and "pedotransfer" in self._soil_modules:
+        #         try:
+        #             pass  # Module-specific implementation
+        #         except Exception:
+        #             pass
+        # which could not do anything: the body was two bare passes, so a dead
+        # try/except stood where a dispatch used to be, and the comment implied a
+        # pedotransfer path that was never called. It is removed rather than
+        # tidied, because the honest statement is that the parameters come from
+        # the shared table and nothing else.
 
-        # Fallback: typical values per texture (from literature)
-        vg_params = {
-            SoilTexture.SAND: {"theta_r": 0.045, "theta_s": 0.437, "alpha": 0.145, "n": 2.68},
-            SoilTexture.LOAMY_SAND: {"theta_r": 0.057, "theta_s": 0.437, "alpha": 0.124, "n": 2.28},
-            SoilTexture.SANDY_LOAM: {"theta_r": 0.065, "theta_s": 0.453, "alpha": 0.075, "n": 1.89},
-            SoilTexture.LOAM: {"theta_r": 0.078, "theta_s": 0.463, "alpha": 0.036, "n": 1.56},
-            SoilTexture.SILT_LOAM: {"theta_r": 0.065, "theta_s": 0.471, "alpha": 0.020, "n": 1.41},
-            SoilTexture.SILT: {"theta_r": 0.060, "theta_s": 0.479, "alpha": 0.016, "n": 1.37},
-            SoilTexture.SANDY_CLAY_LOAM: {
-                "theta_r": 0.067,
-                "theta_s": 0.398,
-                "alpha": 0.020,
-                "n": 1.48,
-            },
-            SoilTexture.CLAY_LOAM: {"theta_r": 0.095, "theta_s": 0.464, "alpha": 0.019, "n": 1.31},
-            SoilTexture.SILTY_CLAY_LOAM: {
-                "theta_r": 0.089,
-                "theta_s": 0.471,
-                "alpha": 0.010,
-                "n": 1.23,
-            },
-            SoilTexture.SANDY_CLAY: {"theta_r": 0.100, "theta_s": 0.430, "alpha": 0.027, "n": 1.23},
-            SoilTexture.SILTY_CLAY: {"theta_r": 0.070, "theta_s": 0.479, "alpha": 0.005, "n": 1.09},
-            SoilTexture.CLAY: {"theta_r": 0.090, "theta_s": 0.468, "alpha": 0.008, "n": 1.09},
+        key = texture.value if hasattr(texture, "value") else str(texture)
+        try:
+            params = get_params(key)
+        except KeyError:
+            # Same fail-open policy the rest of the engine uses for an
+            # unrecognised texture, kept here so the integrator does not
+            # silently return clay physics for a typo.
+            params = get_params("loam")
+        return {
+            "theta_r": params["theta_r"],
+            "theta_s": params["theta_s"],
+            "alpha": params["alpha"],
+            "n": params["n"],
         }
-
-        return vg_params.get(texture, vg_params[SoilTexture.LOAM])
 
     def build_default_profile(self, lat: float, lon: float) -> DeepSoilProfile:
         """

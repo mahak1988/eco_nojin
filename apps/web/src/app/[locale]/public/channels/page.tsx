@@ -4,6 +4,7 @@ import { ProvenanceStamp } from '@/components/ProvenanceStamp';
 import { SiteNav } from '@/components/SiteNav';
 import { StatusDot } from '@/components/StatusDot';
 import { Card } from '@/components/ui/Card';
+import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
 import { DataStateCard, SourceFooter, toDataState } from '../data-states';
@@ -50,12 +51,6 @@ type SyncStatus = {
   local_pending_events?: number;
 };
 
-const TITLES: Record<string, string> = { fa: 'کانال‌های دسترسی', en: 'Access Channels' };
-const DESCRIPTIONS: Record<string, string> = {
-  fa: 'وضعیت واقعی کانال‌های USSD، صوت و همگام‌سازی',
-  en: 'The real USSD, voice, and sync channel status',
-};
-
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
@@ -64,21 +59,19 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getTranslations('pageMeta.public-channels');
   return {
-    title: TITLES[locale] ?? TITLES.en,
-    description: DESCRIPTIONS[locale] ?? DESCRIPTIONS.en,
+    title: meta('title'),
+    description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
       url: `${BASE_URL}/${locale}/public/channels`,
-      title: TITLES[locale] ?? TITLES.en,
+      title: meta('title'),
     },
     alternates: {
-      canonical: `${BASE_URL}/${locale}/public/channels`,
-      languages: {
-        fa: `${BASE_URL}/fa/public/channels`,
-        en: `${BASE_URL}/en/public/channels`,
-      },
+      canonical: canonicalFor(locale, '/public/channels'),
+      languages: languageAlternates('/public/channels'),
     },
   };
 }
@@ -86,12 +79,14 @@ export async function generateMetadata({
 export default async function ChannelsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  const meta = await getTranslations('pageMeta.public-channels');
   const t = await getTranslations('public.channels');
   const common = await getTranslations('common');
   const status = await getTranslations('statusLine');
   const template = await getTranslations('market.template');
-  const title = TITLES[locale] ?? TITLES.en;
-  const description = DESCRIPTIONS[locale] ?? DESCRIPTIONS.en;
+  const title = meta('title');
+  const description = meta('description');
 
   const [ussd, menu, voice, languages, sync] = await Promise.all([
     apiGet<UssdStatus>(USSD_STATUS_PATH),
@@ -122,14 +117,15 @@ export default async function ChannelsPage({ params }: { params: Promise<{ local
     <main id="main" className="min-h-dvh">
       <SiteNav locale={locale} />
       <section className="mx-auto max-w-5xl px-6 pb-6 pt-2">
-        <ProvenanceStamp
-          source={USSD_STATUS_PATH}
-          label={title}
-          verified={ussd.ok}
-          method={USSD_STATUS_PATH}
-        >
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="display text-4xl font-bold text-ink">{title}</h1>
-        </ProvenanceStamp>
+          <ProvenanceStamp
+            source={USSD_STATUS_PATH}
+            label={title}
+            verified={ussd.ok}
+            method={USSD_STATUS_PATH}
+          />
+        </div>
         <p className="mt-3 max-w-2xl text-ink-soft">{description}</p>
       </section>
 
