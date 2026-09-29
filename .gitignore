@@ -195,8 +195,17 @@ docs/.doctrees/
 
 # --- 14. Legacy migration & tooling artifacts ---
 *.bak
+# Dated backups. `*.bak` above does not match `page.tsx.bak-20260928` — the
+# suffix is a hyphen, not a dot — and a cleanup pass left fifteen of those
+# untracked across the tree, including `data/econojin.db.bak-20260928` and a
+# `package.json` copy. A backup that is not ignored is a backup that gets
+# committed, and a committed database copy is a committed database.
+*.bak-*
+_quarantine_bak_*/
 _one_shot_backup/
 _secret_migration.local.txt
+# pytest's cost-scenario scratch directory.
+.pytest_tmp_cost/
 FIX_REVIEW.md
 FIX_CONTEXT.txt
 .kilo/
@@ -240,3 +249,9 @@ foundry.lock
 
 # Applier backup: written only when a pass removes catalogue entries
 apps/web/messages/*.bak
+# --- 15. Build and test output added with Storybook and the CWV harness ---
+# A built Storybook is an artefact of the source, not a source. Committing it is how a
+# 12 MB directory of screenshots ends up in a diff.
+apps/web/storybook-static/
+data/pytest/
+reports/*_final.xml
