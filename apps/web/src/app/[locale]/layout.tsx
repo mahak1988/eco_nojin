@@ -11,6 +11,38 @@ import { isRtl, routing } from '@/i18n/routing';
 import '../globals.css';
 import { SITE_URL as BASE_URL } from '@/config/site';
 
+/**
+ * Script font sheets, one per locale that reads a script the three families in
+ * `globals.css` do not carry.
+ *
+ * These rules used to live in `globals.css`, where every page in all fourteen
+ * locales downloaded them: `Noto Sans SC` alone is 97 `@font-face` rules with
+ * disjoint `unicode-range`s, 18.7 kB brotli of rule text that a page in `de`
+ * can never use. They are in `public/styles/fonts/<locale>.css` now, and this
+ * layout links the one file the current locale needs — ten of the fourteen
+ * locales get no extra request at all.
+ *
+ * A `<link>` rather than an `import`: CSS imports are resolved at build time,
+ * so a static import in this layout would put all four sheets in the one
+ * stylesheet every locale loads, which is the thing being fixed. The cost is a
+ * second render-blocking request on four locales out of fourteen; the preload
+ * scanner starts it in the same batch as `globals.css` (both `<link>`s are in
+ * this `<head>`), and `font-display: swap` means the extra request delays which
+ * face is chosen, never legibility. No `preload` hint is added: the link is
+ * already in the first bytes of the document, and preloading a stylesheet that
+ * is also linked buys nothing but a second HTML element to keep in step.
+ *
+ * Cascade order is irrelevant here — these files contain only `@font-face`
+ * rules, which do not participate in the cascade — so React's `precedence`
+ * float is deliberately not used.
+ */
+const SCRIPT_FONT_SHEET: Partial<Record<(typeof routing.locales)[number], string>> = {
+  hi: '/styles/fonts/hi.css',
+  bn: '/styles/fonts/bn.css',
+  zh: '/styles/fonts/zh.css',
+  ur: '/styles/fonts/ur.css',
+};
+
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -111,6 +143,8 @@ export default async function LocaleLayout({
       ? messages.a11y.skipToContent
       : 'Skip to main content';
 
+  const scriptFontSheet = SCRIPT_FONT_SHEET[locale as (typeof routing.locales)[number]];
+
   return (
     <html lang={locale} dir={isRtl(locale) ? 'rtl' : 'ltr'}>
       <head>
@@ -123,6 +157,7 @@ export default async function LocaleLayout({
           `check-page-meta.mjs` fails if a page hand-writes a two-locale one.
         */}
         <link rel="alternate" hrefLang="x-default" href={BASE_URL} />
+        {scriptFontSheet ? <link rel="stylesheet" href={scriptFontSheet} /> : null}
       </head>
       <body className="flex min-h-dvh flex-col">
         <a href="#main-content" className="skip-link">

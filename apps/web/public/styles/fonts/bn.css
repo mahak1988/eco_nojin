@@ -1,0 +1,38 @@
+/* ============================================================
+   Script font sheet — `bn` · one variable-weight slice, Bengali
+   ============================================================
+
+   Loaded only on /bn/** by `app/[locale]/layout.tsx`, which renders
+   <link rel="stylesheet" href="/styles/fonts/bn.css"> when and only when
+   the route locale is `bn`. Nothing else links it.
+
+   Why this file is not in globals.css
+   -----------------------------------
+   `globals.css` is the one stylesheet every page in all fourteen locales loads, so
+   everything in it is paid for by readers who will never use it.
+   `Noto Sans Bengali` is declared here as a single variable-weight face covering
+   the Bengali block, and only `bn` reads that script. In the global sheet it cost
+   every page in every locale bytes for glyphs ten of them cannot render.
+
+   The rules themselves are correct and were not touched — only their address.
+   They stay self-hosted (`src: url("/fonts/…")`), `font-display: swap`, and sliced
+   by `unicode-range`; `scripts/check-font-coverage.mjs` reads this file as well as
+   `globals.css`, so the coverage report still shows all fourteen locales served
+   from this origin, and it fails if a script family is moved back into the
+   global sheet or if this sheet is left unlinked.
+
+   Keep Latin out of this file. Every script stack in `globals.css` ends in
+   `var(--font-sans)`, and the Latin cut of Vazirmatn is bundled there, so the
+   letters, digits and punctuation on a `bn` page come from the same face
+   as the other thirteen locales.
+   ============================================================ */
+
+@font-face {
+  font-family: "Noto Sans Bengali";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/noto-sans-bengali-bengali-wght-normal-TM3GJpr3.woff2") format("woff2");
+  unicode-range:
+    U+0951-0952, U+0964-0965, U+0980-09FE, U+1CD0, U+1CD2, U+1CD5-1CD6, U+1CD8, U+1CE1, U+1CEA, U+1CED, U+1CF2, U+1CF5-1CF7, U+200C-200D, U+20B9, U+25CC, U+A8F1;
+}
