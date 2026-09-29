@@ -428,8 +428,12 @@ class TestSpatialRunoff:
         assert "peak_flow_map_path" in SpatialRunoffOutput.model_fields
         body = inspect.getsource(SpatialRunoffCalculator.execute)
         assert "peak_flow_map_path" not in body, "execute() populates the field after all"
+        # data_source and model are required on every result type, so even an
+        # output with nothing written to disk has to declare where it came from.
         assert (
             SpatialRunoffOutput(
+                data_source="modelled",
+                model="SCS-CN spatial (NRCS TR-55)",
             ).peak_flow_map_path
             is None
         )

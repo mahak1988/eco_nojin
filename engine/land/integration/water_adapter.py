@@ -111,14 +111,13 @@ class GroundwaterResult:
     data_source: str = "simulated"
     model: str = ""
     computed: bool = True
+    aquifer_type: str | None = None
 
     darcy_velocity_m_day: float | None = None
     flow_rate_m3_day: float | None = None
     darcy_velocity_m_day: float | None = None
     seepage_velocity_m_day: float | None = None
     storage_volume_m3: float | None = None
-    data_source: str = "simulated"
-    model: str = ""
 # ============================================================
 # Water Balance Integrator
 # ============================================================

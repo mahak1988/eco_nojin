@@ -8,6 +8,31 @@
   },
   "monthly_limit_usd": 150,
   "alert_thresholds_usd": [75, 120, 150],
+  "collector": {
+    "adapters": {
+      "aws": {
+        "required_env": ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_REGION"],
+        "measures": "EKS, NAT gateways, EBS, data transfer",
+        "note": "Only needed if you deploy on AWS. The cost analysis recommends against it."
+      },
+      "supabase": {
+        "required_env": ["SUPABASE_ACCESS_TOKEN", "SUPABASE_PROJECT_REF"],
+        "measures": "Postgres size; no public per-service bill",
+        "note": "Size is measured but is not spend. Do not treat it as USD."
+      },
+      "vercel": {
+        "required_env": ["VERCEL_TOKEN", "VERCEL_TEAM_ID"],
+        "measures": "bandwidth, build minutes, function invocations",
+        "note": "Reports nothing billable on the Hobby plan, which is not zero cost."
+      },
+      "github": {
+        "required_env": ["GITHUB_TOKEN", "GITHUB_OWNER"],
+        "measures": "Actions minutes",
+        "note": "Needs an owner-level token; the billing endpoint rejects org tokens."
+      }
+    },
+    "invariant": "No adapter may ever report 0 USD for a source it could not read. Unavailable is recorded with a reason instead."
+  },
   "per_provider_caps_usd": {
     "_note": "سقف سخت روزانه. یک حلقهٔ بی‌پایان RAG می‌تواند در یک شب چند صد دلار خرج کند.",
     "llm_groq": 5,

@@ -148,7 +148,6 @@ class SatelliteAnalyzer:
             recommendation=recommendation,
             quality_flags=getattr(tile, "quality_flags", None),
             data_source="modelled",
-            model="satellite field analysis",
         )
 
     def _all_clouded_analysis(
@@ -188,7 +187,6 @@ class SatelliteAnalyzer:
             ),
             quality_flags={"reason": "all_pixels_clouded", **(quality_flags or {})},
             data_source="modelled",
-            model="satellite field analysis",
         )
 
     def _fallback_analysis(self, lat: float, lon: float, analysis_date: date) -> FieldAnalysis:
@@ -215,7 +213,6 @@ class SatelliteAnalyzer:
             recommendation="Satellite data temporarily unavailable. Please try again later or provide manual field observations.",
             quality_flags={"reason": "no_tiles"},
             data_source="modelled",
-            model="satellite field analysis",
         )
 
     def _generate_recommendation(

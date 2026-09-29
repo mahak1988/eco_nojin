@@ -942,10 +942,8 @@ class WaterSavingsResult:
     data_source: str = "simulated"
     model: str = ""
     computed: bool = True
-    data_source: str = "simulated"
-    model: str = ""
-    computed: bool = True
-
+    baseline_irrigation_m3_ha: float | None = None
+    new_irrigation_m3_ha: float | None = None
     water_saved_m3_ha: float | None = None
     water_saved_percent: float | None = None
     annual_water_saved_m3: float | None = None
@@ -1122,11 +1120,11 @@ class ScaleResult:
     data_source: str = "simulated"
     model: str = ""
     computed: bool = True
+    scale_category: str | None = None
+    total_tons: float | None = None
+    material_quantities: dict | None = None
 
     area_ha: float | None = None
-    data_source: str = "simulated"
-    model: str = ""
-    computed: bool = True
 
     total_cost_usd: float | None = None
     logistics_notes: list[str] = None
