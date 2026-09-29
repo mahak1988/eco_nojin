@@ -1,0 +1,62 @@
+{
+  "$comment": [
+    "Lighthouse CI configuration. INERT until `@lhci/cli` is installed — nothing in",
+    "the repository runs it today, and this file does not pretend otherwise.",
+    "",
+    "Why it exists: `apps/web/lighthouserc.json` was written for `@lhci/cli` in 2026-09",
+    "and then never used by anything. The `lighthouse` CLI (which IS installed, and",
+    "which the old scripts/check-cwv.mjs tried to point at this file with",
+    "`--config-path`) does not read an LHCI `ci` block and has no such flag for one.",
+    "The budget in there was therefore never enforced by anything, and the script",
+    "that named it printed success unconditionally.",
+    "",
+    "The enforced gate today is `scripts/check-cwv.mjs`, which drives the Lighthouse",
+    "Node API directly, measures cold and warm separately, and refuses to pass when",
+    "it cannot measure. Its budgets live in docs/performance/cwv-budgets.json so the",
+    "script and this file cannot drift apart by being edited in two places: the",
+    "values below are transcribed from there and the negative test in",
+    "docs/performance/core-web-vitals.md is what proves the enforced path.",
+    "",
+    "To make this file live:  pnpm -C apps/web add -D @lhci/cli",
+    "and then run:  pnpm exec lhci autorun",
+    "Note that @lhci/cli measures a *lab* run only, and does not distinguish cold",
+    "from warm. For the budget this repository is actually held to, use",
+    "  pnpm -C apps/web test:cwv",
+    "which requires a production server and fails loudly when there is none."
+  ],
+  "ci": {
+    "collect": {
+      "staticDistDir": "./apps/web/.next",
+      "url": [
+        "http://localhost:3000/en/auth/login",
+        "http://localhost:3000/en/market/products",
+        "http://localhost:3000/en/learn/content/search",
+        "http://localhost:3000/en/market/bazaars/demo/map",
+        "http://localhost:3000/en/offline",
+        "http://localhost:3000/en/no-such-page-cwv-probe"
+      ],
+      "numberOfRuns": 5,
+      "settings": {
+        "preset": "desktop",
+        "throttlingMethod": "simulate",
+        "chromeFlags": "--headless=new --no-sandbox"
+      }
+    },
+    "assert": {
+      "assertions": {
+        "largest-contentful-paint": ["error", { "maxNumericValue": 2500 }],
+        "cumulative-layout-shift": ["error", { "maxNumericValue": 0.1 }],
+        "server-response-time": ["error", { "maxNumericValue": 800 }],
+        "total-blocking-time": ["error", { "maxNumericValue": 200 }],
+        "categories:performance": ["warn", { "minScore": 0.9 }],
+        "categories:accessibility": ["error", { "minScore": 0.95 }],
+        "categories:best-practices": ["error", { "minScore": 0.9 }],
+        "categories:seo": ["error", { "minScore": 0.9 }]
+      }
+    },
+    "upload": {
+      "target": "filesystem",
+      "outputDir": "./docs/performance/results/lhci"
+    }
+  }
+}
