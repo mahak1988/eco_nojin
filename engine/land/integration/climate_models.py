@@ -8,6 +8,7 @@ from datetime import UTC, datetime
 from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict, Field
+from engine.hydroma.provenance import Provenance
 
 
 class KoppenClimate(StrEnum):
@@ -134,7 +135,7 @@ class ClimateProfile(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
-class ClimateIntegrationResult(BaseModel):
+class ClimateIntegrationResult(Provenance, BaseModel):
     """Result of climate integration with land profile"""
 
     model_config = ConfigDict(

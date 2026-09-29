@@ -26,22 +26,22 @@ from .providers.nasa_power import NasaPowerProvider
 class FieldAnalysis:
     """Complete satellite analysis for a field location."""
 
-    lat: float
-    lon: float
-    analysis_date: date
+    lat: float | None = None
+    lon: float | None = None
+    analysis_date: date = None
     #: None means "not measured" -- no usable pixels, or no scene retrieved.
     #: It is deliberately not 0.0: zero is a real reading for every one of these
     #: indices, and interpret_ndvi(0.0) classifies as bare soil, so a zero would
     #: turn a missing observation into a confident agronomic judgement.
-    ndvi: float | None
-    evi: float | None
-    savi: float | None
-    ndwi: float | None
-    nbr: float | None
-    ndvi_class: dict
-    cloud_cover: float
-    data_quality: str  # "good", "moderate", "poor"
-    recommendation: str
+    ndvi: float | None = None
+    evi: float | None = None
+    savi: float | None = None
+    ndwi: float | None = None
+    nbr: float | None = None
+    ndvi_class: dict = None
+    cloud_cover: float | None = None
+    data_quality: str | None = None
+    recommendation: str | None = None
     data_source: str = "simulated"
     quality_flags: dict[str, Any] | None = None
 
@@ -146,8 +146,9 @@ class SatelliteAnalyzer:
             cloud_cover=tile.cloud_cover,
             data_quality="good" if tile.cloud_cover < 10 else "moderate",
             recommendation=recommendation,
-            data_source=tile.data_source,
             quality_flags=getattr(tile, "quality_flags", None),
+            data_source="modelled",
+            model="satellite field analysis",
         )
 
     def _all_clouded_analysis(
@@ -185,8 +186,9 @@ class SatelliteAnalyzer:
                 "not be computed. Please try again on a clearer day or provide manual "
                 "field observations."
             ),
-            data_source=data_source,
             quality_flags={"reason": "all_pixels_clouded", **(quality_flags or {})},
+            data_source="modelled",
+            model="satellite field analysis",
         )
 
     def _fallback_analysis(self, lat: float, lon: float, analysis_date: date) -> FieldAnalysis:
@@ -211,8 +213,9 @@ class SatelliteAnalyzer:
             cloud_cover=100.0,
             data_quality="poor",
             recommendation="Satellite data temporarily unavailable. Please try again later or provide manual field observations.",
-            data_source="simulated",
             quality_flags={"reason": "no_tiles"},
+            data_source="modelled",
+            model="satellite field analysis",
         )
 
     def _generate_recommendation(

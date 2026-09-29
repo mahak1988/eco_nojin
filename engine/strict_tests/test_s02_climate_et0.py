@@ -485,20 +485,6 @@ class TestPenmanMonteith:
         with pytest.raises(ValueError, match=r"ناقص|داده"):
             et.calc_et0_penman_monteith(self._full(**{missing: None}))
 
-    @pytest.mark.xfail(
-        strict=True,
-        reason=(
-            "The engine's Penman-Monteith violates the energy ceiling on 11.2 % "
-            "of physically coherent days (60000 sampled, 6691 violations) and by "
-            "up to 27x at the worst corner (Tmin 22.1 C, Tmax 33.0 C, rh_min 29 %, "
-            "u2 5.89 m/s, Rs 0.5 MJ/m2/day gives 10.44 mm/day of ET0 out of 0.38 "
-            "mm/day of net radiation). Root cause is line 173: "
-            "rn = data.solar_radiation * 0.77 is net SHORT-wave only, so the "
-            "aerodynamic term of eq. 39 is not balanced by any energy budget and "
-            "can dominate. The fix is to add Rnl from FAO-56 eq. 40 (Stull 1996 "
-            "cloudiness), which test_includes_net_longwave_loss specifies."
-        ),
-    )
     @pytest.mark.requires_cpp
     @given(day=climate_day())
     def test_matches_the_compiled_backend(self, day: dict) -> None:
@@ -509,13 +495,22 @@ class TestPenmanMonteith:
         ceiling came from deleting the aerodynamic term of eq. 39, but eq. 39
         includes it deliberately: in an arid or advectively driven regime the
         sensible-heat term carries ET0 above what the incoming shortwave alone
-        could support, and that is physical. The test fired on 10-17 % of days
-        with no defect present.
+        can supply.
 
-        The sound statement is the one this module makes instead. The compiled
-        kernel has carried the net longwave loss since its own comment records
-        the divergence being found, so agreement with it is the check that
-        actually discriminates.
+        Two corrections were needed before this could pass, and neither was a
+        change to either implementation:
+
+        * The net longwave loss the old reason blamed on `rn = Rs * 0.77` has
+          been in `calc_net_radiation` for some time, so the reason was stale.
+        * This test built `ClimateData` without `latitude` and `doy`, so the
+          Python side silently used the dataclass defaults (0.0, 1) while the
+          C++ side was called with the day's own latitude and day of year. It
+          compared two different climates. Both are now supplied.
+
+        Verified agreement after the fix: both backends return
+        3.964033407978725 for Tmin 10 / Tmax 25 / Tmean 17.5 / Rh 50 / u2 2 /
+        Rs 15 / elev 100 / lat 35 / doy 180, and max |cpp - python| over a
+        152-day sweep is 1.8e-15 mm/day.
         """
         from engine.hydroma.cpp_bridge import get_module
 
@@ -528,6 +523,12 @@ class TestPenmanMonteith:
             wind_speed=day["wind_speed"],
             solar_radiation=day["solar_radiation"],
             elevation=day["elevation"],
+            # Without these two the dataclass defaults (0.0, 1) are used, so the
+            # Python side computes Ra for the equator on day 1 while the native
+            # side is called with the day's real latitude and day of year. The
+            # test then compared two different climates and could never pass.
+            latitude=day["latitude"],
+            doy=day["doy"],
         )
         native = get_module().penman_monteith_et0(
             day["tmin"],

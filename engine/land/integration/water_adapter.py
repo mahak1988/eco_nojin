@@ -22,6 +22,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
 from typing import Any
+from engine.hydroma.provenance import Provenance
 
 logger = logging.getLogger(__name__)
 
@@ -47,12 +48,16 @@ class WaterBalanceInput:
 class WaterBalanceResult:
     """Water balance result (P - ET - R - dS = 0)"""
 
-    precipitation_mm: float
-    evapotranspiration_mm: float
-    surface_runoff_mm: float
-    deep_percolation_mm: float
-    storage_change_mm: float
-    final_storage_mm: float
+    data_source: str = "simulated"
+    model: str = ""
+    computed: bool = True
+
+    precipitation_mm: float | None = None
+    evapotranspiration_mm: float | None = None
+    surface_runoff_mm: float | None = None
+    deep_percolation_mm: float | None = None
+    storage_change_mm: float | None = None
+    final_storage_mm: float | None = None
     balance_error_mm: float = 0.0
     is_balanced: bool = True
     metadata: dict[str, Any] = field(default_factory=dict)
@@ -71,13 +76,18 @@ class RunoffInput:
 @dataclass
 class RunoffResult:
     """SCS-CN runoff result"""
+    data_source: str = "simulated"
+    model: str = ""
+    computed: bool = True
 
-    runoff_mm: float
-    runoff_volume_m3: float
-    peak_flow_m3s: float
-    cn_adjusted: float
-    s_parameter_mm: float
-    initial_abstraction_mm: float
+
+    runoff_mm: float | None = None
+    runoff_volume_m3: float | None = None
+
+    peak_flow_m3s: float | None = None
+    cn_adjusted: float | None = None
+    s_parameter_mm: float | None = None
+    initial_abstraction_mm: float | None = None
     method: str = "scs_cn"
 
 
@@ -97,13 +107,18 @@ class GroundwaterInput:
 class GroundwaterResult:
     """Groundwater flow result"""
 
-    flow_rate_m3_day: float
-    darcy_velocity_m_day: float
-    seepage_velocity_m_day: float
-    storage_volume_m3: float
-    aquifer_type: str = "unconfined"
+    flow_rate_m3_day: float | None = None
+    data_source: str = "simulated"
+    model: str = ""
+    computed: bool = True
 
-
+    darcy_velocity_m_day: float | None = None
+    flow_rate_m3_day: float | None = None
+    darcy_velocity_m_day: float | None = None
+    seepage_velocity_m_day: float | None = None
+    storage_volume_m3: float | None = None
+    data_source: str = "simulated"
+    model: str = ""
 # ============================================================
 # Water Balance Integrator
 # ============================================================

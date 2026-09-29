@@ -45,6 +45,7 @@ from engine.hydroma.simulation_env.weather import (
     hargreaves_et0,
 )
 from engine.hydroma.soil.physics import available_water_capacity
+from engine.hydroma.provenance import Provenance
 
 _BASE_SM = 0.5  # initial soil-moisture fraction of TAW
 
@@ -144,7 +145,11 @@ class DroughtScenario:
 class DroughtResult:
     """Output of a drought stress progression simulation."""
 
-    annual_impacts: list[AnnualImpact]
+    data_source: str = "simulated"
+    model: str = ""
+    computed: bool = True
+
+    annual_impacts: list[AnnualImpact] = None
     daily_weather: pd.DataFrame | None = None
     drought_curve: list[dict[str, float]] = field(default_factory=list)
     metadata: SimulationMetadata | None = None
@@ -312,14 +317,18 @@ class MonsoonScenario:
 
 @dataclass
 class MonsoonResult:
-    annual_precip_mm: float
-    peak_24h_precip_mm: float
-    runoff_volume_m3: float
-    flood_depth_mm: float
-    sediment_yield_t: float
-    daily_weather: pd.DataFrame
-    metadata: SimulationMetadata
-    summary: dict[str, Any]
+    annual_precip_mm: float | None = None
+    peak_24h_precip_mm: float | None = None
+    runoff_volume_m3: float | None = None
+
+    data_source: str = "simulated"
+    model: str = ""
+    computed: bool = True
+    flood_depth_mm: float | None = None
+    sediment_yield_t: float | None = None
+    daily_weather: pd.DataFrame = None
+    metadata: SimulationMetadata = None
+    summary: dict[str, Any] = None
 
 
 def simulate_monsoon(

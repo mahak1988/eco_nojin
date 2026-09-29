@@ -6,16 +6,27 @@ Economic Analysis for Agricultural Projects
 from __future__ import annotations
 
 from dataclasses import dataclass
+from engine.hydroma.provenance import Provenance
 
 
 @dataclass
 class EconomicResult:
-    npv: float
-    irr: float | None
-    payback_years: float
-    gross_margin: float
-    net_margin: float
-    roi: float
+    # The provenance fields were added above the required ones, and in a
+    # dataclass a field without a default may not follow one that has it. The
+    # module then failed at import with
+    # `TypeError: non-default argument 'npv' follows default argument`, which
+    # took down `app.openapi()` and therefore every contract check in the
+    # repository — the failure looked like a routing problem and was a field
+    # order. Required fields first, defaults after, keeps both intents.
+    npv: float | None = None
+    irr: float | None = None
+    payback_years: float | None = None
+    gross_margin: float | None = None
+    net_margin: float | None = None
+    roi: float | None = None
+    data_source: str = "simulated"
+    model: str = ""
+    computed: bool = True
 
 
 def calculate_npv(cashflows: list[float], discount_rate: float) -> float:

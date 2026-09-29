@@ -4,10 +4,11 @@ Pydantic models for Hydroma Engine analysis results.
 
 from typing import Any
 
+from engine.hydroma.provenance import Provenance
 from pydantic import BaseModel, Field
 
 
-class SoilAnalysisResult(BaseModel):
+class SoilAnalysisResult(Provenance, BaseModel):
     """نتیجه تحلیل خاک"""
 
     ec: float = Field(..., description="Electrical conductivity (dS/m)")
@@ -18,7 +19,7 @@ class SoilAnalysisResult(BaseModel):
     management: dict[str, Any] = Field(default_factory=dict)
 
 
-class ClimateAnalysisResult(BaseModel):
+class ClimateAnalysisResult(Provenance, BaseModel):
     """نتیجه تحلیل اقلیم"""
 
     estimated_et0: float = Field(..., description="Reference evapotranspiration (mm/day)")
@@ -26,14 +27,14 @@ class ClimateAnalysisResult(BaseModel):
     method: str = "Hargreaves"
 
 
-class WatershedAnalysisResult(BaseModel):
+class WatershedAnalysisResult(Provenance, BaseModel):
     """نتیجه تحلیل حوضه آبریز"""
 
     design_proposal: dict[str, Any] = Field(default_factory=dict)
     input_data: dict[str, Any] = Field(default_factory=dict)
 
 
-class GroundwaterAnalysisResult(BaseModel):
+class GroundwaterAnalysisResult(Provenance, BaseModel):
     """نتیجه تحلیل آبخوان"""
 
     estimated_depth_m: float = Field(..., description="Estimated water table depth (m)")

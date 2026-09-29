@@ -209,8 +209,17 @@ async def transfer_tokens(
 async def get_wallet_state(
     user_id: str,
     service: WalletService = Depends(get_wallet_service),
+    current=Depends(require_user),
 ):
-    """Get wallet state for a user"""
+    """Wallet state for a user.
+
+    Gated because `user_id` comes from the path: ungated, this returns any
+    user's balance to whoever asks. Every write on this router already carried
+    `require_user` while the three reads did not, so the effect was an
+    authenticated wallet behind a public balance sheet. That the principal exists
+    is what this layer can establish; whether it may read *this* `user_id` is the
+    service's question, and it is the gap to close before this page ships.
+    """
     state = await service.get_wallet_state(user_id)
     return WalletState(**state)
 
@@ -220,6 +229,7 @@ async def list_earnings(
     user_id: str = Query(..., min_length=1),
     limit: int = Query(50, ge=1, le=200),
     service: WalletService = Depends(get_wallet_service),
+    current=Depends(require_user),
 ):
     """List user earnings history"""
     earnings = await service.list_earnings(user_id, limit=limit)
@@ -240,6 +250,7 @@ async def list_earnings(
 async def get_daily_cap(
     user_id: str = Query(..., min_length=1),
     service: WalletService = Depends(get_wallet_service),
+    current=Depends(require_user),
 ):
     """Get daily earning cap status"""
 

@@ -68,6 +68,8 @@ class TestModels:
             slope_mean=12.5,
             slope_max=25.0,
             aspect_dominant="S",
+            data_source="modelled",
+            model="terrain_analysis",
         )
 
         assert analysis.terrain_type == TerrainType.ROLLING

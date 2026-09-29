@@ -8,6 +8,7 @@ from datetime import date
 from pydantic import BaseModel, Field
 
 from engine.hydroma.climate.et_calculator import calc_et0_hargreaves
+from engine.hydroma.provenance import Provenance
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +37,7 @@ class CropWaterReqInput(BaseModel):
     # Could also accept a path to a weather file or integrate with existing weather fetching
 
 
-class CropWaterReqOutput(BaseModel):
+class CropWaterReqOutput(Provenance, BaseModel):
     """Output results of crop water requirement calculation."""
 
     daily_et_crop: list[float] = Field(..., description="Daily crop evapotranspiration (mm/day)")
@@ -99,6 +100,8 @@ class CropWaterRequirementCalculator:
         total_seasonal_req = sum(daily_et_crop_list)
 
         return CropWaterReqOutput(
+            data_source="modelled",
+            model="FAO-56 eq. 52 crop water requirement",
             daily_et_crop=daily_et_crop_list,
             seasonal_water_requirement=round(total_seasonal_req, 2),
         )

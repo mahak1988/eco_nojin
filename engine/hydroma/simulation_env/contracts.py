@@ -12,6 +12,7 @@ from enum import StrEnum
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field, field_validator
+from engine.hydroma.provenance import Provenance
 
 # Provenance marker reused by every simulator output.  Keeping it as a single
 # constant makes it trivial to grep the codebase for honest data-labelling.
@@ -105,7 +106,7 @@ class DisasterImpact(BaseModel):
     metadata: SimulationMetadata
 
 
-class StressTestResult(BaseModel):
+class StressTestResult(Provenance, BaseModel):
     """Result of a single stress-test injection."""
 
     test_name: str

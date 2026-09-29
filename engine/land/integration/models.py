@@ -8,6 +8,7 @@ from datetime import UTC, datetime
 from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict, Field
+from engine.hydroma.provenance import Provenance
 
 
 class SoilTexture(StrEnum):
@@ -149,7 +150,7 @@ class DeepSoilProfile(BaseModel):
     data_source: str | None = None
 
 
-class SoilIntegrationResult(BaseModel):
+class SoilIntegrationResult(Provenance, BaseModel):
     """Result of soil integration with land profile"""
 
     model_config = ConfigDict(

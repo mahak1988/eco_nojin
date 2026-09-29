@@ -8,6 +8,8 @@ from typing import Literal
 
 import rioxarray
 import xarray as xr
+
+from engine.hydroma.provenance import Provenance
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy.orm import Session
 
@@ -29,7 +31,7 @@ class TopographyInput(BaseModel):
     target_crs: str = Field(default="auto", description="Target coordinate reference system")
 
 
-class TopographyOutput(BaseModel):
+class TopographyOutput(Provenance, BaseModel):
     """Output results of topographic analysis."""
 
     slope: xr.DataArray | None = Field(None, description="Slope in degrees")
@@ -101,7 +103,10 @@ class TopographyAnalyzer:
         if dem.rio.crs.to_string() != target_crs:
             dem = dem.rio.reproject(target_crs)
 
-        results = TopographyOutput()
+        results = TopographyOutput(
+            data_source="modelled",
+            model="terrain derivatives (Horn 1981)",
+        )
 
         # Prepare output paths
         output_dir = Path("data/analyses/topography") / input_data.site_id

@@ -59,7 +59,22 @@ def list_disputes(
 
 
 @router.get("/{dispute_id}")
-def get_dispute(dispute_id: str, db: Session = Depends(get_db)) -> dict[str, Any]:
+def get_dispute(
+    dispute_id: str,
+    db: Session = Depends(get_db),
+    user=Depends(require_user),
+) -> dict[str, Any]:
+    """
+    Read one dispute by id.
+
+    The ``require_user`` dependency was missing here while both neighbours gate:
+    ``create_dispute`` at :39 and ``list_disputes`` at :54. That left an
+    unauthenticated read of any dispute record by guessing or enumerating an id,
+    and a dispute carries the parties, the evidence and the money in dispute.
+    The module docstring above already stated the intent — "auth: require_user on
+    writes/list" — so this is a gap in a surface that was meant to be gated, not
+    a deliberate public read.
+    """
     svc = DisputeService(db)
     try:
         d = svc.get(dispute_id)

@@ -17,8 +17,6 @@ from services.api_gateway.auth import require_content_admin
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/content", tags=["admin-content"])
-
 
 class ContentCreate(BaseModel):
     title: str
@@ -81,6 +79,11 @@ class ScheduleRequest(BaseModel):
     publish_at: datetime
 
 
+# The single router declaration for this module. It used to appear twice -- an
+# identical `router = APIRouter(prefix="/content", tags=["admin-content"])` at
+# the top of the file and again here -- and the second assignment silently
+# replaced the first, so any decorator added above this line would have been
+# discarded at import time with no error.
 router = APIRouter(prefix="/content", tags=["admin-content"])
 
 

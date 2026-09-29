@@ -18,6 +18,7 @@ All outputs are synthetic (raster data is generated procedurally) and tagged
 from __future__ import annotations
 
 import math
+from engine.hydroma.provenance import Provenance
 from dataclasses import dataclass
 from typing import Any
 
@@ -66,16 +67,20 @@ class FireScenario:
 
 @dataclass
 class FireResult:
-    pre_nbr: float
-    post_nbr: float
-    dNBR: float
-    burn_severity: str
-    burned_area_ha: float
-    economic_loss_usd: float
-    recovery_curve: list[float]
-    post_fire_ndvi: float
-    metadata: SimulationMetadata
-    raster: dict[str, np.ndarray]
+
+    data_source: str = "simulated"
+    model: str = ""
+    computed: bool = True
+    pre_nbr: float | None = None
+    post_nbr: float | None = None
+    dNBR: float | None = None
+    burn_severity: str | None = None
+    burned_area_ha: float | None = None
+    economic_loss_usd: float | None = None
+    recovery_curve: list[float] = None
+    post_fire_ndvi: float | None = None
+    metadata: SimulationMetadata = None
+    raster: dict[str, np.ndarray] = None
 
 
 # dNBR burn-severity thresholds (Key & Benson 2006, scaled).
@@ -215,13 +220,17 @@ class FloodScenario:
 
 @dataclass
 class FloodResult:
-    peak_runoff_m3s: float
-    flood_volume_m3: float
-    max_inundation_depth_m: float
-    inundation_fraction: float
-    sediment_deposition_t: float
-    metadata: SimulationMetadata
-    raster: dict[str, np.ndarray]
+    peak_runoff_m3s: float | None = None
+    flood_volume_m3: float | None = None
+    max_inundation_depth_m: float | None = None
+
+    data_source: str = "simulated"
+    model: str = ""
+    computed: bool = True
+    inundation_fraction: float | None = None
+    sediment_deposition_t: float | None = None
+    metadata: SimulationMetadata = None
+    raster: dict[str, np.ndarray] = None
 
 
 def _synthetic_dem(
@@ -331,12 +340,16 @@ class StormScenario:
 
 @dataclass
 class StormResult:
-    wind_damage_index: float
-    coastal_eroding_m: float
-    structures_destroyed: int
-    affected_area_ha: float
-    total_loss_usd: float
-    metadata: SimulationMetadata
+    wind_damage_index: float | None = None
+    coastal_eroding_m: float | None = None
+    structures_destroyed: int | None = None
+    affected_area_ha: float | None = None
+    total_loss_usd: float | None = None
+    metadata: SimulationMetadata = None
+
+    data_source: str = "simulated"
+    model: str = ""
+    computed: bool = True
 
 
 def simulate_storm(scenario: StormScenario) -> StormResult:
@@ -418,13 +431,18 @@ class LandslideScenario:
 
 @dataclass
 class LandslideResult:
-    factor_of_safety: float
-    failure_probability: float
-    displaced_volume_m3: float
-    sediment_yield_t: float
-    affected_area_fraction: float
-    metadata: SimulationMetadata
-    raster: dict[str, np.ndarray]
+    data_source: str = "simulated"
+    model: str = ""
+    computed: bool = True
+
+    factor_of_safety: float | None = None
+    failure_probability: float | None = None
+    displaced_volume_m3: float | None = None
+    sediment_yield_t: float | None = None
+    affected_area_fraction: float | None = None
+    metadata: SimulationMetadata = None
+    raster: dict[str, np.ndarray] = None
+
 
 
 def _infinite_slope_fs(

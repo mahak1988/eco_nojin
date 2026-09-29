@@ -47,4 +47,6 @@ def simulate_weap(input_data: WEAPInput) -> WEAPOutput:
             "total_supply_m3": float(np.sum(supply)),
         },
         allocation_efficiency=efficiency,
+        data_source="simulated",
+        model="WEAP (external executable)",
     )

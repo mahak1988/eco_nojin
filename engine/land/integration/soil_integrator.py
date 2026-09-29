@@ -434,6 +434,8 @@ class SoilIntegrator:
                 recommendations=recommendations,
                 integration_time_ms=integration_time_ms,
                 data_quality_level="L0",  # Global model
+                data_source="modelled",
+                model="soil integrator",
             )
 
         except Exception as e:
@@ -444,6 +446,8 @@ class SoilIntegrator:
                 success=False,
                 error_message=str(e),
                 integration_time_ms=integration_time_ms,
+                data_source="modelled",
+                model="soil integrator",
             )
 
     def _determine_suitable_crops(

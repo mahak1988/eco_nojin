@@ -18,6 +18,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 from enum import StrEnum
+from engine.hydroma.provenance import Provenance
 
 logger = logging.getLogger(__name__)
 
@@ -62,30 +63,34 @@ class GroundwaterInput:
 class GroundwaterResult:
     """Result of groundwater analysis."""
 
-    land_profile_id: str
+    data_source: str = "simulated"
+    model: str = ""
+    computed: bool = True
+
+    land_profile_id: str | None = None
 
     # Flow calculations
-    darcy_flux_m_s: float
-    transmissivity_m2_s: float
-    specific_capacity_m2_s: float
+    darcy_flux_m_s: float | None = None
+    transmissivity_m2_s: float | None = None
+    specific_capacity_m2_s: float | None = None
 
     # Sustainability metrics
-    sustainability_index: float  # 0-1, >1 = sustainable
-    safe_yield_m3_yr: float
-    reserve_m3: float
+    sustainability_index: float | None = None
+    safe_yield_m3_yr: float | None = None
+    reserve_m3: float | None = None
 
     # Quality
-    water_quality_class: WaterQualityClass
+    water_quality_class: WaterQualityClass = None
 
     # Risk assessment
-    overexploitation_risk: str  # "low", "moderate", "high", "critical"
-    contamination_risk: str
+    overexploitation_risk: str | None = None
+    contamination_risk: str | None = None
 
     # Recommendations
-    recommendations: list[str]
+    recommendations: list[str] = None
 
     # Metadata
-    status: str  # "healthy", "stressed", "depleted"
+    status: str | None = None
 
 
 class GroundwaterService:

@@ -17,40 +17,42 @@ from contracts.simulation import HECRASInput, HECRASOutput
 # For now, we implement a simplified calculation.
 
 
+class HecRasUnavailable(RuntimeError):
+    """HEC-RAS is not installed, so no hydraulic result can be produced.
+
+    Raised instead of returning invented numbers. A caller that receives this
+    can distinguish "the model did not run" from "the model ran and said the
+    structure is safe", which is the distinction that matters when the answer
+    is a flood extent and a safety factor.
+    """
+
+
 def simulate_hecras(input_data: HECRASInput) -> HECRASOutput:
+    """Run HEC-RAS on the supplied geometry.
+
+    HEC-RAS is an external executable and is not bundled. When it is absent the
+    only correct answer is to say so.
+
+    This function used to fabricate a full result set from the input shape: a
+    water-surface profile that ramped from 100.0 m, velocities that divided a
+    flow RATE by ten, a bed shear computed as rho/2 * v^2 rather than rho * v^2,
+    a hard-coded flood extent of 5.2 km2, and a hard-coded
+    `{"status": "safe", "factor_of_safety": 1.8}`. It also ignored the
+    `initial_conditions` it was handed and started the profile 4 m above them.
+    `HECRASOutput` carries no `data_source` field, so none of that was
+    distinguishable from a real run by anything downstream.
+
+    Measured, with the fabricated values removed, a caller that had been
+    reading "levee is safe, 1200 people affected" now gets an exception it can
+    handle and an orchestrator step that reports `not_computed`.
+
+    Raises:
+        HecRasUnavailable: always, until a HEC-RAS binary is wired in.
     """
-    Simulate hydraulic flow using HEC-RAS.
-
-    Args:
-        input_data: Input parameters for the HEC-RAS model.
-
-    Returns:
-        Output results from the HEC-RAS simulation.
-    """
-    # Extract input data (simplified for this example)
-    num_steps = len(input_data.boundary_conditions.get("upstream_flow_m3s", []))
-
-    # Placeholder calculations based on inputs
-    # In reality, HEC-RAS solves complex equations for water surface profile
-    water_surface_elevations = [100.0 + i * 0.1 for i in range(num_steps)]  # Dummy elevations
-    velocities = [
-        input_data.boundary_conditions.get("upstream_flow_m3s", [1])[0] / 10
-        for _ in range(num_steps)
-    ]  # Dummy velocities
-    shear_stresses = [
-        0.5 * 1000 * v**2 for v in velocities
-    ]  # Simplified tau = rho * v^2 (not accurate)
-
-    # Dummy flood extent and safety data
-    flood_extent_data = {"area_sqkm": 5.2, "affected_pop": 1200}
-    structure_safety_data = {"status": "safe", "factor_of_safety": 1.8}
-
-    return HECRASOutput(
-        water_surface_profile=water_surface_elevations,
-        shear_stress_pa=shear_stresses,
-        velocity_m_s=velocities,
-        flood_extent=flood_extent_data,
-        structure_safety=structure_safety_data,
+    raise HecRasUnavailable(
+        "HEC-RAS executable not available; no hydraulic result was computed. "
+        "Wiring a real run needs a project file, steady or unsteady flow data, "
+        "and an external binary, none of which this function can synthesise."
     )
 
 

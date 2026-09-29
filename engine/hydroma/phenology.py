@@ -124,7 +124,7 @@ class PhenologyInput:
 class PhenologyOutput:
     """Phenology simulation result."""
 
-    crop: str
+    crop: str | None = None
     gdd_series: list[float] = field(default_factory=list)
     cumulative_gdd: list[float] = field(default_factory=list)
     stages: list[str] = field(default_factory=list)

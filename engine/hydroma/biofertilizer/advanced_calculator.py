@@ -325,28 +325,32 @@ class FormulationOptimizer:
 class CostBenefitResult:
     """Cost-benefit analysis result (scientifically correct)."""
 
-    total_investment_usd: float
-    annual_benefit_usd: float
-    annual_cost_usd: float  # Recurring annual costs (if any)
-    net_annual_benefit_usd: float  # Annual benefit - recurring costs
+    data_source: str = "simulated"
+    model: str = ""
+    computed: bool = True
+
+    total_investment_usd: float | None = None
+    annual_benefit_usd: float | None = None
+    annual_cost_usd: float | None = None
+    net_annual_benefit_usd: float | None = None
 
     # Key economic indicators (FAO/World Bank standard)
-    roi_annual_percent: float  # Annual ROI after payback
-    payback_simple_months: int  # Simple payback (no discount)
-    payback_discounted_months: int  # Discounted payback (at discount rate)
-    npv_10year_usd: float  # Net Present Value at 8% discount
-    irr_percent: float  # Internal Rate of Return
-    benefit_cost_ratio: float  # BCR (PV Benefits / PV Costs)
+    roi_annual_percent: float | None = None
+    payback_simple_months: int | None = None
+    payback_discounted_months: int | None = None
+    npv_10year_usd: float | None = None
+    irr_percent: float | None = None
+    benefit_cost_ratio: float | None = None
 
     # Environmental benefits
-    carbon_credit_potential_usd: float  # 10-year total
-    water_savings_value_usd: float  # Annual
-    soil_health_value_usd: float  # Annual ecosystem service value
+    carbon_credit_potential_usd: float | None = None
+    water_savings_value_usd: float | None = None
+    soil_health_value_usd: float | None = None
 
     # Viability
-    is_economically_viable: bool
-    viability_score: float  # 0-100 composite score
-    farmer_category: str  # smallholder, commercial, subsistence
+    is_economically_viable: bool | None = None
+    viability_score: float | None = None
+    farmer_category: str | None = None
 
     # Detailed breakdown
     yearly_cashflow: list[dict] = field(default_factory=list)  # 10-year cashflow
@@ -935,16 +939,21 @@ class CostBenefitCalculator:
 class WaterSavingsResult:
     """Water savings analysis."""
 
-    baseline_irrigation_m3_ha: float
-    new_irrigation_m3_ha: float
-    water_saved_m3_ha: float
-    water_saved_percent: float
-    annual_water_saved_m3: float
-    annual_savings_usd: float
-    evaporation_reduction_pct: float
-    soil_moisture_retention_pct: float
-    irrigation_frequency_change: str
-    drought_resistance_days: int
+    data_source: str = "simulated"
+    model: str = ""
+    computed: bool = True
+    data_source: str = "simulated"
+    model: str = ""
+    computed: bool = True
+
+    water_saved_m3_ha: float | None = None
+    water_saved_percent: float | None = None
+    annual_water_saved_m3: float | None = None
+    annual_savings_usd: float | None = None
+    evaporation_reduction_pct: float | None = None
+    soil_moisture_retention_pct: float | None = None
+    irrigation_frequency_change: str | None = None
+    drought_resistance_days: int | None = None
     recommendations: list[str] = field(default_factory=list)
 
 
@@ -1110,16 +1119,21 @@ class WaterSavingsCalculator:
 class ScaleResult:
     """Scale calculation result."""
 
-    area_ha: float
-    scale_category: str  # micro, small, medium, large, industrial, mega
-    material_quantities: dict[str, dict[str, float]]  # code -> {kg, tons, cost}
-    total_tons: float
-    total_cost_usd: float
-    logistics_notes: list[str]
-    labor_requirements: dict[str, Any]
-    equipment_needed: list[str]
-    implementation_days: int
-    economies_of_scale_pct: float
+    data_source: str = "simulated"
+    model: str = ""
+    computed: bool = True
+
+    area_ha: float | None = None
+    data_source: str = "simulated"
+    model: str = ""
+    computed: bool = True
+
+    total_cost_usd: float | None = None
+    logistics_notes: list[str] = None
+    labor_requirements: dict[str, Any] = None
+    equipment_needed: list[str] = None
+    implementation_days: int | None = None
+    economies_of_scale_pct: float | None = None
 
 
 class ScaleCalculator:

@@ -1,5 +1,6 @@
 from datetime import date
 
+from engine.hydroma.provenance import Provenance
 from pydantic import BaseModel
 
 
@@ -16,7 +17,7 @@ class SWATInput(BaseModel):
     time_step: str = "daily"
 
 
-class SWATOutput(BaseModel):
+class SWATOutput(Provenance, BaseModel):
     """قرارداد خروجی از مدل SWAT+"""
 
     runoff_m3: list[float]
@@ -40,7 +41,7 @@ class RUSLEInput(BaseModel):
     management_factor: float
 
 
-class RUSLEOutput(BaseModel):
+class RUSLEOutput(Provenance, BaseModel):
     """قرارداد خروجی از مدل RUSLE"""
 
     erosion_rate_t_ha_yr: float
@@ -106,8 +107,11 @@ class WEAPInput(BaseModel):
     end_date: date
 
 
-class WEAPOutput(BaseModel):
-    """قرارداد خروجی از مدل WEAP"""
+class WEAPOutput(Provenance, BaseModel):
+    """قرارداد خروجی از مدل WEAP
+
+    ارث‌بری از Provenance اجازهٔ فراموشی برچسب منشأ را نمی‌دهد.
+    """
 
     water_allocation_m3: list[float]
     unmet_demand_m3: list[float]
@@ -127,8 +131,14 @@ class HECRASInput(BaseModel):
     time_step: str = "hourly"
 
 
-class HECRASOutput(BaseModel):
-    """قرارداد خروجی از مدل HEC-RAS"""
+class HECRASOutput(Provenance, BaseModel):
+    """قرارداد خروجی از مدل HEC-RAS
+
+    این کلاس پیش‌تر هیچ فیلد منشأی نداشت، و همین نبودِ فیلدی بود که اجازه داد
+    `hecras.py` حکم ایمنی ساختگی برگرداند و هیچ مصرف‌کننده‌ای نتوانست
+    تشخیص دهد عدد از مدل آمده یا از یک ثابت. اکنون هر نمونه باید بگوید
+    مدل اجرا شده است یا نه.
+    """
 
     water_surface_profile: list[float]
     shear_stress_pa: list[float]

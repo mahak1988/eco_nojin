@@ -29,7 +29,7 @@ from engine.hydroma.simulation.contracts import (
     WEAPInput,
     WEAPOutput,
 )
-from engine.hydroma.simulation.hecras import simulate_hecras
+from engine.hydroma.simulation.hecras import HecRasUnavailable, simulate_hecras
 from engine.hydroma.simulation.runners.aquacrop_runner import AquaCropRunner
 from engine.hydroma.simulation.weap import simulate_weap
 from engine.hydroma.simulation.weather_source import growing_season_window
@@ -334,12 +334,26 @@ def run_chain(
             }
 
         # 6) HEC-RAS -- consumes SWAT+ runoff, so only meaningful when SWAT+ ran.
+        #
+        # Both conditions are reported, not just the first. HEC-RAS is an
+        # external executable, so a working SWAT+ binary is not sufficient to
+        # make this step computable, and the reason a caller sees should say
+        # which of the two was missing.
         if swat_out is not None:
-            outputs["hecras"] = _run_hecras(swat_out)
+            try:
+                outputs["hecras"] = _run_hecras(swat_out)
+            except HecRasUnavailable as exc:
+                outputs["hecras"] = {
+                    "status": "not_computed",
+                    "data_source": "unavailable",
+                    "model": "HEC-RAS (external executable)",
+                    "reason": str(exc),
+                }
         else:
             outputs["hecras"] = {
                 "status": "not_computed",
                 "data_source": "unavailable",
+                "model": "HEC-RAS (external executable)",
                 "reason": "requires SWAT+ runoff",
             }
 

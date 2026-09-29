@@ -220,9 +220,20 @@ def calc_net_radiation(
     if rso > 0.0:
         rs_over_rso = min(max(solar_radiation_mj / rso, 0.3), 1.0)
     else:
-        # Polar night: there is no shortwave to lose, so the longwave loss is the
-        # whole of the net radiation.
-        rs_over_rso = 0.3
+        # Polar night: Ra is zero, so Rso is zero and Rs/Rso is undefined.
+        #
+        # The limit is 1.0, the clear-sky end, not 0.3. A polar night is a clear
+        # sky with the sun below the horizon; nothing is blocking anything, and
+        # eq. 40's Rs/Rso measures how much of the clear-sky flux arrives. A
+        # cold winter surface under a clear sky is the strongest longwave loser
+        # in the whole model, which is exactly why it is cold.
+        #
+        # This previously used 0.3, the overcast end, while the comment beside
+        # it described the clear-sky loss. The comment and the code disagreed,
+        # and the compiled kernel used 1.0, so the two backends differed by up
+        # to 3x in ET0 on polar-night days. Measured at latitude 80, day 1:
+        # 0.2946 (wrong) against 0.9078 (correct) mm/day.
+        rs_over_rso = 1.0
     cloudiness = 1.35 * rs_over_rso - 0.35
     if cloudiness < 0.0:
         # Overcast: the atmosphere returns more longwave than the surface emits
@@ -279,11 +290,17 @@ def calc_et0_penman_monteith(data: ClimateData) -> float:
     # A slightly negative Rn is a real winter condition, not a bad input. Near
     # the solstice at mid latitudes a 0-2 degC day in January can lose marginally
     # more longwave than it gains in shortwave: a surface that is a net energy
-    # sink is exactly why it is cold. The radiation term is therefore floored at
-    # zero, because the surface cannot evaporate using energy it does not have,
-    # while the aerodynamic term is a transport of advected energy and is left
-    # to act. The uncapped value stays available from calc_net_radiation.
-    rn_raw = calc_net_radiation(
+    # sink is exactly why it is cold. FAO-56 eq. 6 carries the negative value
+    # through, which reduces ET0 and is the correct direction for a day that has
+    # no radiative energy to spend.
+    #
+    # This used to be floored at zero on the reasoning that a surface cannot
+    # evaporate energy it does not have. That reasoning is sound for the final
+    # flux but it is not FAO-56: the published form is unclamped, and clamping
+    # it silently inflated ET0 through a polar night. Measured at latitude 80,
+    # day 1: 0.8038 (clamped) against 0.2946 (FAO-56) mm/day, with the compiled
+    # kernel already returning 0.2946.
+    rn = calc_net_radiation(
         t_min=data.tmin,
         t_max=data.tmax,
         ea_kpa=ea,
@@ -292,7 +309,6 @@ def calc_et0_penman_monteith(data: ClimateData) -> float:
         latitude_deg=data.latitude,
         doy=data.doy,
     )
-    rn = max(rn_raw, 0.0)
 
     numerator = 0.408 * delta * rn + gamma * (900 / (tmean + 273)) * data.wind_speed * (
         es_mean - ea

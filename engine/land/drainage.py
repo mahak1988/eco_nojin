@@ -446,4 +446,6 @@ class DrainageAnalyzer:
             watershed_area_km2=round(watershed_area, 4),
             time_of_concentration_hours=round(tc, 2),
             main_channel_length_km=round(stream_length_km, 2),
+            data_source="modelled",
+            model="drainage_analysis",
         )

@@ -10,6 +10,7 @@ import logging
 from dataclasses import dataclass, field
 from enum import StrEnum
 from typing import Any
+from engine.hydroma.provenance import Provenance
 
 logger = logging.getLogger(__name__)
 
@@ -26,8 +27,12 @@ class MotorStatus(StrEnum):
 class MotorResult:
     """Standard result from any scientific motor"""
 
-    motor_name: str
-    status: MotorStatus
+    data_source: str = "simulated"
+    model: str = ""
+    computed: bool = True
+
+    motor_name: str | None = None
+    status: MotorStatus = None
     success: bool = False
     data: dict[str, Any] = field(default_factory=dict)
     recommendations: list[str] = field(default_factory=list)

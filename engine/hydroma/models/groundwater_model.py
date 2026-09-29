@@ -7,6 +7,7 @@ from typing import Any, Literal  # Added 'Any'
 
 import numpy as np
 from pydantic import BaseModel, Field
+from engine.hydroma.provenance import Provenance
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +28,7 @@ class GroundwaterInput(BaseModel):
     # For future modflow integration: path_to_input_files: str
 
 
-class GroundwaterOutput(BaseModel):
+class GroundwaterOutput(Provenance, BaseModel):
     """Output results of groundwater analysis."""
 
     drawdown_m: float | Any | None = Field(
@@ -66,7 +67,10 @@ class GroundwaterModel:
             # Currently only implements Theis
             drawdown = self._theis_solution(input_data)
             return GroundwaterOutput(
-                drawdown_m=drawdown, model_description="Theis Solution (Analytical)"
+                drawdown_m=drawdown,
+            model_description="Theis Solution (Analytical)",
+            data_source="modelled",
+            model="Theis (1935)"
             )
         elif input_data.model_type == "modflow_link":
             # Placeholder for future MODFLOW integration

@@ -428,7 +428,11 @@ class TestSpatialRunoff:
         assert "peak_flow_map_path" in SpatialRunoffOutput.model_fields
         body = inspect.getsource(SpatialRunoffCalculator.execute)
         assert "peak_flow_map_path" not in body, "execute() populates the field after all"
-        assert SpatialRunoffOutput().peak_flow_map_path is None
+        assert (
+            SpatialRunoffOutput(
+            ).peak_flow_map_path
+            is None
+        )
 
     def test_soil_raster_is_loaded_but_never_used(self) -> None:
         """The CN map is built from land use alone.

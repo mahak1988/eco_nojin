@@ -9,6 +9,7 @@ from enum import StrEnum
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
+from engine.hydroma.provenance import Provenance
 
 
 class TerrainType(StrEnum):
@@ -92,7 +93,7 @@ class LandformType(StrEnum):
     RIDGE = "ridge"
 
 
-class SlopeAspectResult(BaseModel):
+class SlopeAspectResult(Provenance, BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
@@ -111,7 +112,7 @@ class SlopeAspectResult(BaseModel):
     aspect_cardinal: str
 
 
-class CurvatureResult(BaseModel):
+class CurvatureResult(Provenance, BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
             "example": {

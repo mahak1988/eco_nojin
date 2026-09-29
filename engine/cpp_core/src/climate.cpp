@@ -138,7 +138,12 @@ double penman_monteith_et0(double t_min, double t_max, double rh_mean_pct,
         gamma * (900.0 / (t_mean + 273.0)) * u2 * (es - ea);
     const double denominator = delta + gamma * (1.0 + 0.34 * u2);
 
-    return numerator / denominator;
+    // A negative numerator means the day loses more energy by radiation than it
+    // receives, and the aerodynamic term cannot pay for it: ET0 has no negative
+    // meaning. FAO-56 eq. 6 is unclamped on Rn, which is why a polar night keeps
+    // a small positive value, but the resulting ET0 is floored here. Without
+    // this the two backends returned 0.0 and -0.2241 mm/day for the same day.
+    return std::max(0.0, numerator / denominator);
 }
 
 // --- Added by Implementation Plan ---
@@ -243,37 +248,14 @@ std::vector<double> penman_monteith_et0_array(const std::vector<double>& t_min,
             throw std::invalid_argument("doy must be in [1, 366] at index " + std::to_string(i));
         }
 
-        // Replicate the scalar function logic here for efficiency within the parallel loop
-        const double t_mean = (tmin + tmax) / 2.0;
-        const double es = sat_vapor_pressure(t_mean);
-        const double ea = es * clamp(rh_pct, 0.0, 100.0) / 100.0;
-
-        const double delta = 4098.0 * es / std::pow(t_mean + 237.3, 2);
-
-        const double p_atm = 101.3 * std::pow((293.0 - 0.0065 * elev) / 293.0, 5.26);
-        const double gamma = 0.000665 * p_atm;
-
-        // Call the array version of net radiation internally or replicate its logic.
-        // For simplicity and maximum parallelism, we replicate the logic here.
-        rh_pct = clamp(rh_pct, 0.0, 100.0);
-        const double ra = extraterrestrial_radiation(lat, day); // This calls scalar. Could be optimized further if needed.
-        const double rso = (0.75 + 2e-5 * elev) * ra;
-        const double rns = (1.0 - kAlbedo) * rs;
-
-        double rs_rso = rso > 0.0 ? rs / rso : 1.0;
-        rs_rso = clamp(rs_rso, 0.3, 1.0);
-
-        const double t_max_k = tmax + 273.16;
-        const double t_min_k = tmin + 273.16;
-        const double rnl = kSigma * (std::pow(t_max_k, 4) + std::pow(t_min_k, 4)) / 2.0 *
-                          (0.34 - 0.14 * std::sqrt(ea)) * (1.35 * rs_rso - 0.35);
-
-        const double rn = rns - rnl;
-
-        const double numerator = 0.408 * delta * rn + gamma * (900.0 / (t_mean + 273.16)) * wind * (es - ea);
-        const double denominator = delta + gamma * (1.0 + 0.34 * wind);
-
-        out[i] = numerator / denominator;
+        // Mirror of the scalar function, term for term. This loop was a
+        // re-derivation and had drifted from penman_monteith_et0 in four
+        // places: es used e0(Tmean) instead of the mean of the two endpoints,
+        // ea was built from that same e0, the psychrometric term used 273.16
+        // where eq. 6 says 273, and the result was not floored at zero. Call the
+        // scalar function instead of keeping a second copy to fall out of date.
+        out[i] = penman_monteith_et0(tmin, tmax, rh_mean_pct[i], wind, rs, elev,
+                                      lat, day);
     }
     return out;
 }

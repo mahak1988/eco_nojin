@@ -162,6 +162,8 @@ class MODFLOW6Model(ScientificModel):
             success=True,
             outputs=self._outputs_to_dict(outputs),
             uncertainty=self._estimate_uncertainty(outputs),
+            data_source="modelled",
+            model="scientific model",
         )
 
     def _run_mock(self, inputs: MODFLOW6Inputs) -> MODFLOW6Outputs:

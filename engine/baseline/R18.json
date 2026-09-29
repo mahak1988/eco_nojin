@@ -1200,11 +1200,14 @@
     0.0413196508
    ],
    "hargreaves_copy_crop_water": {
+    "computed": true,
     "daily_et_crop": [
      1.28,
      1.28,
      1.28
     ],
+    "data_source": "modelled",
+    "model": "FAO-56 eq. 52 crop water requirement",
     "seasonal_water_requirement": 3.84
    },
    "hargreaves_copy_simulation_env": 4.6025507242,
@@ -2759,123 +2762,213 @@
   },
   "runoff": {
    "Rational_cn35_p12": {
+    "computed": true,
+    "data_source": "modelled",
+    "model": "SCS-CN / Rational (NRCS TR-55)",
     "peak_flow_m3s": 0.05,
     "volume_m3": 180.0
    },
    "Rational_cn35_p120": {
+    "computed": true,
+    "data_source": "modelled",
+    "model": "SCS-CN / Rational (NRCS TR-55)",
     "peak_flow_m3s": 0.5,
     "volume_m3": 1800.0
    },
    "Rational_cn35_p50": {
+    "computed": true,
+    "data_source": "modelled",
+    "model": "SCS-CN / Rational (NRCS TR-55)",
     "peak_flow_m3s": 0.2083333333,
     "volume_m3": 750.0
    },
    "Rational_cn50_p12": {
+    "computed": true,
+    "data_source": "modelled",
+    "model": "SCS-CN / Rational (NRCS TR-55)",
     "peak_flow_m3s": 0.05,
     "volume_m3": 180.0
    },
    "Rational_cn50_p120": {
+    "computed": true,
+    "data_source": "modelled",
+    "model": "SCS-CN / Rational (NRCS TR-55)",
     "peak_flow_m3s": 0.5,
     "volume_m3": 1800.0
    },
    "Rational_cn50_p50": {
+    "computed": true,
+    "data_source": "modelled",
+    "model": "SCS-CN / Rational (NRCS TR-55)",
     "peak_flow_m3s": 0.2083333333,
     "volume_m3": 750.0
    },
    "Rational_cn70_p12": {
+    "computed": true,
+    "data_source": "modelled",
+    "model": "SCS-CN / Rational (NRCS TR-55)",
     "peak_flow_m3s": 0.05,
     "volume_m3": 180.0
    },
    "Rational_cn70_p120": {
+    "computed": true,
+    "data_source": "modelled",
+    "model": "SCS-CN / Rational (NRCS TR-55)",
     "peak_flow_m3s": 0.5,
     "volume_m3": 1800.0
    },
    "Rational_cn70_p50": {
+    "computed": true,
+    "data_source": "modelled",
+    "model": "SCS-CN / Rational (NRCS TR-55)",
     "peak_flow_m3s": 0.2083333333,
     "volume_m3": 750.0
    },
    "Rational_cn85_p12": {
+    "computed": true,
+    "data_source": "modelled",
+    "model": "SCS-CN / Rational (NRCS TR-55)",
     "peak_flow_m3s": 0.05,
     "volume_m3": 180.0
    },
    "Rational_cn85_p120": {
+    "computed": true,
+    "data_source": "modelled",
+    "model": "SCS-CN / Rational (NRCS TR-55)",
     "peak_flow_m3s": 0.5,
     "volume_m3": 1800.0
    },
    "Rational_cn85_p50": {
+    "computed": true,
+    "data_source": "modelled",
+    "model": "SCS-CN / Rational (NRCS TR-55)",
     "peak_flow_m3s": 0.2083333333,
     "volume_m3": 750.0
    },
    "SCS-CN_cn35_p12": {
+    "computed": true,
+    "data_source": "modelled",
+    "model": "SCS-CN / Rational (NRCS TR-55)",
     "peak_flow_m3s": 0.0,
     "volume_m3": 0.0
    },
    "SCS-CN_cn35_p120": {
+    "computed": true,
+    "data_source": "modelled",
+    "model": "SCS-CN / Rational (NRCS TR-55)",
     "peak_flow_m3s": 0.0091912221,
     "volume_m3": 33.0883994223
    },
    "SCS-CN_cn35_p50": {
+    "computed": true,
+    "data_source": "modelled",
+    "model": "SCS-CN / Rational (NRCS TR-55)",
     "peak_flow_m3s": 0.0,
     "volume_m3": 0.0
    },
    "SCS-CN_cn50_p12": {
+    "computed": true,
+    "data_source": "modelled",
+    "model": "SCS-CN / Rational (NRCS TR-55)",
     "peak_flow_m3s": 0.0,
     "volume_m3": 0.0
    },
    "SCS-CN_cn50_p120": {
+    "computed": true,
+    "data_source": "modelled",
+    "model": "SCS-CN / Rational (NRCS TR-55)",
     "peak_flow_m3s": 0.1028912266,
     "volume_m3": 370.4084158416
    },
    "SCS-CN_cn50_p50": {
+    "computed": true,
+    "data_source": "modelled",
+    "model": "SCS-CN / Rational (NRCS TR-55)",
     "peak_flow_m3s": 0.0,
     "volume_m3": 0.0
    },
    "SCS-CN_cn70_p12": {
+    "computed": true,
+    "data_source": "modelled",
+    "model": "SCS-CN / Rational (NRCS TR-55)",
     "peak_flow_m3s": 0.0,
     "volume_m3": 0.0
    },
    "SCS-CN_cn70_p120": {
+    "computed": true,
+    "data_source": "modelled",
+    "model": "SCS-CN / Rational (NRCS TR-55)",
     "peak_flow_m3s": 0.3235661069,
     "volume_m3": 1164.8379848628
    },
    "SCS-CN_cn70_p50": {
+    "computed": true,
+    "data_source": "modelled",
+    "model": "SCS-CN / Rational (NRCS TR-55)",
     "peak_flow_m3s": 0.0403666872,
     "volume_m3": 145.3200738403
    },
    "SCS-CN_cn85_p12": {
+    "computed": true,
+    "data_source": "modelled",
+    "model": "SCS-CN / Rational (NRCS TR-55)",
     "peak_flow_m3s": 0.0013368327,
     "volume_m3": 4.8125976054
    },
    "SCS-CN_cn85_p120": {
+    "computed": true,
+    "data_source": "modelled",
+    "model": "SCS-CN / Rational (NRCS TR-55)",
     "peak_flow_m3s": 0.5493235383,
     "volume_m3": 1977.5647378517
    },
    "SCS-CN_cn85_p50": {
+    "computed": true,
+    "data_source": "modelled",
+    "model": "SCS-CN / Rational (NRCS TR-55)",
     "peak_flow_m3s": 0.1361970421,
     "volume_m3": 490.3093514742
    },
    "rational_sweep": {
     "0.1": {
+     "computed": true,
+     "data_source": "modelled",
+     "model": "SCS-CN / Rational (NRCS TR-55)",
      "peak_flow_m3s": 0.0138888889,
      "volume_m3": 50.0
     },
     "0.2": {
+     "computed": true,
+     "data_source": "modelled",
+     "model": "SCS-CN / Rational (NRCS TR-55)",
      "peak_flow_m3s": 0.0277777778,
      "volume_m3": 100.0
     },
     "0.4": {
+     "computed": true,
+     "data_source": "modelled",
+     "model": "SCS-CN / Rational (NRCS TR-55)",
      "peak_flow_m3s": 0.0555555556,
      "volume_m3": 200.0
     },
     "0.6": {
+     "computed": true,
+     "data_source": "modelled",
+     "model": "SCS-CN / Rational (NRCS TR-55)",
      "peak_flow_m3s": 0.0833333333,
      "volume_m3": 300.0
     },
     "0.8": {
+     "computed": true,
+     "data_source": "modelled",
+     "model": "SCS-CN / Rational (NRCS TR-55)",
      "peak_flow_m3s": 0.1111111111,
      "volume_m3": 400.0
     },
     "1.0": {
+     "computed": true,
+     "data_source": "modelled",
+     "model": "SCS-CN / Rational (NRCS TR-55)",
      "peak_flow_m3s": 0.1388888889,
      "volume_m3": 500.0
     }

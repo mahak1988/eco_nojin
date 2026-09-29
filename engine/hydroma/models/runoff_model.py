@@ -11,6 +11,7 @@ from typing import Annotated, Literal
 import numpy as np
 import xarray as xr
 from pydantic import BaseModel, Field
+from engine.hydroma.provenance import Provenance
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +57,7 @@ class RunoffInput(BaseModel):
     )
 
 
-class RunoffOutput(BaseModel):
+class RunoffOutput(Provenance, BaseModel):
     """Output results of runoff calculation."""
 
     volume_m3: float = Field(..., description="Total runoff volume in cubic meters")
@@ -77,7 +78,7 @@ class SpatialRunoffInput(BaseModel):
     target_crs: str = Field(default="auto", description="Target coordinate reference system")
 
 
-class SpatialRunoffOutput(BaseModel):
+class SpatialRunoffOutput(Provenance, BaseModel):
     """Output results of spatial runoff calculation."""
 
     runoff_volume_map_path: str | None = Field(
@@ -120,6 +121,8 @@ class RunoffCalculator:
         return RunoffOutput(
             volume_m3=volume_m3,
             peak_flow_m3s=peak_flow,
+            data_source="modelled",
+            model="SCS-CN / Rational (NRCS TR-55)",
         )
 
     def _scs_cn_method(self, input_data: RunoffInput) -> RunoffOutput:
@@ -170,6 +173,8 @@ class RunoffCalculator:
         return RunoffOutput(
             volume_m3=volume_m3,
             peak_flow_m3s=peak_flow_m3s,
+            data_source="modelled",
+            model="SCS-CN / Rational (NRCS TR-55)",
         )
 
     def execute(self, input_data: RunoffInput) -> RunoffOutput:
@@ -283,7 +288,8 @@ class SpatialRunoffCalculator:
             runoff_depth.rio.to_raster(runoff_map_path)
 
             logger.info(f"Spatial runoff map saved to {runoff_map_path}")
-            return SpatialRunoffOutput(runoff_volume_map_path=runoff_map_path)
+            return SpatialRunoffOutput(runoff_volume_map_path=runoff_map_path,
+            )
 
         else:
             raise ValueError(

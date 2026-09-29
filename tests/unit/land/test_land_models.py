@@ -41,6 +41,8 @@ class TestLandModels:
             aspect_dominant="S",
             roughness_index=0.1,
             curvature_mean=0,
+            data_source="modelled",
+            model="terrain_analysis",
         )
 
         # Serialize
@@ -49,7 +51,10 @@ class TestLandModels:
         assert data["elevation_mean"] == 1050
 
         # DeIntegerize
-        restored = TerrainAnalysis(**data)
+        restored = TerrainAnalysis(**data,
+            data_source="modelled",
+            model="terrain_analysis",
+        )
         assert restored.terrain_type == analysis.terrain_type
         assert restored.elevation_mean == analysis.elevation_mean
 

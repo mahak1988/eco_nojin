@@ -29,6 +29,8 @@ class TestLandService(unittest.TestCase):
             elevation_mean=2.5,
             slope_mean=10.0,
             slope_max=15.0,
+            data_source="modelled",
+            model="terrain_analysis",
         )
         self.mock_land_engine.analyze_terrain.return_value = mock_result
 
@@ -49,6 +51,8 @@ class TestLandService(unittest.TestCase):
             profile_id=profile.id,
             drainage_pattern=DrainagePattern.DENDRITIC,
             drainage_density=1.5,
+            data_source="modelled",
+            model="drainage_analysis",
         )
         self.mock_land_engine.analyze_drainage.return_value = mock_result
 

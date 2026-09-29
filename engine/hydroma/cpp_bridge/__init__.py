@@ -410,7 +410,15 @@ def _py_penman_monteith_et0(tmin, tmax, rh_mean, u2, rs, z, lat, doy):
     # overcast and winter range FAO-56 is written for.
     # engine/cpp_core/src/climate.cpp:78-86 has always limited the ratio, so
     # this change also closes a C++/Python divergence.
-    _rs_rso = _np.clip(rs / _np.maximum(rso, 1e-6), 0.3, 1.0)
+    #
+    # rso is zero through polar night, where Ra is zero. Guarding the division
+    # with 1e-6 turns that into a ratio of 0/1e-6, which clips to 1.0 and so
+    # reads a polar night as a perfectly clear sky. The limit is 1.0 for a
+    # different reason than the guard gives it: a polar night is clear, but the
+    # guard only arrives there by accident. Make the case explicit so the
+    # value is chosen rather than produced by a divide-by-tiny artefact.
+    _rs_rso = _np.where(rso > 0.0, rs / _np.where(rso > 0.0, rso, 1.0), 1.0)
+    _rs_rso = _np.clip(_rs_rso, 0.3, 1.0)
 
     rnl = (
         4.903e-9

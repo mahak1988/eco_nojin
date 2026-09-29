@@ -25,6 +25,7 @@ from datetime import datetime
 from enum import StrEnum
 
 import numpy as np
+from engine.hydroma.provenance import Provenance
 
 logger = logging.getLogger(__name__)
 
@@ -104,38 +105,42 @@ class NojinInput:
 class NojinResult:
     """Result of Nojin application calculation."""
 
-    land_profile_id: str
+    data_source: str = "simulated"
+    model: str = ""
+    computed: bool = True
+
+    land_profile_id: str | None = None
 
     # Recommended dosage
-    recommended_dosage_kg_ha: float
-    optimal_application_date_offset_days: int
-    reapplication_interval_days: int
+    recommended_dosage_kg_ha: float | None = None
+    optimal_application_date_offset_days: int | None = None
+    reapplication_interval_days: int | None = None
 
     # Expected benefits
-    expected_yield_increase_pct: float
-    expected_nitrogen_fixation_kg_ha: float
-    expected_phosphorus_solubilization_pct: float
-    expected_potassium_mobility_pct: float
+    expected_yield_increase_pct: float | None = None
+    expected_nitrogen_fixation_kg_ha: float | None = None
+    expected_phosphorus_solubilization_pct: float | None = None
+    expected_potassium_mobility_pct: float | None = None
 
     # Multi-strain analysis
-    strain_synergy_score: float  # 0-100
-    strain_compatibility: str  # "excellent", "good", "moderate", "poor"
+    strain_synergy_score: float | None = None
+    strain_compatibility: str | None = None
 
     # Environmental factors
-    soil_compatibility_score: float  # 0-100
-    temperature_suitability: str
-    moisture_suitability: str
-    seasonal_suitability: str
+    soil_compatibility_score: float | None = None
+    temperature_suitability: str | None = None
+    moisture_suitability: str | None = None
+    seasonal_suitability: str | None = None
 
     # Long-term effects
-    persistence_days: int
-    soil_health_improvement_score: float  # 0-100
+    persistence_days: int | None = None
+    soil_health_improvement_score: float | None = None
 
     # Risk assessment
-    risk_level: str  # "low", "moderate", "high"
+    risk_level: str | None = None
 
     # Status (MUST be before defaults)
-    suitability_score: float  # 0-100
+    suitability_score: float | None = None
 
     # Integration data (defaults)
     water_efficiency_impact: float | None = None  # From Phase 3

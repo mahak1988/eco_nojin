@@ -57,6 +57,9 @@ from services.api_gateway.routers import nojin
 from services.commerce.routers import commerce as commerce_router
 from services.finance.routers import finance as finance_router
 from services.inventory.routers import inventory as inventory_router
+from services.livestock import api as livestock_router
+from services.simulation import api as simulation_legacy_router
+from services.validation import router as validation_router
 
 # Import all routers
 # Import individual routers that are used later with app.include_router
@@ -81,6 +84,7 @@ from .routers import (  # Import the new router
     benchmark,
     blockchain,
     carbon,
+    compliance,
     contact,
     content_public,
     dashboard,
@@ -104,14 +108,17 @@ from .routers import (  # Import the new router
     iot_devices,
     land,
     legal_texts,
+    lms,
     logistics,
     manual_data,
     marketplace,
     materials,
     models as models_router,
+    motors,
     mrv,
     newsletter,
     nojin,
+    ogc_router,
     organizations,
     passkey_router,
     pilot,
@@ -125,8 +132,10 @@ from .routers import (  # Import the new router
     simulation,
     soil,
     support,
+    supabase_proxy,
     sync,
     tool_registry,
+    tourism_router,
     ussd,
     village_hub,
     voice,
@@ -491,8 +500,22 @@ app.include_router(watershed.router)
 app.include_router(scenarios.router)
 
 # AI & Assistant
-app.include_router(ai.router)
+#
+# `ai_chat` is included before `ai`, and the order is the fix rather than a style
+# choice. Both declare `POST /chat` on the same router prefix, and Starlette
+# matches in registration order, so whichever is included first answers and the
+# other is unreachable.
+#
+# `ai.py:68` is `async def chat_endpoint(payload: QueryRequest)` — no principal,
+# no dependency, RAG and a Groq call behind it. `ai_chat.py:223` is
+# `def chat(…, user: User = Depends(require_user))`. With `ai` first, the
+# authenticated chat endpoint had never been reachable and the platform shipped
+# an open AI endpoint that the gate flags. `ai_chat` first means the gated
+# implementation answers; `ai.py`'s declaration stays mounted and shadowed, which
+# `check-mounted-routes.mjs` reports, because deleting the route is a decision
+# about the RAG assistant's future rather than an auth one.
 app.include_router(ai_chat.router)
+app.include_router(ai.router)
 app.include_router(ai_analysis.router)
 
 # Economy & Marketplace
@@ -500,6 +523,9 @@ app.include_router(ecowallet.router)
 app.include_router(marketplace.router)
 # Village Development Hub — extends marketplace with village development features
 app.include_router(village_hub.router)
+# EcoCoin/LMS/ecotourism module status endpoints: written, tested and previously
+# unreachable because nothing in this file ever included them.
+app.include_router(tourism_router.router, tags=["tourism"])
 
 # Farm Management
 app.include_router(farms.router)
@@ -531,6 +557,38 @@ app.include_router(dashboard.router)
 app.include_router(contact.router, tags=["contact"])
 app.include_router(pilot.router, tags=["pilot"])
 app.include_router(newsletter.router, tags=["newsletter"])
+
+# ── Routers that existed as tested, importable modules with a declared read
+#    contract but no include_router() anywhere in this file. A page bound to
+#    any of these paths rendered a permanent error state until now.
+#    Each one is mounted at its own declared prefix with no extra prefix, so
+#    scripts/check-mounted-routes.mjs can verify the result against the
+#    running app rather than trusting the wiring by eye.
+
+# Compliance: KYC/AML, greenwashing, credit bridge. require_user for reads,
+# require_admin for any verdict or issuance (see the router's own docstring).
+app.include_router(compliance.router, tags=["compliance"])
+# Scientific motors: /motors/*. require_admin / get_current_user.
+app.include_router(motors.router, tags=["motors"])
+# OGC API - Features / WaterML. Public standard surface, read-only by design.
+app.include_router(ogc_router.router, tags=["ogc"])
+# LMS: public course catalogue; progress routes are scoped by a Supabase JWT
+# and RLS, never by a caller-supplied user id.
+app.include_router(lms.router, tags=["lms"])
+# Supabase pass-through. Every user-scoped route resolves the token to a user
+# id first; the two /admin/* routes delegate the role check to the
+# admin_set_role RPC, so authorisation is enforced in the database, not here.
+app.include_router(supabase_proxy.router, tags=["supabase"])
+# HyDroMa scientific validation: read-only run/checks/reference-data contract.
+app.include_router(validation_router.router, tags=["validation"])
+# Livestock: /livestock/animal-types is a static capability catalogue. The
+# simulate/forage POSTs are stateless in-process computation, the same posture
+# as the already-mounted /api/v1/analyses and /api/v1/simulation compute routes.
+app.include_router(livestock_router.router, tags=["livestock"])
+# Unversioned legacy simulation surface (/simulation/simulators). The versioned
+# /api/v1/simulation router is mounted above; this one is kept because the
+# capability catalogue it serves is not a duplicate of anything.
+app.include_router(simulation_legacy_router.router, tags=["simulation"])
 
 # Legal & Registry (Phase 2)
 app.include_router(legal_texts.router)

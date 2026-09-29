@@ -646,6 +646,8 @@ class ClimateIntegrator:
                 recommendations=recommendations,
                 integration_time_ms=integration_time_ms,
                 data_quality_level=climate_profile.data_quality_level,
+                data_source="modelled",
+                model="climate integrator",
             )
 
         except Exception as e:
@@ -656,4 +658,6 @@ class ClimateIntegrator:
                 success=False,
                 error_message=str(e),
                 integration_time_ms=integration_time_ms,
+                data_source="modelled",
+                model="climate integrator",
             )

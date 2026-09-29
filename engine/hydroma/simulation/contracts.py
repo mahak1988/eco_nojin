@@ -9,6 +9,7 @@ where a number came from.
 from datetime import datetime
 from typing import Any, Literal
 
+from engine.hydroma.provenance import DataSource, Provenance, ProvenanceCarrier
 from pydantic import BaseModel, Field
 
 
@@ -36,9 +37,9 @@ class ScenarioParams(BaseModel):
 class RusleOutput(BaseModel):
     """RUSLE soil-loss result for before/after intervention."""
 
-    erosion_before_t_ha: float
-    erosion_after_t_ha: float
-    reduction_pct: float
+    erosion_before_t_ha: float | None = None
+    erosion_after_t_ha: float | None = None
+    reduction_pct: float | None = None
     data_source: Literal["simulated"] = "simulated"
     model: str = "RUSLE (C++ core or analytic product)"
 
@@ -46,7 +47,7 @@ class RusleOutput(BaseModel):
 class AquacropOutput(BaseModel):
     """AquaCrop-OSPy crop-simulation result for one season."""
 
-    crop: str
+    crop: str | None = None
     yield_kg_ha: float | None = None
     biomass_kg_ha: float | None = None
     residue_kg_ha: float | None = None
@@ -59,11 +60,11 @@ class AquacropOutput(BaseModel):
 class RothcOutput(BaseModel):
     """RothC soil-carbon result (one run window)."""
 
-    soc_before_t_ha: float
-    soc_after_t_ha: float
-    soc_change_t_ha_yr: float
-    co2_respired_t_ha: float
-    co2e_t_ha: float
+    soc_before_t_ha: float | None = None
+    soc_after_t_ha: float | None = None
+    soc_change_t_ha_yr: float | None = None
+    co2_respired_t_ha: float | None = None
+    co2e_t_ha: float | None = None
     data_source: Literal["simulated"] = "simulated"
     model: str = "RothC (in-house port, pending reference validation)"
 
@@ -133,7 +134,7 @@ class GroundwaterInput(BaseModel):
     specific_yield: float = 0.15
 
 
-class GroundwaterOutput(BaseModel):
+class GroundwaterOutput(Provenance, BaseModel):
     """Output contract for groundwater analysis."""
 
     land_profile_id: str
@@ -161,7 +162,7 @@ class WatershedInput(BaseModel):
     average_slope_m_m: float
 
 
-class WatershedOutput(BaseModel):
+class WatershedOutput(Provenance, BaseModel):
     """Output contract for watershed analysis."""
 
     land_profile_id: str
@@ -188,7 +189,7 @@ class WaterQualityInput(BaseModel):
     hardness_mg_l: float = 0.0
 
 
-class WaterQualityOutput(BaseModel):
+class WaterQualityOutput(Provenance, BaseModel):
     """Output contract for water quality analysis."""
 
     land_profile_id: str
@@ -208,12 +209,16 @@ class SWATInput:
             setattr(self, k, v)
 
 
-class SWATOutput:
-    """Placeholder for compatibility with old tests."""
 
-    def __init__(self, *args, **kwargs):
+class SWATOutput(ProvenanceCarrier):
+    """Placeholder for compatibility with old tests."""
+    _FIELDS = ('water_yield_m3', 'runoff_m3', 'sediment_yield_t', 'evapotranspiration_mm', 'start_date', 'end_date')
+
+    def __init__(self, *args, data_source: DataSource, model: str, **kwargs):
+        super().__init__(data_source=data_source, model=model)
         for k, v in kwargs.items():
             setattr(self, k, v)
+
 
     def model_dump(self) -> dict:
         return {k: v for k, v in self.__dict__.items() if not k.startswith("_")}
@@ -227,12 +232,16 @@ class AquaCropInput:
             setattr(self, k, v)
 
 
-class AquaCropOutput:
-    """Placeholder for compatibility with old tests."""
 
-    def __init__(self, *args, **kwargs):
+class AquaCropOutput(ProvenanceCarrier):
+    """Placeholder for compatibility with old tests."""
+    _FIELDS = ('yield_t_ha', 'biomass_t_ha', 'water_use_mm')
+
+    def __init__(self, *args, data_source: DataSource, model: str, **kwargs):
+        super().__init__(data_source=data_source, model=model)
         for k, v in kwargs.items():
             setattr(self, k, v)
+
 
 
 class RothCInput:
@@ -243,12 +252,16 @@ class RothCInput:
             setattr(self, k, v)
 
 
-class RothCOutput:
-    """Placeholder for compatibility with old tests."""
 
-    def __init__(self, *args, **kwargs):
+class RothCOutput(ProvenanceCarrier):
+    """Placeholder for compatibility with old tests."""
+    _FIELDS = ('total_soc', 'co2_emitted')
+
+    def __init__(self, *args, data_source: DataSource, model: str, **kwargs):
+        super().__init__(data_source=data_source, model=model)
         for k, v in kwargs.items():
             setattr(self, k, v)
+
 
 
 class HECRASInput:
@@ -259,12 +272,16 @@ class HECRASInput:
             setattr(self, k, v)
 
 
-class HECRASOutput:
-    """Placeholder for compatibility."""
 
-    def __init__(self, *args, **kwargs):
+class HECRASOutput(ProvenanceCarrier):
+    """Placeholder for compatibility."""
+    _FIELDS = ('water_surface_profile', 'shear_stress_pa', 'velocity_m_s', 'flood_extent', 'structure_safety')
+
+    def __init__(self, *args, data_source: DataSource, model: str, **kwargs):
+        super().__init__(data_source=data_source, model=model)
         for k, v in kwargs.items():
             setattr(self, k, v)
+
 
 
 class RUSLEInput:
@@ -275,12 +292,16 @@ class RUSLEInput:
             setattr(self, k, v)
 
 
-class RUSLEOutput:
-    """Placeholder for compatibility."""
 
-    def __init__(self, *args, **kwargs):
+class RUSLEOutput(ProvenanceCarrier):
+    """Placeholder for compatibility."""
+    _FIELDS = ('soil_loss_t_ha', 'gross_erosion_t')
+
+    def __init__(self, *args, data_source: DataSource, model: str, **kwargs):
+        super().__init__(data_source=data_source, model=model)
         for k, v in kwargs.items():
             setattr(self, k, v)
+
 
 
 class WEAPInput:
@@ -291,9 +312,13 @@ class WEAPInput:
             setattr(self, k, v)
 
 
-class WEAPOutput:
-    """Placeholder for compatibility."""
 
-    def __init__(self, *args, **kwargs):
+class WEAPOutput(ProvenanceCarrier):
+    """Placeholder for compatibility."""
+    _FIELDS = ('water_allocation_m3', 'unmet_demand_m3', 'water_balance', 'allocation_efficiency')
+
+    def __init__(self, *args, data_source: DataSource, model: str, **kwargs):
+        super().__init__(data_source=data_source, model=model)
         for k, v in kwargs.items():
             setattr(self, k, v)
+

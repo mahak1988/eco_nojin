@@ -16,6 +16,8 @@ from typing import Any
 
 import numpy as np
 
+from engine.hydroma.provenance import DataSource
+
 
 @dataclass
 class ValidationResult:
@@ -80,10 +82,21 @@ class ModelOutput:
     which model it is talking to.
     """
 
+    # Required, and with no default. The docstring above asks for exactly this
+    # and the two lines that used to sit here defeated it: `data_source: str =
+    # "simulated"` let any of the twenty call sites omit the label while
+    # returning a measured number, and `str` accepted any value at all, so a
+    # typo was a query that matched nothing rather than a validation error.
+    #
+    # `computed` is separate from `data_source` because the two answer different
+    # questions. A number can be computed from live sensor data and still be
+    # fabricated, and a number can be entirely internal and still be honest.
+    #
+    # Order matters: every non-default field must precede every defaulted one.
+    data_source: DataSource
+    model: str
     success: bool
     outputs: dict[str, Any] = field(default_factory=dict)
-    data_source: str = "simulated"
-    model: str = ""
     uncertainty: dict[str, Any] = field(default_factory=dict)
 
     def __getitem__(self, key: str) -> Any:

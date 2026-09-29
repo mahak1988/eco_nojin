@@ -175,12 +175,16 @@ class PINNModel(ScientificModel):
                 success=True,
                 outputs={"solution": u},
                 uncertainty={"epistemic": 0.0, "aleatoric": 0.0},
+                data_source="modelled",
+                model="scientific model",
             )
 
         return ModelOutput(
             success=True,
             outputs={"message": "Model trained, provide query_points for evaluation"},
             uncertainty={},
+            data_source="modelled",
+            model="scientific model",
         )
 
     def train(self) -> dict[str, float]:

@@ -542,6 +542,8 @@ class TerrainAnalyzer:
             convergence_index=float(np.nanmean(valid_conv))
             if np.any(np.isfinite(valid_conv))
             else None,
+            data_source="modelled",
+            model="terrain_analysis curvature",
         )
 
         # Landform classification
@@ -616,4 +618,6 @@ class TerrainAnalyzer:
                 wetness_class=wetness_class,
             ),
             roughness_index=roughness,
+            data_source="modelled",
+            model="terrain_analysis",
         )

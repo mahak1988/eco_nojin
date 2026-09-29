@@ -6,6 +6,7 @@ import logging
 from typing import Any, Protocol  # Imported 'Any'
 
 from pydantic import BaseModel, Field
+from engine.hydroma.provenance import Provenance
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +33,7 @@ class CalibrationInput(BaseModel):
     )
 
 
-class CalibrationOutput(BaseModel):
+class CalibrationOutput(Provenance, BaseModel):
     """Output results of the calibration process."""
 
     calibrated_parameters: dict[str, float] = Field(
@@ -130,7 +131,11 @@ class Calibrator:
             f"Calibration finished. Best params: {best_params}, Best {input_data.objective_function}: {best_obj_val:.4f}"
         )
         return CalibrationOutput(
-            calibrated_parameters=best_params, best_objective_value=best_obj_val, history=history
+            calibrated_parameters=best_params,
+            best_objective_value=best_obj_val,
+            history=history,
+            data_source="modelled",
+            model="calibration fit",
         )
 
     def execute(self, input_data: CalibrationInput) -> CalibrationOutput:

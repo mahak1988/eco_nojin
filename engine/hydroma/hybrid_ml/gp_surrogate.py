@@ -374,6 +374,8 @@ class GPSurrogateModel(ScientificModel):
                 success=False,
                 error_message="GP not trained",
                 outputs={},
+                data_source="modelled",
+                model="scientific model",
             )
 
         query_points = inputs.get("query_points")
@@ -382,6 +384,8 @@ class GPSurrogateModel(ScientificModel):
                 success=False,
                 error_message="query_points required",
                 outputs={},
+                data_source="modelled",
+                model="scientific model",
             )
 
         X = np.array(query_points)
@@ -400,6 +404,8 @@ class GPSurrogateModel(ScientificModel):
                 "epistemic": std.tolist(),
                 "aleatoric": [0.0] * len(std),
             },
+            data_source="modelled",
+            model="scientific model",
         )
 
     def predict(

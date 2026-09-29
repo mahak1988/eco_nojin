@@ -175,6 +175,8 @@ class SWATPlusModel(ScientificModel):
                 success=False,
                 error_message="SWAT+ execution failed",
                 outputs={},
+                data_source="modelled",
+                model="scientific model",
             )
 
         # Parse outputs
@@ -185,6 +187,8 @@ class SWATPlusModel(ScientificModel):
             success=True,
             outputs=self._outputs_to_dict(outputs),
             uncertainty=self._estimate_uncertainty(outputs),
+            data_source="modelled",
+            model="scientific model",
         )
 
     def _setup_project(self, inputs: SWATPlusInputs) -> Path:

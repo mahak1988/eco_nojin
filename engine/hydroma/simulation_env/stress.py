@@ -145,6 +145,8 @@ def validate_index_robustness(
                 detail=detail,
                 metric=float(np.nanmean(ndvi)),
                 metadata=_meta(f"corruption_{cfg.seed}", seed, {"corruption": cfg.__dict__}),
+                data_source="simulated",
+                model="simulation_env stress",
             )
         )
     return results
@@ -155,11 +157,15 @@ def validate_index_robustness(
 # ---------------------------------------------------------------------------
 @dataclass
 class VolumeResult:
-    grid_size: int
-    elapsed_ms: float
-    nan_share: float
-    passed: bool
-    metadata: SimulationMetadata
+
+    data_source: str = "simulated"
+    model: str = ""
+    computed: bool = True
+    grid_size: int | None = None
+    elapsed_ms: float | None = None
+    nan_share: float | None = None
+    passed: bool | None = None
+    metadata: SimulationMetadata = None
 
 
 def run_volume_stress(sizes: list[int] | None = None, seed: int = 42) -> list[VolumeResult]:
