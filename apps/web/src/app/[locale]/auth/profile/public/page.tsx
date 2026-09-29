@@ -50,7 +50,6 @@ export default async function Page({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { locale } = await params;
-  await params;
   const meta = await getTranslations('pageMeta.inclusive-auth-profile-public');
   const labels = await resourceLabels();
   const endpoint = PATH;

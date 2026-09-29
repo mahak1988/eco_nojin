@@ -68,7 +68,7 @@ export default async function Page({
       description={meta('description')}
       path={endpoint}
       result={result}
-      mode="record"
+      mode="rows"
       rowsKey={undefined}
       rowKey={(row) => String(row.id ?? JSON.stringify(row).slice(0, 24))}
       labels={labels}

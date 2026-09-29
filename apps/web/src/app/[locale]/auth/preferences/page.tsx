@@ -43,7 +43,6 @@ export async function generateMetadata({
 
 export default async function Page({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  await params;
   const meta = await getTranslations('pageMeta.inclusive-auth-preferences');
   const labels = await resourceLabels();
   const endpoint = PATH;
