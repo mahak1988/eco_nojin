@@ -25,7 +25,22 @@ function countPageFiles(dir: string, acc: number = 0): number {
 describe('route manifest foundation', () => {
   it('keeps the planning ceiling and current baseline explicit', () => {
     expect(PLANNING_CEILING).toBe(987);
-    expect(CURRENT_PAGE_FILES_OBSERVED).toBe(352);
+    // 2026-09-29: 352 -> 356. Four catalogue GET contracts gained their page:
+    // `/market/villages/{village_id}`, `/hydroma/carbon/verra/{registry_id}`,
+    // `/hydroma/carbon/{model_id}` and `/system/iot/devices/{device_id}`. The
+    // generator had been refusing all four because their reported "swallowed"
+    // siblings (`/market/villages/engagements`, `/hydroma/carbon/verra/search`,
+    // `/hydroma/carbon/tokenize`, `/system/iot/devices/provision-qr`) are `POST`
+    // mutations, which never get a page and so cannot be taken by a dynamic
+    // route. Both numbers are in this file on purpose: the one that must match
+    // disk is asserted against the filesystem on the next test.
+    //
+    // 2026-09-29: 356 -> 378, measured against the tree on the next test rather
+    // than reasoned about. Twenty-one of the twenty-two are the routes this
+    // change catalogues; the twenty-second is not named here, because nothing in
+    // this file identifies it and a ratchet that explains a number it has not
+    // measured is a ratchet that can absorb the next one silently.
+    expect(CURRENT_PAGE_FILES_OBSERVED).toBe(378);
     expect(plannedPageTotal).toBe(PLANNING_CEILING);
   });
 

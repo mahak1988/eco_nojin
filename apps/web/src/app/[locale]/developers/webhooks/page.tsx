@@ -19,6 +19,7 @@ const INBOUND_WEBHOOKS = [
 
 export default async function WebhooksPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  await params;
   setRequestLocale(locale);
   const t = await getTranslations('developers');
   const common = await getTranslations('common');

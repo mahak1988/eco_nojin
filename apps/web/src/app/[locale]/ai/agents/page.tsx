@@ -13,6 +13,7 @@ const ASSISTANT_PATHS = ['/api/v1/ai/health', '/api/v1/ai/analysis/providers'] a
 
 export default async function AgentsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  await params;
   setRequestLocale(locale);
   const t = await getTranslations('ai');
   const common = await getTranslations('common');

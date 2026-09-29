@@ -57,6 +57,7 @@ export default async function ContentPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { locale } = await params;
+  await params;
   const query = await searchParams;
   setRequestLocale(locale);
   const t = await getTranslations();

@@ -105,7 +105,7 @@ describe('sitemap', () => {
     const indexableListable = PAGE_CATALOG.filter(
       (entry) => entry.indexable && !entry.path.includes('{'),
     ).length;
-    expect(PAGE_CATALOG_TOTAL).toBe(600);
+    expect(PAGE_CATALOG_TOTAL).toBe(621);
     // The old hand-written list produced 19 × 14 = 266 entries and missed every
     // deep path. These figures follow the catalogue, which follows the filesystem,
     // so they move when pages are added — deliberately, with the change recorded
@@ -116,8 +116,44 @@ describe('sitemap', () => {
     // this ratchet moving with it, so the sitemap was under-reporting by 13
     // paths × 14 locales. See `page-catalog.integrity.test.ts` for the status
     // totals that produced the change.
-    expect(indexableListable).toBe(294);
-    expect(entries.length).toBe(294 * 14);
+    //
+    // 2026-09-29: unchanged at 294, and the reason is the point. Four more
+    // catalogue entries became indexable the same day — capability 40 -> 44,
+    // indexable 334 -> 338 — but all four are parameterised
+    // (`/market/villages/{village_id}`, `/hydroma/carbon/verra/{registry_id}`,
+    // `/hydroma/carbon/{model_id}`, `/system/iot/devices/{device_id}`), and a
+    // sitemap entry has to be a real address. Listing `/market/villages/{id}`
+    // would publish a literal `{village_id}` to crawlers, which is the same
+    // defect the `isListablePath` filter exists to prevent. The count is the
+    // count of listable paths, and four route templates are not listable.
+    // 2026-09-29: 294 -> 295. One catalogue entry gained a page on disk while its
+    // seed still said `planned` — `/market/villages/b2b/demands` — so it resolved
+    // `live` and became listable. The ratchet had not been re-run. See the change
+    // log in `page-catalog.integrity.test.ts`.
+    //
+    // 2026-09-29: 295 -> 307. The catalogue grew by twenty-one entries, of which
+    // twelve are listable. The nine that carry a `{param}` are the same case the
+    // paragraph above already states: `/hydroma/indices/{model_id}`,
+    // `/hydroma/models/{model_id}`, `/hydroma/models/{model_id}/validation`,
+    // `/hydroma/mrv/{model_id}`, `/hydroma/simulation/{model_id}`,
+    // `/hydroma/soil/{model_id}`, `/hydroma/water/{model_id}`, `/market/orders/{id}`
+    // and `/market/orders/{id}/transitions` are route templates, not addresses, and
+    // publishing a literal brace to a crawler is the defect `isListablePath` exists
+    // to prevent. The twelve listable are the eleven hydroma surfaces (`indices`,
+    // `models`, `mrv`, `simulation`, `slaughterhouse/status`, `soil`, `validation`,
+    // `validation/checks`, `validation/reference-data`, `validation/run`, `water`)
+    // plus `/market/escrow/orders`.
+    //
+    // One caveat, recorded rather than hidden: `/market/escrow/orders` sets
+    // `robots: { index: false, follow: true }` in its own `generateMetadata`, and
+    // the catalogue's single rule resolves it `live`, so it is listed here. The
+    // catalogue has no status that means "renders a contract but must not be
+    // indexed" — `indexable` is derived, and the only way to switch it off is to
+    // deny that a contract exists. Fixing it properly means either the page
+    // dropping its own `robots` or the status model gaining a `live + noindex`
+    // state; neither is in this file's ownership, and neither is invented here.
+    expect(indexableListable).toBe(307);
+    expect(entries.length).toBe(307 * 14);
     expect(entries.length).toBeGreaterThan(266);
   });
 });

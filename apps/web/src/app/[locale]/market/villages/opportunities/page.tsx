@@ -58,7 +58,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       path={endpoint}
       result={result}
       mode="rows"
-      rowsKey={'opportunities'}
+      rowsKey={undefined}
       rowKey={(row) => String(row.id ?? JSON.stringify(row).slice(0, 24))}
       labels={labels}
     ></ResourcePage>

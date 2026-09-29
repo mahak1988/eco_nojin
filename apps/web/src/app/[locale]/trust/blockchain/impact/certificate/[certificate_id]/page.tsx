@@ -68,8 +68,8 @@ export default async function Page({
       description={meta('description')}
       path={endpoint}
       result={result}
-      mode="rows"
-      rowsKey={'{certificate_id}s'}
+      mode="record"
+      rowsKey={undefined}
       rowKey={(row) => String(row.id ?? JSON.stringify(row).slice(0, 24))}
       labels={labels}
     ></ResourcePage>

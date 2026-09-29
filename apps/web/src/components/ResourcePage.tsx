@@ -35,7 +35,21 @@ import { verificationOf } from '@/lib/api/surfaces';
 
 export type ResourceTone = 'info' | 'success' | 'warn' | 'bad';
 
-export interface ResourcePageProps<T> {
+/**
+ * `Row` is the type of one row; `Payload` is the type the gateway returned.
+ *
+ * They are usually the same — for an object payload the generator declares
+ * `Record<string, unknown>` and every row is that shape — but they diverge for
+ * every contract that returns a bare array. `GET
+ * /api/v1/commerce/orders/{order_id}/transitions` (`commerce.py:271`) answers a
+ * bare `list[str]`, so the payload is `string[]` and each row is a `string`.
+ * With one parameter, `rowKey` and `columns` would be typed on the payload and
+ * the columns would be rejected.
+ *
+ * `Payload` defaults to `Row`, so the 132 generated pages and every existing call
+ * site are unaffected.
+ */
+export interface ResourcePageProps<Row, Payload = Row> {
   /** The catalogue slug this page was generated from, e.g. `market-cart`. */
   slug: string;
   locale: string;
@@ -46,13 +60,13 @@ export interface ResourcePageProps<T> {
   /** Registered gateway path. Never a substitute. */
   path: string;
   /** Rendered result of `apiGet` for `path`. */
-  result: ApiResult<T>;
+  result: ApiResult<Payload>;
   /** Table mode, or `record` for a flat document. */
   mode: 'rows' | 'record';
   /** Field holding the array, for `mode: 'rows'`. */
   rowsKey?: string;
-  columns?: Column<T>[];
-  rowKey?: (row: T) => string;
+  columns?: Column<Row>[];
+  rowKey?: (row: Row) => string;
   /** Copy for the five states, from the catalogue. */
   labels: {
     loading: string;
@@ -111,7 +125,7 @@ function inferColumns<T>(rows: T[], declared: Column<T>[] | undefined): Column<T
 
 const isOffline = (result: ApiResult<unknown>): boolean => !result.ok && result.status === 0;
 
-export async function ResourcePage<T>({
+export async function ResourcePage<Row, Payload = Row>({
   slug,
   locale,
   title,
@@ -125,7 +139,7 @@ export async function ResourcePage<T>({
   labels,
   tone = 'info',
   children,
-}: ResourcePageProps<T>) {
+}: ResourcePageProps<Row, Payload>) {
   // A contract that declares no field is a different case from one that declares
   // an array, and the codebase already has a renderer for it. Delegating rather
   // than reimplementing means the "the payload says it is verified" rule lives in
@@ -149,7 +163,7 @@ export async function ResourcePage<T>({
 
   const status = await getTranslations('statusLine');
 
-  const rows = result.ok && mode === 'rows' ? readRows<T>(result.data, rowsKey) : [];
+  const rows = result.ok && mode === 'rows' ? readRows<Row>(result.data, rowsKey) : [];
   const total = rows.length;
 
   const state = !result.ok

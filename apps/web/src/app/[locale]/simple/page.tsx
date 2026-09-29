@@ -1,40 +1,35 @@
-import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { StatusDot } from '@/components/StatusDot';
-import { SITE_URL as BASE_URL } from '@/config/site';
 import { apiGet } from '@/lib/api/client';
-import {
-  isUssdMenuLanguage,
-  LIVE_LABEL_KEY,
-  REAL_DATA_LABEL_KEY,
-  SIMPLE_ACCESS_ROUTE,
-  UNAVAILABLE_LABEL_KEY,
-} from '@/lib/domains/registry';
+import { isUssdMenuLanguage } from '@/lib/domains/registry';
 
-type MenuPreview = { language: string; menu_text: string };
-type GatewayStatus = { status: string };
-
-// Channel state is read from the gateway on every request.
 export const dynamic = 'force-dynamic';
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  setRequestLocale(locale);
-  const t = await getTranslations();
+type MenuPreview = { language: string; menu_text: string };
+type GatewayStatus = { status: string; note?: string };
 
-  return {
-    title: t(SIMPLE_ACCESS_ROUTE.headingKey),
-    description: t('public.channels.lead'),
-    alternates: {
-      canonical: `${BASE_URL}/${locale}/simple`,
-    },
-  };
-}
+const MENU_PATH = '/api/v1/ussd/menu/preview';
+const STATUS_PATH = '/api/v1/ussd/status';
 
+/**
+ * `/simple` — the low-bandwidth variant.
+ *
+ * "Lighter" is a claim about bytes, so it is enforced structurally rather than
+ * asserted in a paragraph:
+ *
+ *   - no `next/image`, no `<img>`, no `SiteNav`, no `SiteFooter`. The chrome is
+ *     the single largest thing on a public page and a reader on a weak network
+ *     pays for every one of its links;
+ *   - no client component and no `use client` island, so nothing here
+ *     hydrates — the page is HTML and CSS the moment the response lands;
+ *   - a document of a few hundred lines, with a plain vertical stack and no
+ *     card grid, because layout cost is paid on every keystroke of scrolling on
+ *     the handsets this page is for.
+ *
+ * The content is the same as the default variant: the gateway's own USSD menu
+ * for the reader's language, the honest channel states, and the guarantee list
+ * below, which is the page describing its own constraints.
+ */
 export default async function SimpleAccessPage({
   params,
 }: {
@@ -42,104 +37,83 @@ export default async function SimpleAccessPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations();
 
-  // The USSD menu endpoint only serves en/fa/ar; other locales get the honest
-  // unavailable state instead of an unrelated language.
+  const t = await getTranslations('public.simple');
+  const common = await getTranslations('common');
+  const statusLine = await getTranslations('statusLine');
+
   const menuLanguage = isUssdMenuLanguage(locale) ? locale : null;
   const [menu, gateway] = await Promise.all([
     menuLanguage
-      ? apiGet<MenuPreview>(`/api/v1/ussd/menu/preview?language=${menuLanguage}`)
-      : Promise.resolve({ ok: false as const, error: 'language not served', status: 0 }),
-    apiGet<GatewayStatus>('/api/v1/ussd/status'),
+      ? apiGet<MenuPreview>(`${MENU_PATH}?language=${menuLanguage}`)
+      : Promise.resolve({ ok: false as const, status: 0, error: `language=${locale} not served` }),
+    apiGet<GatewayStatus>(STATUS_PATH),
   ]);
 
-  const menuText = menu.ok ? menu.data.menu_text : null;
+  const guarantees = [
+    t('guaranteeNoImages'),
+    t('guaranteeNoScripts'),
+    t('guaranteeSmall'),
+    t('guaranteeLanguages'),
+    t('guaranteeOffline'),
+  ];
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-12">
-      <header>
-        <h1 className="display text-3xl font-bold text-ink sm:text-4xl">
-          {t(SIMPLE_ACCESS_ROUTE.headingKey)}
-        </h1>
-        <p className="mt-2 max-w-2xl text-sm text-ink-soft">{t('public.channels.lead')}</p>
-      </header>
+    <main id="main" className="mx-auto max-w-2xl px-4 py-6">
+      <h1 className="display text-2xl font-bold text-ink">{t('metaTitle')}</h1>
+      <p className="mt-2 text-sm text-ink-soft">{t('metaDescription')}</p>
 
-      <section className="card mt-6 p-5" aria-labelledby="simple-menu">
-        <h2 id="simple-menu" className="field-label">
-          {t('public.channels.ussd')}
-        </h2>
-        {menuText ? (
-          <p className="num mt-3 text-sm text-ink" dir="auto">
-            {menuText}
-          </p>
-        ) : (
-          <div className="mt-3 space-y-2">
-            <p className="text-sm text-ink">{t(UNAVAILABLE_LABEL_KEY)}</p>
-            <p className="text-sm text-ink-soft">{t('public.channels.whatDesc')}</p>
-          </div>
-        )}
-      </section>
+      <h2 className="mt-6 text-base font-semibold text-ink">{t('guaranteeTitle')}</h2>
+      <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-ink-soft">
+        {guarantees.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
 
-      <section className="mt-4" aria-labelledby="simple-channels">
-        <h2 id="simple-channels" className="field-label">
-          {t('public.channels.channels')}
-        </h2>
-        <ul className="mt-3 space-y-2">
-          {SIMPLE_ACCESS_ROUTE.capabilities.map((capability) => {
-            const live =
-              capability.id === 'simple-ussd-menu'
-                ? menu.ok
-                : capability.id === 'simple-ussd-gateway' && gateway.ok;
-            return (
-              <li
-                key={capability.id}
-                className="card flex flex-wrap items-center justify-between gap-3 p-4"
-              >
-                <span className="text-sm text-ink">{t(capability.labelKey)}</span>
-                <span className="flex flex-wrap items-center gap-3">
-                  <span className="num text-xs text-ink-faint">
-                    {capability.endpoint ?? t(UNAVAILABLE_LABEL_KEY)}
-                  </span>
-                  <StatusDot
-                    state={live ? 'ok' : 'down'}
-                    label={live ? t(LIVE_LABEL_KEY) : t(UNAVAILABLE_LABEL_KEY)}
-                  />
-                </span>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
+      <h2 className="mt-6 text-base font-semibold text-ink">{t('languagesTitle')}</h2>
+      <p className="mt-1 text-sm text-ink-soft">{t('languagesBody')}</p>
+      {menu.ok ? (
+        <p className="num mt-2 text-sm whitespace-pre-wrap text-ink" dir="auto">
+          {menu.data.menu_text}
+        </p>
+      ) : (
+        <p className="mt-2 text-sm text-ink">{statusLine('unavailable')}</p>
+      )}
+      <p className="num mt-1 text-xs text-ink-faint">
+        {menuLanguage
+          ? `${MENU_PATH}?language=${menuLanguage}`
+          : `${MENU_PATH}?language=${locale} · en, fa, ar`}
+      </p>
 
-      <section className="mt-4 grid gap-4 md:grid-cols-3">
-        <div className="card p-5">
-          <h2 className="field-label">{t('common.evidence')}</h2>
-          <ul className="mt-2 list-inside list-disc text-sm text-ink-soft">
-            {t.raw('public.channels.evidenceItems')?.map((item: string) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </div>
-        <div className="card p-5">
-          <h2 className="field-label">{t('common.limits')}</h2>
-          <ul className="mt-2 list-inside list-disc text-sm text-ink-soft">
-            {t.raw('public.channels.limitsItems')?.map((item: string) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </div>
-        <div className="card p-5">
-          <h2 className="field-label">{t('common.next')}</h2>
-          <ul className="mt-2 list-inside list-disc text-sm text-ink-soft">
-            {t.raw('public.channels.nextItems')?.map((item: string) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </div>
-      </section>
+      <h2 className="mt-6 text-base font-semibold text-ink">{common('error')}</h2>
+      <ul className="mt-2 space-y-2 text-sm">
+        <li className="flex flex-wrap items-center justify-between gap-2 border-b border-line pb-2">
+          <span className="num font-mono text-xs text-ink">{STATUS_PATH}</span>
+          <span className="flex items-center gap-2">
+            <span className="num text-xs text-ink-soft">
+              {gateway.ok ? gateway.data.status : statusLine('unavailable')}
+            </span>
+            <StatusDot
+              state={gateway.ok ? 'ok' : 'down'}
+              label={gateway.ok ? common('live') : statusLine('unavailable')}
+            />
+          </span>
+        </li>
+        <li className="flex flex-wrap items-center justify-between gap-2 border-b border-line pb-2">
+          <span className="num font-mono text-xs text-ink">{MENU_PATH}</span>
+          <span className="flex items-center gap-2">
+            <span className="num text-xs text-ink-soft">
+              {menu.ok ? statusLine('realData') : statusLine('unavailable')}
+            </span>
+            <StatusDot
+              state={menu.ok ? 'ok' : 'down'}
+              label={menu.ok ? common('live') : statusLine('unavailable')}
+            />
+          </span>
+        </li>
+      </ul>
 
-      <p className="mt-6 text-xs text-ink-soft">{t(REAL_DATA_LABEL_KEY)}</p>
-    </div>
+      <p className="mt-6 text-xs text-ink-faint">{statusLine('realData')}</p>
+    </main>
   );
 }

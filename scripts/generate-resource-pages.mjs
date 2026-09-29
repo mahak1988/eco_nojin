@@ -1,32 +1,36 @@
 #!/usr/bin/env node
 /**
  * Generate the page files for every catalogue entry that has a real gateway
- * contract but no page yet.
+ * contract but no page yet, and keep the ones already generated current.
  *
  * Why generate instead of hand-write
  * ----------------------------------
  * The master plan's own answer to the 985-page target is "templates plus
  * generation from the registry" (section on risks: *page volume — response:
- * templates + generation from registry*). Writing 114 files by hand would produce
- * 114 places for the same decision to be made slightly differently, which is how
- * the codebase accumulated five density spellings and two competing title
- * dictionaries in the first place.
+ * templates + generation from registry*). Writing 132 files by hand would
+ * produce 132 places for the same decision to be made slightly differently,
+ * which is how the codebase accumulated five density spellings and two
+ * competing title dictionaries in the first place.
  *
  * The honest scope
  * ----------------
- * Of 233 catalogue entries with a contract and no page, 119 are *action or API
- * surfaces* — `POST /workspace/commerce/orders/{order_id}/settle`,
- * `GET /auth/2fa/status`. Those are not pages and are skipped: rendering a form
- * for them would be inventing a workflow the contract does not describe. The
- * remaining 114 are page-shaped: a GET with no action verb.
+ * Of 600 catalogue entries, 256 declare a contract and had no page. 118 of those
+ * are *action or API surfaces* — `POST /workspace/commerce/orders/{order_id}/
+ * settle`, `GET /auth/2fa/status`. Those are not pages and are skipped: rendering
+ * a form for them would be inventing a workflow the contract does not describe.
+ * The remaining 132 are page-shaped: a GET with no action verb, whose response
+ * shape has been read from the router that serves it (see `CONTRACT_SHAPES`).
  *
  * Every generated page is bound to its declared endpoint and renders the five
  * required states. None of them can show a fabricated number, because the
- * template has no fixture path.
+ * template has no fixture path — and a page whose `rowsKey` names a field the
+ * gateway does not send is not generated at all, because that is how an empty
+ * state gets rendered on top of a response that arrived.
  *
  * Run from the repository root:
- *   node scripts/generate-resource-pages.mjs            # dry run, prints the plan
- *   node scripts/generate-resource-pages.mjs --write    # actually write
+ *   node scripts/generate-resource-pages.mjs              # dry run, prints the plan
+ *   node scripts/generate-resource-pages.mjs --write --missing   # absent pages only
+ *   node scripts/generate-resource-pages.mjs --write --force    # + refresh generated
  */
 import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve, sep } from 'node:path';
@@ -212,16 +216,44 @@ const isPageShaped = (method, path) => {
 };
 
 /**
- * Unrouted catalogue paths, computed from the catalogue and the app tree.
+ * Catalogue paths that could be swallowed, computed from the catalogue and the
+ * app tree.
  *
  * The clash that matters is a *fallback* path being swallowed. A static sibling
  * that has its own page is fine — Next.js serves it directly and the dynamic
  * route serves everything else, which is how `/market/bazaars/{id}` has sat
  * beside `/market/bazaars/create` all along.
+ *
+ * Only a path that can *become a page* is at risk. A `POST` entry — an action or
+ * an API surface — is never routed here, so a dynamic segment cannot take it:
+ * whatever the dynamic route renders for that URL is not the action the
+ * catalogue declared, and the entry was never going to be a page. Counting those
+ * as swallowed reported five conflicts that did not exist and suppressed four
+ * real GET pages; see `shadowedFallbacks`.
  */
-function unroutedCatalogPaths() {
+function shadowableCatalogPaths() {
   // Computed on first call rather than at module load: this is declared above
   // `seeds`, and eager evaluation made it a temporal-dead-zone error.
+  if (shadowableCatalogPaths.cached) return shadowableCatalogPaths.cached;
+  const acc = [];
+  for (const seed of SEEDS_PARSED) {
+    if (!seed.endpoint) continue;
+    if (!isPageShaped(seed.method, seed.path)) continue;
+    const literal = join(APP, routeDirFor(seed.path), 'page.tsx');
+    if (exists(literal)) continue;
+    acc.push(seed.path);
+  }
+  if (process.env.ECO_DEBUG_UNROUTED) {
+    console.log(
+      `  debug: seeds=${SEEDS_PARSED.length} shadowable=${acc.length} unrouted=${unroutedCatalogPaths().length}`,
+    );
+  }
+  shadowableCatalogPaths.cached = acc;
+  return acc;
+}
+shadowableCatalogPaths.cached = null;
+
+function unroutedCatalogPaths() {
   if (unroutedCatalogPaths.cached) return unroutedCatalogPaths.cached;
   const acc = [];
   for (const seed of SEEDS_PARSED) {
@@ -229,29 +261,35 @@ function unroutedCatalogPaths() {
     if (exists(literal)) continue;
     acc.push(seed.path);
   }
-  if (process.env.ECO_DEBUG_UNROUTED) {
-    console.log(`  debug: seeds=${SEEDS_PARSED.length} unrouted=${acc.length}`);
-    console.log(`  debug: sample ${JSON.stringify(SEEDS_PARSED[0]?.path)} -> ${literal}`);
-  }
   unroutedCatalogPaths.cached = acc;
   return acc;
 }
 unroutedCatalogPaths.cached = null;
 
-/** Filled in once the seeds are parsed; see `unroutedCatalogPaths`. */
+/** Filled in once the seeds are parsed; see `shadowableCatalogPaths`. */
 let SEEDS_PARSED = [];
 
 /** A lazy accessor, because the catalogue is parsed further down this file. */
 const unrouted = () => unroutedCatalogPaths();
+const shadowable = () => shadowableCatalogPaths();
 
 /**
- * A dynamic route is refused when it would swallow a fallback path.
+ * A dynamic route is refused when it would swallow a page it can be routed for.
  *
- * The comparison is segment-by-segment against the *whole* pattern, not a string
+ * The comparison is segment-by-segment against the whole pattern, not a string
  * prefix. `/hydroma/carbon/{model_id}` collides with `/hydroma/carbon/tokenize`
  * — same length, static where the other has a parameter — but not with
  * `/hydroma/carbon/credits/retire`, which is two segments deeper and is served by
  * its own catch-all below `credits/[token_id]`.
+ *
+ * The candidate set is `shadowableCatalogPaths`, not every unrouted entry. That
+ * distinction is the whole rule, and getting it wrong was worth four working
+ * pages: all five reported "swallows" named a static sibling that is a `POST`
+ * mutation (`/market/villages/engagements`, `/hydroma/carbon/verra/search`,
+ * `/admin/content/generate-draft`, `/system/iot/devices/provision-qr`,
+ * `/hydroma/carbon/tokenize`). A mutation never gets a page, so a dynamic
+ * sibling cannot take a route away from it, and refusing the dynamic GET that
+ * *does* have a read contract was suppressing the page the contract asked for.
  *
  * Three earlier versions of this rule were wrong in different directions: one
  * refused any dynamic route with a static sibling and deleted twenty working
@@ -264,7 +302,7 @@ function shadowedFallbacks(routePath) {
   const pattern = routePath.split('/').filter(Boolean);
   if (!pattern.some((segment) => segment.includes('{'))) return [];
 
-  return unrouted().filter((candidate) => {
+  return shadowable().filter((candidate) => {
     const segments = candidate.split('/').filter(Boolean);
     if (segments.length !== pattern.length) return false;
     return pattern.every((segment, index) => {
@@ -334,8 +372,17 @@ if (incomplete.length > 0) {
   );
 }
 
-if (seeds.length !== 600) {
-  throw new Error(`parsed ${seeds.length} seeds, expected 600 — the catalog shape changed`);
+// 2026-09-29: 600 -> 621. The catalogue gained twenty-one entries whose pages
+// already exist on disk: the five `_SPECS` families, the model registry, the
+// verification suite, the validation roll-up and the three commerce order
+// surfaces. None of their endpoints is in `CONTRACT_SHAPES`, so the undeclared
+// list below now names all twenty-one instead of leaving them invisible, and
+// `--write --force` still refuses to generate them. That refusal is the point:
+// the generator cannot express a `{count, models}` envelope or a bare
+// `list[str]`, and a generated page for them would render its empty state over a
+// 200 that arrived.
+if (seeds.length !== 621) {
+  throw new Error(`parsed ${seeds.length} seeds, expected 621 — the catalog shape changed`);
 }
 
 const pending = seeds.filter((seed) => seed.endpoint && !seed.routeFile);
@@ -393,22 +440,273 @@ const slugOf = (domain, path) =>
   `${domain}-${path.split('/').filter(Boolean).join('-')}`.replace(/[{}]/g, '').toLowerCase();
 
 /**
- * Which shape the response is. Declared rather than inferred, so a change of
- * contract shows up as a code change instead of a blank page.
+ * The response shape of every contract this generator writes.
+ *
+ * Each entry is read from the handler that serves it, and each row names where
+ * the reading came from. This replaces two functions that guessed.
+ *
+ * `shapeOf` used to test the route leaf against a list of words — `stats`,
+ * `overview`, `health`, `trends` — and `rowsKeyOf` used to pluralise the leaf:
+ * `/ai/history` became `historys`, `/admin/errors/{error_id}` became
+ * `{error_id}s`, `/manual/crop-params` became `crop_params`. `ResourcePage`
+ * reads `(data as Record<string, unknown>)[rowsKey]` and gets `undefined`, so
+ * every one of those pages rendered its *empty* state on top of a response that
+ * had arrived, with a 200 next to it. The count in the empty state was a
+ * fabricated zero.
+ *
+ * So the shape is declared, per endpoint, from the contract:
+ *
+ *   ['/api/v1/ai/history', 'rows', 'conversations']
+ *   //  ai_chat.py: `return {"count": len(convs), "conversations": [...]}`
+ *   ['/api/v1/manual/crop-params', 'rows', 'rows']
+ *   //  manual_data.py: `ManualCropsResponse(ManualRowsResponse)` — the envelope
+ *   //  key is literally `rows`, whatever the page is about
+ *   ['/api/v1/iot/devices', 'rows']
+ *   //  iot_devices.py: `return [Device(...), ...]` — a bare list, so `rowsKey`
+ *   //  is undefined and `readRows` takes the payload itself
+ *   ['/api/v1/auth/me', 'record']
+ *   //  auth.py: `user_to_response(current_user)` — one object
+ *
+ * `rowsKey` is omitted when the response *is* the array. `record` is for a
+ * response that is one document, which a table cannot render.
+ *
+ * An endpoint that is not listed here is not generated. Inventing a key is how
+ * the empty-over-data page was produced in the first place, and a missing
+ * declaration should stop the run with a message naming the endpoint rather
+ * than ship a page that cannot render its own response.
  */
-const shapeOf = (path) => {
-  if (/\/(stats|overview|health|status|metrics|trends|summary|timeline|counts)\b/.test(path)) {
-    return 'record';
-  }
-  return 'rows';
-};
+const CONTRACT_SHAPES = [
+  // --- AI -------------------------------------------------------------------
+  // Two arrays of different length and meaning; neither is the page's subject,
+  // so this is a document, not a table.
+  ['/api/v1/ai/analysis/providers', 'record'],
+  // ai_chat.py: `{"count": len(convs), "conversations": [...]}`
+  ['/api/v1/ai/history', 'rows', 'conversations'],
+  // support.py: `{"personas": [...]}`
+  ['/api/v1/support/personas', 'rows', 'personas'],
+  // marketplace.py: totals, with the revenue breakdown nested under `orders`.
+  ['/api/v1/marketplace/stats', 'record'],
+  ['/api/v1/marketplace/admin/stats', 'record'],
+  // ai.py: `{"status": "operational", "engine_type": …, "providers_configured": true}`
+  ['/api/v1/ai/health', 'record'],
+  // pilot.py: application aggregates.
+  ['/api/v1/pilot/stats', 'record'],
 
-const rowsKeyOf = (path) => {
-  const leaf = path.split('/').filter(Boolean).at(-1) ?? '';
-  if (leaf === '') return undefined;
-  const singular = leaf.replace(/-/g, '_');
-  return `${singular.replace(/s$/, '')}s`;
-};
+  // --- blockchain -----------------------------------------------------------
+  // Every `*_health` and `*_stats` here returns a flat capability report.
+  ['/api/v1/blockchain/ecocoin/health', 'record'],
+  ['/api/v1/blockchain/ecocoin/stats', 'record'],
+  ['/api/v1/blockchain/health', 'record'],
+  ['/api/v1/blockchain/phasegate/status', 'record'],
+  ['/api/v1/blockchain/ecocoin/wallet/{user_id}', 'record'],
+  ['/api/v1/blockchain/impact/certificate/{certificate_id}', 'record'],
+  ['/api/v1/blockchain/info', 'record'],
+  ['/api/v1/blockchain/treasury/balance', 'record'],
+  // `{confidence, impact_score, trust_multiplier, …}` for one activity.
+  ['/api/v1/blockchain/oracle/metrics/{activity_id}', 'record'],
+
+  // --- marketplace ----------------------------------------------------------
+  ['/api/v1/marketplace/admin/orders', 'rows', 'orders'],
+  ['/api/v1/marketplace/marketplaces/{marketplace_id}', 'record'],
+  ['/api/v1/marketplace/marketplaces/{marketplace_id}/shops', 'rows', 'shops'],
+  ['/api/v1/marketplace/orders/{order_id}/track', 'rows', 'timeline'],
+  ['/api/v1/marketplace/payments/{payment_id}/escrow', 'rows', 'entries'],
+  ['/api/v1/marketplace/producers', 'rows', 'producers'],
+  ['/api/v1/marketplace/products', 'rows', 'products'],
+  ['/api/v1/marketplace/products/search', 'rows', 'results'],
+  ['/api/v1/marketplace/products/{product_id}', 'record'],
+  ['/api/v1/marketplace/products/{product_id}/carbon-credits', 'rows', 'credits'],
+  ['/api/v1/marketplace/products/{product_id}/trace', 'rows', 'events'],
+  ['/api/v1/marketplace/vendors/{vendor_id}', 'record'],
+  ['/api/v1/marketplace/vendors/{vendor_id}/orders', 'rows', 'orders'],
+  ['/api/v1/marketplace/vendors/{vendor_id}/products', 'rows', 'products'],
+  // village_hub.py declares `response_model=list` on all four.
+  ['/api/v1/marketplace/villages/b2b/demands/my', 'rows'],
+  ['/api/v1/marketplace/villages/b2b/matches/{village_id}', 'rows'],
+  ['/api/v1/marketplace/villages/investments', 'rows'],
+  ['/api/v1/marketplace/villages/nomadic-communities', 'rows'],
+  ['/api/v1/marketplace/villages/opportunities', 'rows'],
+  ['/api/v1/marketplace/villages/opportunities/{opportunity_id}/team', 'rows'],
+  // `{"profiles": [...], "count": n}`
+  ['/api/v1/marketplace/villages/entrepreneurs', 'rows', 'profiles'],
+  // `{"exists": bool}`
+  ['/api/v1/marketplace/villages/entrepreneurs/me', 'record'],
+  // One engagement, not a list of them.
+  ['/api/v1/marketplace/villages/projects/{project_id}/engaged', 'record'],
+  // village_hub.py:300 — `response_model=dict`, one village profile.
+  ['/api/v1/marketplace/villages/{village_id}', 'record'],
+
+  // --- carbon ---------------------------------------------------------------
+  ['/api/v1/carbon/credits/balance', 'record'],
+  ['/api/v1/carbon/credits/{token_id}/history', 'rows', 'history'],
+  ['/api/v1/carbon/verra/standards', 'rows', 'standards'],
+  // carbon.py:214 — the Verra registry returns the project document.
+  ['/api/v1/carbon/verra/{registry_id}', 'record'],
+
+  // --- hydroma --------------------------------------------------------------
+  // hydroma_*.py: `{"count": len(_SPECS), "models": _SPECS}` for all three.
+  ['/api/v1/hydroma/carbon', 'rows', 'models'],
+  ['/api/v1/hydroma/climate', 'rows', 'models'],
+  ['/api/v1/hydroma/economics', 'rows', 'models'],
+  // `return spec` — one tool's metadata.
+  ['/api/v1/hydroma/carbon/{model_id}', 'record'],
+  ['/api/v1/hydroma/climate/{model_id}', 'record'],
+  ['/api/v1/hydroma/economics/{model_id}', 'record'],
+  // hydroma_ops.py: `return out` — a row/index/journal-mode report.
+  ['/api/v1/hydroma/db-stats', 'record'],
+  // elevation.py: `return data`
+  ['/api/v1/elevation/grid/{site_id}', 'record'],
+
+  // --- hub / science / analytics -------------------------------------------
+  ['/api/v1/hub/shared', 'rows', 'runs'],
+  ['/api/v1/science/agrovoc', 'rows', 'results'],
+  ['/api/v1/science/citations', 'record'],
+  // citations.py: `{"count": len(items), "items": [...]}`
+  ['/api/v1/science/citations/index', 'rows', 'items'],
+  // datasets.py: `{"count": …, "live": …, "datasets": [...], "note": …}`
+  ['/api/v1/science/datasets', 'rows', 'datasets'],
+  // science.py: `{"count": len(out), "cards": [...]}`
+  ['/api/v1/science/model-cards', 'rows', 'cards'],
+  ['/api/v1/analytics/activity-timeline', 'rows', 'activities'],
+  ['/api/v1/analytics/carbon-summary', 'record'],
+  ['/api/v1/analytics/ndvi-trends', 'record'],
+  ['/api/v1/analytics/performance-metrics', 'record'],
+  ['/api/v1/analytics/scenario-impact', 'rows', 'scenarios'],
+  ['/api/v1/analytics/soil-trends', 'record'],
+
+  // --- dashboard ------------------------------------------------------------
+  // Every `/dashboard/public/*` returns the same envelope: a status flag around
+  // a `data` object, not a list of rows.
+  ['/dashboard/data', 'record'],
+  ['/dashboard/public/analytics', 'record'],
+  ['/dashboard/public/carbon', 'record'],
+  ['/dashboard/public/full', 'record'],
+  ['/dashboard/public/mrv', 'record'],
+  ['/dashboard/public/projects', 'record'],
+  ['/dashboard/public/satellite', 'record'],
+  ['/dashboard/public/simulations', 'record'],
+  ['/dashboard/public/soil', 'record'],
+  ['/dashboard/public/tourism', 'record'],
+  ['/dashboard/public/weather', 'record'],
+  // `available_endpoints` is the only list in the capability probe.
+  ['/dashboard/public/test', 'rows', 'available_endpoints'],
+  ['/dashboard/recommendations/{farm_id}', 'rows', 'recommendations'],
+
+  // --- IoT ------------------------------------------------------------------
+  ['/api/v1/iot/devices', 'rows', 'devices'],
+  ['/api/v1/iot/devices/{device_id}/readings', 'rows', 'readings'],
+  // iot_devices.py:112 — one device's detail document.
+  ['/api/v1/iot/devices/{device_id}', 'record'],
+
+  // --- auth -----------------------------------------------------------------
+  // `/api/v1/auth/*` wraps its payload as `{"status": …, "data": …}`; `data` is
+  // an object, so every one of these is a document.
+  ['/api/v1/auth/achievements', 'record'],
+  ['/api/v1/auth/activity/history', 'record'],
+  ['/api/v1/auth/api-keys', 'record'],
+  ['/api/v1/auth/assets', 'record'],
+  ['/api/v1/auth/billing/subscription', 'record'],
+  ['/api/v1/auth/legacy', 'record'],
+  ['/api/v1/auth/me', 'record'],
+  ['/api/v1/auth/notifications', 'record'],
+  ['/api/v1/auth/oauth/connections', 'record'],
+  ['/api/v1/auth/preferences', 'record'],
+  ['/api/v1/auth/preferences/extended', 'record'],
+  ['/api/v1/auth/profile/public', 'record'],
+  ['/api/v1/auth/rate-limit', 'record'],
+
+  ['/api/v1/auth/2fa/status', 'record'],
+  ['/api/v1/auth/account/status', 'record'],
+  // --- content / legal / manual --------------------------------------------
+  ['/api/v1/content/search', 'rows', 'results'],
+  // legal_texts.py: `{"count": len(results), "legal_texts": [...]}`
+  ['/api/v1/legal-texts', 'rows', 'legal_texts'],
+  // `response_model=list[str]` and `response_model=list[dict]` respectively.
+  ['/api/v1/legal-texts/locales', 'rows'],
+  ['/api/v1/legal-texts/slugs', 'rows'],
+  ['/api/v1/legal-texts/{locale}/{slug}', 'record'],
+  ['/api/v1/legal-texts/{locale}/{slug}/versions', 'rows'],
+  // manual_data.py: the dataset envelope key is `rows` for every dataset page
+  // except `sites`, which publishes its own `ManualSitesResponse`.
+  ['/api/v1/manual/crop-calendar', 'rows', 'rows'],
+  ['/api/v1/manual/crop-params', 'rows', 'rows'],
+  ['/api/v1/manual/soil-regions', 'rows', 'rows'],
+  ['/api/v1/manual/sites', 'rows', 'sites'],
+  // manual_data.py: `{exists, path, size_mb, tables}` — a deployment report.
+  ['/api/v1/manual/status', 'record'],
+
+  // --- admin ----------------------------------------------------------------
+  // Each of these declares `response_model=list[…]` or `list[dict]`, so the
+  // payload is the array and there is no envelope key to name.
+  ['/api/v1/admin/bots', 'rows'],
+  ['/api/v1/admin/errors', 'rows'],
+  ['/api/v1/admin/models', 'rows'],
+  ['/api/v1/admin/settings', 'rows'],
+  ['/api/v1/admin/security/logins', 'rows'],
+  ['/api/v1/admin/content/{item_id}/translations', 'rows'],
+  ['/api/v1/admin/content/{item_id}/versions', 'rows'],
+  ['/api/v1/admin/errors/{error_id}', 'record'],
+  ['/api/v1/admin/models/{name}', 'record'],
+  // Two lists of different meaning plus six counters: a document.
+  ['/api/v1/admin/security/audit', 'record'],
+  // `PlatformStats`
+  ['/api/v1/admin/overview', 'record'],
+  // `response_model=list[ChannelHealth]` — the one admin health route that is a
+  // list. The old word-list rule called anything with `health` in the path a
+  // record, which would have emptied this page over eight channel rows.
+  ['/api/v1/admin/overview/health', 'rows'],
+  ['/api/v1/admin/overview/metrics', 'record'],
+  // `{total, unacknowledged, by_type, by_status}`
+  ['/api/v1/admin/errors/summary', 'record'],
+
+  // --- science / analytics / automation --------------------------------------
+  // science.py: `default_zenodo_client().status()`
+  ['/api/v1/science/zenodo/status', 'record'],
+  ['/api/v1/analytics/overview', 'record'],
+  // automation.py: `{"status", "agent", "token_configured"}`
+  ['/api/v1/automation/health', 'record'],
+
+  // --- commerce / disputes / finance ---------------------------------------
+  ['/api/v1/commerce/orders/{order_id}', 'record'],
+  // `response_model=list[str]`
+  ['/api/v1/commerce/orders/{order_id}/transitions', 'rows'],
+  ['/api/v1/disputes/{dispute_id}', 'record'],
+  ['/api/v1/finance/accounts', 'rows'],
+  ['/api/v1/finance/idempotency/keys', 'rows'],
+  ['/api/v1/finance/ledger/accounts/{account_id}/balance', 'record'],
+  ['/api/v1/finance/ledger/entries', 'rows'],
+  ['/api/v1/finance/ledger/profit-and-loss', 'record'],
+  // `TrialBalanceResponse(as_of=…, rows=report["rows"], totals=…)`
+  ['/api/v1/finance/ledger/trial-balance', 'rows', 'rows'],
+  ['/api/v1/finance/wallet', 'record'],
+
+  // --- farms ----------------------------------------------------------------
+  // farms.py: `response_model=list[FarmOut]`
+  ['/api/v1/farms', 'rows'],
+];
+
+/**
+ * The table above is a list of tuples, which is readable; a `Map` of those tuples
+ * is not, because `new Map([[k, a, b]])` silently discards `b` and stores `a` as
+ * the value. That is not a detail: it read every contract as `{mode: 'rows',
+ * rowsKey: undefined}`, which is precisely the guess this table exists to
+ * remove — the mode happened to survive and the key did not, so every page came
+ * out as a table over an unnamed field. So the tuples are folded into
+ * `{ mode, rowsKey }` explicitly, once, from the plain list.
+ */
+const DECLARED_SHAPES = new Map(
+  CONTRACT_SHAPES.map(([endpoint, mode, rowsKey]) => [
+    endpoint,
+    { mode, rowsKey: rowsKey ?? undefined },
+  ]),
+);
+
+/** The declared shape, or `null` when the contract has not been read yet. */
+const contractShapeOf = (endpoint) => DECLARED_SHAPES.get(endpoint) ?? null;
+
+const shapeOf = (endpoint) => contractShapeOf(endpoint)?.mode ?? 'rows';
+
+const rowsKeyOf = (endpoint) => contractShapeOf(endpoint)?.rowsKey;
 
 /**
  * Contracts that accept a `q` term, and whether a bare GET is still valid.
@@ -424,10 +722,56 @@ const rowsKeyOf = (path) => {
  *     state on arrival and the form is the only way to reach real content.
  *
  * Both facts come from the routers; neither is invented here.
+ *
+ * Two more are here for the same reason, found by reading `openapi.json` for a
+ * `required` query parameter on every planned contract. Both were rendering a
+ * permanent error: `marketplace.py` declares `q: str = Query(...)` on
+ * `/products/search`, and `science.py` declares `def model_citation(slug: str)`.
+ * A bare GET to either is a 422, so the page could never show anything but an
+ * error state. The form is not a nicety on these two, it is the only route to
+ * the contract.
+ *
+ * Two others are *not* here, deliberately. `carbon.py` declares `address: str`
+ * on `/credits/balance` and `auth.py` declares `user_id: str` on
+ * `/profile/public`; both also 422 without the value, but neither is a search,
+ * and giving `/auth/profile/public` a public form that asks a reader to name
+ * another user is a decision that belongs to the surface's owner rather than to
+ * a generator. Those two pages are reported instead of silently reshaped.
  */
 const SEARCH_CONTRACTS = new Map([
   ['/api/v1/content/search', { required: true }],
   ['/api/v1/manual/sites', { required: false }],
+  ['/api/v1/marketplace/products/search', { required: true }],
+  ['/api/v1/science/citations', { required: true }],
+]);
+
+/**
+ * Contracts that cannot answer a bare GET and take an *identifier* rather than a
+ * term — `carbon.py` declares `address: str` on `/credits/balance`, `auth.py`
+ * declares `user_id: str` on `/profile/public`. Both return 422 without the value,
+ * so both pages rendered a permanent error state.
+ *
+ * These were previously only reported. They are now generated with a value form,
+ * for three reasons:
+ *
+ *   1. the transport is identical to a search — a GET, a reader-supplied value,
+ *      a server re-render — so `NoJsSearch` with `kind="value"` is the whole fix
+ *      and no new component is warranted;
+ *   2. the alternative was a page that can never render the contract it was
+ *      generated for, which is worse than a form: a reader cannot tell the
+ *      difference between "no such address" and "this page is broken";
+ *   3. the field is labelled from the parameter name and the contract path, both
+ *      language-neutral, so the form needs no fourteenth translation pass.
+ *
+ * The privacy question on `/auth/profile/public` — whether a *public* surface
+ * should let a reader name another user — is real and is recorded here as
+ * belonging to the surface's owner. It is not a reason to ship a dead page. If
+ * that decision goes the other way, delete the entry from this map and the page
+ * reverts to being reported rather than generated with a form.
+ */
+const VALUE_CONTRACTS = new Map([
+  ['/api/v1/carbon/credits/balance', { param: 'address' }],
+  ['/api/v1/auth/profile/public', { param: 'user_id' }],
 ]);
 
 /** The dynamic parameter names a catalogue path declares, in order. */
@@ -473,7 +817,7 @@ const conflicting = owned.filter(
 );
 
 console.log(
-  `  unrouted catalogue paths: ${unrouted().length}; dynamic entries that would swallow one: ${conflicting.length}`,
+  `  unrouted catalogue paths: ${unrouted().length}; of those routable as pages: ${shadowable().length}; dynamic entries that would swallow one: ${conflicting.length}`,
 );
 for (const seed of conflicting) {
   console.log(`    ${seed.path} would swallow ${shadowedFallbacks(seed.path).join(', ')}`);
@@ -482,14 +826,38 @@ for (const seed of conflicting) {
 const generatable = pageShaped.filter((seed) => !conflicting.some((c) => c.path === seed.path));
 const skipped = pending.filter((seed) => !isPageShaped(seed.method, seed.path));
 
+/**
+ * Entries whose response shape has not been read from the router.
+ *
+ * A page in this set is refused rather than generated with a guessed key. The
+ * guess is what produced `historys` and `{error_id}s`, and `ResourcePage` turns a
+ * wrong key into an empty state over a 200 — a fabricated zero. Not generating is
+ * visible; generating a page that cannot render its own response is not.
+ */
+const undeclared = pageShaped.filter(
+  (seed) =>
+    !conflicting.some((c) => c.path === seed.path) &&
+    paramConflict(seed.path).length === 0 &&
+    contractShapeOf(seed.endpoint) === null,
+);
+if (undeclared.length > 0) {
+  console.log(
+    `\n  ${undeclared.length} contract(s) have no declared response shape, and will not be generated:`,
+  );
+  for (const seed of undeclared.slice(0, 20)) {
+    console.log(`    ${seed.path}  ->  ${seed.endpoint}  (${seed.sourceOfTruth})`);
+  }
+}
+
 const plan = pageShaped
   .filter((seed) => !conflicting.some((c) => c.path === seed.path))
   .filter((seed) => paramConflict(seed.path).length === 0)
+  .filter((seed) => contractShapeOf(seed.endpoint) !== null)
   .map((seed) => ({
     ...seed,
     slug: slugOf(seed.domain, seed.path),
     file: join(APP, routeDirFor(seed.path), 'page.tsx'),
-    shape: shapeOf(seed.path),
+    shape: shapeOf(seed.endpoint),
   }));
 
 /** Entries the reserved-parameter rule refuses, alongside the shadowing ones. */
@@ -500,8 +868,8 @@ const reservedConflicts = pageShaped.filter(
 
 const template = ({ id, domain, path, endpoint, sourceOfTruth }) => {
   const slug = slugOf(domain, path);
-  const shape = shapeOf(path);
-  const rowsKey = shape === 'rows' ? rowsKeyOf(path) : undefined;
+  const shape = shapeOf(endpoint);
+  const rowsKey = shape === 'rows' ? rowsKeyOf(endpoint) : undefined;
   const routePath = path;
   const params = paramsOf(routePath);
 
@@ -540,7 +908,18 @@ const template = ({ id, domain, path, endpoint, sourceOfTruth }) => {
 
   // Does the gateway accept a term on this contract, and is it mandatory?
   const search = SEARCH_CONTRACTS.get(endpoint);
-  const searchId = `search-${slug}`;
+  const value = VALUE_CONTRACTS.get(endpoint);
+  /**
+   * One descriptor for both kinds, so the template below has a single code path.
+   * `required` means the gateway rejects a request without the value, which is
+   * what decides whether the empty state is the honest first render or a defect.
+   */
+  const query = search
+    ? { param: 'q', kind: 'search', required: search.required }
+    : value
+      ? { param: value.param, kind: 'value', required: true }
+      : null;
+  const queryId = `query-${slug}`;
 
   return `import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
@@ -548,7 +927,7 @@ import { getTranslations } from 'next-intl/server';
 import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 import { fetchResource, ResourcePage, resourceLabels } from '@/components/ResourcePage';${
-    search ? "\nimport { NoJsSearch } from '@/components/surface/NoJsSearch';" : ''
+    query ? "\nimport { NoJsSearch } from '@/components/surface/NoJsSearch';" : ''
   }
 
 const SLUG = ${JSON.stringify(slug)};
@@ -585,13 +964,13 @@ export async function generateMetadata({ params }: { params: ${paramsPromise} })
 }
 
 export default async function Page({
-  params,${search ? '\n  searchParams,' : ''}
+  params,${query ? '\n  searchParams,' : ''}
 }: {
-  params: ${paramsPromise};${search ? '\n  searchParams: Promise<Record<string, string | string[] | undefined>>;' : ''}
+  params: ${paramsPromise};${query ? '\n  searchParams: Promise<Record<string, string | string[] | undefined>>;' : ''}
 }) {
   const { locale${params.length ? ', ...rest' : ''} } = await params;
   const meta = await getTranslations('pageMeta.${slug}');
-  const labels = await resourceLabels();${search ? "\n  const searchCopy = await getTranslations('search');" : ''}
+  const labels = await resourceLabels();${query && query.kind === 'search' ? "\n  const searchCopy = await getTranslations('search');" : ''}
 ${
   params.length
     ? `  // A dynamic segment is resolved from the route params rather than requested
@@ -602,25 +981,32 @@ ${
     : `  const endpoint = PATH;
 `
 }${
-  search
-    ? `  // A real <form method="get"> on the page, so the search works with
-  // JavaScript disabled: submitting it re-navigates to this URL with ?q=…, and
-  // the term is read here and forwarded to the gateway. \`required: ${
-      search.required
-        ? 'true'
-        : 'false'
-    }\` — the gateway${
-      search.required
-        ? ' rejects a request without one, so the empty state is the honest first render.'
-        : ' lists everything when the term is absent, so the page is useful before anything is typed.'
+  query
+    ? `  // A real <form method="get"> on the page, so this works with JavaScript
+  // disabled: submitting it re-navigates to this URL with the value, and the value
+  // is read here and forwarded to the gateway. Kind: ${query.kind} (${JSON.stringify(query.param)}).
+  // \`required: ${query.required}\` — the gateway${
+      query.required
+        ? ' rejects a request without it, so without a form this page could only ever render an error.'
+        : ' lists everything when it is absent, so the page is useful before anything is typed.'
     }
   const resolved = await searchParams;
-  const raw = resolved?.q;
+  const raw = resolved?.${/^[A-Za-z_$][\w$]*$/.test(query.param) ? query.param : `[${JSON.stringify(query.param)}]`};
   const term = (Array.isArray(raw) ? raw[0] : raw)?.trim() ?? '';
-  const searched = ${search.required ? "term.length > 0 ? " : ''}endpoint + (term ? \`?q=\${encodeURIComponent(term)}\` : '')${search.required ? " : ''" : ''};`
+  const searched = ${
+    query.required
+      ? "term.length > 0 ? `${endpoint}?" +
+        query.param +
+        '=${encodeURIComponent(term)}` : ""'
+      : 'endpoint + (term ? `' +
+        '?' +
+        query.param +
+        '=${encodeURIComponent(term)}`' +
+        " : '')"
+  };`
     : ''
 }
-  const result = await fetchResource<Payload>(${search ? 'searched' : 'endpoint'});
+  const result = await fetchResource<Payload>(${query ? 'searched' : 'endpoint'});
 
   return (
     <ResourcePage<Payload>
@@ -628,22 +1014,26 @@ ${
       locale={locale}
       title={meta('title')}
       description={meta('description')}
-      path={${search ? 'searched' : 'endpoint'}}
+      path={${query ? 'searched' : 'endpoint'}}
       result={result}
       mode=${JSON.stringify(shape)}
       rowsKey={${rowsKey ? JSON.stringify(rowsKey) : 'undefined'}}
       rowKey={(row) => String(row.id ?? JSON.stringify(row).slice(0, 24))}
       labels={labels}
     >${
-      search
+      query
         ? `
       {({ state }) => (
         <NoJsSearch
-          name="q"
+          kind=${JSON.stringify(query.kind)}
+          name=${JSON.stringify(query.param)}
           path={\`\${searched}\`}
-          value={term}
-          emptyResult={state === 'empty' && term.length > 0 ? searchCopy('noResults', { term }) : undefined}
-          id=${JSON.stringify(searchId)}
+          value={term}${
+            query.kind === 'search'
+              ? "\n          emptyResult={state === 'empty' && term.length > 0 ? searchCopy('noResults', { term }) : undefined}"
+              : "\n          // The value kind has no \"no results\" message on purpose: an address\n          // that matches nothing is not a failed search, and a reader who mistyped\n          // a wallet address should be told the field was not found rather than\n          // that a catalogue came up empty. The error state below carries that."
+          }
+          id=${JSON.stringify(queryId)}
         />
       )}`
         : ''
@@ -661,9 +1051,53 @@ console.log(`catalogue entries            : ${seeds.length}`);
 console.log(`with a contract, no page     : ${pending.length}`);
 console.log(`  page-shaped (will generate): ${plan.length}`);
 console.log(`  action/API (skipped)       : ${skipped.length}`);
+
+const gated = plan.filter((item) => VALUE_CONTRACTS.has(item.endpoint));
+if (gated.length > 0) {
+  console.log('\n  these pages need a reader-supplied value, and are generated with a form:');
+  for (const item of gated) {
+    console.log(
+      `    ${item.path}  ->  ${item.endpoint}  requires ?${VALUE_CONTRACTS.get(item.endpoint).param}`,
+    );
+  }
+  console.log('  Without the form they could only render a permanent error state. To suppress');
+  console.log('  the form and go back to reporting them, delete the entry from VALUE_CONTRACTS.');
+}
 console.log('\nby domain:');
 for (const [domain, count] of Object.entries(byDomain).sort((a, b) => b[1] - a[1])) {
   console.log(`  ${domain.padEnd(12)} ${count}`);
+}
+
+/**
+ * Dump the plan as JSON for inspection: the path, the declared contract, the
+ * response shape and the rows key every generated page will read.
+ *
+ * Set `ECO_DEBUG_PLAN=1`. The ratchets in the test suite are counts, and a count
+ * cannot be audited; this is the list a reviewer reads to confirm the contract
+ * behind each key.
+ */
+if (process.env.ECO_DEBUG_PLAN) {
+  const dump = join(REPO_ROOT, '.tmp', 'resource-page-plan.json');
+  mkdirSync(dirname(dump), { recursive: true });
+  writeFileSync(
+    dump,
+    `${JSON.stringify(
+      plan.map((item) => ({
+        id: item.id,
+        path: item.path,
+        endpoint: item.endpoint,
+        method: item.method,
+        shape: item.shape,
+        rowsKey: item.shape === 'rows' ? rowsKeyOf(item.endpoint) : null,
+        file: relative(APP, item.file).split(sep).join('/'),
+        sourceOfTruth: item.sourceOfTruth,
+      })),
+      null,
+      2,
+    )}\n`,
+    'utf8',
+  );
+  console.log(`  debug: plan written to ${dump}`);
 }
 
 if (!WRITE) {

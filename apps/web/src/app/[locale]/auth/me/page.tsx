@@ -43,6 +43,7 @@ export async function generateMetadata({
 
 export default async function Page({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  await params;
   const meta = await getTranslations('pageMeta.inclusive-auth-me');
   const labels = await resourceLabels();
   const endpoint = PATH;
@@ -57,8 +58,8 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       description={meta('description')}
       path={endpoint}
       result={result}
-      mode="rows"
-      rowsKey={'mes'}
+      mode="record"
+      rowsKey={undefined}
       rowKey={(row) => String(row.id ?? JSON.stringify(row).slice(0, 24))}
       labels={labels}
     ></ResourcePage>

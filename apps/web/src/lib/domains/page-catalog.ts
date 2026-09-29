@@ -28,7 +28,7 @@ import { fileURLToPath } from 'node:url';
  */
 
 export const PAGE_CATALOG_VERSION = '2026-09-26';
-export const PAGE_CATALOG_TOTAL = 600;
+export const PAGE_CATALOG_TOTAL = 621;
 
 export const CATALOG_DOMAINS = [
   'public',
@@ -2394,6 +2394,22 @@ const SEEDS: readonly CatalogSeed[] = [
       'Registered surface /market/escrow-dispute-arbitration. No gateway contract is published for it; apps/web/src/lib/api/market.ts is the only source of truth.',
   },
   {
+    // A static sibling of `/market/escrow/{id}`, which used to capture it: a
+    // reader asking for their escrow orders got the payment record for a payment
+    // whose id was the literal string `orders`. `commerce.py:145` returns
+    // `{orders, count}`, so the rows key is `orders`.
+    id: 'marketplace-market-escrow-orders',
+    domain: 'marketplace',
+    path: '/market/escrow/orders',
+    status: 'live',
+    endpoint: '/api/v1/commerce/orders',
+    method: 'GET',
+    sourceOfTruth: 'apps/web/src/app/[locale]/market/escrow/orders/page.tsx',
+    routeFile: 'apps/web/src/app/[locale]/market/escrow/orders/page.tsx',
+    description:
+      'Registered surface /market/escrow/orders. Gateway contract: GET /api/v1/commerce/orders, registered in apps/web/src/app/[locale]/market/escrow/orders/page.tsx.',
+  },
+  {
     id: 'marketplace-market-escrow',
     domain: 'marketplace',
     path: '/market/escrow/{id}',
@@ -2490,6 +2506,22 @@ const SEEDS: readonly CatalogSeed[] = [
       'Registered surface /market/orders. Gateway contract: GET /api/v1/marketplace/orders, registered in apps/web/src/app/[locale]/market/orders/page.tsx.',
   },
   {
+    // The catalogue names the parameter `{id}` because the route directory is
+    // `[id]`; the gateway's own parameter is `order_id`, which the endpoint field
+    // records. `commerce.py:97` answers the authenticated reader's order or a
+    // 401, and this is a record surface rather than a table.
+    id: 'marketplace-market-orders-order',
+    domain: 'marketplace',
+    path: '/market/orders/{id}',
+    status: 'live',
+    endpoint: '/api/v1/commerce/orders/{order_id}',
+    method: 'GET',
+    sourceOfTruth: 'apps/web/src/app/[locale]/market/orders/[id]/page.tsx',
+    routeFile: 'apps/web/src/app/[locale]/market/orders/[id]/page.tsx',
+    description:
+      'Registered surface /market/orders/{id}. Gateway contract: GET /api/v1/commerce/orders/{order_id}, registered in apps/web/src/app/[locale]/market/orders/[id]/page.tsx.',
+  },
+  {
     id: 'marketplace-market-orders-dispute',
     domain: 'marketplace',
     path: '/market/orders/{id}/dispute',
@@ -2536,6 +2568,22 @@ const SEEDS: readonly CatalogSeed[] = [
     routeFile: 'apps/web/src/app/[locale]/market/orders/[id]/tracking/page.tsx',
     description:
       'Registered surface /market/orders/{id}/tracking. Gateway contract: GET /api/v1/marketplace/orders, registered in apps/web/src/app/[locale]/market/orders/[id]/tracking/page.tsx.',
+  },
+  {
+    // `commerce.py:271` declares `response_model=list[str]` and returns the bare
+    // list, so there is no envelope key to name. Declaring a `rowsKey` here would
+    // render the empty state over a 200, and `inferColumns` would read
+    // `Object.keys` off a string and yield character indices.
+    id: 'marketplace-market-orders-order-transitions',
+    domain: 'marketplace',
+    path: '/market/orders/{id}/transitions',
+    status: 'live',
+    endpoint: '/api/v1/commerce/orders/{order_id}/transitions',
+    method: 'GET',
+    sourceOfTruth: 'apps/web/src/app/[locale]/market/orders/[id]/transitions/page.tsx',
+    routeFile: 'apps/web/src/app/[locale]/market/orders/[id]/transitions/page.tsx',
+    description:
+      'Registered surface /market/orders/{id}/transitions. Gateway contract: GET /api/v1/commerce/orders/{order_id}/transitions, registered in apps/web/src/app/[locale]/market/orders/[id]/transitions/page.tsx.',
   },
   {
     id: 'marketplace-market-orders-complete',
@@ -3750,6 +3798,246 @@ const SEEDS: readonly CatalogSeed[] = [
       'Registered surface /hydroma/farms. Gateway contract: GET /api/v1/farms, registered in services/api_gateway/routers/farms.py.',
   },
   {
+    // Hand-written page, 2026-09-29. The generator cannot express this family:
+    // the list returns `{"count": n, "models": _SPECS}`, whose rows key is not
+    // derivable from the path, and deriving one rendered a permanent empty state
+    // over a 200. Contract: `hydroma_indices.py:566-569`.
+    id: 'hydroma-hydroma-indices',
+    domain: 'hydroma',
+    path: '/hydroma/indices',
+    status: 'live',
+    endpoint: '/api/v1/hydroma/indices',
+    method: 'GET',
+    sourceOfTruth: 'apps/web/src/app/[locale]/hydroma/indices/page.tsx',
+    routeFile: 'apps/web/src/app/[locale]/hydroma/indices/page.tsx',
+    description:
+      'Registered surface /hydroma/indices. Gateway contract: GET /api/v1/hydroma/indices, registered in apps/web/src/app/[locale]/hydroma/indices/page.tsx.',
+  },
+  {
+    id: 'hydroma-hydroma-indices-model_id',
+    domain: 'hydroma',
+    path: '/hydroma/indices/{model_id}',
+    status: 'live',
+    endpoint: '/api/v1/hydroma/indices/{model_id}',
+    method: 'GET',
+    sourceOfTruth: 'apps/web/src/app/[locale]/hydroma/indices/[model_id]/page.tsx',
+    routeFile: 'apps/web/src/app/[locale]/hydroma/indices/[model_id]/page.tsx',
+    description:
+      'Registered surface /hydroma/indices/{model_id}. Gateway contract: GET /api/v1/hydroma/indices/{model_id}, registered in apps/web/src/app/[locale]/hydroma/indices/[model_id]/page.tsx.',
+  },
+  {
+    // `hydroma_dashboard.py:714-734` returns `[ModelMeta(**m) for m in models]`.
+    // The payload *is* the array, so the page calls `readRows` with no key; a
+    // name-derived key produced `{error_id}s` on the sibling surface.
+    id: 'hydroma-hydroma-models',
+    domain: 'hydroma',
+    path: '/hydroma/models',
+    status: 'live',
+    endpoint: '/api/v1/hydroma/models',
+    method: 'GET',
+    sourceOfTruth: 'apps/web/src/app/[locale]/hydroma/models/page.tsx',
+    routeFile: 'apps/web/src/app/[locale]/hydroma/models/page.tsx',
+    description:
+      'Registered surface /hydroma/models. Gateway contract: GET /api/v1/hydroma/models, registered in apps/web/src/app/[locale]/hydroma/models/page.tsx.',
+  },
+  {
+    id: 'hydroma-hydroma-models-model_id',
+    domain: 'hydroma',
+    path: '/hydroma/models/{model_id}',
+    status: 'live',
+    endpoint: '/api/v1/hydroma/models/{model_id}',
+    method: 'GET',
+    sourceOfTruth: 'apps/web/src/app/[locale]/hydroma/models/[model_id]/page.tsx',
+    routeFile: 'apps/web/src/app/[locale]/hydroma/models/[model_id]/page.tsx',
+    description:
+      'Registered surface /hydroma/models/{model_id}. Gateway contract: GET /api/v1/hydroma/models/{model_id}, registered in apps/web/src/app/[locale]/hydroma/models/[model_id]/page.tsx.',
+  },
+  {
+    // `hydroma_dashboard.py:752-800` is a published GET that fabricates its own
+    // result (`:763-764`), so the page stamps it as declared, not executed. The
+    // contract is real; what it answers is not a measurement, and the page says so.
+    id: 'hydroma-hydroma-models-model_id-validation',
+    domain: 'hydroma',
+    path: '/hydroma/models/{model_id}/validation',
+    status: 'live',
+    endpoint: '/api/v1/hydroma/models/{model_id}/validation',
+    method: 'GET',
+    sourceOfTruth: 'apps/web/src/app/[locale]/hydroma/models/[model_id]/validation/page.tsx',
+    routeFile: 'apps/web/src/app/[locale]/hydroma/models/[model_id]/validation/page.tsx',
+    description:
+      'Registered surface /hydroma/models/{model_id}/validation. Gateway contract: GET /api/v1/hydroma/models/{model_id}/validation, registered in apps/web/src/app/[locale]/hydroma/models/[model_id]/validation/page.tsx.',
+  },
+  {
+    id: 'hydroma-hydroma-mrv',
+    domain: 'hydroma',
+    path: '/hydroma/mrv',
+    status: 'live',
+    endpoint: '/api/v1/hydroma/mrv',
+    method: 'GET',
+    sourceOfTruth: 'apps/web/src/app/[locale]/hydroma/mrv/page.tsx',
+    routeFile: 'apps/web/src/app/[locale]/hydroma/mrv/page.tsx',
+    description:
+      'Registered surface /hydroma/mrv. Gateway contract: GET /api/v1/hydroma/mrv, registered in apps/web/src/app/[locale]/hydroma/mrv/page.tsx.',
+  },
+  {
+    id: 'hydroma-hydroma-mrv-model_id',
+    domain: 'hydroma',
+    path: '/hydroma/mrv/{model_id}',
+    status: 'live',
+    endpoint: '/api/v1/hydroma/mrv/{model_id}',
+    method: 'GET',
+    sourceOfTruth: 'apps/web/src/app/[locale]/hydroma/mrv/[model_id]/page.tsx',
+    routeFile: 'apps/web/src/app/[locale]/hydroma/mrv/[model_id]/page.tsx',
+    description:
+      'Registered surface /hydroma/mrv/{model_id}. Gateway contract: GET /api/v1/hydroma/mrv/{model_id}, registered in apps/web/src/app/[locale]/hydroma/mrv/[model_id]/page.tsx.',
+  },
+  {
+    id: 'hydroma-hydroma-simulation',
+    domain: 'hydroma',
+    path: '/hydroma/simulation',
+    status: 'live',
+    endpoint: '/api/v1/hydroma/simulation',
+    method: 'GET',
+    sourceOfTruth: 'apps/web/src/app/[locale]/hydroma/simulation/page.tsx',
+    routeFile: 'apps/web/src/app/[locale]/hydroma/simulation/page.tsx',
+    description:
+      'Registered surface /hydroma/simulation. Gateway contract: GET /api/v1/hydroma/simulation, registered in apps/web/src/app/[locale]/hydroma/simulation/page.tsx.',
+  },
+  {
+    id: 'hydroma-hydroma-simulation-model_id',
+    domain: 'hydroma',
+    path: '/hydroma/simulation/{model_id}',
+    status: 'live',
+    endpoint: '/api/v1/hydroma/simulation/{model_id}',
+    method: 'GET',
+    sourceOfTruth: 'apps/web/src/app/[locale]/hydroma/simulation/[model_id]/page.tsx',
+    routeFile: 'apps/web/src/app/[locale]/hydroma/simulation/[model_id]/page.tsx',
+    description:
+      'Registered surface /hydroma/simulation/{model_id}. Gateway contract: GET /api/v1/hydroma/simulation/{model_id}, registered in apps/web/src/app/[locale]/hydroma/simulation/[model_id]/page.tsx.',
+  },
+  {
+    id: 'hydroma-hydroma-slaughterhouse-status',
+    domain: 'hydroma',
+    path: '/hydroma/slaughterhouse/status',
+    status: 'live',
+    endpoint: '/api/v1/hydroma/slaughterhouse/status',
+    method: 'GET',
+    sourceOfTruth: 'apps/web/src/app/[locale]/hydroma/slaughterhouse/status/page.tsx',
+    routeFile: 'apps/web/src/app/[locale]/hydroma/slaughterhouse/status/page.tsx',
+    description:
+      'Registered surface /hydroma/slaughterhouse/status. Gateway contract: GET /api/v1/hydroma/slaughterhouse/status, registered in apps/web/src/app/[locale]/hydroma/slaughterhouse/status/page.tsx.',
+  },
+  {
+    id: 'hydroma-hydroma-soil',
+    domain: 'hydroma',
+    path: '/hydroma/soil',
+    status: 'live',
+    endpoint: '/api/v1/hydroma/soil',
+    method: 'GET',
+    sourceOfTruth: 'apps/web/src/app/[locale]/hydroma/soil/page.tsx',
+    routeFile: 'apps/web/src/app/[locale]/hydroma/soil/page.tsx',
+    description:
+      'Registered surface /hydroma/soil. Gateway contract: GET /api/v1/hydroma/soil, registered in apps/web/src/app/[locale]/hydroma/soil/page.tsx.',
+  },
+  {
+    id: 'hydroma-hydroma-soil-model_id',
+    domain: 'hydroma',
+    path: '/hydroma/soil/{model_id}',
+    status: 'live',
+    endpoint: '/api/v1/hydroma/soil/{model_id}',
+    method: 'GET',
+    sourceOfTruth: 'apps/web/src/app/[locale]/hydroma/soil/[model_id]/page.tsx',
+    routeFile: 'apps/web/src/app/[locale]/hydroma/soil/[model_id]/page.tsx',
+    description:
+      'Registered surface /hydroma/soil/{model_id}. Gateway contract: GET /api/v1/hydroma/soil/{model_id}, registered in apps/web/src/app/[locale]/hydroma/soil/[model_id]/page.tsx.',
+  },
+  {
+    // `hydroma_ops.py:20-27` returns `run_all()` whole: `{total, passed, failed,
+    // pass_rate, checks}`. The rows key is `checks`, and every check carries the
+    // cited publication it is judged against.
+    id: 'hydroma-hydroma-validation',
+    domain: 'hydroma',
+    path: '/hydroma/validation',
+    status: 'live',
+    endpoint: '/api/v1/hydroma/validation',
+    method: 'GET',
+    sourceOfTruth: 'apps/web/src/app/[locale]/hydroma/validation/page.tsx',
+    routeFile: 'apps/web/src/app/[locale]/hydroma/validation/page.tsx',
+    description:
+      'Registered surface /hydroma/validation. Gateway contract: GET /api/v1/hydroma/validation, registered in apps/web/src/app/[locale]/hydroma/validation/page.tsx.',
+  },
+  {
+    // The three surfaces below are declared by `services/validation/router.py`,
+    // mounted at `services/api_gateway/main.py:583`. They are absent from the
+    // committed `openapi.json` because the snapshot predates the mount, not
+    // because the contract is missing; `page-catalog.test.ts` therefore reads the
+    // mounted routers as well as the snapshot.
+    id: 'hydroma-hydroma-validation-checks',
+    domain: 'hydroma',
+    path: '/hydroma/validation/checks',
+    status: 'live',
+    endpoint: '/api/v1/hydroma/validation/checks',
+    method: 'GET',
+    sourceOfTruth: 'apps/web/src/app/[locale]/hydroma/validation/checks/page.tsx',
+    routeFile: 'apps/web/src/app/[locale]/hydroma/validation/checks/page.tsx',
+    description:
+      'Registered surface /hydroma/validation/checks. Gateway contract: GET /api/v1/hydroma/validation/checks, registered in apps/web/src/app/[locale]/hydroma/validation/checks/page.tsx.',
+  },
+  {
+    // The contract answers `{"error": "Reference data file not found"}` today:
+    // `docs/hydroma/scientific_reference_data.json` is not in the repository.
+    // That is a real answer, and the page reports the contract's own error rather
+    // than substituting the `source` strings and calling them reference data.
+    id: 'hydroma-hydroma-validation-reference-data',
+    domain: 'hydroma',
+    path: '/hydroma/validation/reference-data',
+    status: 'live',
+    endpoint: '/api/v1/hydroma/validation/reference-data',
+    method: 'GET',
+    sourceOfTruth: 'apps/web/src/app/[locale]/hydroma/validation/reference-data/page.tsx',
+    routeFile: 'apps/web/src/app/[locale]/hydroma/validation/reference-data/page.tsx',
+    description:
+      'Registered surface /hydroma/validation/reference-data. Gateway contract: GET /api/v1/hydroma/validation/reference-data, registered in apps/web/src/app/[locale]/hydroma/validation/reference-data/page.tsx.',
+  },
+  {
+    // A GET that runs a check, and answers a 200 carrying `{"error": ...}` for an
+    // unknown id. The page reads `error` out of the body and reports it.
+    id: 'hydroma-hydroma-validation-run',
+    domain: 'hydroma',
+    path: '/hydroma/validation/run',
+    status: 'live',
+    endpoint: '/api/v1/hydroma/validation/run',
+    method: 'GET',
+    sourceOfTruth: 'apps/web/src/app/[locale]/hydroma/validation/run/page.tsx',
+    routeFile: 'apps/web/src/app/[locale]/hydroma/validation/run/page.tsx',
+    description:
+      'Registered surface /hydroma/validation/run. Gateway contract: GET /api/v1/hydroma/validation/run, registered in apps/web/src/app/[locale]/hydroma/validation/run/page.tsx.',
+  },
+  {
+    id: 'hydroma-hydroma-water',
+    domain: 'hydroma',
+    path: '/hydroma/water',
+    status: 'live',
+    endpoint: '/api/v1/hydroma/water',
+    method: 'GET',
+    sourceOfTruth: 'apps/web/src/app/[locale]/hydroma/water/page.tsx',
+    routeFile: 'apps/web/src/app/[locale]/hydroma/water/page.tsx',
+    description:
+      'Registered surface /hydroma/water. Gateway contract: GET /api/v1/hydroma/water, registered in apps/web/src/app/[locale]/hydroma/water/page.tsx.',
+  },
+  {
+    id: 'hydroma-hydroma-water-model_id',
+    domain: 'hydroma',
+    path: '/hydroma/water/{model_id}',
+    status: 'live',
+    endpoint: '/api/v1/hydroma/water/{model_id}',
+    method: 'GET',
+    sourceOfTruth: 'apps/web/src/app/[locale]/hydroma/water/[model_id]/page.tsx',
+    routeFile: 'apps/web/src/app/[locale]/hydroma/water/[model_id]/page.tsx',
+    description:
+      'Registered surface /hydroma/water/{model_id}. Gateway contract: GET /api/v1/hydroma/water/{model_id}, registered in apps/web/src/app/[locale]/hydroma/water/[model_id]/page.tsx.',
+  },
+  {
     id: 'hydroma-hydroma-tools-aquacrop-runner',
     domain: 'hydroma',
     path: '/hydroma/tools/aquacrop-runner',
@@ -4278,16 +4566,21 @@ const SEEDS: readonly CatalogSeed[] = [
       'Registered surface /hydroma/tools/mrv-metrics/execute. No gateway contract is published for it; apps/web/src/lib/domains/registry.ts is the only source of truth.',
   },
   {
+    // `engine/hydroma/mrv/nojin_mrv.py` is deleted in the working tree
+    // (`git status` reports ` D`), and `engine/**` is not this file's to restore,
+    // so the entry names the surviving MRV data-model module in the same package.
+    // `registry.ts` still declares the deleted path for the `mrv-nojin` tool id;
+    // that registry mirrors the engine and is a separate owner.
     id: 'hydroma-hydroma-tools-mrv-nojin',
     domain: 'hydroma',
     path: '/hydroma/tools/mrv-nojin',
     status: 'capability',
     endpoint: '/api/v1/tool-registry/{tool_id}',
     method: 'GET',
-    sourceOfTruth: 'engine/hydroma/mrv/nojin_mrv.py',
+    sourceOfTruth: 'engine/hydroma/mrv/models.py',
     routeFile: 'apps/web/src/app/[locale]/hydroma/tools/[toolId]/page.tsx',
     description:
-      'Registered surface /hydroma/tools/mrv-nojin. Gateway contract: GET /api/v1/tool-registry/{tool_id}, registered in engine/hydroma/mrv/nojin_mrv.py.',
+      'Registered surface /hydroma/tools/mrv-nojin. Gateway contract: GET /api/v1/tool-registry/{tool_id}, registered in engine/hydroma/mrv/models.py.',
   },
   {
     id: 'hydroma-hydroma-tools-mrv-nojin-execute',

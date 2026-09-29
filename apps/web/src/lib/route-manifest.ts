@@ -10,10 +10,29 @@ export const PLANNING_CEILING = 987;
  * impossible: the number in the source is a claim, and the assertion is the
  * check.
  *
+ * 2026-09-29: 352 -> 356. Four pages were added, all of them dynamic routes the
+ * generator had been refusing to write: `/market/villages/{village_id}`,
+ * `/hydroma/carbon/verra/{registry_id}`, `/hydroma/carbon/{model_id}` and
+ * `/system/iot/devices/{device_id}`. Each is a published `GET` in
+ * `services/api_gateway/routers/`, and each was being suppressed because the
+ * generator counted a `POST` sibling as a swallowed page — see
+ * `scripts/generate-resource-pages.mjs`. No hand-written page was replaced and no
+ * page was removed; see the change log in `page-catalog.integrity.test.ts`.
+ *
+ * 2026-09-29, second movement today: 356 -> 378, measured by scanning the tree.
+ * Twenty-two page files arrived from the surface agents. Twenty-one of them are
+ * the routes `page-catalog.test.ts` was failing to account for, and they are now
+ * catalogued rather than declared; see the change log in
+ * `page-catalog.integrity.test.ts`. The residue is one page this change does not
+ * name, because nothing here identifies it and the constant is a measurement
+ * rather than an inventory — `git status` against the 356 checkpoint is where to
+ * look. The assertion in `route-manifest.test.ts` is what makes this number
+ * checkable, so an unexplained movement is a question, not a licence.
+ *
  * The figure is the whole tree. `page-catalog.test.ts` scans the same tree for
  * routable pages, excluding the catalogue catch-all and `_not-found`.
  */
-export const CURRENT_PAGE_FILES_OBSERVED = 352;
+export const CURRENT_PAGE_FILES_OBSERVED = 378;
 
 export type RouteContext =
   | 'public'

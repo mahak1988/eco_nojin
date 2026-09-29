@@ -1,42 +1,65 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
-import { fetchResource, ResourcePage, resourceLabels } from '@/components/ResourcePage';
+
+import { adminGet, adminToken, readAdminSession } from '@/components/admin/admin-server';
 import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
+import { verificationOf } from '@/lib/api/surfaces';
+
+import { ledgerCopy } from '../../_lib/copy';
+import {
+  LedgerSurface,
+  RecordList,
+  record,
+  resolveLedgerState,
+  scalar,
+  segment,
+} from '../../_lib/surface';
 
 const SLUG = 'admin-admin-errors-error_id';
 const ROUTE = '/admin/errors/{error_id}';
-/** The declared contract. A dynamic segment is resolved from the route params. */
 const PATH = '/api/v1/admin/errors/{error_id}';
 
 /**
- * Generated from the page catalogue — do not hand-edit.
+ * `GET /api/v1/admin/errors/{error_id}` —
+ * `services/api_gateway/routers/admin_errors.py:83`.
  *
- * Entry `admin-admin-errors-2`, domain `admin`. Source of truth: `openapi.json`.
- * The endpoint is the declared contract; the page renders one of the five
- * required states and never a fabricated value.
+ * `response_model=ErrorResponse`, so the payload is a single record, not a list.
+ * `ErrorResponse` is declared at `admin_errors.py:27` with `id`, `timestamp`,
+ * `severity`, `error_type`, `message`, `endpoint` and `user_id`. The handler
+ * looks the id up in `ERROR_STORE` and raises `404` when it is absent
+ * (`admin_errors.py:88-96`).
+ *
+ * The sibling `/summary` route is registered after this one and is therefore
+ * shadowed by it; that is a gateway defect and is reported rather than reproduced
+ * here. The path segment is resolved from the route parameter, so the page asks
+ * about the record the address names rather than the literal `{error_id}`.
  */
-type Payload = Record<string, unknown>;
+interface Fetched {
+  ok: boolean;
+  status: number;
+  data?: Record<string, unknown>;
+}
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ locale: string; error_id: string }>;
+  params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const meta = await getTranslations('pageMeta.admin-admin-errors-error_id');
+  const meta = await getTranslations(`pageMeta.${SLUG}`);
   return {
     title: meta('title'),
     description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
-      url: `${BASE_URL}/${locale}${ROUTE.replace(/\{[a-z_]+\}/g, '·')}`,
+      url: `${BASE_URL}/${locale}/admin/errors`,
       title: meta('title'),
     },
     alternates: {
-      canonical: canonicalFor(locale, ROUTE),
-      languages: languageAlternates(ROUTE),
+      canonical: canonicalFor(locale, '/admin/errors'),
+      languages: languageAlternates('/admin/errors'),
     },
   };
 }
@@ -46,28 +69,53 @@ export default async function Page({
 }: {
   params: Promise<{ locale: string; error_id: string }>;
 }) {
-  const { locale, ...rest } = await params;
-  const meta = await getTranslations('pageMeta.admin-admin-errors-error_id');
-  const labels = await resourceLabels();
-  // A dynamic segment is resolved from the route params rather than requested
-  // as a literal template. "rest" is used instead of a second "params" binding,
-  // which collided with the destructured parameter and failed to compile.
-  const routeParams = rest as Record<string, string>;
-  const endpoint = String(PATH).replace(/\{(\w+)\}/g, (_m, key) => String(routeParams[key] ?? ''));
-  const result = await fetchResource<Payload>(endpoint);
+  const { error_id } = await params;
+  const meta = await getTranslations(`pageMeta.${SLUG}`);
+  const copy = await ledgerCopy('admin');
+  const endpoint = PATH.replace('{error_id}', segment(error_id));
+
+  const result: Fetched = await adminGet<Record<string, unknown>>(
+    adminToken(await readAdminSession()),
+    endpoint,
+  );
+  const payload = record(result.ok ? result.data : undefined);
+  const state = resolveLedgerState(result, result.ok ? 1 : 0);
+  const c = copy.columns;
 
   return (
-    <ResourcePage<Payload>
-      slug={SLUG}
-      locale={locale}
+    <LedgerSurface
+      catalogPath={ROUTE}
+      namespace="admin"
       title={meta('title')}
       description={meta('description')}
       path={endpoint}
-      result={result}
-      mode="rows"
-      rowsKey={'{error_id}s'}
-      rowKey={(row) => String(row.id ?? JSON.stringify(row).slice(0, 24))}
-      labels={labels}
-    ></ResourcePage>
+      slug={SLUG}
+      state={state}
+      total={result.ok ? 1 : 0}
+      ok={result.ok}
+      verified={result.ok && verificationOf(result.data)}
+      stateDetail={result.ok ? undefined : `${endpoint} · ${result.status}`}
+      data={
+        result.ok ? (
+          <RecordList
+            caption={meta('title')}
+            fields={[
+              { label: c.identifier, value: scalar(payload.id) },
+              { label: c.created, value: scalar(payload.timestamp) },
+              { label: c.status, value: scalar(payload.severity) },
+              { label: c.type, value: scalar(payload.error_type) },
+              { label: c.source, value: scalar(payload.endpoint) },
+              { label: c.message, value: scalar(payload.message) },
+              { label: c.member, value: scalar(payload.user_id) },
+            ]}
+          />
+        ) : null
+      }
+      detail={
+        <p className="text-xs text-ink-soft">
+          {copy.processMemory} <span className="num">{endpoint}</span>
+        </p>
+      }
+    />
   );
 }

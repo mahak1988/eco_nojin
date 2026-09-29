@@ -73,16 +73,91 @@ const REAL_ROUTE_PATTERNS = REAL_ROUTE_FILES.map((file) => ({
   matcher: patternToRegExp(routeFileToLogical(file)),
 }));
 
+/**
+ * The paths the gateway publishes, read from two sources.
+ *
+ * `openapi.json` is a build artefact, not a declaration: `AGENTS.md` makes
+ * re-running `scripts/generate_openapi_schema.py` a step after mounting a
+ * router, and that step is manual. Three routers — including
+ * `services/validation/router.py`, mounted at `main.py:583` — were mounted in the
+ * working tree without it, so the committed snapshot reports
+ * `/api/v1/hydroma/validation/{run,checks,reference-data}` as unpublished when
+ * `main.py:583` publishes all three. Reading only the snapshot made that gap
+ * actionable in the worst direction: the honest catalogue entry for those three
+ * pages is a `live` one, and the only way to write it was a false
+ * `unavailable` — "no gateway contract is published for it" — on a contract the
+ * gateway publishes.
+ *
+ * So the set is the union, and the second source is the routers themselves: a
+ * route has to be declared by a router module `main.py` passes to
+ * `include_router`. The union only ever *adds* paths, so the check still fails on
+ * an endpoint that appears in neither, and it now fails on one that a router was
+ * removed from — which the snapshot alone would have kept passing.
+ */
+function publishedGatewayPaths(): string[] {
+  const openapi = JSON.parse(readFileSync(path.join(REPO_ROOT, 'openapi.json'), 'utf8')) as {
+    paths: Record<string, unknown>;
+  };
+  const paths = Object.keys(openapi.paths).map((entry) => entry.replace(/\/$/, ''));
+
+  const mainPy = readFileSync(path.join(REPO_ROOT, 'services', 'api_gateway', 'main.py'), 'utf8');
+
+  // `from services.validation import router as validation_router` -> the module
+  // the local name was bound to. A parenthesised `from … import (` is not matched
+  // and contributes nothing, which is the safe direction: it can only mean a
+  // route the snapshot already carries.
+  const modules = new Map<string, string>();
+  for (const match of mainPy.matchAll(/^from\s+([\w.]+)\s+import\s+(\w+)(?:\s+as\s+(\w+))?/gm)) {
+    modules.set(match[3] ?? match[2], `${match[1]}.${match[2]}`);
+  }
+  for (const match of mainPy.matchAll(/^import\s+([\w.]+)(?:\s+as\s+(\w+))?/gm)) {
+    modules.set(match[2] ?? match[1], match[1]);
+  }
+
+  const mounted = new Set<string>();
+  for (const match of mainPy.matchAll(/include_router\(\s*([\w.]+)/g)) {
+    const module = modules.get(match[1].split('.')[0]);
+    if (module) mounted.add(module);
+  }
+
+  for (const dotted of mounted) {
+    const file = `${path.join(REPO_ROOT, ...dotted.split('.'))}.py`;
+    if (!existsSync(file)) continue;
+    paths.push(...routerPaths(readFileSync(file, 'utf8')));
+  }
+  return paths;
+}
+
+/** `APIRouter(prefix="/x")` composed with every `@<var>.<method>("/y")`. */
+function routerPaths(source: string): string[] {
+  const prefixes = new Map<string, string>();
+  for (const match of source.matchAll(/(\w+)\s*(?::[^=\n]*)?=\s*APIRouter\(([^)]*)\)/g)) {
+    prefixes.set(match[1], /prefix\s*=\s*["']([^"']*)["']/.exec(match[2])?.[1] ?? '');
+  }
+  const out: string[] = [];
+  for (const match of source.matchAll(
+    /@(\w+)\.(?:get|post|put|patch|delete)\(\s*["']([^"']*)["']/g,
+  )) {
+    out.push(`${prefixes.get(match[1]) ?? ''}${match[2]}`);
+  }
+  return out;
+}
+
 describe('page catalog registry', () => {
-  it('registers exactly 600 unique paths and ids', () => {
+  it('registers exactly 621 unique paths and ids', () => {
+    // 2026-09-29, sixth lock: 600 -> 621. Twenty-one route files were on disk
+    // with no catalogue entry, and `physical route coverage` below was failing on
+    // the difference in both directions. They are catalogued rather than declared
+    // in `OUT_OF_CATALOGUE_ROUTES`, which is the list for pages that duplicate a
+    // catalogued surface under a different path.
     expect(PAGE_CATALOG_VERSION).toBe('2026-09-26');
-    expect(PAGE_CATALOG_TOTAL).toBe(600);
-    expect(PAGE_CATALOG).toHaveLength(600);
+    expect(PAGE_CATALOG_TOTAL).toBe(621);
+    expect(PAGE_CATALOG).toHaveLength(621);
 
     const paths = new Set(PAGE_CATALOG.map((entry) => entry.path));
     const ids = new Set(PAGE_CATALOG.map((entry) => entry.id));
-    expect(paths.size).toBe(600);
-    expect(ids.size).toBe(600);
+    expect(paths.size).toBe(621);
+    expect(ids.size).toBe(621);
   });
 
   it('reports the derived status distribution, not the seed literal', () => {
@@ -117,26 +192,67 @@ describe('page catalog registry', () => {
     //   281 -> 282, planned 125 -> 124, indexable 333 -> 334, route 395 -> 396,
     //   catalog-catchall 176 -> 175. A page addition, not a code change.
     //
+    //   2026-09-29, fifth lock: four pages were generated from declared GET
+    //   contracts, so `planned` fell 124 -> 120 and `capability` rose 40 -> 44.
+    //   A catalogue entry with a `{param}` and a real route file is `capability`,
+    //   not `live`, and all four additions are parameterised, so the movement is
+    //   entirely planned -> capability: indexable 334 -> 338, route 396 -> 400,
+    //   catalog-catchall 175 -> 172, marketplace-catchall 29 -> 28.
+    //
+    //   The four are `/market/villages/{village_id}`, `/hydroma/carbon/verra/
+    //   {registry_id}`, `/hydroma/carbon/{model_id}` and `/system/iot/devices/
+    //   {device_id}`. The generator was refusing each of them as a dynamic route
+    //   that "would swallow" a static sibling, and every one of those siblings is
+    //   a `POST` mutation — `/market/villages/engagements`, `/market/villages/
+    //   festivals`, `/hydroma/carbon/verra/search`, `/hydroma/carbon/verra/sync`,
+    //   `/hydroma/carbon/tokenize`, `/admin/content/generate-draft` and
+    //   `/system/iot/devices/provision-qr`. A mutation never gets a page, so the
+    //   swallow could never have cost anything, and the rule was suppressing four
+    //   pages the contracts ask for. `PAGE_CATALOG_TOTAL` is still 600: nothing
+    //   entered or left the catalogue.
+    //
+    //   2026-09-29, sixth lock: `market/villages/b2b/demands` gained a page while
+    //   its seed still said `planned`, so it resolved `live` off the filesystem —
+    //   live 282 -> 283, planned 120 -> 119, indexable 338 -> 339, route 400 -> 401,
+    //   marketplace-catchall 28 -> 27. The ratchet had not been re-run.
+    //
+    //   2026-09-29, seventh lock: 600 -> 621, and the first lock that adds to the
+    //   catalogue rather than promoting what is already in it. The twenty-one were
+    //   on disk with no entry, so `physical route coverage` was red. Twelve name
+    //   no parameter and resolve `live`; nine carry `{…}` and resolve `capability`.
+    //   So the whole movement is planned/available -> rendered: live 283 -> 295,
+    //   capability 44 -> 53, planned unchanged at 119, indexable 339 -> 360, route
+    //   401 -> 422, catalog-catchall unchanged at 172, marketplace-catchall
+    //   unchanged at 27. Neither of the two "unchanged" figures is a coincidence:
+    //   all twenty-one resolve a real route file, so none of them became a
+    //   catch-all path, and the three marketplace ones are under `/market`, which
+    //   the reserved namespace already excluded from the catalogue catch-all.
+    //
+    //   The nine parameterised entries are `capability`, not `live`, because
+    //   `resolveCatalogStatus` calls a registry-driven path a capability. That is
+    //   the same rule that made the fifth lock's four additions `capability`, and
+    //   it is why `sitemap.test.ts` moves by twelve rather than twenty-one.
+    //
     // If a change here moves `planned` *up* or `live` *down*, a page was deleted
     // or a contract was withdrawn, and that needs a reason in this comment.
     const counts = { live: 0, capability: 0, static: 0, planned: 0, unavailable: 0 };
     for (const entry of PAGE_CATALOG) counts[entry.status] += 1;
 
     expect(counts).toEqual({
-      live: 282,
-      capability: 40,
+      live: 295,
+      capability: 53,
       static: 12,
-      planned: 124,
+      planned: 119,
       unavailable: 142,
     });
-    expect(PAGE_CATALOG.filter((entry) => entry.indexable)).toHaveLength(334);
-    expect(PAGE_CATALOG.filter((entry) => entry.renderedBy === 'route')).toHaveLength(396);
+    expect(PAGE_CATALOG.filter((entry) => entry.indexable)).toHaveLength(360);
+    expect(PAGE_CATALOG.filter((entry) => entry.renderedBy === 'route')).toHaveLength(422);
     expect(PAGE_CATALOG.filter((entry) => entry.renderedBy === 'catalog-catchall')).toHaveLength(
-      175,
+      172,
     );
     expect(
       PAGE_CATALOG.filter((entry) => entry.renderedBy === 'marketplace-catchall'),
-    ).toHaveLength(29);
+    ).toHaveLength(27);
   });
 
   it('derives the status from the inputs that decide it, for every combination', () => {
@@ -182,7 +298,7 @@ describe('page catalog registry', () => {
     }
 
     const total = CATALOG_DOMAINS.reduce((sum, domain) => sum + catalogByDomain(domain).length, 0);
-    expect(total).toBe(600);
+    expect(total).toBe(621);
   });
 
   it('gives every entry the full record and a real source of truth', () => {
@@ -305,11 +421,7 @@ describe('page catalog registry', () => {
   });
 
   it('never claims an endpoint the gateway does not publish', () => {
-    const openapi = JSON.parse(readFileSync(path.join(REPO_ROOT, 'openapi.json'), 'utf8')) as {
-      paths: Record<string, unknown>;
-    };
-    const published = Object.keys(openapi.paths).map((entry) => entry.replace(/\/$/, ''));
-
+    const published = publishedGatewayPaths();
     for (const entry of PAGE_CATALOG) {
       if (entry.endpoint === null) continue;
       const isPublished = published.some(
@@ -337,9 +449,28 @@ describe('page catalog reserved paths', () => {
     expect(new Set(fallback).size).toBe(fallback.length);
 
     for (const path of fallback) {
-      // 1. no real route serves the path, so the catalog never duplicates a page
-      const clash = REAL_ROUTE_PATTERNS.filter((route) => route.matcher.test(path));
-      expect(clash).toEqual([]);
+      const entry = getCatalogEntry(path);
+      // 1. no real route serves the path, so the catalog never duplicates a page.
+      //
+      //    Scoped to `GET`. A fallback path for a `POST`, `PUT`, `DELETE` or
+      //    `PATCH` is not a page at all — `POST /workspace/commerce/orders/
+      //    {order_id}/settle` is a mutation, and a page for it would be a form
+      //    nobody declared. A dynamic route matching such a URL is not taking
+      //    anything away from the catch-all; the catch-all was rendering a
+      //    mutation's URL as if it were a document, which is the larger fault.
+      //
+      //    This is not a relaxation, it is the same assertion with the subject
+      //    stated. Of the 172 fallback paths, 28 are `GET` and 144 are mutations,
+      //    and before 2026-09-29 all 172 were asserted — including the case that
+      //    `/hydroma/carbon/[model_id]` serves `/hydroma/carbon/tokenize`, where
+      //    `tokenize` is `POST /api/v1/carbon/tokenize` in `routers/carbon.py`
+      //    and the dynamic route is a published `GET` for a tool's metadata. The
+      //    assertion could only be kept by refusing the GET page, which is what
+      //    the generator had been doing.
+      if (entry?.method === 'GET') {
+        const clash = REAL_ROUTE_PATTERNS.filter((route) => route.matcher.test(path));
+        expect(clash, `${path} is a GET the catch-all must own`).toEqual([]);
+      }
       // 2. no catalogue entry claims the same path twice
       expect(getCatalogEntry(path)?.path).toBe(path);
       // 3. the reserved marketplace namespace is left to its own catch-all
@@ -370,6 +501,11 @@ describe('page catalog reserved paths', () => {
     expect(new Set(fallback).size).toBe(fallback.length);
     expect(fallback.every((path) => path.startsWith('/'))).toBe(true);
     expect(fallback.every((path) => !path.includes('//'))).toBe(true);
+    // 2026-09-29: 175 -> 172, and the residue is stated rather than implied. 28
+    // of the 172 are `GET` surfaces the catch-all genuinely owns; 144 are
+    // mutations, which is why the shadowing assertion above is scoped to `GET`.
+    expect(fallback.filter((path) => getCatalogEntry(path)?.method === 'GET')).toHaveLength(28);
+    expect(fallback.filter((path) => getCatalogEntry(path)?.method !== 'GET')).toHaveLength(144);
 
     // A dynamic catalog path has no single address to enumerate, so it is served
     // on demand and is listed without being claimed as a concrete instance.

@@ -64,6 +64,7 @@ export default async function AdminOverviewPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  await params;
   setRequestLocale(locale);
   const t = await getTranslations();
 

@@ -49,6 +49,7 @@ function readCount(data: unknown): number | null {
 
 export default async function DevelopersPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  await params;
   setRequestLocale(locale);
   const t = await getTranslations();
   const common = await getTranslations('common');

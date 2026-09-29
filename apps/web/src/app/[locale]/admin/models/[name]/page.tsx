@@ -1,42 +1,63 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
-import { fetchResource, ResourcePage, resourceLabels } from '@/components/ResourcePage';
+
+import { adminGet, adminToken, readAdminSession } from '@/components/admin/admin-server';
 import { canonicalFor, languageAlternates } from '@/config/alternates';
 import { SITE_URL as BASE_URL } from '@/config/site';
 
+import { ledgerCopy } from '../../_lib/copy';
+import {
+  LedgerSurface,
+  PlaceholderNotice,
+  record,
+  resolveLedgerState,
+  scalar,
+  segment,
+  UnmeasuredCell,
+} from '../../_lib/surface';
+
 const SLUG = 'admin-admin-models-name';
 const ROUTE = '/admin/models/{name}';
-/** The declared contract. A dynamic segment is resolved from the route params. */
 const PATH = '/api/v1/admin/models/{name}';
 
 /**
- * Generated from the page catalogue — do not hand-edit.
+ * `GET /api/v1/admin/models/{name}` — `services/api_gateway/routers/admin_models.py:76`.
  *
- * Entry `admin-admin-models-2`, domain `admin`. Source of truth: `openapi.json`.
- * The endpoint is the declared contract; the page renders one of the five
- * required states and never a fabricated value.
+ * `response_model=ModelResponse`, so the payload is one record. The handler looks
+ * the name up in `MODEL_STORE` and raises `404` when it is absent
+ * (`admin_models.py:81-82`).
+ *
+ * The store is the same three-entry mock literal as the index, declared at
+ * `admin_models.py:33-65`. Only `name` is not an invented constant, so the page
+ * renders the name and labels `size`, `modified_at`, `digest`, `family`,
+ * `parameter_size`, `quantization_level` and `running` as not measured. The
+ * segment is resolved from the route parameter rather than the literal `{name}`.
  */
-type Payload = Record<string, unknown>;
+interface Fetched {
+  ok: boolean;
+  status: number;
+  data?: Record<string, unknown>;
+}
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ locale: string; name: string }>;
+  params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const meta = await getTranslations('pageMeta.admin-admin-models-name');
+  const meta = await getTranslations(`pageMeta.${SLUG}`);
   return {
     title: meta('title'),
     description: meta('description'),
     openGraph: {
       type: 'website',
       locale,
-      url: `${BASE_URL}/${locale}${ROUTE.replace(/\{[a-z_]+\}/g, '·')}`,
+      url: `${BASE_URL}/${locale}/admin/models`,
       title: meta('title'),
     },
     alternates: {
-      canonical: canonicalFor(locale, ROUTE),
-      languages: languageAlternates(ROUTE),
+      canonical: canonicalFor(locale, '/admin/models'),
+      languages: languageAlternates('/admin/models'),
     },
   };
 }
@@ -46,28 +67,64 @@ export default async function Page({
 }: {
   params: Promise<{ locale: string; name: string }>;
 }) {
-  const { locale, ...rest } = await params;
-  const meta = await getTranslations('pageMeta.admin-admin-models-name');
-  const labels = await resourceLabels();
-  // A dynamic segment is resolved from the route params rather than requested
-  // as a literal template. "rest" is used instead of a second "params" binding,
-  // which collided with the destructured parameter and failed to compile.
-  const routeParams = rest as Record<string, string>;
-  const endpoint = String(PATH).replace(/\{(\w+)\}/g, (_m, key) => String(routeParams[key] ?? ''));
-  const result = await fetchResource<Payload>(endpoint);
+  const { name } = await params;
+  const meta = await getTranslations(`pageMeta.${SLUG}`);
+  const copy = await ledgerCopy('admin');
+  const endpoint = PATH.replace('{name}', segment(name));
+
+  const result: Fetched = await adminGet<Record<string, unknown>>(
+    adminToken(await readAdminSession()),
+    endpoint,
+  );
+  const payload = record(result.ok ? result.data : undefined);
+  const state = resolveLedgerState(result, result.ok ? 1 : 0);
+  const c = copy.columns;
+  const notMeasured = <UnmeasuredCell label={copy.notMeasured} />;
 
   return (
-    <ResourcePage<Payload>
-      slug={SLUG}
-      locale={locale}
+    <LedgerSurface
+      catalogPath={ROUTE}
+      namespace="admin"
       title={meta('title')}
       description={meta('description')}
       path={endpoint}
-      result={result}
-      mode="rows"
-      rowsKey={'{name}s'}
-      rowKey={(row) => String(row.id ?? JSON.stringify(row).slice(0, 24))}
-      labels={labels}
-    ></ResourcePage>
+      slug={SLUG}
+      state={state}
+      total={result.ok ? 1 : 0}
+      ok={result.ok}
+      stateDetail={result.ok ? undefined : `${endpoint} · ${result.status}`}
+      data={
+        result.ok ? (
+          <div className="flex flex-col gap-3">
+            <PlaceholderNotice heading={copy.placeholderHeading} body={copy.placeholderBody} />
+            <dl className="grid gap-2 sm:grid-cols-[minmax(0,14rem)_minmax(0,1fr)]">
+              <dt className="text-xs text-ink-soft">{c.name}</dt>
+              <dd className="num text-sm text-ink">{scalar(payload.name)}</dd>
+              {(
+                [
+                  { field: 'size', label: c.value },
+                  { field: 'modified_at', label: c.updated },
+                  { field: 'digest', label: c.key },
+                  { field: 'family', label: c.group },
+                  { field: 'parameter_size', label: c.count },
+                  { field: 'quantization_level', label: c.type },
+                  { field: 'running', label: c.status },
+                ] as const
+              ).map((entry) => (
+                <div key={entry.field} className="contents">
+                  <dt className="text-xs text-ink-soft">{entry.label}</dt>
+                  <dd className="text-sm">{notMeasured}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        ) : null
+      }
+      detail={
+        <p className="num text-xs text-ink-faint">
+          {endpoint} — services/api_gateway/routers/admin_models.py:33
+        </p>
+      }
+    />
   );
 }

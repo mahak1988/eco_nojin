@@ -65,7 +65,7 @@ export default async function Page({
       path={endpoint}
       result={result}
       mode="rows"
-      rowsKey={'tracks'}
+      rowsKey={'timeline'}
       rowKey={(row) => String(row.id ?? JSON.stringify(row).slice(0, 24))}
       labels={labels}
     ></ResourcePage>

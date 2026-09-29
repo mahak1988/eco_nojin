@@ -49,6 +49,7 @@ export default async function DesignSystemPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  await params;
   setRequestLocale(locale);
 
   return (

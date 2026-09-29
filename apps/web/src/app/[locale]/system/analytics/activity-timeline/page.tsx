@@ -58,7 +58,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       path={endpoint}
       result={result}
       mode="rows"
-      rowsKey={'activity_timelines'}
+      rowsKey={'activities'}
       rowKey={(row) => String(row.id ?? JSON.stringify(row).slice(0, 24))}
       labels={labels}
     ></ResourcePage>

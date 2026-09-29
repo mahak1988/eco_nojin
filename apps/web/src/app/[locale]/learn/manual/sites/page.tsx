@@ -54,9 +54,10 @@ export default async function Page({
   const labels = await resourceLabels();
   const searchCopy = await getTranslations('search');
   const endpoint = PATH;
-  // A real <form method="get"> on the page, so the search works with
-  // JavaScript disabled: submitting it re-navigates to this URL with ?q=…, and
-  // the term is read here and forwarded to the gateway. `required: false` — the gateway lists everything when the term is absent, so the page is useful before anything is typed.
+  // A real <form method="get"> on the page, so this works with JavaScript
+  // disabled: submitting it re-navigates to this URL with the value, and the value
+  // is read here and forwarded to the gateway. Kind: search ("q").
+  // `required: false` — the gateway lists everything when it is absent, so the page is useful before anything is typed.
   const resolved = await searchParams;
   const raw = resolved?.q;
   const term = (Array.isArray(raw) ? raw[0] : raw)?.trim() ?? '';
@@ -78,13 +79,14 @@ export default async function Page({
     >
       {({ state }) => (
         <NoJsSearch
+          kind="search"
           name="q"
           path={`${searched}`}
           value={term}
           emptyResult={
             state === 'empty' && term.length > 0 ? searchCopy('noResults', { term }) : undefined
           }
-          id="search-learning-learn-manual-sites"
+          id="query-learning-learn-manual-sites"
         />
       )}
     </ResourcePage>

@@ -40,6 +40,7 @@ export async function generateMetadata({
 
 export default async function SdksPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  await params;
   setRequestLocale(locale);
   const t = await getTranslations('developers');
   const common = await getTranslations('common');

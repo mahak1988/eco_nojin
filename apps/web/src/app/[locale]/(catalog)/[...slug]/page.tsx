@@ -60,7 +60,7 @@ export default async function CatalogFallbackPage({
 }: {
   params: Promise<{ locale: string; slug: string[] }>;
 }) {
-  const { locale, slug } = await params;
+  const { slug, locale } = await params;
   setRequestLocale(locale);
   const entry = getCatalogEntryForSlug(slug);
   // Anything already routed keeps its own page; this route answers only for the

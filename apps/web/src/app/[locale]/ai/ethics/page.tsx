@@ -6,6 +6,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function EthicsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  await params;
   setRequestLocale(locale);
   const t = await getTranslations('ai');
 

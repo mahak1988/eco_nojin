@@ -54,13 +54,14 @@ export default async function Page({
   const labels = await resourceLabels();
   const searchCopy = await getTranslations('search');
   const endpoint = PATH;
-  // A real <form method="get"> on the page, so the search works with
-  // JavaScript disabled: submitting it re-navigates to this URL with ?q=…, and
-  // the term is read here and forwarded to the gateway. `required: true` — the gateway rejects a request without one, so the empty state is the honest first render.
+  // A real <form method="get"> on the page, so this works with JavaScript
+  // disabled: submitting it re-navigates to this URL with the value, and the value
+  // is read here and forwarded to the gateway. Kind: search ("q").
+  // `required: true` — the gateway rejects a request without it, so without a form this page could only ever render an error.
   const resolved = await searchParams;
   const raw = resolved?.q;
   const term = (Array.isArray(raw) ? raw[0] : raw)?.trim() ?? '';
-  const searched = term.length > 0 ? endpoint + (term ? `?q=${encodeURIComponent(term)}` : '') : '';
+  const searched = term.length > 0 ? `${endpoint}?q=${encodeURIComponent(term)}` : '';
   const result = await fetchResource<Payload>(searched);
 
   return (
@@ -72,19 +73,20 @@ export default async function Page({
       path={searched}
       result={result}
       mode="rows"
-      rowsKey={'searchs'}
+      rowsKey={'results'}
       rowKey={(row) => String(row.id ?? JSON.stringify(row).slice(0, 24))}
       labels={labels}
     >
       {({ state }) => (
         <NoJsSearch
+          kind="search"
           name="q"
           path={`${searched}`}
           value={term}
           emptyResult={
             state === 'empty' && term.length > 0 ? searchCopy('noResults', { term }) : undefined
           }
-          id="search-learning-learn-content-search"
+          id="query-learning-learn-content-search"
         />
       )}
     </ResourcePage>

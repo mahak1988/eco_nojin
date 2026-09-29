@@ -33,6 +33,7 @@ const DENSITIES = ['cozy', 'compact', 'dense'] as const;
  */
 export default async function GalleryPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  await params;
   setRequestLocale(locale);
   const t = await getTranslations();
 
