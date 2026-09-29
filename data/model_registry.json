@@ -43578,7 +43578,573 @@
         "deep_learning"
       ],
       "provenance": {}
+    },
+    {
+      "model_id": "f2790137-58f9-4bdc-8e04-89327b91c790",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-29T17:06:47.124644",
+      "updated_at": "2026-09-29T17:06:47.170617",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "27991073-a275-4b0c-abee-f7d88247d0a0",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-29T17:06:47.378549",
+      "updated_at": "2026-09-29T17:06:47.378549",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "08de3764-ea3d-4502-b3e7-17a2470e6854",
+      "name": "Ensemble Kalman Filter",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Ensemble Kalman Filter for sequential data assimilation",
+      "references": [
+        "Evensen (2009) Data Assimilation: The Ensemble Kalman Filter",
+        "Houtekamer & Zhang (2016) Review of the Ensemble Kalman Filter"
+      ],
+      "doi": "10.1007/978-3-642-03711-5",
+      "authors": [
+        "G. Evensen",
+        "P. Houtekamer",
+        "F. Zhang"
+      ],
+      "created_at": "2026-09-29T17:06:47.603474",
+      "updated_at": "2026-09-29T17:06:47.603474",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "enkf",
+        "data_assimilation",
+        "kalman_filter",
+        "ensemble"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "86f3b250-3a68-4612-907a-9fb94a56da4d",
+      "name": "4D-Var",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "4D-Var variational data assimilation",
+      "references": [
+        "Le Dimet & Talagrand (1986) Variational algorithms for analysis and assimilation of meteorological observations"
+      ],
+      "doi": "10.1002/qj.49711247302",
+      "authors": [
+        "F. Le Dimet",
+        "O. Talagrand"
+      ],
+      "created_at": "2026-09-29T17:06:47.803461",
+      "updated_at": "2026-09-29T17:06:47.803461",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "4dvar",
+        "variational",
+        "data_assimilation",
+        "optimization"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "8cf4cf20-8397-49b6-8ce4-44879c7398d1",
+      "name": "Particle Filter",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Particle filter for non-Gaussian data assimilation",
+      "references": [
+        "Doucet et al. (2001) Sequential Monte Carlo Methods in Practice"
+      ],
+      "doi": "10.1007/978-1-4757-3437-9",
+      "authors": [
+        "A. Doucet",
+        "N. de Freitas",
+        "N. Gordon"
+      ],
+      "created_at": "2026-09-29T17:06:47.988454",
+      "updated_at": "2026-09-29T17:06:47.988454",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "particle_filter",
+        "sequential_monte_carlo",
+        "data_assimilation",
+        "non_gaussian"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "6fb36d07-6738-47e2-9c94-53503440c88a",
+      "name": "Distributed PINN Trainer",
+      "version": "1.0.0",
+      "domain": "climate",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Distributed training infrastructure for PINN and GP models",
+      "references": [
+        "Li et al. (2020) PyTorch Distributed: Experiences on Accelerating Data Parallel Training"
+      ],
+      "doi": "10.1109/IPDPS51204.2020.00044",
+      "authors": [
+        "Pytorch Team"
+      ],
+      "created_at": "2026-09-29T17:06:53.259358",
+      "updated_at": "2026-09-29T17:06:53.259358",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "distributed",
+        "ddp",
+        "pinn",
+        "training",
+        "scaling"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "f8211c81-8215-4b56-844f-be23868babac",
+      "name": "Gaussian Process Surrogate",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Gaussian Process emulator for fast model approximation",
+      "references": [
+        "Rasmussen & Williams (2006) Gaussian Processes for Machine Learning",
+        "Kennedy & O'Hagan (2001) Bayesian calibration of computer models"
+      ],
+      "doi": "10.1111/1467-9868.00294",
+      "authors": [
+        "C. Rasmussen",
+        "C. Williams",
+        "M. Kennedy",
+        "A. O'Hagan"
+      ],
+      "created_at": "2026-09-29T17:07:01.551385",
+      "updated_at": "2026-09-29T17:07:01.551385",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "gp",
+        "surrogate",
+        "emulator",
+        "bayesian",
+        "uq"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "b4d5f753-3643-48f8-8c03-8e7956f590c2",
+      "name": "Heat Equation PINN",
+      "version": "1.0.0",
+      "domain": "climate",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Physics-Informed Neural Network for heat equation",
+      "references": [
+        "Raissi et al. (2019) Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations"
+      ],
+      "doi": "10.1016/j.jcp.2018.10.045",
+      "authors": [
+        "M. Raissi",
+        "P. Perdikaris",
+        "G. Karniadakis"
+      ],
+      "created_at": "2026-09-29T17:07:01.799585",
+      "updated_at": "2026-09-29T17:07:01.799585",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "pinn",
+        "heat",
+        "pde",
+        "deep_learning"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "21d19354-f28a-43b4-91e5-70ae33c78780",
+      "name": "Richards Equation PINN",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Physics-Informed Neural Network for Richards equation",
+      "references": [
+        "Cai et al. (2021) Physics-informed neural networks for solving Richards equation"
+      ],
+      "doi": "10.1016/j.advwatres.2021.103977",
+      "authors": [
+        "Z. Cai",
+        "et al."
+      ],
+      "created_at": "2026-09-29T17:07:02.034451",
+      "updated_at": "2026-09-29T17:07:02.035449",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "pinn",
+        "richards",
+        "unsaturated_flow",
+        "deep_learning"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "a9024f47-3664-462f-a14b-713847d77a51",
+      "name": "MODFLOW 6",
+      "version": "6.2.0",
+      "domain": "groundwater",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "USGS modular groundwater flow model (MODFLOW 6) via flopy",
+      "references": [
+        "Langevin et al. (2017) MODFLOW 6: A modular framework for groundwater flow simulation",
+        "Hughes et al. (2020) flopy: A Python package for MODFLOW"
+      ],
+      "doi": "10.5066/P9FQ0YGF",
+      "authors": [
+        "C. Langevin",
+        "J. Hughes",
+        "A. White"
+      ],
+      "created_at": "2026-09-29T17:08:03.969575",
+      "updated_at": "2026-09-29T17:08:04.013549",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "groundwater",
+        "flow",
+        "transient",
+        "calibration",
+        "flopy"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "4a9dcc54-6f41-44fc-8eed-860c4d9f5a87",
+      "name": "SWAT+",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "process_based",
+      "status": "experimental",
+      "description": "Watershed-scale hydrologic and water quality model (SWAT+)",
+      "references": [
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+"
+      ],
+      "doi": "10.1016/j.envsoft.2017.03.014",
+      "authors": [
+        "J. Arnold",
+        "K. Bieger",
+        "R. Srinivasan"
+      ],
+      "created_at": "2026-09-29T17:08:04.236423",
+      "updated_at": "2026-09-29T17:08:04.237422",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "watershed",
+        "hydrology",
+        "water_quality",
+        "calibration"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "9a2d3138-f7b7-4024-90d1-e10376094f59",
+      "name": "Ensemble Kalman Filter",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Ensemble Kalman Filter for sequential data assimilation",
+      "references": [
+        "Evensen (2009) Data Assimilation: The Ensemble Kalman Filter",
+        "Houtekamer & Zhang (2016) Review of the Ensemble Kalman Filter"
+      ],
+      "doi": "10.1007/978-3-642-03711-5",
+      "authors": [
+        "G. Evensen",
+        "P. Houtekamer",
+        "F. Zhang"
+      ],
+      "created_at": "2026-09-29T17:08:04.540754",
+      "updated_at": "2026-09-29T17:08:04.540754",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "enkf",
+        "data_assimilation",
+        "kalman_filter",
+        "ensemble"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "c02ce6d3-0e8b-4ccd-be55-ec58a4f1c4de",
+      "name": "4D-Var",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "4D-Var variational data assimilation",
+      "references": [
+        "Le Dimet & Talagrand (1986) Variational algorithms for analysis and assimilation of meteorological observations"
+      ],
+      "doi": "10.1002/qj.49711247302",
+      "authors": [
+        "F. Le Dimet",
+        "O. Talagrand"
+      ],
+      "created_at": "2026-09-29T17:08:04.795638",
+      "updated_at": "2026-09-29T17:08:04.796638",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "4dvar",
+        "variational",
+        "data_assimilation",
+        "optimization"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "0e465c00-5c16-4008-874b-b4095d6d1049",
+      "name": "Particle Filter",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Particle filter for non-Gaussian data assimilation",
+      "references": [
+        "Doucet et al. (2001) Sequential Monte Carlo Methods in Practice"
+      ],
+      "doi": "10.1007/978-1-4757-3437-9",
+      "authors": [
+        "A. Doucet",
+        "N. de Freitas",
+        "N. Gordon"
+      ],
+      "created_at": "2026-09-29T17:08:05.077477",
+      "updated_at": "2026-09-29T17:08:05.077477",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "particle_filter",
+        "sequential_monte_carlo",
+        "data_assimilation",
+        "non_gaussian"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "e811b3c9-3009-4447-beb8-d6cfff2e3565",
+      "name": "Distributed PINN Trainer",
+      "version": "1.0.0",
+      "domain": "climate",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Distributed training infrastructure for PINN and GP models",
+      "references": [
+        "Li et al. (2020) PyTorch Distributed: Experiences on Accelerating Data Parallel Training"
+      ],
+      "doi": "10.1109/IPDPS51204.2020.00044",
+      "authors": [
+        "Pytorch Team"
+      ],
+      "created_at": "2026-09-29T17:08:09.385048",
+      "updated_at": "2026-09-29T17:08:09.385048",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "distributed",
+        "ddp",
+        "pinn",
+        "training",
+        "scaling"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "8ab7b179-21e5-4df1-a9df-a32f4e2eddd1",
+      "name": "Gaussian Process Surrogate",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Gaussian Process emulator for fast model approximation",
+      "references": [
+        "Rasmussen & Williams (2006) Gaussian Processes for Machine Learning",
+        "Kennedy & O'Hagan (2001) Bayesian calibration of computer models"
+      ],
+      "doi": "10.1111/1467-9868.00294",
+      "authors": [
+        "C. Rasmussen",
+        "C. Williams",
+        "M. Kennedy",
+        "A. O'Hagan"
+      ],
+      "created_at": "2026-09-29T17:08:16.390923",
+      "updated_at": "2026-09-29T17:08:16.390923",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "gp",
+        "surrogate",
+        "emulator",
+        "bayesian",
+        "uq"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "0f987992-d005-4b8f-ad01-b09789d5bf37",
+      "name": "Heat Equation PINN",
+      "version": "1.0.0",
+      "domain": "climate",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Physics-Informed Neural Network for heat equation",
+      "references": [
+        "Raissi et al. (2019) Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations"
+      ],
+      "doi": "10.1016/j.jcp.2018.10.045",
+      "authors": [
+        "M. Raissi",
+        "P. Perdikaris",
+        "G. Karniadakis"
+      ],
+      "created_at": "2026-09-29T17:08:16.558827",
+      "updated_at": "2026-09-29T17:08:16.558827",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "pinn",
+        "heat",
+        "pde",
+        "deep_learning"
+      ],
+      "provenance": {}
+    },
+    {
+      "model_id": "b1a2ad70-a163-40bb-8ca7-17deaabed325",
+      "name": "Richards Equation PINN",
+      "version": "1.0.0",
+      "domain": "hydrology",
+      "fidelity": "hybrid",
+      "status": "experimental",
+      "description": "Physics-Informed Neural Network for Richards equation",
+      "references": [
+        "Cai et al. (2021) Physics-informed neural networks for solving Richards equation"
+      ],
+      "doi": "10.1016/j.advwatres.2021.103977",
+      "authors": [
+        "Z. Cai",
+        "et al."
+      ],
+      "created_at": "2026-09-29T17:08:16.733834",
+      "updated_at": "2026-09-29T17:08:16.733834",
+      "input_schema": {},
+      "output_schema": {},
+      "calibration_sets": [],
+      "validation_datasets": [],
+      "tags": [
+        "pinn",
+        "richards",
+        "unsaturated_flow",
+        "deep_learning"
+      ],
+      "provenance": {}
     }
   ],
-  "updated_at": "2026-09-29T16:54:03.812606"
+  "updated_at": "2026-09-29T17:08:16.741830"
 }
