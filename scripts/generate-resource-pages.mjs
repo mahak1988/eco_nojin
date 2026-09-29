@@ -484,8 +484,8 @@ const CONTRACT_SHAPES = [
   ['/api/v1/ai/history', 'rows', 'conversations'],
   // support.py: `{"personas": [...]}`
   ['/api/v1/support/personas', 'rows', 'personas'],
-  // marketplace.py: totals, with the revenue breakdown nested under `orders`.
-  ['/api/v1/marketplace/stats', 'record'],
+  // marketplace.py: `/admin/stats` totals; `/stats` is declared with the other
+  // public audience surfaces, which cite it at the handler.
   ['/api/v1/marketplace/admin/stats', 'record'],
   // ai.py: `{"status": "operational", "engine_type": …, "providers_configured": true}`
   ['/api/v1/ai/health', 'record'],
@@ -621,22 +621,72 @@ const CONTRACT_SHAPES = [
   ['/api/v1/auth/2fa/status', 'record'],
   ['/api/v1/auth/account/status', 'record'],
   // --- content / legal / manual --------------------------------------------
+  // content_public.py:47 `@router.get("/search", response_model=ContentSearchResponse)`,
+  // returning `{query, count, results}` at :57. `ContentSearchResponse` (:34)
+  // declares `results`, so the envelope key survives filtering.
   ['/api/v1/content/search', 'rows', 'results'],
-  // legal_texts.py: `{"count": len(results), "legal_texts": [...]}`
+  // legal_texts.py:118 returns `{"count": len(results), "legal_texts": [...]}`;
+  // `response_model=dict` passes the whole body through.
   ['/api/v1/legal-texts', 'rows', 'legal_texts'],
-  // `response_model=list[str]` and `response_model=list[dict]` respectively.
+  // legal_texts.py:121 `response_model=list[str]` and :128 `response_model=list[str]`
+  // — bare arrays, so there is no envelope key to name.
   ['/api/v1/legal-texts/locales', 'rows'],
   ['/api/v1/legal-texts/slugs', 'rows'],
+  // legal_texts.py:160 `return _to_response(text)` with `response_model=dict` — one
+  // legal text document, which a table cannot render.
   ['/api/v1/legal-texts/{locale}/{slug}', 'record'],
+  // legal_texts.py:163 `response_model=list[dict]` — a bare array of versions.
   ['/api/v1/legal-texts/{locale}/{slug}/versions', 'rows'],
-  // manual_data.py: the dataset envelope key is `rows` for every dataset page
-  // except `sites`, which publishes its own `ManualSitesResponse`.
+  // manual_data.py:160 `return {"count": len(df), "rows": df.to_dict("records")}`
+  // with `response_model=ManualRowsResponse` (:157). The envelope key is literally
+  // `rows`, whatever the page is about.
   ['/api/v1/manual/crop-calendar', 'rows', 'rows'],
+  // FAITHFUL TO THE WIRE, WHICH IS THE DEFECT. manual_data.py:148 returns
+  // `{"count", "crops"}` but declares `response_model=ManualCropsResponse` (:145),
+  // which subclasses `ManualRowsResponse` and publishes only `count` + `rows`.
+  // FastAPI therefore filters `crops` off the response and the wire carries
+  // `{"count": 240, "rows": []}` — a non-zero count over an empty array. The rowsKey
+  // below is what actually arrives; the fix belongs in the router, not here.
   ['/api/v1/manual/crop-params', 'rows', 'rows'],
+  // Same defect, same shape: manual_data.py:154 returns `{"count", "regions"}` under
+  // `response_model=ManualRegionsResponse` (:151), so `regions` is filtered off and
+  // `rows` is `[]` on the wire while `count` is not. See the crop-params note.
   ['/api/v1/manual/soil-regions', 'rows', 'rows'],
+  // The `sites` dataset publishes its own `ManualSitesResponse` (manual_data.py:63),
+  // so its envelope key is `sites` and not `rows` — the one exception to the rule
+  // above. manual_data.py:113 returns `{"count", "sites"}`.
   ['/api/v1/manual/sites', 'rows', 'sites'],
-  // manual_data.py: `{exists, path, size_mb, tables}` — a deployment report.
+  // manual_data.py:82 `return manual.status()` — `{exists, path, size_mb, tables}`,
+  // a deployment report, not a table.
   ['/api/v1/manual/status', 'record'],
+
+  // --- public audience surfaces ----------------------------------------------
+  // These seven pages are hand-written, so the generator does not own them and
+  // never emits them. The rows are here because the catalogue declares the same
+  // endpoints and a future `--force` must not have to re-derive them, and because
+  // two of the shapes below (`land/profiles`, `models`) are bare arrays that a
+  // guesser would have wrapped.
+  // land.py:135 `@router.get("/profiles", operation_id="list_land_profiles",
+  // response_model=list[LandProfile])`, returning `profiles` at :144 — a bare list.
+  ['/api/v1/land/profiles', 'rows'],
+  // platform.py:533 `@router.get("/stats")` returns a flat dict — `{cpp_available,
+  // db_backend, db_reachable, total_landscapes, total_projects, active_projects}`
+  // (plus `error` on failure). Counters and a reachability flag: one document.
+  ['/api/v1/platform/stats', 'record'],
+  // marketplace.py:425 `@router.get("/stats")` returns
+  // `{"total_products", "total_producers", "organic_products", "orders"}` at :433,
+  // where `orders` is a nested revenue breakdown — four scalars plus a nested object.
+  ['/api/v1/marketplace/stats', 'record'],
+  // models.py:14 `@router.get("", response_model=dict)` returns
+  // `{"count", "fidelity_counts", "models", …}` — 22 models under `models`.
+  // This row previously carried `hydroma_dashboard.py:714` as its evidence and
+  // no rowsKey, which is `/api/v1/hydroma/models`: a different router, and that
+  // one really is a bare list. Reading the evidence is what caught it — the two
+  // routes differ by prefix and the citation was for the other one.
+  ['/api/v1/models', 'rows', 'models'],
+  // ussd.py:103 `@router.get("/status")` returns
+  // `{"status": "requires_gateway", "note": …}` — a two-key capability statement.
+  ['/api/v1/ussd/status', 'record'],
 
   // --- admin ----------------------------------------------------------------
   // Each of these declares `response_model=list[…]` or `list[dict]`, so the
@@ -727,6 +777,55 @@ const CONTRACT_SHAPES = [
     ["/api/v1/platform/health", "record"],  // services/api_gateway/routers/platform.py:253 `@router.get("/health")` returning `{"status", "service", "cpp_available", "db_backend", "db_reachable"}` at :264 — one record
     ["/api/v1/sync/status", "record"],  // services/api_gateway/routers/sync.py:25 `@router.get("/status")` returning `{"status", "mode", "cloud", "local_pending_events", "supabase_connected", "supabase_error", "note"}` at :32 — one record
     ["/api/v1/tool-registry/{tool_id}", "record"],  // services/api_gateway/routers/tool_registry.py:224-234 — `return _to_response(tool)`; one ToolResponse for one ToolRegistryEntry row.
+
+  // --- merged from the per-domain shape reports, 2026-09-29 ---------------------
+  // Every row below was read from the handler that serves it; the evidence is the
+  // agent's citation, kept inline so a reviewer can check it without re-running
+  // the generator. A bare array carries no rowsKey, which is what the third slot
+  // being absent means — not an omission.
+    ["/api/v1/admin/content", "rows"],  // services/api_gateway/routers/admin_content.py:90 `@router.get("", response_model=List[ContentResponse])` returning `items` at :113 — a bare list
+    ["/api/v1/admin/users", "rows"],  // services/api_gateway/routers/admin_users.py:48 `@router.get("", response_model=List[UserResponse])` returning `users` at :57 — a bare list
+    ["/api/v1/auth/sessions", "record"],  // auth.py:1060 returns {status: 'success', data: sessions} — the {status, data} envelope
+    ["/api/v1/carbon/credits/{token_id}/verify", "record"],  // services/api_gateway/routers/carbon.py:167 `@router.get("/credits/{token_id}/verify")` -> :177 `return result`, where result = _carbon_service.verify_on_chain(token_id); services/business_modules/carbon/tokenization.py:246 returns {"token_id": token_id, "on_chain": on_chain, "transaction_hash": ..., "transaction_data": tx_data, "contract": "CarbonCredit.abi", "status": ..., "verified": ...} — one credit's verification document, no list of them.
+    ["/api/v1/commerce/orders", "rows", "orders"],  // services/commerce/routers/commerce.py:145 `@router.get("/orders", response_model=dict)` -> :159 returns {"orders": [{"id": o.id, "order_number": ..., "status": ..., "payment_status": ..., "total": ..., "created_at": ...} for o in orders], "count": len(orders)}. Router prefix is /api/v1/commerce (main.py:608 includes it by alias `commerce_router`).
+    ["/api/v1/contact", "record"],  // DEFECT — services/api_gateway/routers/contact.py:60 declares only `@router.post("")`, returning `{"ok": True}` at :65. The catalogue publishes this as GET /api/v1/contact for /public/ai/feedback and /trust/disclosure, so a generated page would fetch a method the router does not serve. Shape declared as record because that is what the sole handler returns; the method mismatch is reported, not fixed.
+    ["/api/v1/ecowallet/health", "record"],  // services/api_gateway/routers/ecowallet.py:343 `@router.get("/health")` -> :345 returns {"status": "operational", "module": "ecowallet", "version": "1.0.0"} — three scalars, no array.
+    ["/api/v1/health", "record"],  // services/api_gateway/main.py:781 `@app.get("/api/v1/health")` -> :784 `return await health()`; the referenced handler at main.py:670 returns a single envelope {"status", "timestamp", "version", "services": {...}, "blockchain": {...}, "inclusive_access": {...}, "checks": checks, "degraded_reasons": ...} (main.py:735-755). The nested `services` and `checks` values are objects, not row lists.
+    ["/api/v1/hydroma/indices", "rows", "models"],  // services/api_gateway/routers/hydroma_indices.py:566 `@router.get("")` -> :569 `return {"count": len(_SPECS), "models": _SPECS}` — the same envelope as the carbon/climate/economics rows already in the table.
+    ["/api/v1/hydroma/indices/{model_id}", "record"],  // services/api_gateway/routers/hydroma_indices.py:572-577 — `return spec`, the single `_SPECS` entry keyed by model_id.
+    ["/api/v1/hydroma/models", "rows"],  // services/api_gateway/routers/hydroma_dashboard.py:714 `@router.get("/models", response_model=list[ModelMeta])` -> :734 `return [ModelMeta(**m) for m in models]`. app.openapi() confirms the 200 schema is `array<#/components/schemas/ModelMeta>`, so the payload is the array itself and there is no envelope key to name.
+    ["/api/v1/hydroma/models/{model_id}", "record"],  // services/api_gateway/routers/hydroma_dashboard.py:737-749 — `return ModelDetail(**model_data)`, one document.
+    ["/api/v1/hydroma/models/{model_id}/validation", "record"],  // services/api_gateway/routers/hydroma_dashboard.py:752-800 — `return ValidationReport(...)`, one document with a `details` list, not a rows envelope.
+    ["/api/v1/hydroma/mrv", "rows", "models"],  // services/api_gateway/routers/hydroma_mrv.py:139 `@router.get("")` -> :141 `return {"count": len(_SPECS), "models": _SPECS}`.
+    ["/api/v1/hydroma/mrv/{model_id}", "record"],  // services/api_gateway/routers/hydroma_mrv.py:144-149 — `return spec`, the single `_SPECS` entry keyed by model_id.
+    ["/api/v1/hydroma/simulation", "rows", "models"],  // services/api_gateway/routers/hydroma_simulation.py:83 `@router.get("")` -> :86 `return {"count": len(_SPECS), "models": _SPECS}`.
+    ["/api/v1/hydroma/simulation/{model_id}", "record"],  // services/api_gateway/routers/hydroma_simulation.py:89-94 — `return spec`, the single `_SPECS` entry keyed by model_id.
+    ["/api/v1/hydroma/slaughterhouse/status", "record"],  // services/api_gateway/routers/hydroma_dashboard.py:832 `@router.get("/slaughterhouse/status", response_model=SlaughterhouseStatus)` -> :854 `return SlaughterhouseStatus(models_total=..., models_validated=..., models_partial=..., models_drift=..., models_unvalidated=..., models_deprecated=..., last_run=..., recent_failures=[])`. The model (hydroma_dashboard.py:118-126) is six counters plus `recent_failures: list[dict] = Field(default_factory=list)`, and the handler passes a literal `[]` — there are no rows to render.
+    ["/api/v1/hydroma/soil", "rows", "models"],  // services/api_gateway/routers/hydroma_soil.py:425 `@router.get("")` -> :428 `return {"count": len(_SPECS), "models": _SPECS}`.
+    ["/api/v1/hydroma/soil/{model_id}", "record"],  // services/api_gateway/routers/hydroma_soil.py:431-436 — `return spec`, the single `_SPECS` entry keyed by model_id.
+    ["/api/v1/hydroma/validation", "rows", "checks"],  // services/api_gateway/routers/hydroma_ops.py:20 `@router.get("/validation")` -> :27 `return run_all()`; services/validation/formula_checks.py:346 returns {"total": len(checks), "passed": passed, "failed": ..., "pass_rate": ..., "checks": [asdict(c) for c in checks]}. Four counters around exactly one list, the same `count` + one-list shape as the model-cards and citations/index rows already in the table, so the list is the row set.
+    ["/api/v1/hydroma/validation/checks", "rows", "checks"],  // services/validation/router.py:32 `@router.get("/checks")` -> :38 returns {"checks": [{"id": c["id"], "label": c["label"], "kind": c["kind"], "unit": c["unit"]} for c in result["checks"]], "total": len(result["checks"])}. This router lives at services/validation/router.py and is mounted at main.py:583, not under services/api_gateway/routers/.
+    ["/api/v1/hydroma/validation/reference-data", "record"],  // services/validation/router.py:47 `@router.get("/reference-data")` -> :58 `return json.load(f)`, the parsed contents of docs/hydroma/scientific_reference_data.json — a keyed reference document (`soil`, and the hydrology keys read at formula_checks.py:126). The same handler returns {"error": ...} at :55 when the file is absent.
+    ["/api/v1/hydroma/validation/run", "rows", "checks"],  // services/validation/router.py:8 `@router.get("/run")` -> :29 `return result`, where result = run_all() — the same {"total", "passed", "failed", "pass_rate", "checks"} envelope as /api/v1/hydroma/validation. The filtered branch at :22 also returns {"checks": [one], "total": 1, "passed": ..., "failed": ...}, so the key is `checks` on both paths.
+    ["/api/v1/hydroma/water", "rows", "models"],  // services/api_gateway/routers/hydroma_water.py:263 `@router.get("")` -> :266 `return {"count": len(_SPECS), "models": _SPECS}`.
+    ["/api/v1/hydroma/water/{model_id}", "record"],  // services/api_gateway/routers/hydroma_water.py:269-274 — `return spec`, the single `_SPECS` entry keyed by model_id.
+    ["/api/v1/land/health", "record"],  // services/api_gateway/routers/land.py:301 `@router.get("/health")` -> :308 returns {"status": "healthy", "service": "land", "profiles_count": len(land_service.list_profiles())} — three scalars.
+    ["/api/v1/manual/climate-normals/{site_id}", "rows", "rows"],  // manual_data.py:142 returns {count, months}, but response_model=ManualMonthsResponse(ManualRowsResponse) publishes only rows, so months is filtered off the wire
+    ["/api/v1/manual/sites/{site_id}", "record"],  // manual_data.py:121 returns df.iloc[0].to_dict() with response_model=ManualSite — one site
+    ["/api/v1/manual/weather-daily/{site_id}", "rows", "rows"],  // manual_data.py:134 returns {count, rows: df.head(limit).to_dict('records')} with response_model=ManualRowsResponse
+    ["/api/v1/marketplace/cart", "record"],  // routers/marketplace.py:582 returns {"cart_id": cart.id, "items": cart.items, "total_items": cart.total_items, "subtotal": cart.subtotal} (empty cart at :581 returns {"cart_id": None, "items": [], "total_items": 0, "subtotal": 0}) — one cart document, items is a field of it
+    ["/api/v1/marketplace/marketplaces", "rows", "marketplaces"],  // routers/marketplace.py:994 returns {"marketplaces": [{"id": m.id, "name": m.name, "slug": m.slug, …, "created_at": m.created_at.isoformat()} for m in marketplaces]}
+    ["/api/v1/marketplace/orders", "rows", "orders"],  // routers/marketplace.py:323 returns {"orders": [{"id": o.id, "product_name": o.product_name, "buyer_name": o.buyer_name, "seller_id": …, "quantity_kg": o.quantity_kg, "total_price": o.total_price, "status": o.status.value, "created_at": o.created_at.isoformat()} for o in orders], "count": len(orders)}
+    ["/api/v1/marketplace/payments", "record"],  // routers/marketplace.py:1164 `return out`, where out = payment.to_dict() (plus `out["bank_instructions"]` for the bank method) — one payment document, not a list
+    ["/api/v1/models/cpp-status", "record"],  // services/api_gateway/routers/models.py:37 `@router.get("/cpp-status", response_model=dict)` -> :60 returns {"available": ..., "backend": ..., "import_error": ..., "module_path": ..., "symbols": ..., "numba_available": ..., "array_cpp_threshold": ..., "telemetry": state["telemetry"]} — a capability report with no list of rows.
+    ["/api/v1/mrv/public/dashboard-summary", "rows", "latest_satellite_per_site"],  // services/api_gateway/routers/mrv.py:178 `@router.get("/public/dashboard-summary")` -> :185 returns {"total_observations": len(rows), "by_level": {str(level): ... for level in (1,2,3)}, "by_source": {...}, "latest_satellite_per_site": [{"site_id": row.site_id, "index": row.sensor_type, "value": row.value, "data_source": row.data_source} for row in latest_satellite.values()]}. `by_level` and `by_source` are objects, so `latest_satellite_per_site` is the only list and is the row set.
+    ["/api/v1/organizations", "rows", "organizations"],  // services/api_gateway/routers/organizations.py:90 `@router.get("")` returning `{"organizations": orgs, "count": len(orgs)}` at :115 — an envelope whose row key is `organizations`
+    ["/api/v1/platform/health", "record"],  // services/api_gateway/routers/platform.py:253 `@router.get("/health")` returning `{"status", "service", "cpp_available", "db_backend", "db_reachable"}` at :264 — one record
+    ["/api/v1/satellite/health", "record"],  // services/api_gateway/routers/satellite.py:277 `@router.get("/health", response_model=HealthResponse)` -> :281 `return HealthResponse(status="operational", module="satellite", supported_indices=SUPPORTED_INDICES, providers=PROVIDERS, data_source="copernicus" if client.configured else "simulated")`. The model at satellite.py:159-166 publishes two name lists (supported_indices, providers), but they are capability declarations of different meaning, not a row set, and the page's subject is the health verdict.
+    ["/api/v1/sync/status", "record"],  // services/api_gateway/routers/sync.py:25 `@router.get("/status")` returning `{"status", "mode", "cloud", "local_pending_events", "supabase_connected", "supabase_error", "note"}` at :32 — one record
+    ["/api/v1/tool-registry", "rows", "tools"],  // services/api_gateway/routers/tool_registry.py:168 `@router.get("", response_model=ToolListResponse)` -> :200 `return {"count": len(results), "tools": [_to_response(t) for t in results]}`. ToolListResponse (tool_registry.py:157-161) is `count: int` + `tools: list[ToolResponse]`, and app.openapi() resolves the 200 schema to it, so the model agrees with the body.
+    ["/api/v1/tool-registry/{tool_id}", "record"],  // services/api_gateway/routers/tool_registry.py:224-234 — `return _to_response(tool)`; one ToolResponse for one ToolRegistryEntry row.
+    ["/api/v1/tool-registry/phases", "rows"],  // services/api_gateway/routers/tool_registry.py:217 `@router.get("/phases", response_model=list[int])` -> :221 `return sorted([row[0] for row in db.execute(stmt).all() if row[0]])`. app.openapi() confirms the 200 schema is `array<integer>`: a bare array, so `rowsKey` is null.
 
 ];
 

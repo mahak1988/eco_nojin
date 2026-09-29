@@ -374,10 +374,7 @@
     "lead": "Desenvolvedores, integradores e parceiros técnicos: consultem contratos, experimentem endpoints e colaborem.",
     "what": "Cada endpoint está documentado, cada alteração de API é registada e cada pedido traz um identificador de correlação.",
     "audience": "Desenvolvedores, integradores, universidades, equipas de investigação e parceiros técnicos.",
-    "evidence": [
-      "Um contrato de API com versões",
-      "Exemplos de pedido e resposta"
-    ],
+    "evidence": ["Um contrato de API com versões", "Exemplos de pedido e resposta"],
     "limits": [
       "As escritas só são permitidas em ambientes autorizados",
       "Ferramentas automatizadas não são permitidas na superfície pública"

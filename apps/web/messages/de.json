@@ -300,10 +300,7 @@
     "lead": "Jede wissenschaftliche Antwort muss ihre Methode, ihren Kontext und ihre Grenzen zeigen.",
     "what": "Ausgaben werden mit Erläuterung der Methode, des Zeitpunkts und des Anwendungsbereichs bereitgestellt; eine Zahl allein ist kein endgültiges Urteil.",
     "audience": "Forschende, wissenschaftliche Institutionen und Validierungsexperten.",
-    "evidence": [
-      "DOI-Verweise für ausgewählte Studien",
-      "Modellversion und Unsicherheitsbereich"
-    ],
+    "evidence": ["DOI-Verweise für ausgewählte Studien", "Modellversion und Unsicherheitsbereich"],
     "limits": [
       "Wissenschaftliche Ausgabe ersetzt keine Feldmessung und Expertenmeinung",
       "Ohne lokalen Kontext muss das Ergebnis mit Vorsicht gelesen werden",
@@ -349,10 +346,7 @@
     "lead": "Vertrauen entsteht durch kleine, überprüfbare Verhaltensweisen.",
     "what": "Datenherkunft macht den Registrierungs- und Anzeigepfad jeder Zahl in einfacher Sprache transparent.",
     "audience": "Aufsichtsbehörden, Käufer und alle, denen Transparenz wichtig ist.",
-    "evidence": [
-      "Quellenkennung und Abrufzeitpunkt",
-      "Datenversion und Änderungsverlauf"
-    ],
+    "evidence": ["Quellenkennung und Abrufzeitpunkt", "Datenversion und Änderungsverlauf"],
     "limits": [
       "Umweltauswirkungs-Register wird nach Start der Wirkungsüberwachung aktiv",
       "Herkunfts-Explorer zeigt derzeit allgemeinen Dienststatus und Herkunft jeder Anzeige"
@@ -374,10 +368,7 @@
     "lead": "Zusammenarbeit hält, wenn Verträge klar und Änderungen nachvollziehbar sind.",
     "what": "Öffentliche Dokumentation und Vertragsversionen klären die Koordination zwischen System und externen Anwendungen; kein Raten über Service-Verhalten nötig.",
     "audience": "Integrationsentwickler, Datenteams und technische Partner.",
-    "evidence": [
-      "Ein versionierter API-Vertrag",
-      "Beispiele für Anfrage und Antwort"
-    ],
+    "evidence": ["Ein versionierter API-Vertrag", "Beispiele für Anfrage und Antwort"],
     "limits": [
       "Service-Zugriff durch Ratenlimit und Zugriffsberechtigungen begrenzt",
       "Integrationswerkzeuge in erster Phase nur für Web verfügbar"

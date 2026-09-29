@@ -300,10 +300,7 @@
     "lead": "Chaque réponse scientifique doit montrer sa méthode, son contexte et ses limites.",
     "what": "Les sorties sont présentées avec explication de la méthode, du temps et de la portée d'application ; le nombre seul n'est pas un jugement final.",
     "audience": "Chercheurs, institutions scientifiques et experts en validation.",
-    "evidence": [
-      "Références DOI des études retenues",
-      "Version du modèle et plage d’incertitude"
-    ],
+    "evidence": ["Références DOI des études retenues", "Version du modèle et plage d’incertitude"],
     "limits": [
       "La sortie scientifique ne remplace pas la mesure de terrain ni l'avis d'expert",
       "Sans contexte local, le résultat doit être lu avec prudence",
@@ -374,10 +371,7 @@
     "lead": "La collaboration dure quand les contrats sont clairs et les changements traçables.",
     "what": "Documentation publique et versions de contrat clarifient la coordination entre système et applications externes ; pas besoin de deviner le comportement du service.",
     "audience": "Développeurs d'intégration, équipes de données et partenaires techniques.",
-    "evidence": [
-      "Un contrat d’API versionné",
-      "Exemples de requête et de réponse"
-    ],
+    "evidence": ["Un contrat d’API versionné", "Exemples de requête et de réponse"],
     "limits": [
       "Accès aux services limité par politique de taux et permission d'accès",
       "Outils d'intégration en première phase seulement pour le web"

@@ -374,10 +374,7 @@
     "lead": "La colaboración dura cuando los contratos son claros y los cambios rastreables.",
     "what": "Documentación pública y versiones de contrato aclaran la coordinación entre sistema y aplicaciones externas; sin necesidad de adivinar comportamiento del servicio.",
     "audience": "Desarrolladores de integración, equipos de datos y socios técnicos.",
-    "evidence": [
-      "Un contrato de API con versiones",
-      "Ejemplos de solicitud y respuesta"
-    ],
+    "evidence": ["Un contrato de API con versiones", "Ejemplos de solicitud y respuesta"],
     "limits": [
       "Acceso a servicios limitado por política de tasa y permiso de acceso",
       "Herramientas de integración en primer paso solo para web"

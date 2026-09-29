@@ -264,10 +264,7 @@
       "Tiada sistem boleh menggantikan pengetahuan tempatan petani",
       "Ramalan iklim jangka panjang mempunyai ketidakpastian yang tinggi"
     ],
-    "next": [
-      "Daftar untuk melihat profil tanah anda",
-      "Mohon sesi latihan untuk komuniti anda"
-    ]
+    "next": ["Daftar untuk melihat profil tanah anda", "Mohon sesi latihan untuk komuniti anda"]
   },
   "services": {
     "title": "Perkhidmatan dan penyelesaian",
@@ -282,10 +279,7 @@
       "Laman perintis adalah terhad dan dipilih berdasarkan data",
       "Perkhidmatan kecerdasan buatan terhad kepada domain agronomi yang dinyatakan"
     ],
-    "next": [
-      "Daftar untuk bermula daripada profil tanah anda",
-      "Lihat senarai penuh model sains"
-    ],
+    "next": ["Daftar untuk bermula daripada profil tanah anda", "Lihat senarai penuh model sains"],
     "farmersTitle": "Untuk penghasil pertanian",
     "farmersDesc": "Perancangan tanaman, pengairan, kesuburan tanah dan pengurusan sumber air dengan cadangan yang berasaskan sebab.",
     "institutionsTitle": "Untuk institusi",
@@ -300,10 +294,7 @@
     "lead": "Setiap tuntutan saintifik disambungkan kepada sumber, tarikh dan kaedah pengesahan.",
     "what": "Setiap dokumen saintifik mengikut aliran logik yang sama: kaedah, data, batasan yang dinyatakan, dan hasil.",
     "audience": "Penyelidik, penyemak, pihak berkuasa dan sesiapa yang menilai tuntutan projek ini.",
-    "evidence": [
-      "Rujukan DOI bagi kajian yang dipilih",
-      "Versi model dan julat ketidakpastian"
-    ],
+    "evidence": ["Rujukan DOI bagi kajian yang dipilih", "Versi model dan julat ketidakpastian"],
     "limits": [
       "Model keseimbangan air yang dipermudahkan terlalu optimistis untuk tanah berpasir",
       "Data satelit boleh tersekat oleh tutupan awan",
@@ -327,10 +318,7 @@
     "lead": "Kecerdasan buatan ialah sokongan, bukan pengganti kaedah saintifik. Ia mesti menyatakan hadnya.",
     "what": "Alat kecerdasan buatan membantu merangka soalan dan mencari dalam pangkalan pengetahuan, tetapi tidak menggantikan pendapat agronom atau pemerhatian di lapangan.",
     "audience": "Penghasil, juruteknik, penyelidik dan sesiapa yang menggunakan alat automatik dalam perancangan pertanian.",
-    "evidence": [
-      "Sumber dipaparkan bagi setiap jawapan",
-      "Label draf untuk jawapan tanpa sumber"
-    ],
+    "evidence": ["Sumber dipaparkan bagi setiap jawapan", "Label draf untuk jawapan tanpa sumber"],
     "limits": [
       "Cadangan tidak menggantikan agronom atau undang-undang tempatan",
       "Model mungkin mengesyorkan amalan yang tidak sesuai untuk wilayah tertentu",
@@ -349,18 +337,12 @@
     "lead": "Asal data bermakna dijejak setiap data hingga sumbernya, bukan sekadar lencana.",
     "what": "Setiap data yang dipaparkan membawa cap asal data: origin, tarikh dan perkhidmatan yang menghasilkannya.",
     "audience": "Rakan institusi, pemeriksa, penyelidik dan badan pengawalan.",
-    "evidence": [
-      "Pengenalan sumber dan masa pengambilan",
-      "Versi data dan sejarah perubahan"
-    ],
+    "evidence": ["Pengenalan sumber dan masa pengambilan", "Versi data dan sejarah perubahan"],
     "limits": [
       "Alamat pendaftaran karbon belum tersedia",
       "Peneroka asal data belum tersedia untuk sesetengah set data"
     ],
-    "next": [
-      "Terokai asal setiap data dalam sistem",
-      "Lihat laporan ketelusan tahunan"
-    ],
+    "next": ["Terokai asal setiap data dalam sistem", "Lihat laporan ketelusan tahunan"],
     "provenanceTitle": "Peneroka asal data",
     "provenanceDesc": "Jejak setiap data hingga perkhidmatan, imej data dan tarikh Shuttle yang diperoleh.",
     "registryTitle": "Pendaftaran karbon",
@@ -374,10 +356,7 @@
     "lead": "Pembangun, penyepadu dan rakan teknikal: semak kontrak, cuba endpoint dan aluminati.",
     "what": "Setiap endpoint berdokumen, setiap perubahan API dijejak dan setiap permintaan membawa pengenalan korelasi.",
     "audience": "Pembangun, penyepadu, universiti, pasukan penyelidikan dan rakan teknikal.",
-    "evidence": [
-      "Kontrak API berversi",
-      "Contoh permintaan dan maklum balas"
-    ],
+    "evidence": ["Kontrak API berversi", "Contoh permintaan dan maklum balas"],
     "limits": [
       "Tulisan hanya dibenarkan dalam persekitaran yang dibenarkan",
       "Alatan automatik tidak dibenarkan pada permukaan awam"
@@ -399,10 +378,7 @@
     "lead": "Kebolehcapaian ialah keperluan fungsi: tiada fungsi sepatutnya bergantung sepenuhnya pada warna atau bunyi.",
     "what": "Laman ini dibina untuk dilayari dengan papan kekunci, dengan kontras yang complies, struktur semantik yang betul dan sokongan penuh untuk mod RTL/LTR.",
     "audience": "Orang kurang upaya, warga emas, pengguna teknologi bantuan dan sesiapa yang melayari dengan tasteo atau papan kekunci.",
-    "evidence": [
-      "Semakan axe automatik",
-      "Semakan arah tulisan dan bahasa dalam pelayar"
-    ],
+    "evidence": ["Semakan axe automatik", "Semakan arah tulisan dan bahasa dalam pelayar"],
     "limits": [
       "Sesetengah peta interaktif mempunyai teks alternatif yang terhad",
       "Sesetengah dokumen saintifik hanya boleh didapati dalam format teks"
@@ -492,11 +468,7 @@
       "p3_solution": "Bukti, ketidakpastian dan status data",
       "p4_problem": "Akses alat yang tidak sama rata",
       "p4_solution": "PWA, pelbagai bahasa dan saluran inklusif",
-      "evidenceItems": [
-        "Bengkel pihak berkepentingan",
-        "Kaji lapangan",
-        "Perintis berdokumen"
-      ],
+      "evidenceItems": ["Bengkel pihak berkepentingan", "Kaji lapangan", "Perintis berdokumen"],
       "limitsItems": [
         "Generalisasi wilayah terhad",
         "Impak jangka panjang masih diukur",

@@ -283,10 +283,7 @@
       "Every solution needs validated data and local calibration",
       "A pilot result is not final without field review"
     ],
-    "next": [
-      "Choose a small pilot",
-      "Capture user feedback and revise the model"
-    ],
+    "next": ["Choose a small pilot", "Capture user feedback and revise the model"],
     "farmersTitle": "For agricultural producers",
     "farmersDesc": "Crop planning, irrigation, soil fertility and water-resource management with reasoned recommendations.",
     "institutionsTitle": "For institutions",
@@ -301,18 +298,12 @@
     "lead": "Every scientific claim is shown with its source, validation method and limitations.",
     "what": "The evidence library links standard FAO and IPCC methods and scientific tool outputs to traceable decisions.",
     "audience": "Researchers, advisers and users who need an explanation and a reference.",
-    "evidence": [
-      "DOI references for selected studies",
-      "Model version and uncertainty range"
-    ],
+    "evidence": ["DOI references for selected studies", "Model version and uncertainty range"],
     "limits": [
       "Not every model is valid in every climate",
       "Field data quality remains the primary limitation"
     ],
-    "next": [
-      "Select an appropriate reference",
-      "Review evidence periodically"
-    ],
+    "next": ["Select an appropriate reference", "Review evidence periodically"],
     "refsTitle": "Method and references",
     "refs": [
       "Soil modelling and water-balance methods",
@@ -327,18 +318,12 @@
     "lead": "Traceable answers for water, soil and livelihood questions.",
     "what": "The assistant can prepare a calculation, but its final answer always needs a source and human confirmation.",
     "audience": "Advisers, farmers and support teams.",
-    "evidence": [
-      "A source is shown for every answer",
-      "Draft label for answers without a source"
-    ],
+    "evidence": ["A source is shown for every answer", "Draft label for answers without a source"],
     "limits": [
       "A language model does not replace local judgement",
       "Sensitive data must not be sent without permission"
     ],
-    "next": [
-      "Connect source search",
-      "Require human review before publication"
-    ],
+    "next": ["Connect source search", "Require human review before publication"],
     "sourceRule": "Every answer must cite its source or be labelled a model draft.",
     "limitsTitle": "Declared limits",
     "nextTitle": "Next step"
@@ -348,18 +333,12 @@
     "lead": "Every datum can be traced to its service, retrieval time and validation method.",
     "what": "The provenance explorer shows the data chain and distinguishes live data, demos and unavailable services.",
     "audience": "Organisational users, auditors and scientific teams.",
-    "evidence": [
-      "Source identifier and retrieval time",
-      "Data version and change history"
-    ],
+    "evidence": ["Source identifier and retrieval time", "Data version and change history"],
     "limits": [
       "Not all services have the same timestamp contract yet",
       "Deleted data cannot be recovered"
     ],
-    "next": [
-      "Complete the provenance chain",
-      "Add data-change reports"
-    ],
+    "next": ["Complete the provenance chain", "Add data-change reports"],
     "provenanceTitle": "Provenance explorer",
     "provenanceDesc": "Follow any datum to the service, the dataset image and the acquisition date.",
     "registryTitle": "Carbon registry",
@@ -373,18 +352,12 @@
     "lead": "APIs, data contracts and integration tools for dependable services.",
     "what": "OpenAPI documentation and a generated client provide a clear path to connect platform services.",
     "audience": "Software teams, researchers and technology partners.",
-    "evidence": [
-      "A versioned API contract",
-      "Request and response examples"
-    ],
+    "evidence": ["A versioned API contract", "Request and response examples"],
     "limits": [
       "Rate limits and authentication must be respected",
       "Development and production environments differ"
     ],
-    "next": [
-      "Complete public route documentation",
-      "Add webhooks and versioned contracts"
-    ],
+    "next": ["Complete public route documentation", "Add webhooks and versioned contracts"],
     "docsTitle": "API documentation",
     "docsDesc": "Every endpoint is documented with request and response examples, rate limits and error codes.",
     "toolsTitle": "Developer tools",
@@ -398,17 +371,9 @@
     "lead": "An experience usable with keyboards, screen readers, right-to-left and left-to-right languages.",
     "what": "Semantic controls, Tab navigation, sufficient contrast and translatable messages are part of the base design.",
     "audience": "Everyone, especially people with diverse access needs.",
-    "evidence": [
-      "Automated axe checks",
-      "Direction and language checks in browsers"
-    ],
-    "limits": [
-      "Some specialist content still needs human review"
-    ],
-    "next": [
-      "Complete route coverage",
-      "Review with real users"
-    ],
+    "evidence": ["Automated axe checks", "Direction and language checks in browsers"],
+    "limits": ["Some specialist content still needs human review"],
+    "next": ["Complete route coverage", "Review with real users"],
     "standardTitle": "Standards applied",
     "standardDesc": "The site targets WCAG 2.2 level AA. Automated checks do not replace manual verification with people.",
     "feedbackTitle": "Reporting an accessibility barrier",
@@ -490,11 +455,7 @@
       "p3_solution": "Evidence, uncertainty and data status",
       "p4_problem": "Unequal access to tools",
       "p4_solution": "PWA, multiple languages and inclusive channels",
-      "evidenceItems": [
-        "Stakeholder workshops",
-        "Field research",
-        "Recorded pilots"
-      ],
+      "evidenceItems": ["Stakeholder workshops", "Field research", "Recorded pilots"],
       "limitsItems": [
         "Regional generalisation is limited",
         "Long-term impact is still being measured",

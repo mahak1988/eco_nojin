@@ -1,0 +1,705 @@
+{
+  "total": 117,
+  "gated": [
+    {
+      "path": "/ai/stream",
+      "method": "POST",
+      "endpoint": "/api/v1/ai/stream",
+      "domain": "public"
+    },
+    {
+      "path": "/help/chat",
+      "method": "POST",
+      "endpoint": "/api/v1/support/chat",
+      "domain": "public"
+    },
+    {
+      "path": "/market/admin/products/{product_id}/approve",
+      "method": "PATCH",
+      "endpoint": "/api/v1/marketplace/admin/products/{product_id}/approve",
+      "domain": "marketplace"
+    },
+    {
+      "path": "/market/admin/vendors/{vendor_id}/approve",
+      "method": "PATCH",
+      "endpoint": "/api/v1/marketplace/admin/vendors/{vendor_id}/approve",
+      "domain": "marketplace"
+    },
+    {
+      "path": "/market/cart/{product_id}",
+      "method": "DELETE",
+      "endpoint": "/api/v1/marketplace/cart/{product_id}",
+      "domain": "marketplace"
+    },
+    {
+      "path": "/market/marketplaces",
+      "method": "POST",
+      "endpoint": "/api/v1/marketplace/marketplaces",
+      "domain": "marketplace"
+    },
+    {
+      "path": "/market/marketplaces/{marketplace_id}/approve",
+      "method": "POST",
+      "endpoint": "/api/v1/marketplace/marketplaces/{marketplace_id}/approve",
+      "domain": "marketplace"
+    },
+    {
+      "path": "/market/marketplaces/{marketplace_id}/members",
+      "method": "POST",
+      "endpoint": "/api/v1/marketplace/marketplaces/{marketplace_id}/members",
+      "domain": "marketplace"
+    },
+    {
+      "path": "/market/orders/{order_id}/complete",
+      "method": "POST",
+      "endpoint": "/api/v1/marketplace/orders/{order_id}/complete",
+      "domain": "marketplace"
+    },
+    {
+      "path": "/market/orders/{order_id}/confirm",
+      "method": "POST",
+      "endpoint": "/api/v1/marketplace/orders/{order_id}/confirm",
+      "domain": "marketplace"
+    },
+    {
+      "path": "/market/orders/{order_id}/dispute",
+      "method": "POST",
+      "endpoint": "/api/v1/marketplace/orders/{order_id}/dispute",
+      "domain": "marketplace"
+    },
+    {
+      "path": "/market/orders/{order_id}/settle",
+      "method": "POST",
+      "endpoint": "/api/v1/marketplace/orders/{order_id}/settle",
+      "domain": "marketplace"
+    },
+    {
+      "path": "/market/payments",
+      "method": "POST",
+      "endpoint": "/api/v1/marketplace/payments",
+      "domain": "marketplace"
+    },
+    {
+      "path": "/market/payments/{payment_id}/confirm",
+      "method": "POST",
+      "endpoint": "/api/v1/marketplace/payments/{payment_id}/confirm",
+      "domain": "marketplace"
+    },
+    {
+      "path": "/market/payments/{payment_id}/escrow/refund",
+      "method": "POST",
+      "endpoint": "/api/v1/marketplace/payments/{payment_id}/escrow/refund",
+      "domain": "marketplace"
+    },
+    {
+      "path": "/market/payments/{payment_id}/escrow/release",
+      "method": "POST",
+      "endpoint": "/api/v1/marketplace/payments/{payment_id}/escrow/release",
+      "domain": "marketplace"
+    },
+    {
+      "path": "/market/products/{product_id}/images",
+      "method": "POST",
+      "endpoint": "/api/v1/marketplace/products/{product_id}/images",
+      "domain": "marketplace"
+    },
+    {
+      "path": "/market/products/{product_id}/tokenize",
+      "method": "POST",
+      "endpoint": "/api/v1/marketplace/products/{product_id}/tokenize",
+      "domain": "marketplace"
+    },
+    {
+      "path": "/market/vendors",
+      "method": "POST",
+      "endpoint": "/api/v1/marketplace/vendors",
+      "domain": "marketplace"
+    },
+    {
+      "path": "/market/villages/b2b/demands",
+      "method": "POST",
+      "endpoint": "/api/v1/marketplace/villages/b2b/demands",
+      "domain": "marketplace"
+    },
+    {
+      "path": "/market/villages/engagements",
+      "method": "POST",
+      "endpoint": "/api/v1/marketplace/villages/engagements",
+      "domain": "marketplace"
+    },
+    {
+      "path": "/market/villages/events/{event_id}/register",
+      "method": "POST",
+      "endpoint": "/api/v1/marketplace/villages/events/{event_id}/register",
+      "domain": "marketplace"
+    },
+    {
+      "path": "/market/villages/festivals",
+      "method": "POST",
+      "endpoint": "/api/v1/marketplace/villages/festivals",
+      "domain": "marketplace"
+    },
+    {
+      "path": "/market/villages/opportunities/{opportunity_id}/interest",
+      "method": "POST",
+      "endpoint": "/api/v1/marketplace/villages/opportunities/{opportunity_id}/interest",
+      "domain": "marketplace"
+    },
+    {
+      "path": "/hydroma/carbon/credits/retire",
+      "method": "POST",
+      "endpoint": "/api/v1/carbon/credits/retire",
+      "domain": "hydroma"
+    },
+    {
+      "path": "/hydroma/carbon/credits/transfer",
+      "method": "POST",
+      "endpoint": "/api/v1/carbon/credits/transfer",
+      "domain": "hydroma"
+    },
+    {
+      "path": "/hydroma/carbon/tokenize",
+      "method": "POST",
+      "endpoint": "/api/v1/carbon/tokenize",
+      "domain": "hydroma"
+    },
+    {
+      "path": "/hydroma/carbon/verra/search",
+      "method": "POST",
+      "endpoint": "/api/v1/carbon/verra/search",
+      "domain": "hydroma"
+    },
+    {
+      "path": "/hydroma/carbon/verra/sync",
+      "method": "POST",
+      "endpoint": "/api/v1/carbon/verra/sync",
+      "domain": "hydroma"
+    },
+    {
+      "path": "/admin/bots/{key}/restart",
+      "method": "POST",
+      "endpoint": "/api/v1/admin/bots/{key}/restart",
+      "domain": "admin"
+    },
+    {
+      "path": "/admin/bots/{key}/toggle",
+      "method": "POST",
+      "endpoint": "/api/v1/admin/bots/{key}/toggle",
+      "domain": "admin"
+    },
+    {
+      "path": "/admin/content/generate-draft",
+      "method": "POST",
+      "endpoint": "/api/v1/admin/content/generate-draft",
+      "domain": "admin"
+    },
+    {
+      "path": "/admin/content/{item_id}",
+      "method": "PUT",
+      "endpoint": "/api/v1/admin/content/{item_id}",
+      "domain": "admin"
+    },
+    {
+      "path": "/admin/content/{item_id}/cancel-schedule",
+      "method": "POST",
+      "endpoint": "/api/v1/admin/content/{item_id}/cancel-schedule",
+      "domain": "admin"
+    },
+    {
+      "path": "/admin/content/{item_id}/publish",
+      "method": "POST",
+      "endpoint": "/api/v1/admin/content/{item_id}/publish",
+      "domain": "admin"
+    },
+    {
+      "path": "/admin/content/{item_id}/schedule",
+      "method": "POST",
+      "endpoint": "/api/v1/admin/content/{item_id}/schedule",
+      "domain": "admin"
+    },
+    {
+      "path": "/admin/content/{item_id}/translate",
+      "method": "POST",
+      "endpoint": "/api/v1/admin/content/{item_id}/translate",
+      "domain": "admin"
+    },
+    {
+      "path": "/admin/errors/{error_id}/ack",
+      "method": "POST",
+      "endpoint": "/api/v1/admin/errors/{error_id}/ack",
+      "domain": "admin"
+    },
+    {
+      "path": "/admin/errors/{error_id}/resolve",
+      "method": "POST",
+      "endpoint": "/api/v1/admin/errors/{error_id}/resolve",
+      "domain": "admin"
+    },
+    {
+      "path": "/admin/errors/{error_id}/suppress",
+      "method": "POST",
+      "endpoint": "/api/v1/admin/errors/{error_id}/suppress",
+      "domain": "admin"
+    },
+    {
+      "path": "/admin/models/{name}/load",
+      "method": "POST",
+      "endpoint": "/api/v1/admin/models/{name}/load",
+      "domain": "admin"
+    },
+    {
+      "path": "/admin/models/{name}/pull",
+      "method": "POST",
+      "endpoint": "/api/v1/admin/models/{name}/pull",
+      "domain": "admin"
+    },
+    {
+      "path": "/admin/models/{name}/stop",
+      "method": "POST",
+      "endpoint": "/api/v1/admin/models/{name}/stop",
+      "domain": "admin"
+    },
+    {
+      "path": "/system/iot/devices/provision-qr",
+      "method": "POST",
+      "endpoint": "/api/v1/iot/devices/provision-qr",
+      "domain": "system"
+    },
+    {
+      "path": "/system/iot/devices/{device_id}/status",
+      "method": "PUT",
+      "endpoint": "/api/v1/iot/devices/{device_id}/status",
+      "domain": "system"
+    },
+    {
+      "path": "/workspace/commerce/orders",
+      "method": "POST",
+      "endpoint": "/api/v1/commerce/orders",
+      "domain": "workspace"
+    },
+    {
+      "path": "/workspace/commerce/orders/{order_id}/cancel",
+      "method": "POST",
+      "endpoint": "/api/v1/commerce/orders/{order_id}/cancel",
+      "domain": "workspace"
+    },
+    {
+      "path": "/workspace/commerce/orders/{order_id}/confirm-payment",
+      "method": "POST",
+      "endpoint": "/api/v1/commerce/orders/{order_id}/confirm-payment",
+      "domain": "workspace"
+    },
+    {
+      "path": "/workspace/commerce/orders/{order_id}/mark-delivered",
+      "method": "POST",
+      "endpoint": "/api/v1/commerce/orders/{order_id}/mark-delivered",
+      "domain": "workspace"
+    },
+    {
+      "path": "/workspace/commerce/orders/{order_id}/pay",
+      "method": "POST",
+      "endpoint": "/api/v1/commerce/orders/{order_id}/pay",
+      "domain": "workspace"
+    },
+    {
+      "path": "/workspace/commerce/orders/{order_id}/settle",
+      "method": "POST",
+      "endpoint": "/api/v1/commerce/orders/{order_id}/settle",
+      "domain": "workspace"
+    },
+    {
+      "path": "/workspace/commerce/orders/{order_id}/ship",
+      "method": "POST",
+      "endpoint": "/api/v1/commerce/orders/{order_id}/ship",
+      "domain": "workspace"
+    },
+    {
+      "path": "/workspace/disputes",
+      "method": "POST",
+      "endpoint": "/api/v1/disputes",
+      "domain": "workspace"
+    },
+    {
+      "path": "/workspace/disputes/{dispute_id}/escalate",
+      "method": "POST",
+      "endpoint": "/api/v1/disputes/{dispute_id}/escalate",
+      "domain": "workspace"
+    },
+    {
+      "path": "/workspace/disputes/{dispute_id}/resolve",
+      "method": "POST",
+      "endpoint": "/api/v1/disputes/{dispute_id}/resolve",
+      "domain": "workspace"
+    },
+    {
+      "path": "/workspace/finance/ledger/batch",
+      "method": "POST",
+      "endpoint": "/api/v1/finance/ledger/batch",
+      "domain": "workspace"
+    },
+    {
+      "path": "/workspace/finance/ledger/batch/{batch_id}/post",
+      "method": "POST",
+      "endpoint": "/api/v1/finance/ledger/batch/{batch_id}/post",
+      "domain": "workspace"
+    },
+    {
+      "path": "/workspace/finance/payments/intent",
+      "method": "POST",
+      "endpoint": "/api/v1/finance/payments/intent",
+      "domain": "workspace"
+    },
+    {
+      "path": "/workspace/finance/reconciliation/full",
+      "method": "POST",
+      "endpoint": "/api/v1/finance/reconciliation/full",
+      "domain": "workspace"
+    },
+    {
+      "path": "/workspace/finance/reconciliation/wallet-ledger",
+      "method": "POST",
+      "endpoint": "/api/v1/finance/reconciliation/wallet-ledger",
+      "domain": "workspace"
+    },
+    {
+      "path": "/workspace/finance/wallet/earn",
+      "method": "POST",
+      "endpoint": "/api/v1/finance/wallet/earn",
+      "domain": "workspace"
+    },
+    {
+      "path": "/workspace/finance/wallet/redeem",
+      "method": "POST",
+      "endpoint": "/api/v1/finance/wallet/redeem",
+      "domain": "workspace"
+    },
+    {
+      "path": "/auth/2fa/toggle",
+      "method": "POST",
+      "endpoint": "/api/v1/auth/2fa/toggle",
+      "domain": "inclusive"
+    },
+    {
+      "path": "/auth/account/bio",
+      "method": "POST",
+      "endpoint": "/api/v1/auth/account/bio",
+      "domain": "inclusive"
+    },
+    {
+      "path": "/auth/api-keys/{key_id}",
+      "method": "DELETE",
+      "endpoint": "/api/v1/auth/api-keys/{key_id}",
+      "domain": "inclusive"
+    },
+    {
+      "path": "/auth/change-password",
+      "method": "POST",
+      "endpoint": "/api/v1/auth/change-password",
+      "domain": "inclusive"
+    },
+    {
+      "path": "/auth/deactivate",
+      "method": "POST",
+      "endpoint": "/api/v1/auth/deactivate",
+      "domain": "inclusive"
+    },
+    {
+      "path": "/auth/email/change-confirm",
+      "method": "POST",
+      "endpoint": "/api/v1/auth/email/change-confirm",
+      "domain": "inclusive"
+    },
+    {
+      "path": "/auth/email/change-request",
+      "method": "POST",
+      "endpoint": "/api/v1/auth/email/change-request",
+      "domain": "inclusive"
+    },
+    {
+      "path": "/auth/export-data",
+      "method": "POST",
+      "endpoint": "/api/v1/auth/export-data",
+      "domain": "inclusive"
+    },
+    {
+      "path": "/auth/logout",
+      "method": "POST",
+      "endpoint": "/api/v1/auth/logout",
+      "domain": "inclusive"
+    },
+    {
+      "path": "/auth/oauth/connect",
+      "method": "POST",
+      "endpoint": "/api/v1/auth/oauth/connect",
+      "domain": "inclusive"
+    },
+    {
+      "path": "/auth/oauth/disconnect/{provider}",
+      "method": "DELETE",
+      "endpoint": "/api/v1/auth/oauth/disconnect/{provider}",
+      "domain": "inclusive"
+    },
+    {
+      "path": "/auth/profile",
+      "method": "PUT",
+      "endpoint": "/api/v1/auth/profile",
+      "domain": "inclusive"
+    },
+    {
+      "path": "/learn/legal/{locale}/{slug}/{version}",
+      "method": "PATCH",
+      "endpoint": "/api/v1/legal-texts/{locale}/{slug}/{version}",
+      "domain": "learning"
+    }
+  ],
+  "ungated": [
+    {
+      "path": "/ai/analysis/advise",
+      "method": "POST",
+      "endpoint": "/api/v1/ai/analysis/advise",
+      "domain": "public"
+    },
+    {
+      "path": "/ai/analysis/drought",
+      "method": "POST",
+      "endpoint": "/api/v1/ai/analysis/drought",
+      "domain": "public"
+    },
+    {
+      "path": "/ai/analysis/drought-report",
+      "method": "POST",
+      "endpoint": "/api/v1/ai/analysis/drought-report",
+      "domain": "public"
+    },
+    {
+      "path": "/ai/analysis/scenario",
+      "method": "POST",
+      "endpoint": "/api/v1/ai/analysis/scenario",
+      "domain": "public"
+    },
+    {
+      "path": "/ai/analysis/scenarios",
+      "method": "POST",
+      "endpoint": "/api/v1/ai/analysis/scenarios",
+      "domain": "public"
+    },
+    {
+      "path": "/ai/chat",
+      "method": "POST",
+      "endpoint": "/api/v1/ai/chat",
+      "domain": "public"
+    },
+    {
+      "path": "/ai/voice/tts",
+      "method": "POST",
+      "endpoint": "/api/v1/ai/voice/tts",
+      "domain": "public"
+    },
+    {
+      "path": "/help/contact",
+      "method": "POST",
+      "endpoint": "/api/v1/contact",
+      "domain": "public"
+    },
+    {
+      "path": "/public/pilot/apply",
+      "method": "POST",
+      "endpoint": "/api/v1/pilot/apply",
+      "domain": "public"
+    },
+    {
+      "path": "/trust/blockchain/ecocoin/distribute",
+      "method": "POST",
+      "endpoint": "/api/v1/blockchain/ecocoin/distribute",
+      "domain": "public"
+    },
+    {
+      "path": "/trust/blockchain/ecocoin/earn",
+      "method": "POST",
+      "endpoint": "/api/v1/blockchain/ecocoin/earn",
+      "domain": "public"
+    },
+    {
+      "path": "/trust/blockchain/ecocoin/redeem",
+      "method": "POST",
+      "endpoint": "/api/v1/blockchain/ecocoin/redeem",
+      "domain": "public"
+    },
+    {
+      "path": "/trust/blockchain/ecocoin/transfer",
+      "method": "POST",
+      "endpoint": "/api/v1/blockchain/ecocoin/transfer",
+      "domain": "public"
+    },
+    {
+      "path": "/trust/blockchain/ecosystem-fund/grant",
+      "method": "POST",
+      "endpoint": "/api/v1/blockchain/ecosystem-fund/grant",
+      "domain": "public"
+    },
+    {
+      "path": "/trust/blockchain/ecosystem-fund/grant/{grant_id}/approve",
+      "method": "POST",
+      "endpoint": "/api/v1/blockchain/ecosystem-fund/grant/{grant_id}/approve",
+      "domain": "public"
+    },
+    {
+      "path": "/trust/blockchain/ecosystem-fund/grant/{grant_id}/milestone",
+      "method": "POST",
+      "endpoint": "/api/v1/blockchain/ecosystem-fund/grant/{grant_id}/milestone",
+      "domain": "public"
+    },
+    {
+      "path": "/trust/blockchain/impact/certificate",
+      "method": "POST",
+      "endpoint": "/api/v1/blockchain/impact/certificate",
+      "domain": "public"
+    },
+    {
+      "path": "/trust/blockchain/oracle/attestation",
+      "method": "POST",
+      "endpoint": "/api/v1/blockchain/oracle/attestation",
+      "domain": "public"
+    },
+    {
+      "path": "/trust/blockchain/oracle/challenge/{activity_id}",
+      "method": "POST",
+      "endpoint": "/api/v1/blockchain/oracle/challenge/{activity_id}",
+      "domain": "public"
+    },
+    {
+      "path": "/trust/blockchain/oracle/report",
+      "method": "POST",
+      "endpoint": "/api/v1/blockchain/oracle/report",
+      "domain": "public"
+    },
+    {
+      "path": "/trust/blockchain/phasegate/activate/{phase}",
+      "method": "POST",
+      "endpoint": "/api/v1/blockchain/phasegate/activate/{phase}",
+      "domain": "public"
+    },
+    {
+      "path": "/trust/blockchain/treasury/proposal",
+      "method": "POST",
+      "endpoint": "/api/v1/blockchain/treasury/proposal",
+      "domain": "public"
+    },
+    {
+      "path": "/trust/blockchain/treasury/proposal/{proposal_id}/approve",
+      "method": "POST",
+      "endpoint": "/api/v1/blockchain/treasury/proposal/{proposal_id}/approve",
+      "domain": "public"
+    },
+    {
+      "path": "/market/villages/{village_id}/ai-recommendations",
+      "method": "POST",
+      "endpoint": "/api/v1/marketplace/villages/{village_id}/ai-recommendations",
+      "domain": "marketplace"
+    },
+    {
+      "path": "/hydroma/carbon/{model_id}/run",
+      "method": "POST",
+      "endpoint": "/api/v1/hydroma/carbon/{model_id}/run",
+      "domain": "hydroma"
+    },
+    {
+      "path": "/hydroma/climate/{model_id}/run",
+      "method": "POST",
+      "endpoint": "/api/v1/hydroma/climate/{model_id}/run",
+      "domain": "hydroma"
+    },
+    {
+      "path": "/hydroma/economics/{model_id}/run",
+      "method": "POST",
+      "endpoint": "/api/v1/hydroma/economics/{model_id}/run",
+      "domain": "hydroma"
+    },
+    {
+      "path": "/hydroma/elevation/erosion-effect/{site_id}",
+      "method": "POST",
+      "endpoint": "/api/v1/elevation/erosion-effect/{site_id}",
+      "domain": "hydroma"
+    },
+    {
+      "path": "/research/hub/runs",
+      "method": "POST",
+      "endpoint": "/api/v1/hub/runs",
+      "domain": "research"
+    },
+    {
+      "path": "/research/hub/runs/{run_id}/share",
+      "method": "POST",
+      "endpoint": "/api/v1/hub/runs/{run_id}/share",
+      "domain": "research"
+    },
+    {
+      "path": "/research/science/datasets/{slug}/doi",
+      "method": "POST",
+      "endpoint": "/api/v1/science/datasets/{slug}/doi",
+      "domain": "research"
+    },
+    {
+      "path": "/system/automation/agent-run",
+      "method": "POST",
+      "endpoint": "/api/v1/automation/agent-run",
+      "domain": "system"
+    },
+    {
+      "path": "/system/dashboard/refresh-data",
+      "method": "POST",
+      "endpoint": "/dashboard/refresh-data",
+      "domain": "system"
+    },
+    {
+      "path": "/workspace/finance/payments/webhook/{provider_name}",
+      "method": "POST",
+      "endpoint": "/api/v1/finance/payments/webhook/{provider_name}",
+      "domain": "workspace"
+    },
+    {
+      "path": "/auth/forgot-password",
+      "method": "POST",
+      "endpoint": "/api/v1/auth/forgot-password",
+      "domain": "inclusive"
+    },
+    {
+      "path": "/learn/newsletter/subscribe",
+      "method": "POST",
+      "endpoint": "/api/v1/newsletter/subscribe",
+      "domain": "learning"
+    }
+  ],
+  "unpublished": [
+    {
+      "path": "/hydroma/analyses/crop-water-req",
+      "method": "POST",
+      "endpoint": "/analyses/crop-water-req"
+    },
+    {
+      "path": "/hydroma/analyses/groundwater",
+      "method": "POST",
+      "endpoint": "/analyses/groundwater"
+    },
+    {
+      "path": "/hydroma/analyses/irrigation-design",
+      "method": "POST",
+      "endpoint": "/analyses/irrigation-design"
+    },
+    {
+      "path": "/hydroma/analyses/runoff",
+      "method": "POST",
+      "endpoint": "/analyses/runoff"
+    },
+    {
+      "path": "/hydroma/analyses/structure-design",
+      "method": "POST",
+      "endpoint": "/analyses/structure-design"
+    },
+    {
+      "path": "/hydroma/analyses/topography",
+      "method": "POST",
+      "endpoint": "/analyses/topography"
+    }
+  ]
+}

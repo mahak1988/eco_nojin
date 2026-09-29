@@ -25,6 +25,16 @@ import { fileURLToPath } from 'node:url';
  * A surface the gateway does not publish can never be indexed: `unavailable`
  * and `planned` are both noindex, so a page stays out of search results until
  * a contract is registered for it.
+ *
+ * Status and `renderedBy` answer different questions and are not allowed to
+ * answer each other's. Status is about the contract — is there something real
+ * to show. `renderedBy` is about the file — how many pages does this path have
+ * of its own. A path can be `live`, indexable, and still have no page of its
+ * own: that is the whole of `/hydroma/tools/*`, 103 catalogue entries served by
+ * one file. The generator and a dashboard both read this catalogue, and a
+ * `--force` run or a new agent that read 103 entries each claiming a
+ * `routeFile` would reasonably conclude fifty-one near-identical tool pages
+ * were owed. The inventory has to say which of the two it is, so it does.
  */
 
 export const PAGE_CATALOG_VERSION = '2026-09-26';
@@ -67,8 +77,39 @@ export interface CatalogEntry {
   access: CatalogAccess;
   /** Existing route that owns this path, when the path is already routed. */
   routeFile: string | null;
-  /** Who renders the path: a real page, the marketplace catch-all or this catalog. */
-  renderedBy: 'route' | 'marketplace-catchall' | 'catalog-catchall';
+  /**
+   * Who renders the path, and — for a shared page — how many pages it is.
+   *
+   *   `route`               one real `page.tsx` serves this path, and no other
+   *                         catalogue path claims that file.
+   *   `dynamic-route`       a real `page.tsx` serves this path, and it is
+   *                         shared: the same `routeFile` is claimed by more than
+   *                         one entry, because the file is a single dynamic route
+   *                         and these entries are the members of its address
+   *                         space rather than pages of their own.
+   *   `marketplace-catchall`  no page owns the path; the marketplace catch-all
+   *                         answers for it.
+   *   `catalog-catchall`      no page owns the path; the catalogue catch-all
+   *                         answers for it.
+   *
+   * `dynamic-route` is not `route`. `route` says "this path has a page"; read as
+   * a count it is how many pages the catalogue claims to have. Under
+   * `/hydroma/tools/` one file — `hydroma/tools/[toolId]/page.tsx` — serves
+   * fifty-one concrete tool ids plus the `{toolId}` template, so fifty-two
+   * entries carry it, and calling each of them `route` claimed fifty-two pages
+   * where the repository has one. That is the "110 single-pattern scientific
+   * pages" defect the master plan's gap table names, arriving by a different
+   * door: not generated, but *inventoried* as owed. The label is the difference
+   * between a page the repository has and a page someone still has to build.
+   *
+   * `routeFile` stays populated for a `dynamic-route` entry, on purpose. The
+   * file really does serve the path — the integrity ratchet proves it exists —
+   * and `scripts/generate-resource-pages.mjs` reads `routeFile` to decide that
+   * it must not write a page there. Dropping the field would make the catalogue
+   * less honest, not more: the generator would then see 51 unrouted `GET`s under
+   * `/hydroma/tools/` and generate them.
+   */
+  renderedBy: 'route' | 'dynamic-route' | 'marketplace-catchall' | 'catalog-catchall';
   indexable: boolean;
   description: string;
 }
@@ -7890,6 +7931,35 @@ const ROUTE_DIR_ALIASES: Record<string, string> = {
   site_id: 'siteId',
 };
 
+/**
+ * How many catalogue paths each real page file answers for.
+ *
+ * One entry claiming one page is a page. Fifty-two entries claiming the same
+ * file are fifty-two members of one route, and the difference is the whole
+ * defect: a reader counting `routeFile` values counts the second set as pages
+ * that are still owed. The count is measured from the resolved files rather
+ * than declared per entry, so a tool added to `/hydroma/tools/` tomorrow is
+ * labelled correctly without a second edit — and a genuinely separate page
+ * under one name would stop being called `dynamic-route` the moment it exists.
+ *
+ * Declared here, below `ROUTE_FILE_CACHE` and `ROUTE_DIR_ALIASES`, because
+ * resolving a route file reads both. Calling it earlier is a temporal-dead-zone
+ * error rather than a helpful failure.
+ */
+const ROUTE_FILE_CLAIMANTS: ReadonlyMap<string, number> = (() => {
+  const counts = new Map<string, number>();
+  for (const seed of SEEDS) {
+    const file = resolveRouteFile(seed.path, seed.routeFile);
+    if (file) counts.set(file, (counts.get(file) ?? 0) + 1);
+  }
+  return counts;
+})();
+
+/** Does this path have a page of its own, or is it a member of a shared route? */
+function isSharedRouteFile(routeFile: string): boolean {
+  return (ROUTE_FILE_CLAIMANTS.get(routeFile) ?? 0) > 1;
+}
+
 /** Does a real route file serve this catalogue path? */
 function routeFileFor(path: string): string | null {
   if (ROUTE_FILE_CACHE.has(path)) return ROUTE_FILE_CACHE.get(path) ?? null;
@@ -7939,11 +8009,14 @@ function buildEntry(seed: CatalogSeed, group: (typeof CATALOG_GROUPS)[number]): 
     registryDriven,
     declaredContent: isDeclaredStatic(seed.path),
   });
-  const renderedBy: CatalogEntry['renderedBy'] = hasRoute
-    ? 'route'
-    : isReservedPath(seed.path)
-      ? 'marketplace-catchall'
-      : 'catalog-catchall';
+  const renderedBy: CatalogEntry['renderedBy'] =
+    routeFile !== null
+      ? isSharedRouteFile(routeFile)
+        ? 'dynamic-route'
+        : 'route'
+      : isReservedPath(seed.path)
+        ? 'marketplace-catchall'
+        : 'catalog-catchall';
   return {
     id: seed.id,
     path: seed.path,

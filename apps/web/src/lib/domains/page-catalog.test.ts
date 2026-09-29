@@ -19,6 +19,7 @@ import {
   resolveIndexable,
   resolveRobots,
 } from './page-catalog';
+import { SCIENTIFIC_TOOL_IDS } from './registry';
 
 const WEB_ROOT = path.resolve(import.meta.dirname, '..', '..', '..');
 const APP_ROOT = path.join(WEB_ROOT, 'src', 'app');
@@ -233,6 +234,36 @@ describe('page catalog registry', () => {
     //   the same rule that made the fifth lock's four additions `capability`, and
     //   it is why `sitemap.test.ts` moves by twelve rather than twenty-one.
     //
+    //   2026-09-29, eighth lock, and the first that changes a renderer rather
+    //   than a status. `/hydroma/tools/*` is 103 catalogue entries served by one
+    //   file — `hydroma/tools/[toolId]/page.tsx` — and every one of them said
+    //   `renderedBy: 'route'`. Fifty-two of them claim that file (fifty-one
+    //   concrete tool ids plus the `{toolId}` template), so the inventory was
+    //   claiming fifty-two pages where the repository has one. A `--force` run
+    //   or a new agent reading the catalogue would reasonably have concluded
+    //   fifty-one near-identical tool pages were owed, which is the "110
+    //   single-pattern scientific pages" defect arriving by a second door: not
+    //   generated, but inventoried as owed. So `renderedBy` gains
+    //   `dynamic-route`, and `renderedBy: 'route'` now means "this path has a
+    //   page of its own" rather than "a page resolves for this path". Only
+    //   `route` moves: 422 -> 370, `dynamic-route` 0 -> 52,
+    //   catalog-catchall unchanged at 172, marketplace-catchall unchanged at 27.
+    //
+    //   Neither status nor `indexable` moves, and the reason matters: status is
+    //   derived from the contract and the route file, and both are unchanged.
+    //   `/hydroma/tools/carbon-calculator` still has a real file serving it and
+    //   still has a published `GET /api/v1/tool-registry/{tool_id}`, so it is
+    //   still `live` and still indexable, and `sitemap.test.ts` correctly still
+    //   lists it. Fifty-one tool ids behind one page is still fifty-one
+    //   addressable, indexable pages; what was false was the *count of page
+    //   files*, not the pages.
+    //
+    //   The count is measured, not declared: `ROUTE_FILE_CLAIMANTS` resolves
+    //   every seed's route file once and counts the claims. Today
+    //   `[toolId]/page.tsx` is the only file with more than one claimant, so 52
+    //   is the whole of the movement, and a genuinely separate page under one
+    //   name would revert to `route` the day it appeared.
+    //
     // If a change here moves `planned` *up* or `live` *down*, a page was deleted
     // or a contract was withdrawn, and that needs a reason in this comment.
     const counts = { live: 0, capability: 0, static: 0, planned: 0, unavailable: 0 };
@@ -246,7 +277,10 @@ describe('page catalog registry', () => {
       unavailable: 142,
     });
     expect(PAGE_CATALOG.filter((entry) => entry.indexable)).toHaveLength(360);
-    expect(PAGE_CATALOG.filter((entry) => entry.renderedBy === 'route')).toHaveLength(422);
+    // 2026-09-29, eighth lock: 422 -> 370. `/hydroma/tools/*` moved to
+    // `dynamic-route`; see the change log above.
+    expect(PAGE_CATALOG.filter((entry) => entry.renderedBy === 'route')).toHaveLength(370);
+    expect(PAGE_CATALOG.filter((entry) => entry.renderedBy === 'dynamic-route')).toHaveLength(52);
     expect(PAGE_CATALOG.filter((entry) => entry.renderedBy === 'catalog-catchall')).toHaveLength(
       172,
     );
@@ -439,6 +473,91 @@ describe('page catalog registry', () => {
       expect(owner, `routeFile not in the real route scan: ${entry.routeFile}`).toBeDefined();
       expect(patternToRegExp(routeFileToLogical(owner as string)).test(entry.path)).toBe(true);
     }
+  });
+
+  it('shares one page across the whole /hydroma/tools inventory', () => {
+    // The audit that produced `dynamic-route`: `/hydroma/tools/*` is 103 entries
+    // and one page. These assertions are what makes the label a fact rather than
+    // a rename — the counts are the measured ones, and each is stated with the
+    // reason it is the number that should hold.
+    const TOOL_PAGE = 'apps/web/src/app/[locale]/hydroma/tools/[toolId]/page.tsx';
+    const tools = PAGE_CATALOG.filter((entry) => entry.path.startsWith('/hydroma/tools/'));
+    expect(tools).toHaveLength(103);
+
+    // 52 read paths, one file: fifty-one concrete tool ids plus the `{toolId}`
+    // template, which is the same page seen from the pattern.
+    const served = tools.filter((entry) => entry.renderedBy === 'dynamic-route');
+    expect(served).toHaveLength(52);
+    expect(served.every((entry) => entry.routeFile === TOOL_PAGE)).toBe(true);
+    expect(served.filter((entry) => entry.path.endsWith('/execute'))).toEqual([]);
+    expect(served.filter((entry) => entry.path.includes('{'))).toHaveLength(1);
+    expect(served.filter((entry) => !entry.path.includes('{'))).toHaveLength(51);
+
+    // 51 `/execute` paths, no page and no page owed. They are `POST` with no
+    // published contract, so `resolveCatalogStatus` calls them `unavailable`,
+    // `indexable` is false, and `scripts/generate-resource-pages.mjs` drops them
+    // on `method !== 'GET'` before `ACTION_SEGMENTS` is even consulted.
+    //
+    // Recorded negative result, because the audit assumed otherwise: `execute`
+    // is *not* a member of the generator's `ACTION_SEGMENTS` set. Reading
+    // `scripts/generate-resource-pages.mjs` directly, the set has `run` and
+    // `rerun` but no `execute`; the skip is real, and it comes from the method
+    // check and from `endpoint: null` removing the entry from `owned`. The
+    // conclusion holds and the stated reason did not, which is worth the line.
+    const mutations = tools.filter((entry) => entry.path.endsWith('/execute'));
+    expect(mutations).toHaveLength(51);
+    for (const entry of mutations) {
+      expect(entry.method, entry.path).toBe('POST');
+      expect(entry.routeFile, entry.path).toBeNull();
+      expect(entry.renderedBy, entry.path).toBe('catalog-catchall');
+      expect(entry.status, entry.path).toBe('unavailable');
+      expect(entry.indexable, entry.path).toBe(false);
+    }
+
+    // The count the whole change turns on: a page-shaped path here would be one
+    // the generator is expected to write. `isPageShaped` in the generator is a
+    // `GET` with no action segment, so that is the same predicate stated on this
+    // side, and it must be empty.
+    const pageShaped = tools.filter((entry) => entry.method === 'GET' && entry.routeFile === null);
+    expect(pageShaped.map((entry) => entry.path)).toEqual([]);
+
+    // And the one shared file is the only shared file in the catalogue, so the
+    // label cannot be hiding a second instance of the same defect elsewhere.
+    const claims = new Map<string, number>();
+    for (const entry of PAGE_CATALOG) {
+      if (entry.routeFile === null) continue;
+      claims.set(entry.routeFile, (claims.get(entry.routeFile) ?? 0) + 1);
+    }
+    const shared = [...claims.entries()].filter(([, count]) => count > 1);
+    expect(shared).toEqual([[TOOL_PAGE, 52]]);
+    expect(existsSync(path.join(REPO_ROOT, TOOL_PAGE))).toBe(true);
+  });
+
+  it('catalogues every tool the registry publishes, and no others', () => {
+    // The other direction of the same lie. A tool added to the registry with no
+    // catalogue path is served by the same shared page, so nothing fails, and the
+    // inventory silently stops describing what exists — the defect this change
+    // fixed, arriving from the other side.
+    //
+    // Recorded negative result: the brief for this work said the dynamic route
+    // serves 62 tools. It does not. `SCIENTIFIC_TOOLS` publishes 51, the
+    // catalogue carries 51 concrete `/hydroma/tools/{id}` paths, and the two sets
+    // are equal — which is the number that matters, and it is measured here
+    // rather than taken from the prose. The 52nd member of the shared page is
+    // the `{toolId}` template, the same file seen from the pattern, not a 52nd
+    // tool. The count below is 51 because 51 is what the code says.
+    expect(SCIENTIFIC_TOOL_IDS).toHaveLength(51);
+    const catalogued = new Set(
+      PAGE_CATALOG.filter(
+        (entry) =>
+          entry.path.startsWith('/hydroma/tools/') &&
+          entry.method === 'GET' &&
+          !entry.path.includes('{'),
+      ).map((entry) => entry.path.replace('/hydroma/tools/', '')),
+    );
+    expect(catalogued.size).toBe(51);
+    expect([...SCIENTIFIC_TOOL_IDS].filter((id) => !catalogued.has(id))).toEqual([]);
+    expect([...catalogued].filter((id) => !SCIENTIFIC_TOOL_IDS.includes(id))).toEqual([]);
   });
 });
 

@@ -374,10 +374,7 @@
     "lead": "Sviluppatori, integratori e partner tecnici: consultate i contratti, provate gli endpoint, collaborate.",
     "what": "Ogni endpoint è documentato, ogni modifica API è tracciata e ogni richiesta porta un identificatore di correlazione.",
     "audience": "Sviluppatori, integratori, università, team di ricerca e partner tecnici.",
-    "evidence": [
-      "Un contratto API con versione",
-      "Esempi di richiesta e risposta"
-    ],
+    "evidence": ["Un contratto API con versione", "Esempi di richiesta e risposta"],
     "limits": [
       "Le scritture sono consentite solo in ambienti autorizzati",
       "Gli strumenti automatizzati non sono consentiti sulla superficie pubblica"
@@ -399,10 +396,7 @@
     "lead": "L'accessibilità è un requisito funzionale: nessuna funzione deve dipendere esclusivamente dal colore o dal suono.",
     "what": "Il sito è realizzato per essere navigabile da tastiera, con contrasto conforme, struttura semantica corretta e supporto completo per la modalità RTL/LTR.",
     "audience": "Persone con disabilità, anziani, utenti con tecnologia assistenziale e chi naviga con tasteo o tastiera.",
-    "evidence": [
-      "Controlli axe automatici",
-      "Controlli di direzione e lingua nei browser"
-    ],
+    "evidence": ["Controlli axe automatici", "Controlli di direzione e lingua nei browser"],
     "limits": [
       "Alcune mappe interattive hanno un'alternativa testuale limitata",
       "Alcuni documenti scientifici sono disponibili solo in formato testo"
@@ -492,11 +486,7 @@
       "p3_solution": "Prove, incertezza e stato dei dati",
       "p4_problem": "Accesso diseguale agli strumenti",
       "p4_solution": "PWA, più lingue e canali inclusivi",
-      "evidenceItems": [
-        "Workshop con gli stakeholder",
-        "Ricerca sul campo",
-        "Piloti documentati"
-      ],
+      "evidenceItems": ["Workshop con gli stakeholder", "Ricerca sul campo", "Piloti documentati"],
       "limitsItems": [
         "La generalizzazione regionale è limitata",
         "L’impatto a lungo termine è ancora in misurazione",
