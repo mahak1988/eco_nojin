@@ -1,0 +1,64 @@
+{
+  "_comment": "قالب سقف بودجه. این فایل نسخهٔ کنترل‌شده نیست - ابزار scripts/cost_guard.py budget آن را می‌خواند. اعداد بر پایه تحلیل COST-OPT-2026-09-29 هستند.",
+  "_baseline": {
+    "manifest_as_written_usd_per_month": 4797.24,
+    "measured_only_usd_per_month": 664.30,
+    "target_usd_per_month": 150,
+    "note": "خط پایه از helm/eco-nojin/values.yaml محاسبه شده، نه از صورت‌حساب. staging و production طبق AGENTS.md غیرفعال است."
+  },
+  "monthly_limit_usd": 150,
+  "alert_thresholds_usd": [75, 120, 150],
+  "per_provider_caps_usd": {
+    "_note": "سقف سخت روزانه. یک حلقهٔ بی‌پایان RAG می‌تواند در یک شب چند صد دلار خرج کند.",
+    "llm_groq": 5,
+    "llm_openrouter": 10,
+    "llm_google": 10,
+    "llm_mistral": 5,
+    "llm_deepseek": 5,
+    "embeddings_jina": 2,
+    "embeddings_cohere": 2,
+    "llm_total_daily": 25
+  },
+  "categories": [
+    {
+      "name": "compute",
+      "limit_usd": 80,
+      "rationale": "۲ نمونهٔ کوچک برای دروازهٔ API و worker"
+    },
+    {
+      "name": "database",
+      "limit_usd": 25,
+      "rationale": "Supabase Pro به‌جای PostgreSQL خودمیزبان"
+    },
+    {
+      "name": "storage",
+      "limit_usd": 10,
+      "rationale": "R2 با egress رایگان + Object Storage داخلی"
+    },
+    {
+      "name": "frontend_cdn",
+      "limit_usd": 0,
+      "rationale": "Vercel Hobby تا رسیدن به ۱ ترابایت یا ۱۰ میلیون درخواست"
+    },
+    {
+      "name": "observability",
+      "limit_usd": 0,
+      "rationale": "Grafana Cloud Free tier + Sentry Free"
+    },
+    {
+      "name": "ci",
+      "limit_usd": 30,
+      "rationale": "۳۰۰۰ دقیقهٔ رایگان + کش محلی"
+    },
+    {
+      "name": "llm",
+      "limit_usd": 60,
+      "rationale": "۲۵ دلار در روز × ۳۰ روز، با سقف سخت"
+    }
+  ],
+  "hard_stops": [
+    "خوشهٔ Kubernetes در پشتیبانی توسعه‌یافته بماند ⇒ استقرار متوقف",
+    "هیچ منبعی بدون سقف ماهانه باشد ⇒ استقرار متوقف",
+    "هزینهٔ ماهانه از ۱۵۰ دلار بگذرد ⇒ استقرار متوقف تا بازبینی"
+  ]
+}

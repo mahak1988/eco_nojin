@@ -126,6 +126,22 @@ mypy --strict engine/hydroma/config/settings.py services/api_gateway/
 
 # Pre-commit
 pre-commit run --all-files
+
+# Innovation backlog (see INNOVATION_BACKLOG_FA.md and docs/adr/0007-innovation-programme.md)
+.venv\Scripts\python.exe scripts\innovation_backlog.py validate
+.venv\Scripts\python.exe scripts\innovation_backlog.py summary
+.venv\Scripts\python.exe scripts\innovation_backlog.py status --wave W0
+.venv\Scripts\python.exe scripts\innovation_backlog.py ready
+.venv\Scripts\python.exe scripts\innovation_backlog.py blocked
+
+# Cost control (see COST_OPTIMIZATION_RESEARCH_FA.md)
+.venv\Scripts\python.exe scripts\cost_estimate.py
+.venv\Scripts\python.exe scripts\cost_guard.py check
+.venv\Scripts\python.exe scripts\cost_collect.py
+.venv\Scripts\python.exe scripts\cost_guard.py budget
+
+# Document/code consistency (after editing any analysis, ADR or standards doc)
+.venv\Scripts\python.exe -m pytest tests/contract/test_claims_gate.py -q
 ```
 
 ## Important Notes for Agents
@@ -139,11 +155,25 @@ pre-commit run --all-files
 - **Prefer composition over inheritance** — dependency injection via FastAPI `Depends`
 - **Use structured logging** — `logger.info("event", extra={"key": value})`
 - **Handle errors explicitly** — custom exceptions with error codes
+- **Check the innovation backlog before adding a feature** — `docs/innovation_backlog.csv` is the single source of truth for status; a new capability must either map to an existing item or get an ADR in `docs/adr/0007-innovation-programme.md`. Run `.venv\Scripts\python.exe scripts/innovation_backlog.py validate` after editing it
+- **Respect wave ordering** — an item in a later wave must not be started before its dependencies are done (`scripts/innovation_backlog.py blocked`)
+- **Do not add cost-bearing infrastructure without a driver** — `helm/eco-nojin/values.yaml` is a *target* manifest, not current state. Before enabling istio, multiRegion, tempo, pgpool or velero, run `scripts/cost_guard.py check` and be able to state the cost in USD/month. Run `.venv\Scripts\python.exe scripts\cost_guard.py check` after any deployment change
+- **Every number in an analysis document needs a reproduction path** — a figure you cannot regenerate is an assertion, not a finding. Three rules:
+  1. **Derive, don't transcribe.** Copying a number from another document or a comment block is forbidden. Extract it from the source of truth, or mark it `NOT VERIFIED` and say why. (On 2026-09-29 an analysis asserted six functions returned constants; all six were wrong — one file was deleted, five were fully implemented. The source was a stale comment in `tolerated-degradations.yaml`.)
+  2. **Ship the derivation.** If a document states a figure, an equivalent runnable command must exist and produce that figure. `scripts/cost_estimate.py` → `COST_OPTIMIZATION_RESEARCH_FA.md` is the reference pattern.
+  3. **Guard it in CI.** `tests/contract/test_claims_gate.py` cross-checks documents against the code they describe. Run it after editing any analysis, ADR, or standards document. Green means the documents still match reality; red means someone changed the code without updating the text, or wrote a number that cannot be reproduced.
+  - When research fails or cannot be verified, **record the negative result** in the document. A documented "could not verify" is required output, not a gap to be quietly removed.
+
+## Analysis Document Standards
+- **Label every figure** — `measured` (taken from a primary source) or `estimated` (assumption). Never present an estimate as a measurement.
+- **Cite primary sources with a retrieval date** — a vendor pricing page, a LICENSE file, an official doc. A citation without a date is a citation without a guarantee.
+- **Distinguish "the manifest as written" from "what is running"** — `docs/ENGINEERING_INDEX_FA.md §۴٫۱` forbids describing intent as status. A cost or capability figure must say which one it measures.
+- **Name the thing you could not verify** — unverified claims are part of the deliverable. Do not smooth over a failed lookup.
 
 ## Current Sprint Focus (Week 1-2)
 **Sprint 1.1: Observability & Cache**
 - [ ] Structured JSON logger with correlation IDs
-- [ ] Redis cache layer (L1/L2, tags, invalidation)
+- [ ] Redis cache layer (L1/L2, tags, invalidation) — innovation item 19 (W0)
 - [ ] Cache invalidator via Redis pub/sub
 - [ ] Alert rules (latency, error rate, saturation)
 

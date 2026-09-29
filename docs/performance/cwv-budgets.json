@@ -1,0 +1,93 @@
+{
+  "$comment": [
+    "Single source of truth for scripts/check-cwv.mjs. The gate reads this file; it",
+    "does not restate any number. Change a budget here, or a route list here, and the",
+    "gate follows.",
+    "",
+    "PROVENANCE. Section 3.2 of hydroma-nojin-master-plan.md states exactly one",
+    "performance budget: 200 kB of initial JavaScript on a public page. It states no",
+    "time budget at all. The four time budgets below are therefore NOT the plan's.",
+    "They are the web.dev Core Web Vitals 'good' thresholds, imported here so the",
+    "plan's binding criterion can be given a number at all, and they are labelled as",
+    "imported everywhere they are printed. If the plan later states its own numbers,",
+    "replace this block and nothing else needs to change.",
+    "",
+    "INP is a field metric. No lab run measures it and this gate does not pretend",
+    "to. `inp` is declared as a field budget and is deliberately NOT asserted; what",
+    "the gate asserts in its place is Total Blocking Time, Lighthouse's lab proxy,",
+    "against `tbtProxyBudgetMs`. Reporting TBT as INP would be a fabricated claim."
+  ],
+  "provenance": {
+    "javascriptTransferBytes": "hydroma-nojin-master-plan.md §3.2 — 200 kB, the plan's own budget",
+    "lcpMs": "imported: web.dev Core Web Vitals 'good' threshold, 2500 ms",
+    "cls": "imported: web.dev Core Web Vitals 'good' threshold, 0.1",
+    "ttfbMs": "imported: web.dev 'good' TTFB threshold, 800 ms",
+    "tbtProxyBudgetMs": "imported: web.dev 'good' INP threshold, applied to the lab proxy TBT",
+    "inpMs": "field only; not assertable in a lab run"
+  },
+  "throttling": {
+    "formFactor": "desktop",
+    "screenEmulation": { "mobile": false, "width": 1350, "height": 940, "deviceScaleFactor": 1, "disabled": false },
+    "throttlingMethod": "simulate",
+    "throttling": {
+      "rttMs": 40,
+      "throughputKbps": 10240,
+      "cpuSlowdownMultiplier": 1,
+      "requestLatencyMs": 0,
+      "downloadThroughputKbps": 0,
+      "uploadThroughputKbps": 0
+    }
+  },
+  "runs": { "cold": 5, "warm": 3 },
+  "budgets": {
+    "lcpMs": 2500,
+    "cls": 0.1,
+    "ttfbMs": 800,
+    "tbtProxyBudgetMs": 200,
+    "javascriptTransferBytes": 204800
+  },
+  "fieldBudgetsNotAsserted": {
+    "inpMs": 200,
+    "why": "INP requires real user interaction across real sessions. The collection endpoint is app/api/observability/web-vitals; turning that stream into an assertion needs production traffic."
+  },
+  "routes": [
+    {
+      "id": "login",
+      "path": "/en/auth/login",
+      "role": "heaviest public page by First Load JS",
+      "buildEvidence": "next build 2026-09-29: /[locale]/auth/login  3.59 kB  First Load JS 170 kB — the heaviest in the 356-route table, tied with /[locale]/auth/signup (170 kB)."
+    },
+    {
+      "id": "content",
+      "path": "/en/market/products",
+      "role": "server-rendered content page from a gateway contract",
+      "buildEvidence": "next build 2026-09-29: /[locale]/market/products  4.79 kB  First Load JS 160 kB. The apiGet/DataStateCard shape is the majority of the app; this is one instance of it."
+    },
+    {
+      "id": "nojs",
+      "path": "/en/learn/content/search",
+      "role": "the no-JavaScript form page",
+      "buildEvidence": "next build 2026-09-29: /[locale]/learn/content/search  4.79 kB  First Load JS 160 kB. Renders components/surface/NoJsSearch.tsx, a real <form method=\"get\" action=\"\"> — a form that works with JS disabled is a claim, so it is measured."
+    },
+    {
+      "id": "island",
+      "path": "/en/market/bazaars/demo/map",
+      "role": "the MapLibre island — §3.3 says the bytes are lazy, so the initial weight is the claim under test",
+      "buildEvidence": "next build 2026-09-29: /[locale]/market/bazaars/[id]/map  2.78 kB  First Load JS 119 kB, 41 kB BELOW the 160 kB that ordinary content pages cost. The map is the route where §3.3 claims the bytes are lazy-loaded."
+    },
+    {
+      "id": "offline",
+      "path": "/en/offline",
+      "role": "the offline route — a state most likely to be neglected",
+      "buildEvidence": "next build 2026-09-29: /[locale]/offline  298 B  First Load JS 120 kB."
+    },
+    {
+      "id": "notfound",
+      "path": "/en/no-such-page-cwv-probe",
+      "role": "an unknown URL — the 404 state",
+      "expectStatus": 200,
+      "expectStatusNote": "Measured on 2026-09-29: this route answers HTTP 200 with <meta name=\"robots\" content=\"index, follow\">, 115,248 bytes and no <h1>. 200 is recorded here because it is what the server does today; the gate must not fail on the current behaviour, and must fail loudly the moment the route is fixed to return 404. Change this field to 404 at the same time as fixing the route.",
+      "buildEvidence": "next build 2026-09-29: /[locale]/[...slug]  724 B  First Load JS 120 kB, and the root /_not-found at 105 kB."
+    }
+  ]
+}

@@ -25,14 +25,31 @@
 #   - شماره‌خط‌های ارجاعی چند سطر با کد فعلی هم‌راستا شد.
 #
 # آنچه این فهرست پوشش نمی‌دهد (کاندیدا، ثبت‌نشده — عمداً اضافه نشده چون
-# مالک و سطح ریسکشان تأیید نشده): اسکنر G2 در services/ هنوز ۸۶ یافته
-# می‌دهد و فقط ۳۱ مورد آن زیر نامِ همین فهرست می‌افتد. بدترین‌های
-# ثبت‌نشده: services/two_factor.py:28 (verify_totp → False ثابت)،
-# services/security/ssrf.py:55 (validate_url → True ثابت)،
-# services/carbon/compliance/kyc_aml.py:263 (verify_kyc → True ثابت)،
-# services/security/antibot.py:429 (check_solution → False ثابت)،
-# services/telegram_bot/config.py:34 (validate → True ثابت)،
-# services/marketplace/order_management.py:309 (confirm_order → False ثابت).
+# مالک و سطح ریسکشان تأیید نشده): اسکنر G2 در services/ یافته‌هایی می‌دهد
+# که فقط بخشی‌شان زیر نامِ همین فهرست می‌افتند.
+#
+# بازبینی ادعاها (۲۰۲۶-۰۹-۲۹): فهرست قبلی شش مورد را به‌عنوان
+# «تابعی که مقدار ثابت برمی‌گرداند» نام می‌برد. هر شش مورد بررسی شد و
+# هر شش نادرست بود:
+#   - services/security/ssrf.py حذف شده است.
+#   - services/two_factor.py verify_totp با pyotp پیاده‌سازی واقعی دارد.
+#   - services/security/antibot.py check_solution بررسی proof-of-work
+#     واقعی با قفل، انقضا و اجبار تک‌استفاده دارد.
+#   - services/telegram_bot/config.py validate توکن را می‌سنجد.
+#   - services/marketplace/order_management.py confirm_order سفارش را
+#     از طریق repository به‌روزرسانی می‌کند.
+#   - services/carbon/compliance/kyc_aml.py verify_kyc مقدار ثابت
+#     برنمی‌گرداند، ولی is_compliant را صدا نمی‌زند.
+# تنها مورد باقی‌مانده به‌عنوان بدهی ثبت‌نشده، آخری است و پایین می‌آید.
+#
+# نکتهٔ فرایندی: هر ادعایی از این نوع باید توسط
+# tests/contract/test_claims_gate.py در برابر کد راستی‌آزمایی شود.
+# همین تست شش مورد غلط را گرفت.
+#
+# ثبت‌نشده، نیازمند مالک: services/carbon/compliance/kyc_aml.py:263
+# verify_kyc وضعیت رکورد را به VERIFIED تغییر می‌دهد بدون آنکه
+# is_compliant(user_id) را فراخوانی کند؛ یعنی تأیید هویت بدون بررسی
+# هیچ بررسی AML انجام می‌شود. ریسک: بالا (مسیر کربن).
 
 version: 1
 reviewed: 2026-09-28

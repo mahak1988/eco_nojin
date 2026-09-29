@@ -1,0 +1,909 @@
+{
+  "tool": "check-cwv.mjs",
+  "lighthouse": "from apps/web devDependencies",
+  "baseUrl": "http://localhost:3107",
+  "measuredAt": "2026-09-29T12:34:44.009Z",
+  "runs": {
+    "cold": 5,
+    "warm": 3
+  },
+  "budgets": {
+    "lcpMs": 2500,
+    "cls": 0.1,
+    "ttfbMs": 800,
+    "tbtProxyBudgetMs": 200,
+    "javascriptTransferBytes": 204800
+  },
+  "provenance": {
+    "javascriptTransferBytes": "hydroma-nojin-master-plan.md §3.2 — 200 kB, the plan's own budget",
+    "lcpMs": "imported: web.dev Core Web Vitals 'good' threshold, 2500 ms",
+    "cls": "imported: web.dev Core Web Vitals 'good' threshold, 0.1",
+    "ttfbMs": "imported: web.dev 'good' TTFB threshold, 800 ms",
+    "tbtProxyBudgetMs": "imported: web.dev 'good' INP threshold, applied to the lab proxy TBT",
+    "inpMs": "field only; not assertable in a lab run"
+  },
+  "results": [
+    {
+      "id": "login",
+      "path": "/en/auth/login",
+      "role": "heaviest public page by First Load JS",
+      "buildEvidence": "next build 2026-09-29: /[locale]/auth/login  3.59 kB  First Load JS 170 kB — the heaviest in the 356-route table, tied with /[locale]/auth/signup (170 kB).",
+      "status": 200,
+      "retries": 0,
+      "cold": [
+        {
+          "pass": "cold",
+          "lcpMs": 690.3157499999999,
+          "cls": 0.002621101352041561,
+          "tbtMs": 3.0000000000001137,
+          "ttfbMs": 30,
+          "fcpMs": 430.18945,
+          "speedIndexMs": 430.18945,
+          "performanceScore": 1
+        },
+        {
+          "pass": "cold",
+          "lcpMs": 696.3018,
+          "cls": 0.0025463823950033567,
+          "tbtMs": 0,
+          "ttfbMs": 20,
+          "fcpMs": 306.2012,
+          "speedIndexMs": 306.2012,
+          "performanceScore": 1
+        },
+        {
+          "pass": "cold",
+          "lcpMs": 1436.2206,
+          "cls": 0.00008825847123719465,
+          "tbtMs": 13.000000000000114,
+          "ttfbMs": 28,
+          "fcpMs": 424.3309,
+          "speedIndexMs": 424.3309,
+          "performanceScore": 0.96
+        },
+        {
+          "pass": "cold",
+          "lcpMs": 547.1107,
+          "cls": 0.0026456999533023967,
+          "tbtMs": 2.5,
+          "ttfbMs": 30,
+          "fcpMs": 325.11069999999995,
+          "speedIndexMs": 325.11069999999995,
+          "performanceScore": 1
+        },
+        {
+          "pass": "cold",
+          "lcpMs": 1437.0738000000003,
+          "cls": 0.00008825847123719465,
+          "tbtMs": 0,
+          "ttfbMs": 25,
+          "fcpMs": 425.6107,
+          "speedIndexMs": 425.6107,
+          "performanceScore": 0.96
+        }
+      ],
+      "warm": [
+        {
+          "pass": "warm",
+          "lcpMs": 1512.1923999999997,
+          "cls": 0.0025582382599305376,
+          "tbtMs": 14.999999999999886,
+          "ttfbMs": 24,
+          "fcpMs": 448.28860000000003,
+          "speedIndexMs": 448.28860000000003,
+          "performanceScore": 0.95
+        },
+        {
+          "pass": "warm",
+          "lcpMs": 693.3467499999999,
+          "cls": 0.0026456999533023967,
+          "tbtMs": 0,
+          "ttfbMs": 23,
+          "fcpMs": 421.3387,
+          "speedIndexMs": 421.3387,
+          "performanceScore": 1
+        },
+        {
+          "pass": "warm",
+          "lcpMs": 1514.741,
+          "cls": 0.00008825847123719465,
+          "tbtMs": 17,
+          "ttfbMs": 34,
+          "fcpMs": 452.1115,
+          "speedIndexMs": 452.1115,
+          "performanceScore": 0.95
+        }
+      ],
+      "lcpBreakdown": {
+        "phases": [
+          {
+            "subpart": "timeToFirstByte",
+            "ms": 33.08
+          },
+          {
+            "subpart": "elementRenderDelay",
+            "ms": 256.794
+          }
+        ],
+        "element": "<p class=\"mt-3 text-sm text-ink-soft\">",
+        "elementLabel": "Sign in to reach your land profiles, marketplace, evidence and carbon records.",
+        "note": "phase durations come from the unthrottled trace; the headline LCP is the simulated value, so the phases do not sum to it"
+      },
+      "transfer": {
+        "totalBytes": 1184540,
+        "requestCount": 45,
+        "javascriptBytes": 247218,
+        "cssBytes": 47541,
+        "fontBytes": 56488,
+        "documentBytes": 37129,
+        "fontUrls": [
+          "http://localhost:3107/fonts/vazirmatn-latin-400-normal-BT_DHTc7.woff2",
+          "http://localhost:3107/fonts/vazirmatn-latin-700-normal-9BlbvDRV.woff2",
+          "http://localhost:3107/fonts/jetbrains-mono-latin-400-normal-V6pRDFza.woff2"
+        ],
+        "fontsWithLongCache": null
+      },
+      "fontHeaders": [
+        {
+          "url": "/fonts/vazirmatn-latin-400-normal-BT_DHTc7.woff2",
+          "bytes": "16068",
+          "cacheControl": "public, max-age=31536000, immutable",
+          "age": null,
+          "etag": "present",
+          "expires": null
+        },
+        {
+          "url": "/fonts/vazirmatn-latin-700-normal-9BlbvDRV.woff2",
+          "bytes": "16420",
+          "cacheControl": "public, max-age=31536000, immutable",
+          "age": null,
+          "etag": "present",
+          "expires": null
+        },
+        {
+          "url": "/fonts/jetbrains-mono-latin-400-normal-V6pRDFza.woff2",
+          "bytes": "21168",
+          "cacheControl": "public, max-age=31536000, immutable",
+          "age": null,
+          "etag": "present",
+          "expires": null
+        }
+      ]
+    },
+    {
+      "id": "content",
+      "path": "/en/market/products",
+      "role": "server-rendered content page from a gateway contract",
+      "buildEvidence": "next build 2026-09-29: /[locale]/market/products  4.79 kB  First Load JS 160 kB. The apiGet/DataStateCard shape is the majority of the app; this is one instance of it.",
+      "status": 200,
+      "retries": 0,
+      "cold": [
+        {
+          "pass": "cold",
+          "lcpMs": 1381.0901,
+          "cls": 0.00006660070630125791,
+          "tbtMs": 5,
+          "ttfbMs": 31,
+          "fcpMs": 431.63515,
+          "speedIndexMs": 431.63515,
+          "performanceScore": 0.96
+        },
+        {
+          "pass": "cold",
+          "lcpMs": 352.33169999999996,
+          "cls": 0.0013231860169862534,
+          "tbtMs": 0,
+          "ttfbMs": 21,
+          "fcpMs": 312.3317,
+          "speedIndexMs": 321.9897168334485,
+          "performanceScore": 1
+        },
+        {
+          "pass": "cold",
+          "lcpMs": 1372.4027999999998,
+          "cls": 0.00006660070630125791,
+          "tbtMs": 23,
+          "ttfbMs": 20,
+          "fcpMs": 368.6042,
+          "speedIndexMs": 368.6042,
+          "performanceScore": 0.96
+        },
+        {
+          "pass": "cold",
+          "lcpMs": 1336.8253,
+          "cls": 0.0008202054694568485,
+          "tbtMs": 1,
+          "ttfbMs": 20,
+          "fcpMs": 345.23794999999996,
+          "speedIndexMs": 345.23794999999996,
+          "performanceScore": 0.97
+        },
+        {
+          "pass": "cold",
+          "lcpMs": 1336.3761999999997,
+          "cls": 0.00006660070630125791,
+          "tbtMs": 0,
+          "ttfbMs": 26,
+          "fcpMs": 344.5643,
+          "speedIndexMs": 344.5643,
+          "performanceScore": 0.97
+        }
+      ],
+      "warm": [
+        {
+          "pass": "warm",
+          "lcpMs": 1386.0425,
+          "cls": 0.0008868061757581064,
+          "tbtMs": 4,
+          "ttfbMs": 33,
+          "fcpMs": 439.06375,
+          "speedIndexMs": 497.02090345310245,
+          "performanceScore": 0.96
+        },
+        {
+          "pass": "warm",
+          "lcpMs": 1339.3046,
+          "cls": 0.00006660070630125791,
+          "tbtMs": 8,
+          "ttfbMs": 21,
+          "fcpMs": 348.9569,
+          "speedIndexMs": 348.9569,
+          "performanceScore": 0.96
+        },
+        {
+          "pass": "warm",
+          "lcpMs": 1337.7446999999997,
+          "cls": 0.00006660070630125791,
+          "tbtMs": 1,
+          "ttfbMs": 36,
+          "fcpMs": 346.61705,
+          "speedIndexMs": 346.61705,
+          "performanceScore": 0.97
+        }
+      ],
+      "lcpBreakdown": {
+        "phases": [
+          {
+            "subpart": "timeToFirstByte",
+            "ms": 33.91600000190735
+          },
+          {
+            "subpart": "elementRenderDelay",
+            "ms": 500.50999999809267
+          }
+        ],
+        "element": "<p class=\"mt-3 max-w-2xl text-ink-soft\">",
+        "elementLabel": "Products the marketplace has registered, with the price and quantity the gatewa…",
+        "note": "phase durations come from the unthrottled trace; the headline LCP is the simulated value, so the phases do not sum to it"
+      },
+      "transfer": {
+        "totalBytes": 1149401,
+        "requestCount": 36,
+        "javascriptBytes": 234728,
+        "cssBytes": 47541,
+        "fontBytes": 39124,
+        "documentBytes": 38452,
+        "fontUrls": [
+          "http://localhost:3107/fonts/vazirmatn-latin-400-normal-BT_DHTc7.woff2",
+          "http://localhost:3107/fonts/vazirmatn-latin-700-normal-9BlbvDRV.woff2",
+          "http://localhost:3107/fonts/jetbrains-mono-latin-400-normal-V6pRDFza.woff2"
+        ],
+        "fontsWithLongCache": null
+      },
+      "fontHeaders": [
+        {
+          "url": "/fonts/vazirmatn-latin-400-normal-BT_DHTc7.woff2",
+          "bytes": "16068",
+          "cacheControl": "public, max-age=31536000, immutable",
+          "age": null,
+          "etag": "present",
+          "expires": null
+        },
+        {
+          "url": "/fonts/vazirmatn-latin-700-normal-9BlbvDRV.woff2",
+          "bytes": "16420",
+          "cacheControl": "public, max-age=31536000, immutable",
+          "age": null,
+          "etag": "present",
+          "expires": null
+        },
+        {
+          "url": "/fonts/jetbrains-mono-latin-400-normal-V6pRDFza.woff2",
+          "bytes": "21168",
+          "cacheControl": "public, max-age=31536000, immutable",
+          "age": null,
+          "etag": "present",
+          "expires": null
+        }
+      ]
+    },
+    {
+      "id": "nojs",
+      "path": "/en/learn/content/search",
+      "role": "the no-JavaScript form page",
+      "buildEvidence": "next build 2026-09-29: /[locale]/learn/content/search  4.79 kB  First Load JS 160 kB. Renders components/surface/NoJsSearch.tsx, a real <form method=\"get\" action=\"\"> — a form that works with JS disabled is a claim, so it is measured.",
+      "status": 200,
+      "retries": 0,
+      "cold": [
+        {
+          "pass": "cold",
+          "lcpMs": 1386.976,
+          "cls": 0.0003351450544318944,
+          "tbtMs": 8,
+          "ttfbMs": 33,
+          "fcpMs": 440.464,
+          "speedIndexMs": 440.464,
+          "performanceScore": 0.96
+        },
+        {
+          "pass": "cold",
+          "lcpMs": 1379.5933,
+          "cls": 0.001159234961912267,
+          "tbtMs": 5,
+          "ttfbMs": 30,
+          "fcpMs": 429.38995,
+          "speedIndexMs": 429.38995,
+          "performanceScore": 0.96
+        },
+        {
+          "pass": "cold",
+          "lcpMs": 1354.8455999999999,
+          "cls": 0.0003351450544318944,
+          "tbtMs": 3,
+          "ttfbMs": 28,
+          "fcpMs": 422.2684,
+          "speedIndexMs": 422.2684,
+          "performanceScore": 0.96
+        },
+        {
+          "pass": "cold",
+          "lcpMs": 1254.48,
+          "cls": 0.0003351450544318944,
+          "tbtMs": 7,
+          "ttfbMs": 22,
+          "fcpMs": 341.72,
+          "speedIndexMs": 341.72,
+          "performanceScore": 0.97
+        },
+        {
+          "pass": "cold",
+          "lcpMs": 1337.5933,
+          "cls": 0.0003351450544318944,
+          "tbtMs": 0,
+          "ttfbMs": 24,
+          "fcpMs": 346.38995,
+          "speedIndexMs": 346.38995,
+          "performanceScore": 0.97
+        }
+      ],
+      "warm": [
+        {
+          "pass": "warm",
+          "lcpMs": 348.99749999999995,
+          "cls": 0.0018865284891865864,
+          "tbtMs": 4,
+          "ttfbMs": 21,
+          "fcpMs": 308.9975,
+          "speedIndexMs": 308.9975,
+          "performanceScore": 1
+        },
+        {
+          "pass": "warm",
+          "lcpMs": 1357.3678,
+          "cls": 0.0003351450544318944,
+          "tbtMs": 11,
+          "ttfbMs": 31,
+          "fcpMs": 426.0517,
+          "speedIndexMs": 426.0517,
+          "performanceScore": 0.96
+        },
+        {
+          "pass": "warm",
+          "lcpMs": 1337.8156,
+          "cls": 0.00179255298171497,
+          "tbtMs": 9,
+          "ttfbMs": 28,
+          "fcpMs": 346.7234,
+          "speedIndexMs": 402.5611215059145,
+          "performanceScore": 0.97
+        }
+      ],
+      "lcpBreakdown": {
+        "phases": [
+          {
+            "subpart": "timeToFirstByte",
+            "ms": 42.570000001907346
+          },
+          {
+            "subpart": "elementRenderDelay",
+            "ms": 488.5719999980927
+          }
+        ],
+        "element": "<p class=\"mt-3 max-w-2xl text-ink-soft\">",
+        "elementLabel": "Search the published learning library. Results are whatever the index matches, …",
+        "note": "phase durations come from the unthrottled trace; the headline LCP is the simulated value, so the phases do not sum to it"
+      },
+      "transfer": {
+        "totalBytes": 1150525,
+        "requestCount": 36,
+        "javascriptBytes": 234728,
+        "cssBytes": 47541,
+        "fontBytes": 39124,
+        "documentBytes": 39098,
+        "fontUrls": [
+          "http://localhost:3107/fonts/vazirmatn-latin-400-normal-BT_DHTc7.woff2",
+          "http://localhost:3107/fonts/vazirmatn-latin-700-normal-9BlbvDRV.woff2",
+          "http://localhost:3107/fonts/jetbrains-mono-latin-400-normal-V6pRDFza.woff2"
+        ],
+        "fontsWithLongCache": null
+      },
+      "fontHeaders": [
+        {
+          "url": "/fonts/vazirmatn-latin-400-normal-BT_DHTc7.woff2",
+          "bytes": "16068",
+          "cacheControl": "public, max-age=31536000, immutable",
+          "age": null,
+          "etag": "present",
+          "expires": null
+        },
+        {
+          "url": "/fonts/vazirmatn-latin-700-normal-9BlbvDRV.woff2",
+          "bytes": "16420",
+          "cacheControl": "public, max-age=31536000, immutable",
+          "age": null,
+          "etag": "present",
+          "expires": null
+        },
+        {
+          "url": "/fonts/jetbrains-mono-latin-400-normal-V6pRDFza.woff2",
+          "bytes": "21168",
+          "cacheControl": "public, max-age=31536000, immutable",
+          "age": null,
+          "etag": "present",
+          "expires": null
+        }
+      ]
+    },
+    {
+      "id": "island",
+      "path": "/en/market/bazaars/demo/map",
+      "role": "the MapLibre island — §3.3 says the bytes are lazy, so the initial weight is the claim under test",
+      "buildEvidence": "next build 2026-09-29: /[locale]/market/bazaars/[id]/map  2.78 kB  First Load JS 119 kB, 41 kB BELOW the 160 kB that ordinary content pages cost. The map is the route where §3.3 claims the bytes are lazy-loaded.",
+      "status": 200,
+      "retries": 1,
+      "cold": [
+        {
+          "pass": "cold",
+          "lcpMs": 571.67345,
+          "cls": 0.000007579258237749176,
+          "tbtMs": 30.5,
+          "ttfbMs": 25,
+          "fcpMs": 411.67345,
+          "speedIndexMs": 562.3977344559446,
+          "performanceScore": 1
+        },
+        {
+          "pass": "cold",
+          "lcpMs": 648.1874,
+          "cls": 0.000007579258237749176,
+          "tbtMs": 17.999999999999886,
+          "ttfbMs": 33,
+          "fcpMs": 418.28110000000004,
+          "speedIndexMs": 656.1306353346165,
+          "performanceScore": 1
+        },
+        {
+          "pass": "cold",
+          "lcpMs": 628.6738999999999,
+          "cls": 0.000007579258237749176,
+          "tbtMs": 5.5,
+          "ttfbMs": 26,
+          "fcpMs": 418.82034999999996,
+          "speedIndexMs": 639.456287993032,
+          "performanceScore": 1
+        },
+        {
+          "pass": "cold",
+          "lcpMs": 654.5284,
+          "cls": 0.000007579258237749176,
+          "tbtMs": 28.5,
+          "ttfbMs": 29,
+          "fcpMs": 419.7116,
+          "speedIndexMs": 668.3666512817156,
+          "performanceScore": 1
+        },
+        {
+          "pass": "cold",
+          "lcpMs": 640.2447,
+          "cls": 0.000007579258237749176,
+          "tbtMs": 7.5,
+          "ttfbMs": 23,
+          "fcpMs": 422.86705,
+          "speedIndexMs": 577.7920688845674,
+          "performanceScore": 1
+        }
+      ],
+      "warm": [
+        {
+          "pass": "warm",
+          "lcpMs": 704.2311999999998,
+          "cls": 0.000007579258237749176,
+          "tbtMs": 9,
+          "ttfbMs": 21,
+          "fcpMs": 418.17339999999996,
+          "speedIndexMs": 640.4835362947177,
+          "performanceScore": 1
+        },
+        {
+          "pass": "warm",
+          "lcpMs": 634.90425,
+          "cls": 0.000007579258237749176,
+          "tbtMs": 22.5,
+          "ttfbMs": 30,
+          "fcpMs": 413.90425,
+          "speedIndexMs": 589.6287403267702,
+          "performanceScore": 1
+        },
+        {
+          "pass": "warm",
+          "lcpMs": 634.67505,
+          "cls": 0.000007579258237749176,
+          "tbtMs": 17,
+          "ttfbMs": 29,
+          "fcpMs": 419.6328500000001,
+          "speedIndexMs": 595.7238744693004,
+          "performanceScore": 1
+        }
+      ],
+      "lcpBreakdown": {
+        "phases": [
+          {
+            "subpart": "timeToFirstByte",
+            "ms": 26.777
+          },
+          {
+            "subpart": "elementRenderDelay",
+            "ms": 149.006
+          }
+        ],
+        "element": "<div class=\"flex items-center justify-center h-full bg-surface text-ink-soft text-sm\">",
+        "elementLabel": "Loading map…\n(0 بازار)",
+        "note": "phase durations come from the unthrottled trace; the headline LCP is the simulated value, so the phases do not sum to it"
+      },
+      "transfer": {
+        "totalBytes": 1425747,
+        "requestCount": 32,
+        "javascriptBytes": 488600,
+        "cssBytes": 47541,
+        "fontBytes": 78520,
+        "documentBytes": 34554,
+        "fontUrls": [
+          "http://localhost:3107/fonts/vazirmatn-latin-400-normal-BT_DHTc7.woff2",
+          "http://localhost:3107/fonts/vazirmatn-latin-700-normal-9BlbvDRV.woff2",
+          "http://localhost:3107/fonts/jetbrains-mono-latin-400-normal-V6pRDFza.woff2",
+          "http://localhost:3107/fonts/vazirmatn-arabic-400-normal-DMZFCm7K.woff2"
+        ],
+        "fontsWithLongCache": null
+      },
+      "fontHeaders": [
+        {
+          "url": "/fonts/vazirmatn-latin-400-normal-BT_DHTc7.woff2",
+          "bytes": "16068",
+          "cacheControl": "public, max-age=31536000, immutable",
+          "age": null,
+          "etag": "present",
+          "expires": null
+        },
+        {
+          "url": "/fonts/vazirmatn-latin-700-normal-9BlbvDRV.woff2",
+          "bytes": "16420",
+          "cacheControl": "public, max-age=31536000, immutable",
+          "age": null,
+          "etag": "present",
+          "expires": null
+        },
+        {
+          "url": "/fonts/jetbrains-mono-latin-400-normal-V6pRDFza.woff2",
+          "bytes": "21168",
+          "cacheControl": "public, max-age=31536000, immutable",
+          "age": null,
+          "etag": "present",
+          "expires": null
+        },
+        {
+          "url": "/fonts/vazirmatn-arabic-400-normal-DMZFCm7K.woff2",
+          "bytes": "21088",
+          "cacheControl": "public, max-age=31536000, immutable",
+          "age": null,
+          "etag": "present",
+          "expires": null
+        }
+      ]
+    },
+    {
+      "id": "offline",
+      "path": "/en/offline",
+      "role": "the offline route — a state most likely to be neglected",
+      "buildEvidence": "next build 2026-09-29: /[locale]/offline  298 B  First Load JS 120 kB.",
+      "status": 200,
+      "retries": 2,
+      "cold": [
+        {
+          "pass": "cold",
+          "lcpMs": 576.75665,
+          "cls": 0.00004329155174678224,
+          "tbtMs": 0,
+          "ttfbMs": 28,
+          "fcpMs": 416.75665000000004,
+          "speedIndexMs": 416.75665000000004,
+          "performanceScore": 1
+        },
+        {
+          "pass": "cold",
+          "lcpMs": 591.6839,
+          "cls": 0.00004329155174678224,
+          "tbtMs": 0,
+          "ttfbMs": 19,
+          "fcpMs": 431.6839,
+          "speedIndexMs": 431.6839,
+          "performanceScore": 1
+        },
+        {
+          "pass": "cold",
+          "lcpMs": 481.8143,
+          "cls": 0.00004329155174678224,
+          "tbtMs": 1.5,
+          "ttfbMs": 29,
+          "fcpMs": 308.8143,
+          "speedIndexMs": 368.334922749872,
+          "performanceScore": 1
+        },
+        {
+          "pass": "cold",
+          "lcpMs": 583.0367,
+          "cls": 0.00004329155174678224,
+          "tbtMs": 0.5,
+          "ttfbMs": 26,
+          "fcpMs": 423.0367,
+          "speedIndexMs": 423.0367,
+          "performanceScore": 1
+        },
+        {
+          "pass": "cold",
+          "lcpMs": 576.44885,
+          "cls": 0.00004329155174678224,
+          "tbtMs": 2.5,
+          "ttfbMs": 25,
+          "fcpMs": 416.44885,
+          "speedIndexMs": 416.44885,
+          "performanceScore": 1
+        }
+      ],
+      "warm": [
+        {
+          "pass": "warm",
+          "lcpMs": 604.8264,
+          "cls": 0.00004329155174678224,
+          "tbtMs": 3,
+          "ttfbMs": 21,
+          "fcpMs": 417.7396,
+          "speedIndexMs": 417.7396,
+          "performanceScore": 1
+        },
+        {
+          "pass": "warm",
+          "lcpMs": 537.0922,
+          "cls": 0.00004329155174678224,
+          "tbtMs": 4.5,
+          "ttfbMs": 16,
+          "fcpMs": 417.0922,
+          "speedIndexMs": 417.0922,
+          "performanceScore": 1
+        },
+        {
+          "pass": "warm",
+          "lcpMs": 614.9276,
+          "cls": 0.00004329155174678224,
+          "tbtMs": 4.5,
+          "ttfbMs": 25,
+          "fcpMs": 429.8914,
+          "speedIndexMs": 429.8914,
+          "performanceScore": 1
+        }
+      ],
+      "lcpBreakdown": {
+        "phases": [
+          {
+            "subpart": "timeToFirstByte",
+            "ms": 30.473
+          },
+          {
+            "subpart": "elementRenderDelay",
+            "ms": 139.387
+          }
+        ],
+        "element": "<p class=\"text-ink-soft\">",
+        "elementLabel": "Cached data is available; retry when you want to refresh.",
+        "note": "phase durations come from the unthrottled trace; the headline LCP is the simulated value, so the phases do not sum to it"
+      },
+      "transfer": {
+        "totalBytes": 1101378,
+        "requestCount": 26,
+        "javascriptBytes": 197936,
+        "cssBytes": 47541,
+        "fontBytes": 56488,
+        "documentBytes": 33644,
+        "fontUrls": [
+          "http://localhost:3107/fonts/vazirmatn-latin-400-normal-BT_DHTc7.woff2",
+          "http://localhost:3107/fonts/jetbrains-mono-latin-400-normal-V6pRDFza.woff2",
+          "http://localhost:3107/fonts/vazirmatn-latin-700-normal-9BlbvDRV.woff2"
+        ],
+        "fontsWithLongCache": null
+      },
+      "fontHeaders": [
+        {
+          "url": "/fonts/vazirmatn-latin-400-normal-BT_DHTc7.woff2",
+          "bytes": "16068",
+          "cacheControl": "public, max-age=31536000, immutable",
+          "age": null,
+          "etag": "present",
+          "expires": null
+        },
+        {
+          "url": "/fonts/jetbrains-mono-latin-400-normal-V6pRDFza.woff2",
+          "bytes": "21168",
+          "cacheControl": "public, max-age=31536000, immutable",
+          "age": null,
+          "etag": "present",
+          "expires": null
+        },
+        {
+          "url": "/fonts/vazirmatn-latin-700-normal-9BlbvDRV.woff2",
+          "bytes": "16420",
+          "cacheControl": "public, max-age=31536000, immutable",
+          "age": null,
+          "etag": "present",
+          "expires": null
+        }
+      ]
+    },
+    {
+      "id": "notfound",
+      "path": "/en/no-such-page-cwv-probe",
+      "role": "an unknown URL — the 404 state",
+      "buildEvidence": "next build 2026-09-29: /[locale]/[...slug]  724 B  First Load JS 120 kB, and the root /_not-found at 105 kB. Measured to serve HTTP 200 with robots index,follow — see the report.",
+      "status": 200,
+      "retries": 0,
+      "cold": [
+        {
+          "pass": "cold",
+          "lcpMs": 1257.6203,
+          "cls": 0.00001211277471324753,
+          "tbtMs": 31,
+          "ttfbMs": 24,
+          "fcpMs": 426.43045,
+          "speedIndexMs": 426.43045,
+          "performanceScore": 0.97
+        },
+        {
+          "pass": "cold",
+          "lcpMs": 1252.4634,
+          "cls": 0.00001211277471324753,
+          "tbtMs": 11.000000000000114,
+          "ttfbMs": 18,
+          "fcpMs": 338.69509999999997,
+          "speedIndexMs": 338.69509999999997,
+          "performanceScore": 0.97
+        },
+        {
+          "pass": "cold",
+          "lcpMs": 1252.6997999999999,
+          "cls": 0.00001211277471324753,
+          "tbtMs": 25.000000000000114,
+          "ttfbMs": 18,
+          "fcpMs": 339.0497,
+          "speedIndexMs": 339.0497,
+          "performanceScore": 0.97
+        },
+        {
+          "pass": "cold",
+          "lcpMs": 1260.5289,
+          "cls": 0.00001211277471324753,
+          "tbtMs": 35,
+          "ttfbMs": 28,
+          "fcpMs": 350.79335000000003,
+          "speedIndexMs": 350.79335000000003,
+          "performanceScore": 0.97
+        },
+        {
+          "pass": "cold",
+          "lcpMs": 2461.1053,
+          "cls": 0.00001211277471324753,
+          "tbtMs": 3,
+          "ttfbMs": 34,
+          "fcpMs": 1151.6579499999998,
+          "speedIndexMs": 1151.6579499999998,
+          "performanceScore": 0.84
+        }
+      ],
+      "warm": [
+        {
+          "pass": "warm",
+          "lcpMs": 1255.3235,
+          "cls": 0.00001211277471324753,
+          "tbtMs": 23,
+          "ttfbMs": 23,
+          "fcpMs": 342.98525,
+          "speedIndexMs": 342.98525,
+          "performanceScore": 0.97
+        },
+        {
+          "pass": "warm",
+          "lcpMs": 1277.8283999999999,
+          "cls": 0.00001211277471324753,
+          "tbtMs": 48.99999999999977,
+          "ttfbMs": 32,
+          "fcpMs": 376.7426,
+          "speedIndexMs": 376.7426,
+          "performanceScore": 0.97
+        },
+        {
+          "pass": "warm",
+          "lcpMs": 1259.3991,
+          "cls": 0.00001211277471324753,
+          "tbtMs": 21,
+          "ttfbMs": 22,
+          "fcpMs": 349.09864999999996,
+          "speedIndexMs": 349.09864999999996,
+          "performanceScore": 0.97
+        }
+      ],
+      "lcpBreakdown": {
+        "phases": [
+          {
+            "subpart": "timeToFirstByte",
+            "ms": 26.98
+          },
+          {
+            "subpart": "elementRenderDelay",
+            "ms": 384.564
+          }
+        ],
+        "element": "<p class=\"text-sm text-ink-soft\">",
+        "elementLabel": "The address you followed does not exist in this locale. The language switcher a…",
+        "note": "phase durations come from the unthrottled trace; the headline LCP is the simulated value, so the phases do not sum to it"
+      },
+      "transfer": {
+        "totalBytes": 1077751,
+        "requestCount": 24,
+        "javascriptBytes": 196527,
+        "cssBytes": 47541,
+        "fontBytes": 34376,
+        "documentBytes": 33621,
+        "fontUrls": [
+          "http://localhost:3107/fonts/vazirmatn-latin-400-normal-BT_DHTc7.woff2",
+          "http://localhost:3107/fonts/vazirmatn-latin-700-normal-9BlbvDRV.woff2"
+        ],
+        "fontsWithLongCache": null
+      },
+      "fontHeaders": [
+        {
+          "url": "/fonts/vazirmatn-latin-400-normal-BT_DHTc7.woff2",
+          "bytes": "16068",
+          "cacheControl": "public, max-age=31536000, immutable",
+          "age": null,
+          "etag": "present",
+          "expires": null
+        },
+        {
+          "url": "/fonts/vazirmatn-latin-700-normal-9BlbvDRV.woff2",
+          "bytes": "16420",
+          "cacheControl": "public, max-age=31536000, immutable",
+          "age": null,
+          "etag": "present",
+          "expires": null
+        }
+      ]
+    }
+  ]
+}

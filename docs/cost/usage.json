@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-29T14:55:46.756014+00:00",
+  "month_to_date_usd": null,
+  "month_to_date_note": "null means unknown, not zero. The budget gate treats null as 'cannot evaluate' and says so out loud.",
+  "measured_count": 0,
+  "unavailable_count": 3,
+  "readings": [
+    {
+      "source": "aws",
+      "key": "month_to_date",
+      "value": null,
+      "unit": "usd",
+      "basis": "unavailable",
+      "detail": "AWS Cost Explorer API needs credentials and a billing-enabled account. Missing environment: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION. Method once available: boto3 cost-explorer GetCostAndUsage.",
+      "tags": {
+        "needs_credentials": "AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_REGION"
+      }
+    },
+    {
+      "source": "github",
+      "key": "month_to_date",
+      "value": null,
+      "unit": "usd",
+      "basis": "unavailable",
+      "detail": "Actions minutes are only visible to an authenticated owner. Missing environment: GITHUB_TOKEN. Method once available: GitHub API /users/{owner}/settings/billing/actions.",
+      "tags": {
+        "needs_credentials": "GITHUB_TOKEN"
+      }
+    },
+    {
+      "source": "vercel",
+      "key": "month_to_date",
+      "value": null,
+      "unit": "usd",
+      "basis": "unavailable",
+      "detail": "Vercel usage requires an authenticated team account. Missing environment: VERCEL_TOKEN. Method once available: Vercel API /v2/usage.",
+      "tags": {
+        "needs_credentials": "VERCEL_TOKEN"
+      }
+    }
+  ]
+}
