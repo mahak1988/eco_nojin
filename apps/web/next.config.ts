@@ -9,6 +9,30 @@ const withSerwist = withSerwistInit({
   disable: process.env.NODE_ENV !== 'production',
   register: true,
   reloadOnOnline: true,
+  /**
+   * The 122 woff2 files in `public/fonts/` must not be in the precache
+   * manifest.
+   *
+   * `@serwist/next` defaults to a glob of every file under public, which puts
+   * each one into the install-time manifest. Replaying that default
+   * against this repository gives 138 entries and 11,902,467 bytes — of which
+   * the 122 font files are 5,292,880 bytes. Every reader in every locale would
+   * download 5.29 MB of fonts at install, and 4.46 MB of that is the CJK
+   * `unicode-range` slices, which exist precisely so a reader downloads only
+   * the slices their characters touch. Ten of the fourteen locales need none of
+   * them at all.
+   *
+   * The fonts are served at runtime instead, by the `fonts-v1` `CacheFirst`
+   * route in `src/app/sw.ts` with a 112-entry LRU budget sized against the
+   * number of faces the stylesheets can actually reach. A reader who never opens
+   * a `zh` page never fetches a single CJK slice, which is the whole point of
+   * slicing them.
+   *
+   * This was found by measurement, not by reading the docs: the same
+   * `globPublicPatterns` default was reported as "excludes woff2" in a review of
+   * this file, and replaying the actual call showed otherwise.
+   */
+  globPublicPatterns: ['**/*', '!**/*.woff2'],
 });
 
 const nextConfig: NextConfig = {
