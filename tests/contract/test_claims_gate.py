@@ -581,16 +581,24 @@ def test_derived_claims_actually_reproduce() -> None:
                 cwd=REPO_ROOT,
                 check=False,
             )
-            if result.returncode != 0:
-                problems.append(f"{path.name}:{claim_id} command failed: {script}")
+            # A non-zero exit is not automatically a broken claim.
+            # `cost_guard.py budget` exits 2 to mean "the bill is unknown",
+            # which is a legitimate state it still prints. Only treat it as a
+            # failure when the command reported nothing to check against.
+            if result.returncode != 0 and not value:
+                problems.append(
+                    f"{path.name}:{claim_id} command failed: {script} "
+                    f"(exit {result.returncode})"
+                )
                 continue
             expected = value.replace(",", "")
             # Command output keeps thousands separators; the claim value may
             # or may not. Compare against both renderings.
-            haystack = _ascii_fold(result.stdout)
+            haystack = _ascii_fold(result.stdout) + _ascii_fold(result.stderr)
             if expected and expected not in haystack and expected not in haystack.replace(",", ""):
                 problems.append(
-                    f"{path.name}:{claim_id} states {value!r}, which the command no longer produces"
+                    f"{path.name}:{claim_id} states {value!r}, which the command "
+                    f"no longer produces"
                 )
     assert not problems, "stale derived claims:\n  " + "\n  ".join(problems)
 

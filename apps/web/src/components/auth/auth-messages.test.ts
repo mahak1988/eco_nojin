@@ -99,17 +99,24 @@ describe('auth message-key contract', () => {
     }
   });
 
-  it('records ar and ur as still serving English auth copy', () => {
-    // A deliberate assertion of a known gap. When the Arabic and Urdu auth
-    // blocks are translated, this test must be replaced by the real expectation,
-    // not deleted — otherwise the gap becomes invisible again.
+  it('records ar and ur as no longer serving English auth copy', () => {
+    // This test used to assert the opposite: that every one of the `ar` and `ur`
+    // auth strings was still byte-identical to English, as a deliberate record of
+    // a known gap. Its own comment said what to do when the gap closed — replace
+    // the assertion with the real expectation, do not delete it, or the gap becomes
+    // invisible again. The gap closed: the `auth.*` namespace was translated in
+    // all fourteen catalogues, and a byte-identical copy of English is now a
+    // regression rather than the expected state.
+    //
+    // The assertion stays a count rather than a boolean so a partial regression
+    // names how many keys drifted instead of only reporting that something did.
     const english = loadCatalogue('en');
     for (const locale of ['ar', 'ur'] as const) {
       const catalogue = loadCatalogue(locale);
       const identical = CONTRACT_KEYS.filter(
         (key) => resolveKey(catalogue, key) === resolveKey(english, key),
       );
-      expect(identical.length, `${locale} auth copy status changed`).toBe(CONTRACT_KEYS.length);
+      expect(identical.length, `${locale} auth copy is still English for`).toBe(0);
     }
   });
 

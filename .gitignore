@@ -255,3 +255,8 @@ apps/web/messages/*.bak
 apps/web/storybook-static/
 data/pytest/
 reports/*_final.xml
+
+# SQLite sidecar files. -shm and -wal exist only while a writer holds
+# the database open; committing one captures a torn page.
+data/*.db-shm
+data/*.db-wal

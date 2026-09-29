@@ -101,9 +101,15 @@ jobs:
           python -m pip install pybind11==2.13.6 scikit-build-core==0.10.0
           python -m pip install pytest pytest-asyncio hypothesis
 
-      - name: Configure CMake
+      - name: Configure CMake from scratch
         working-directory: engine/cpp_core
         run: |
+          # Delete the whole build tree first. An incremental CMake build happily
+          # links a stale object file, and the local runs that motivated this step
+          # did exactly that: a test binary was built from a three-day-old
+          # climate.obj and reported the OLD expected value as a pass. A clean
+          # tree is the only way "ctest passed" means "the current source passed".
+          rm -rf build
           cmake -B build -S . \
             -DCMAKE_BUILD_TYPE=${{ env.CMAKE_BUILD_TYPE }} \
             -DHYDROMA_BUILD_TESTS=${{ env.HYDROMA_BUILD_TESTS }} \
@@ -122,7 +128,23 @@ jobs:
         if: ${{ !inputs.skip_tests || false }}
         working-directory: engine/cpp_core/build
         run: |
+          # Ten of the thirteen test binaries end in `return 0` unconditionally,
+          # so ctest reports PASS for a red suite. Count the [OK]/[FAIL] markers
+          # ourselves and fail on any [FAIL], or on a missing marker file, which
+          # would otherwise read as zero checks and a clean run.
           ctest --output-on-failure --parallel 4
+          fails=$(grep -rho '\[ *FAIL *\]' tests/ 2>/dev/null | wc -l)
+          oks=$(grep -rho '\[ *ok *\]' tests/ 2>/dev/null | wc -l)
+          echo "marker check: $oks ok, $fails fail"
+          if [ "$fails" -ne 0 ]; then
+            echo "::error::native C++ suites reported $fails failure(s) that ctest passed"
+            grep -rn '\[ *FAIL *\]' tests/ || true
+            exit 1
+          fi
+          if [ "$oks" -lt 200 ]; then
+            echo "::error::only $oks checks found; a marker count this low means the binaries were not rebuilt"
+            exit 1
+          fi
         shell: bash
 
       - name: Verify Python module loads
