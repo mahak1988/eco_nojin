@@ -43,6 +43,9 @@ class MotorResult:
 @dataclass
 class UnifiedLandAnalysis:
     """Complete unified analysis from all motors"""
+    data_source: str = 'modelled'
+    model: str = 'motors_hub facade'
+    computed: bool = True
 
     soil_analysis: MotorResult | None = None
     climate_analysis: MotorResult | None = None

@@ -44,15 +44,15 @@ class ValidationCase:
     """One case from a YAML file, with its file-level metadata."""
 
     model: str
-    name: str
-    description: str
-    inputs: dict[str, Any]
-    expected: dict[str, Any]
-    tolerances: dict[str, Any]
-    reference: str
-    language: str
-    status: str
-    source: Path
+    name: str | None = None
+    description: str | None = None
+    inputs: dict[str, Any] | None = None
+    expected: dict[str, Any] | None = None
+    tolerances: dict[str, Any] | None = None
+    reference: str | None = None
+    language: str | None = None
+    status: str | None = None
+    source: Path | None = None
     raw: dict[str, Any] = field(default_factory=dict)
 
 

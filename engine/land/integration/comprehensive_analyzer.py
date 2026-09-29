@@ -35,6 +35,9 @@ class CropType(StrEnum):
 @dataclass
 class SoilSummary:
     """Simplified soil profile summary"""
+    data_source: str = 'modelled'
+    model: str = 'soil integrator summary'
+    computed: bool = True
 
     ph: float = 6.5
     clay_pct: float = 25.0
@@ -50,6 +53,9 @@ class SoilSummary:
 @dataclass
 class ClimateSummary:
     """Simplified climate summary"""
+    data_source: str = 'modelled'
+    model: str = 'climate integrator summary'
+    computed: bool = True
 
     mean_temp_c: float = 20.0
     annual_precip_mm: float = 600.0
@@ -65,6 +71,9 @@ class TerrainSummary:
     slope_pct: float = 3.0
     elevation_m: float = 1500.0
     capability_class: str = "II"
+    data_source: str = 'modelled'
+    model: str = 'terrain analysis summary'
+    computed: bool = True
     erosion_risk: str = "low"
 
 
@@ -83,12 +92,15 @@ class CropSuitability:
 class ComprehensiveLandAnalysis:
     """Complete comprehensive land analysis result"""
 
-    suitability_score: float  # 0-100
+    suitability_score: float | None = None
     land_use_recommendations: list[LandUseCategory] = field(default_factory=list)
     crop_suitabilities: list[CropSuitability] = field(default_factory=list)
     limiting_factors: list[str] = field(default_factory=list)
     improvement_recommendations: list[str] = field(default_factory=list)
     confidence: float = 0.8
+    data_source: str = 'modelled'
+    model: str = 'comprehensive land analyzer'
+    computed: bool = True
     metadata: dict[str, Any] = field(default_factory=dict)
 
 

@@ -82,7 +82,7 @@ class SoilLayer(BaseModel):
     sand_pct: float = Field(..., ge=0, le=100)
     silt_pct: float = Field(..., ge=0, le=100)
     clay_pct: float = Field(..., ge=0, le=100)
-    texture: SoilTexture
+    texture: SoilTexture | None = None
 
     # Chemistry
     ph: float | None = Field(None, ge=0, le=14)

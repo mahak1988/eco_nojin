@@ -3,10 +3,7 @@
     "collect": {
       "startServerCommand": "pnpm -C apps/web exec next start -p 3001",
       "startServerReadyPattern": "Ready",
-      "url": [
-        "http://localhost:3001/en/home",
-        "http://localhost:3001/fa/home"
-      ],
+      "url": ["http://localhost:3001/en/home", "http://localhost:3001/fa/home"],
       "numberOfRuns": 3
     },
     "assert": {

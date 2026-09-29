@@ -41,6 +41,9 @@ class StressLevel(Enum):
 @dataclass
 class StressAssessment:
     """Comprehensive plant stress assessment from multiple modalities."""
+    data_source: str = 'modelled'
+    model: str = 'plant_neuro stress engine'
+    computed: bool = True
 
     electrical_stress_type: str | None = None
     electrical_confidence: float = 0.0

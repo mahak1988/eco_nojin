@@ -24,8 +24,11 @@ from sklearn.preprocessing import StandardScaler
 @dataclass
 class VOCProfile:
     """A normalized VOC profile from a single sample."""
+    data_source: str = 'modelled'
+    model: str = 'VOC concentration profile'
+    computed: bool = True
 
-    compounds: dict[str, float]  # compound_name -> concentration (ppb)
+    compounds: dict[str, float] | None = None
     timestamp: str | None = None
     plant_id: str | None = None
     stress_level: float = 0.0  # 0-1 normalized stress index
@@ -35,11 +38,14 @@ class VOCProfile:
 @dataclass
 class StressSignature:
     """Identified stress signature from VOC analysis."""
+    data_source: str = 'modelled'
+    model: str = 'VOC stress signature'
+    computed: bool = True
 
-    stress_type: str  # 'herbivory', 'pathogen', 'drought', 'heat', 'ozone', 'healthy'
-    confidence: float  # 0-1
-    key_compounds: list[str]  # diagnostic VOCs
-    severity_score: float  # 0-1
+    stress_type: str | None = None
+    confidence: float | None = None
+    key_compounds: list[str] | None = None
+    severity_score: float | None = None
     pca_components: np.ndarray | None = None
 
 

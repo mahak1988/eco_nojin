@@ -46,12 +46,47 @@ EXEMPT = {
     "CombinatorialResult": "aggregates StressTestResult items",
     "MODFLOW6Outputs": "aggregates the per-cell and budget records below it",
     "SWATPlusOutputs": "aggregates the per-subbasin records below it",
+    # Test classes. The sweep selects on shape, and a pytest class is a shape it
+    # cannot tell from a result type without looking at the file it lives in.
+    "TestFullAnalysisIntegration": "pytest class, not a result",
+    "TestAridityIndex": "pytest class, not a result",
+    "TestClimateProfileBuilding": "pytest class, not a result",
+    "TestSoilProfileBuilding": "pytest class, not a result",
+    "TestUnifiedWaterAnalysis": "pytest class, not a result",
+    "TestDrainageAnalysis": "pytest class, not a result",
+    "TestCapabilityAssessment": "pytest class, not a result",
+    "TestTerrainAnalysisModel": "pytest class, not a result",
+    "TestTerrainAnalysis": "pytest class, not a result",
+    "TestLandProfile": "pytest class, not a result",
+    # Not result types.
+    "CarbonProjectType": "enum of project types, carries no numbers",
+    "_ScopedProjectStore": "a MutableMapping wrapper, not a result",
+    "ProjectMapper": "GeoJSON mapper, not a result",
+    "SoilProfileCreate": "ORM row for a write path, not computed output",
+    "SoilProfileRead": "ORM row for a read path, not computed output",
+    "SoilProfileBase": "ORM mixin of columns, not a result",
+    "SoilProfile": "ORM row in the legacy database package, not engine output",
 }
 
 
-def _result_classes() -> list[tuple[str, str, ast.ClassDef]]:
-    """Find every class under engine/ that looks like a result type."""
-    pat = re.compile(r"^class\s+(\w*(?:Output|Result)\w*)\s*\(", re.M)
+def _result_classes() -> list[tuple[str, str, str]]:
+    """Find every class under engine/ that carries numbers to a caller.
+
+    The selection is by what the class IS -- it declares a provenance field, or
+    a dataclass field whose name says it is a result -- not by what it is
+    CALLED. The earlier version keyed on the name containing Output or Result,
+    which hid nine provenance-carrying classes including FieldAnalysis, the
+    class whose field loss went undetected. A sweep that can be evaded by
+    choosing a different name is not a sweep.
+    """
+    name_hint = re.compile(
+        r"^class\s+(\w*(?:Output|Result|Analysis|Profile|Tile|Summary|Report"
+        r"|Solution|Assessment|Signature|Features|Valuation|Index|Project)"
+        r"\w*)\s*\(",
+        re.M,
+    )
+    has_field = re.compile(r"^\s{2,}data_source\s*:", re.M)
+
     found = []
     for path in sorted(ENGINE.rglob("*.py")):
         if "__pycache__" in str(path) or "build" in path.parts:
@@ -61,11 +96,15 @@ def _result_classes() -> list[tuple[str, str, ast.ClassDef]]:
         for node in ast.walk(tree):
             if not isinstance(node, ast.ClassDef):
                 continue
-            if not pat.match(f"class {node.name}("):
-                continue
             body = ast.get_source_segment(src, node) or ""
+            # Selected two ways, so neither can be evaded: a class that already
+            # carries provenance, or one whose name says it is a result. The
+            # second catches the gaps the first cannot see -- a class that
+            # should have provenance and does not have it yet.
+            if not (name_hint.match(f"class {node.name}(") or has_field.search(body)):
+                continue
             found.append((path.relative_to(ENGINE).as_posix(), node.name, body))
-    return [(p, n, b) for p, n, b in found]
+    return found
 
 
 def _has_provenance_field(body: str) -> bool:

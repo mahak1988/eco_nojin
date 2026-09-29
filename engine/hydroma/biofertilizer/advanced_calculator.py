@@ -48,19 +48,22 @@ class FormulationRequest:
 class FormulationSolution:
     """Optimized formulation solution."""
 
-    soil_code: str
-    area_ha: float
-    materials: dict[str, float]  # material_code -> kg/ha
-    total_kg_per_ha: float
-    total_cost_usd_per_ha: float
-    expected_cn_ratio: float
-    expected_n_kg_ha: float
-    expected_p_kg_ha: float
-    expected_k_kg_ha: float
-    expected_om_increase_pct: float
-    water_saving_pct: float
-    is_feasible: bool
+    soil_code: str | None = None
+    area_ha: float | None = None
+    materials: dict[str, float] | None = None
+    total_kg_per_ha: float | None = None
+    total_cost_usd_per_ha: float | None = None
+    expected_cn_ratio: float | None = None
+    expected_n_kg_ha: float | None = None
+    expected_p_kg_ha: float | None = None
+    expected_k_kg_ha: float | None = None
+    expected_om_increase_pct: float | None = None
+    water_saving_pct: float | None = None
+    is_feasible: bool | None = None
     warnings: list[str] = field(default_factory=list)
+    data_source: str = 'modelled'
+    model: str = 'formulation optimizer (greedy)'
+    computed: bool = True
     notes: list[str] = field(default_factory=list)
 
 

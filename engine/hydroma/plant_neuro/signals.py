@@ -20,9 +20,12 @@ from scipy import signal as scipy_signal
 @dataclass
 class SignalFeatures:
     """Extracted features from an electrical signal recording."""
+    data_source: str = 'modelled'
+    model: str = 'electrical signal features (DSP)'
+    computed: bool = True
 
-    sampling_rate: float
-    duration_s: float
+    sampling_rate: float | None = None
+    duration_s: float | None = None
     baseline_mv: float = 0.0
     peak_mv: float = 0.0
     peak_latency_ms: float = 0.0

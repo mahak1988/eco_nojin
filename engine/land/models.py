@@ -153,11 +153,13 @@ class TerrainAnalysis(BaseModel):
             }
         }
     )
-    profile_id: str
+    data_source: str = 'modelled'
+    model: str = 'terrain_analysis (Horn 1981)'
+    profile_id: str | None = None
     terrain_type: TerrainType | None = None
-    elevation_min: float
-    elevation_max: float
-    elevation_mean: float
+    elevation_min: float | None = None
+    elevation_max: float | None = None
+    elevation_mean: float | None = None
     elevation_range: float | None = None
     slope_mean: float = Field(..., ge=0, le=90)
     slope_max: float = Field(..., ge=0, le=90)
@@ -190,7 +192,9 @@ class DrainageAnalysis(BaseModel):
             }
         }
     )
-    profile_id: str
+    data_source: str = 'modelled'
+    model: str = 'drainage_analysis (Strahler)'
+    profile_id: str | None = None
     drainage_pattern: DrainagePattern | None = None
     drainage_density: float | None = Field(None, ge=0)
     density_class: DrainageDensityClass | None = None
@@ -215,8 +219,10 @@ class CapabilityAssessment(BaseModel):
             }
         }
     )
-    profile_id: str
-    capability_class: LandCapabilityClass
+    data_source: str = 'simulated'
+    model: str = 'USDA land capability (rules, unvalidated)'
+    profile_id: str | None = None
+    capability_class: LandCapabilityClass | None = None
     subclass: str | None = None
     limiting_factors: list[str] = Field(default_factory=list)
     suitable_uses: list[str] = Field(default_factory=list)
@@ -240,8 +246,10 @@ class LandProfile(BaseModel):
             }
         }
     )
-    id: str
-    name: str
+    data_source: str = 'simulated'
+    model: str = 'default land profile (built-in constants)'
+    id: str | None = None
+    name: str | None = None
     description: str | None = None
     country: str | None = None
     region: str | None = None

@@ -7,7 +7,9 @@ const page = await browser.newPage();
 
 const errors = [];
 page.on('pageerror', (e) => errors.push(`[pageerror] ${e.message}`));
-page.on('requestfailed', (r) => errors.push(`[requestfailed] ${r.url()} :: ${r.failure()?.errorText}`));
+page.on('requestfailed', (r) =>
+  errors.push(`[requestfailed] ${r.url()} :: ${r.failure()?.errorText}`),
+);
 page.on('framenavigated', (f) => {
   if (f === page.mainFrame()) errors.push(`[framenavigated] ${f.url()}`);
 });

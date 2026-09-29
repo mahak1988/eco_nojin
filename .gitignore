@@ -260,3 +260,9 @@ reports/*_final.xml
 # the database open; committing one captures a torn page.
 data/*.db-shm
 data/*.db-wal
+
+# Session artefacts: captured test output and route dumps. A committed log of a
+# passing run is a liability â€” it goes stale silently and nobody re-reads it.
+test_output*.txt
+*_routes.txt
+*.backup-v*

@@ -6,21 +6,15 @@ from typing import Any
 import numpy as np
 
 from .dem_processor import DEMProcessor
+from .hydrology import flow_accumulation, flow_direction
 
 logger = logging.getLogger(__name__)
 
-# D8 direction offsets: 1=N, 2=NE, 3=E, 4=SE, 5=S, 6=SW, 7=W, 8=NW
-_DIR_OFFSETS = {
-    1: (-1, 0),
-    2: (-1, 1),
-    3: (0, 1),
-    4: (1, 1),
-    5: (1, 0),
-    6: (1, -1),
-    7: (0, -1),
-    8: (-1, -1),
-}
-_CARDINAL_DIRS = {1, 3, 5, 7}
+# The D8 scan, the direction-code table (1=N, 2=NE, 3=E, 4=SE, 5=S, 6=SW,
+# 7=W, 8=NW) and the topological accumulation live in engine.land.hydrology.
+# The copies this module carried scanned the 3x3 window in row-major order and
+# labelled the positions 1..8, which is not the same permutation as the code
+# table, so the codes this module produced did not mean what they said.
 
 
 class SurfaceWaterAnalyzer:
@@ -54,93 +48,31 @@ class SurfaceWaterAnalyzer:
 
         _rows, _cols = dem_data.shape
         flow_dir = self._calculate_d8_flow_direction(dem_data)
-        flow_acc = self._calculate_d8_flow_accumulation(flow_dir)
+        flow_acc = self._calculate_d8_flow_accumulation(flow_dir, dem_data)
 
         logger.info("Flow accumulation identification completed.")
         return flow_acc
 
     def _calculate_d8_flow_direction(self, dem: np.ndarray) -> np.ndarray:
         """
-        Vectorized D8 flow direction calculation.
+        D8 flow direction by steepest descent.
 
-        Returns float codes 1-8 for cardinal/diagonal flow; 0 for pits/borders.
+        Returns float codes 1-8 (1=N, 2=NE, 3=E, 4=SE, 5=S, 6=SW, 7=W,
+        8=NW, clockwise from north); 0 for pits and borders.
         """
-        rows, cols = dem.shape
-        flow_dir = np.zeros((rows, cols), dtype=np.float64)
+        return flow_direction(dem)
 
-        for i in range(1, rows - 1):
-            for j in range(1, cols - 1):
-                center = dem[i, j]
-                if not np.isfinite(center):
-                    continue
-
-                neighbors = np.array(
-                    [
-                        dem[i - 1, j - 1],
-                        dem[i - 1, j],
-                        dem[i - 1, j + 1],
-                        dem[i, j - 1],
-                        dem[i, j + 1],
-                        dem[i + 1, j - 1],
-                        dem[i + 1, j],
-                        dem[i + 1, j + 1],
-                    ]
-                )
-                directions = np.array([1, 2, 3, 4, 5, 6, 7, 8], dtype=float)
-
-                valid_mask = np.isfinite(neighbors) & (neighbors < center)
-                if not np.any(valid_mask):
-                    continue
-
-                dists = np.where(np.isin(directions, list(_CARDINAL_DIRS)), 1.0, np.sqrt(2))
-                slopes = np.where(valid_mask, (center - neighbors) / dists, -np.inf)
-                best_idx = int(np.argmax(slopes))
-                flow_dir[i, j] = directions[best_idx]
-
-        return flow_dir
-
-    def _calculate_d8_flow_accumulation(self, flow_dir: np.ndarray) -> np.ndarray:
+    def _calculate_d8_flow_accumulation(
+        self, flow_dir: np.ndarray, dem: np.ndarray | None = None
+    ) -> np.ndarray:
         """
-        D8 flow accumulation using topological ordering (iterative).
+        D8 flow accumulation in topological order.
 
-        Each cell starts with 1 and accumulates flow from upstream cells.
+        Each cell starts with 1 and accumulates flow from upstream cells. A
+        drainage cycle has no topological order, so it raises FlowCycleError
+        rather than returning a truncated accumulation.
         """
-        rows, cols = flow_dir.shape
-        acc = np.ones((rows, cols), dtype=np.float64)
-
-        downstream = np.full((rows, cols, 2), -1, dtype=np.int32)
-        upstream_count = np.zeros((rows, cols), dtype=np.int32)
-
-        for i in range(rows):
-            for j in range(cols):
-                d = int(flow_dir[i, j])
-                if d == 0:
-                    continue
-                di, dj = _DIR_OFFSETS[d]
-                ni, nj = i + di, j + dj
-                if 0 <= ni < rows and 0 <= nj < cols:
-                    downstream[i, j, 0] = ni
-                    downstream[i, j, 1] = nj
-                    upstream_count[ni, nj] += 1
-
-        from collections import deque
-
-        queue = deque()
-        for i in range(rows):
-            for j in range(cols):
-                if upstream_count[i, j] == 0:
-                    queue.append((i, j))
-
-        while queue:
-            i, j = queue.popleft()
-            ni, nj = int(downstream[i, j, 0]), int(downstream[i, j, 1])
-            if 0 <= ni < rows and 0 <= nj < cols:
-                acc[ni, nj] += acc[i, j]
-                upstream_count[ni, nj] -= 1
-                if upstream_count[ni, nj] == 0:
-                    queue.append((ni, nj))
-
-        return acc
+        return flow_accumulation(flow_dir, dem)
 
     def analyze_surface_water_potential(
         self, flow_threshold: float | None = None

@@ -52,6 +52,8 @@ class HydromaAdapter(IHydromaEngine):
         ec = soil_data.get("ec", 0.0)
         result = hydroma_classify_salinity(ec)
         return SoilAnalysisResult(
+            data_source="modelled",
+            model="soil salinity classification (engine.hydroma.soil.salinity)",
             ec=result.get("ec", ec),
             unit=result.get("unit", "dS/m"),
             classification=result.get("classification", "unknown"),
@@ -68,6 +70,8 @@ class HydromaAdapter(IHydromaEngine):
         ra_mj = climate_data.get("ra_mj", 15.0)
         et0_est = calc_et0_hargreaves(t_min=t_min, t_max=t_max, t_mean=temp_mean, ra_mj=ra_mj)
         return ClimateAnalysisResult(
+            data_source="modelled",
+            model="FAO-56 reference ET0 (et_calculator.calc_et0_hargreaves)",
             estimated_et0=et0_est,
             input_data=climate_data,
             method="Hargreaves",
@@ -79,6 +83,8 @@ class HydromaAdapter(IHydromaEngine):
         """Implements watershed analysis by delegating to engine/hydroma."""
         design_result = hydroma_design_check_dam(slope_pct, area_m2, rainfall_mm)
         return WatershedAnalysisResult(
+            data_source="modelled",
+            model="check-dam design (engine.hydroma.watershed.calculator)",
             design_proposal=design_result,
             input_data={"slope_pct": slope_pct, "area_m2": area_m2, "rainfall_mm": rainfall_mm},
         )
@@ -88,6 +94,8 @@ class HydromaAdapter(IHydromaEngine):
         estimated_depth = gw_data.get("estimated_water_table_depth_m", 10.0)
         quality_class = "Fresh"
         return GroundwaterAnalysisResult(
+            data_source="modelled",
+            model="groundwater placeholder (no solver wired)",
             estimated_depth_m=estimated_depth,
             quality_class=quality_class,
             input_data=gw_data,

@@ -288,7 +288,10 @@ class SpatialRunoffCalculator:
             runoff_depth.rio.to_raster(runoff_map_path)
 
             logger.info(f"Spatial runoff map saved to {runoff_map_path}")
-            return SpatialRunoffOutput(runoff_volume_map_path=runoff_map_path,
+            return SpatialRunoffOutput(
+                data_source="modelled",
+                model="SCS-CN spatial (NRCS TR-55)",
+                runoff_volume_map_path=runoff_map_path,
             )
 
         else:

@@ -187,12 +187,18 @@ def run_volume_stress(sizes: list[int] | None = None, seed: int = 42) -> list[Vo
         # 1024x1024 should complete in well under a few seconds for numpy.
         passed = elapsed_ms < ((n > 512 and 10000.0) or 5000.0)
         results.append(
+            # Keyword arguments, not positional. Provenance fields sit first in
+            # the dataclass, so a positional call bound n (an int) to data_source
+            # (a str) and left nan_share, passed and metadata as None -- a silent
+            # scramble that raised nothing.
             VolumeResult(
-                n,
-                round(elapsed_ms, 2),
-                round(nan_share, 4),
-                passed,
-                _meta(f"volume_{n}", seed, {"grid": n}),
+                data_source="simulated",
+                model="simulation_env volume stress",
+                grid_size=n,
+                elapsed_ms=round(elapsed_ms, 2),
+                nan_share=round(nan_share, 4),
+                passed=passed,
+                metadata=_meta(f"volume_{n}", seed, {"grid": n}),
             )
         )
     return results

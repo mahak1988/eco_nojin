@@ -95,7 +95,7 @@ class ModelOutput:
     # Order matters: every non-default field must precede every defaulted one.
     data_source: DataSource
     model: str
-    success: bool
+    success: bool | None = None
     outputs: dict[str, Any] = field(default_factory=dict)
     uncertainty: dict[str, Any] = field(default_factory=dict)
 

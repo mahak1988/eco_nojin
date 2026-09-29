@@ -410,6 +410,9 @@ class GroundwaterIntegrator:
 @dataclass
 class UnifiedWaterAnalysis:
     """Complete water analysis result"""
+    data_source: str = 'modelled'
+    model: str = 'water balance integration'
+    computed: bool = True
 
     water_balance: WaterBalanceResult | None = None
     runoff: RunoffResult | None = None

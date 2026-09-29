@@ -80,13 +80,15 @@ class AnnualImpact(BaseModel):
 
 class ClimateProfile(BaseModel):
     """A full synthetic climate time-series snapshot."""
+    data_source: str = 'simulated'
+    model: str = 'simulation_env synthetic climate'
 
-    lat: float
-    lon: float
-    baseline_temp_c: float
-    baseline_precip_mm: float
-    years: list[AnnualImpact]
-    metadata: SimulationMetadata
+    lat: float | None = None
+    lon: float | None = None
+    baseline_temp_c: float | None = None
+    baseline_precip_mm: float | None = None
+    years: list[AnnualImpact] | None = None
+    metadata: SimulationMetadata | None = None
 
     @field_validator("years")
     @classmethod

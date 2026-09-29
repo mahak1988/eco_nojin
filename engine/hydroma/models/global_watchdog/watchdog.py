@@ -31,10 +31,13 @@ from .wbi import WBIInputs, WBIv3
 class RegionAnalysis:
     """Result of a region analysis."""
 
-    region_name: str
-    kgc: dict[str, Any]
-    wbi: dict[str, Any]
-    timestamp: str
+    region_name: str | None = None
+    kgc: dict[str, Any] | None = None
+    wbi: dict[str, Any] | None = None
+    data_source: str = 'modelled'
+    model: str = 'Koppen + WBI regional assessment'
+    computed: bool = True
+    timestamp: str | None = None
 
 
 class GlobalWatchdog:

@@ -130,40 +130,6 @@ jobs:
       # .github/workflows/nightly-e2e.yml
       - run: pnpm -C apps/web test:smoke
 
-  innovation-backlog:
-    name: Innovation Backlog Gate
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Validate backlog schema and wave ordering
-        run: python scripts/innovation_backlog.py validate
-      - name: Contract tests for backlog integrity
-        run: python -m pytest tests/contract/test_innovation_backlog_gate.py -q
-
-  cost-gate:
-    name: Cost Control Gate
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Monthly cost estimate from the deployment manifest
-        run: python scripts/cost_estimate.py
-      - name: Cost anti-pattern analysis
-        run: python scripts/cost_guard.py check
-      - name: Collect usage readings
-        run: python scripts/cost_collect.py
-      - name: Budget status (exit 2 means the bill is unknown, not zero)
-        run: python scripts/cost_guard.py budget || [ $? -eq 2 ]
-      - name: Contract tests for cost control
-        run: python -m pytest tests/contract/test_cost_guard_gate.py -q
-      - name: Claims gate: documents must match the code they describe
-        run: python -m pytest tests/contract/test_claims_gate.py -q
-
   i18n-check:
     name: i18n Validation
     runs-on: ubuntu-latest

@@ -51,12 +51,14 @@ class TestLandModels:
         assert data["elevation_mean"] == 1050
 
         # DeIntegerize
-        restored = TerrainAnalysis(**data,
-            data_source="modelled",
-            model="terrain_analysis",
-        )
+        # `data` already carries data_source and model, since model_dump() now
+        # includes them. Passing them again is a duplicate keyword and raises
+        # TypeError, so they are restored from the dump alone.
+        restored = TerrainAnalysis(**data)
         assert restored.terrain_type == analysis.terrain_type
         assert restored.elevation_mean == analysis.elevation_mean
+        assert restored.data_source == analysis.data_source
+        assert restored.model == analysis.model
 
     def test_capability_assessment_recommendations(self):
         """تست توصیه‌های ارزیابی قابلیت"""

@@ -145,22 +145,25 @@ class BaseBasket:
 class BasketValuation:
     """Result of valuing a basket. All money fields are USD per hectare."""
 
-    crop: str
-    market_class: str
-    data_mode: DataMode
-    valued_at: datetime
+    crop: str | None = None
+    market_class: str | None = None
+    data_mode: DataMode | None = None
+    valued_at: datetime | None = None
     #: USD/t for each input used, keyed by item name.
-    unit_prices: dict[str, float]
+    unit_prices: dict[str, float] | None = None
     #: USD/ha contribution of each input, keyed by item name.
-    line_values: dict[str, float]
-    international_subtotal_usd_ha: float
-    landed_multiplier: float
-    landed_value_usd_ha: float
-    platform_share: float
+    line_values: dict[str, float] | None = None
+    international_subtotal_usd_ha: float | None = None
+    landed_multiplier: float | None = None
+    landed_value_usd_ha: float | None = None
+    platform_share: float | None = None
     #: What the platform can actually deliver: a ceiling, not a guarantee.
-    redemption_ceiling_usd_ha: float
-    provenance: str
-    data_mode_note: str
+    redemption_ceiling_usd_ha: float | None = None
+    provenance: str | None = None
+    data_mode_note: str | None = None
+    data_source: str = 'modelled'
+    model: str = 'reference basket valuation'
+    computed: bool = True
     notes: tuple[str, ...] = field(default_factory=tuple)
 
 

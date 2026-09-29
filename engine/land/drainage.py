@@ -4,177 +4,46 @@ from typing import Any
 
 import numpy as np
 
+from engine.land.hydrology import flow_accumulation, flow_direction, strahler_order
 from engine.land.models import (
     DrainageAnalysis,
     DrainageDensityClass,
     DrainagePattern,
 )
 
+# The direction-code convention, the steepest-descent scan and the accumulation
+# all live in engine.land.hydrology now: one scan, one code table, one
+# topological sweep, one place to change when the convention changes. The
+# wrappers below are kept so that anything already importing these private
+# names keeps working; they add no behaviour.
+
 
 def _d8_flow_direction(dem: np.ndarray) -> np.ndarray:
+    """D8 flow direction by steepest descent.
+
+    Codes: 1=N, 2=NE, 3=E, 4=SE, 5=S, 6=SW, 7=W, 8=NW (clockwise from north).
+    Only interior cells are scored; the border keeps 0.
     """
-    محاسبه جهت جریان D8 (steepest descent).
+    return flow_direction(dem)
 
-    خروجی: آرایه‌ای که مقدار هر سلول نشانگر جهت جریان است:
-    1=شمال، 2=شمال-شرق، 3=شرق، 4=جنوب-شرق،
-    5=جنوب، 6=جنوب-غرب، 7=غرب، 8=شمال-غرب
 
-    فقط سلول‌های داخلی محاسبه می‌شوند؛ لبه‌ها مقدار 0 دارند.
+def _d8_flow_accumulation(flow_dir: np.ndarray, dem: np.ndarray | None = None) -> np.ndarray:
+    """D8 flow accumulation in topological order.
+
+    This was a single row-major pass over the grid, which is not a topological
+    order: a cell was added to its downstream neighbour before the cells south
+    and west of it had contributed, so most of each catchment was never counted.
+    The docstring claimed a sort by elevation that the code did not perform, and
+    the ``flat_order`` argument was computed and then discarded.
     """
-    rows, cols = dem.shape
-    flow_dir = np.zeros((rows, cols), dtype=np.float64)
-
-    for i in range(1, rows - 1):
-        for j in range(1, cols - 1):
-            center = dem[i, j]
-            neighbors = np.array(
-                [
-                    dem[i - 1, j - 1],
-                    dem[i - 1, j],
-                    dem[i - 1, j + 1],
-                    dem[i, j - 1],
-                    dem[i, j + 1],
-                    dem[i + 1, j - 1],
-                    dem[i + 1, j],
-                    dem[i + 1, j + 1],
-                ]
-            )
-            directions = np.array([1, 2, 3, 4, 5, 6, 7, 8], dtype=float)
-            # انتخاب steepest descent (بیشترین شیب به سمت پایین)
-            valid_mask = neighbors < center
-            if np.any(valid_mask):
-                # شیب = (center - neighbor) / distance
-                # برای همسایه‌های فشرده (4 و 8): distance = 1
-                # برای همسایه‌های قطری (1, 2, 3, 6, 7, 8): distance = sqrt(2)
-                diag_mask = np.array([True, False, True, False, True, False, True, False])
-                dist = np.where(diag_mask, np.sqrt(2), 1.0)
-                slopes = np.where(valid_mask, (center - neighbors) / dist, -np.inf)
-                best_idx = int(np.argmax(slopes))
-                flow_dir[i, j] = directions[best_idx]
-            else:
-                flow_dir[i, j] = 0  # سلول پایین‌ترین نقطه (ظرفاً یا مخزن)
-
-    return flow_dir
-
-
-def _d8_flow_accumulation(flow_dir: np.ndarray) -> np.ndarray:
-    """
-    محاسبه انباشت جریان با الگوریتم D8.
-
-    استفاده از مرتب‌سازی توپولوژیک بر اساس ارتفاع برای محاسبه دقیق تجمع جریان.
-    هر سلول مقدار 1 اولیه دارد (خودش) به‌علاوه تمام سلول‌های بالادست.
-    """
-    rows, cols = flow_dir.shape
-
-    # نگاشت جهت به افست
-    # D8 directions: 1=N, 2=NE, 3=E, 4=SE, 5=S, 6=SW, 7=W, 8=NW
-    dir_offsets = {
-        1: (-1, 0),  # شمال
-        2: (-1, 1),  # شمال-شرق
-        3: (0, 1),  # شرق
-        4: (1, 1),  # جنوب-شرق
-        5: (1, 0),  # جنوب
-        6: (1, -1),  # جنوب-غرب
-        7: (0, -1),  # غرب
-        8: (-1, -1),  # شمال-غرب
-    }
-
-    # ساخت آرایه نگاشت معکوس: برای هر سلول، کدام سلول‌ها به آن جریان دارند
-    # inverse: upstream neighbors for each cell
-    acc = np.ones((rows, cols), dtype=np.float64)
-
-    # ترتیب توپولوژیک: مرتب‌سازی سلول‌ها بر اساس ارتفاع (از پایین به بالا)
-    # برای اینکه جریان فقط به سمت پایین می‌رود
-    flat_order = np.argsort(flow_dir.flatten())
-
-    # ایجاد لیست سلول‌ها به ترتیب ارتفاع
-    [(idx // cols, idx % cols) for idx in flat_order]
-
-    # محاسبه انباشت جریان با پردازش سلول‌ها از بالا به پایین
-    for i in range(rows):
-        for j in range(cols):
-            d = int(flow_dir[i, j])
-            if d == 0:
-                continue
-            offset = dir_offsets.get(d)
-            if offset is None:
-                continue
-            ni, nj = i + offset[0], j + offset[1]
-            if 0 <= ni < rows and 0 <= nj < cols:
-                acc[ni, nj] += acc[i, j]
-
-    return acc
+    return flow_accumulation(flow_dir, dem)
 
 
 def _calculate_strahler_order(
     flow_acc: np.ndarray, flow_dir: np.ndarray, threshold: float = 10.0
 ) -> tuple[np.ndarray, int]:
-    """
-    محاسبه شماره ترتیب Strahler برای شبکه‌های آبری.
-
-    خروجی: (آرایه ترتیب Strahler، حداکثر ترتیب)
-    """
-    rows, cols = flow_acc.shape
-    strahler = np.zeros((rows, cols), dtype=np.float64)
-
-    # شناسایی سلول‌های جریان > آستانه به عنوان "رودخانه"
-    stream_mask = flow_acc >= threshold
-    strahler[stream_mask] = 1.0  # اولیه: همه رودخانه‌ها سطح 1
-
-    # محاسبه ترتیب Strahler به صورت تکراری
-    # سلول سطح 1: بدون شاخه ورودی
-    # اگر یکی به سلول وصل شود: سطح همان‌جا
-    # اگر دو یا چند شاخه ورودی باشد: سطح + 1
-    dir_offsets = {
-        1: (-1, 0),
-        2: (-1, 1),
-        3: (0, 1),
-        4: (1, 1),
-        5: (1, 0),
-        6: (1, -1),
-        7: (0, -1),
-        8: (-1, -1),
-    }
-
-    max_iter = 50
-    for _ in range(max_iter):
-        new_strahler = strahler.copy()
-        for i in range(rows):
-            for j in range(cols):
-                if not stream_mask[i, j]:
-                    continue
-                # شناسایی همسایه‌های بالادست
-                upstream_orders = []
-                for _d, (di, dj) in dir_offsets.items():
-                    ni, nj = i + di, j + dj
-                    if 0 <= ni < rows and 0 <= nj < cols:
-                        # آیا این سلول به (i,j) جریان دارد؟
-                        d_target = int(flow_dir[ni, nj])
-                        if d_target > 0:
-                            target_i, target_j = (
-                                ni + dir_offsets[d_target][0],
-                                nj + dir_offsets[d_target][1],
-                            )
-                            if (target_i, target_j) == (i, j):
-                                if strahler[ni, nj] > 0:
-                                    upstream_orders.append(strahler[ni, nj])
-
-                if len(upstream_orders) == 0:
-                    new_strahler[i, j] = 1.0
-                else:
-                    max_up = max(upstream_orders)
-                    count_max = sum(1 for o in upstream_orders if o == max_up)
-                    if count_max >= 2:
-                        new_strahler[i, j] = max_up + 1
-                    else:
-                        new_strahler[i, j] = max_up
-
-        if np.allclose(new_strahler, strahler, equal_nan=True):
-            break
-        strahler = new_strahler
-
-    max_order = int(np.nanmax(strahler)) if np.any(strahler > 0) else 1
-    return strahler, max_order
+    """Strahler ordering. Rule unchanged; implementation moved to hydrology."""
+    return strahler_order(flow_acc, flow_dir, threshold)
 
 
 def _classify_drainage_pattern(
@@ -252,7 +121,7 @@ def _calculate_time_of_concentration(
     slope_degrees: float,
 ) -> float:
     """
-    محاسبه زمان غرقطی (Time of Concentration) با روش‌ کرپی-براون.
+    محاسبه زمان غرقطی (Time of Concentration) با روش  کرپی-براون.
 
     Tc = 0.0195 * L^0.77 * S^-0.385  (برای واحد متری، نتیجه در ساعت)
 
@@ -313,7 +182,7 @@ def calculate_drainage_metrics(
     flow_dir = _d8_flow_direction(dem)
 
     # محاسبه انباشت جریان
-    flow_acc = _d8_flow_accumulation(flow_dir)
+    flow_acc = _d8_flow_accumulation(flow_dir, dem)
 
     # محاسبه شبکه‌های آبری (آستانه بر حسب تعداد سلول)
     # معمولاً آستانه = 10 تا 15 سلول برای DEMهای 30m
@@ -391,7 +260,7 @@ class DrainageAnalyzer:
 
         # محاسبه جهت و انباشت جریان
         flow_dir = _d8_flow_direction(dem)
-        flow_acc = _d8_flow_accumulation(flow_dir)
+        flow_acc = _d8_flow_accumulation(flow_dir, dem)
 
         # سطح آبشاری (آستانه تشخیص رودخانه)
         acc_threshold = max(10.0, rows * cols * 0.001)

@@ -1,8 +1,10 @@
 """Abstract base class for satellite data providers."""
 
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import date, datetime as _datetime
 from typing import Any
 
 import numpy as np
@@ -12,12 +14,19 @@ import numpy as np
 class SatelliteTile:
     """Represents a single satellite observation tile."""
 
-    provider: str
-    collection: str
-    datetime: datetime
-    bbox: tuple[float, float, float, float]  # (min_lon, min_lat, max_lon, max_lat)
-    cloud_cover: float  # 0-100 percentage
-    bands: dict[str, np.ndarray]  # band_name -> 2D array
+    provider: str | None = None
+    collection: str | None = None
+    # The field is named `datetime`, which shadows the type of the same name
+    # inside this class body. Without `from __future__ import annotations` the
+    # annotation is evaluated at class creation, so `datetime | None` resolved
+    # `datetime` to the field being defined -- None -- and raised
+    # "unsupported operand type(s) for |: 'NoneType' and 'NoneType'" on import.
+    # The postponed-annotations import above fixes that; the aliased import
+    # keeps the type correct for any runtime introspection.
+    datetime: _datetime | None = None
+    bbox: tuple[float, float, float, float] | None = None
+    cloud_cover: float | None = None
+    bands: dict[str, np.ndarray] | None = None
     crs: str = "EPSG:4326"  # Coordinate Reference System
     # Provenance label: "real" for actual observations, "simulated" for
     # synthetic/demo data. Consumers MUST surface this to users (honesty

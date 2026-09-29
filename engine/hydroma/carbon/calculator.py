@@ -76,6 +76,9 @@ class CarbonProject:
     annual_rate_tonnes: float = 0.0
     methodology: str = ""
 
+    data_source: str = 'modelled'
+    model: str = 'carbon sequestration accounting'
+    computed: bool = True
     created_at: datetime = field(default_factory=datetime.utcnow)
 
 

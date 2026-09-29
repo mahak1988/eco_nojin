@@ -79,9 +79,12 @@ class SoilCondition:
 class StrainProfile:
     """Profile of a single bacterial strain."""
 
-    strain_type: StrainType
-    efficacy_score: float  # 0-100
-    persistence_days: int
+    strain_type: StrainType | None = None
+    efficacy_score: float | None = None
+    persistence_days: int | None = None
+    data_source: str = 'modelled'
+    model: str = 'strain efficacy profile'
+    computed: bool = True
     compatibility_score: float = 100.0  # Compatibility with other strains
 
 

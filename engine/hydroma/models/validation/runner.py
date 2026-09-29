@@ -36,8 +36,8 @@ Status = str  # "match" | "mismatch" | "inconsistent_case" | "not_run"
 @dataclass
 class CaseOutcome:
     model: str
-    name: str
-    status: Status
+    name: str | None = None
+    status: Status | None = None
     detail: str = ""
     measured: Any = None
     expected: Any = None

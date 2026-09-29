@@ -46,7 +46,21 @@ def calculate_slope_aspect(
     slope_degrees = np.degrees(slope_radians)
 
     # Calculate aspect in radians and convert to degrees
-    aspect_radians[1:-1, 1:-1] = np.arctan2(-dz_dy, dz_dx)
+    #
+    # The compass azimuth of the downslope direction, with rows increasing
+    # southward and columns increasing eastward. A compass azimuth theta has
+    # (east, south) components (sin theta, -cos theta), so for the downslope
+    # vector (-dz_dx, -dz_dy):
+    #
+    #     theta = atan2(-dz_dx, dz_dy)
+    #
+    # The previous form, atan2(-dz_dy, dz_dx), transposes the two arguments. It
+    # returns 90 for a north-to-south ramp where 180 is required, and 180 for a
+    # west-to-east ramp where 90 is required. It is a reflection rather than a
+    # rotation, so no constant offset repairs it. engine/land/tests/
+    # test_hydrology.py pins all eight directions against the shared
+    # terrain_analysis implementation.
+    aspect_radians[1:-1, 1:-1] = np.arctan2(-dz_dx, dz_dy)
     aspect_degrees = np.degrees(aspect_radians)
 
     # Handle aspect to be 0-360 degrees

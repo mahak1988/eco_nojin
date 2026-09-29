@@ -221,20 +221,33 @@ Measured on 2026-09-26 against `5d8e98b`. The join rule the previous revision co
 not state is now derived from the catalog itself:
 
 ```
-600 logical paths
-├── 265 with a real routeFile        → renderedBy 'route'
-└── 335 without a routeFile
-    ├── 282 → catalog catch-all      (all noindex, served on demand)
-    └── 53  → marketplace catch-all  (the /market address space)
+621 logical paths
+├── 370 with a page of their own      → renderedBy 'route'
+│   └── of those, 52 are claimed by one dynamic page —
+│       hydroma/tools/[toolId] serves every tool id — so they carry
+│       renderedBy 'dynamic-route'
+├── 172 without a routeFile → the catalog catch-all (noindex, served on demand)
+└── 0 marketplace catch-all
 
-217 routable page.tsx
-├── 214 claimed by a catalog path
+The 51 tool paths stay indexable and stay in the sitemap: each is a URL a reader
+can actually reach. `renderedBy` records where the page comes from, not whether
+the URL works — which is why 'dynamic-route' had to become a value of its own.
+Folding it into 'route' would claim 51 pages exist; folding it into the catch-all
+would claim 51 do not. Both are false.
+
+378 routable page.tsx
+├── 370 claimed by a catalog path
 └── 3 declared in OUT_OF_CATALOGUE_ROUTES
 ```
 
 `218 + 444 = 662` was never a valid composition: 444 is a declared address space
 (`marketplaceRoutePlanTotal`), not a page count, and the two 218 and 217 figures
 were measured before the marketplace catch-all was separated from the catalog.
+
+Re-measured 2026-09-29 against the committed tree: **621 logical paths, 378
+`page.tsx` files, 621 routes each assigned exactly one archetype.** The join rule
+above now reads 370 + 172 = 542, which is deliberately *not* 621 — the remainder
+is the marketplace address space, which has never been a page count.
 
 | ID | Question | Why it is open | Closes when |
 |---|---|---|---|

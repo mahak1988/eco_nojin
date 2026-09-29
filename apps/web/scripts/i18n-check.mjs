@@ -6,17 +6,18 @@
  *
  * Run: node scripts/i18n-check.mjs
  */
-import { readFileSync, readdirSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const MESSAGES_DIR = new URL('../messages/', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1');
+const MESSAGES_DIR = new URL('../messages/', import.meta.url).pathname.replace(
+  /^\/([A-Za-z]:)/,
+  '$1',
+);
 
 function flatten(obj, prefix = '') {
   return Object.entries(obj).flatMap(([k, v]) => {
     const key = prefix ? `${prefix}.${k}` : k;
-    return v && typeof v === 'object' && !Array.isArray(v)
-      ? flatten(v, key)
-      : [key];
+    return v && typeof v === 'object' && !Array.isArray(v) ? flatten(v, key) : [key];
   });
 }
 
@@ -66,9 +67,7 @@ const locales = readdirSync(MESSAGES_DIR)
  * All three now use `en`, the catalog the runtime actually falls back to.
  */
 const REFERENCE_LOCALE = 'en';
-const reference = new Set(
-  flatten(read(REFERENCE_LOCALE)).filter((k) => !k.startsWith('meta')),
-);
+const reference = new Set(flatten(read(REFERENCE_LOCALE)).filter((k) => !k.startsWith('meta')));
 
 let failed = false;
 
@@ -86,4 +85,3 @@ for (const locale of locales) {
 }
 
 process.exit(failed ? 1 : 0);
-

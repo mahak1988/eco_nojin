@@ -22,9 +22,12 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class QAReport:
     """Outcome of a QA/QC check."""
+    data_source: str = 'modelled'
+    model: str = 'MRV quality assurance (mrv.qa)'
+    computed: bool = True
 
-    qa_status: str  # ok | suspect | rejected
-    message: str
+    qa_status: str | None = None
+    message: str | None = None
 
 
 # band keys are the sensor_type / index names used by the API schemas.
@@ -54,7 +57,11 @@ def validate_reading(sensor_type: str, value: float, unit: str | None = None) ->
     """
     band = PHYSICAL_RANGES.get(sensor_type)
     if band is None:
-        return QAReport("rejected", f"Unknown sensor_type '{sensor_type}'; cannot validate.")
+        return QAReport(
+            data_source="measured",
+            model="MRV quality assurance (mrv.qa)",
+            qa_status="rejected",
+            message=f"Unknown sensor_type '{sensor_type}'; cannot validate.")
     unit_str = unit or band["unit"]
     if band["max"] is None:
         hard_ok = value >= band["min"]
@@ -65,16 +72,21 @@ def validate_reading(sensor_type: str, value: float, unit: str | None = None) ->
 
     if not hard_ok:
         return QAReport(
-            "rejected",
-            f"{sensor_type}={value} {unit_str} outside physical range ({bound_desc}); rejected.",
+            qa_status="rejected",
+            message=f"{sensor_type}={value} {unit_str} outside physical range ({bound_desc}); rejected.",
         )
     if value < band["ok_min"] or value > band["ok_max"]:
         return QAReport(
-            "suspect",
-            f"{sensor_type}={value} {unit_str} near/outside plausible band "
+            qa_status="suspect",
+            message=f"{sensor_type}={value} {unit_str} near/outside plausible band "
             f"({band['ok_min']}..{band['ok_max']}); flag for manual review.",
         )
-    return QAReport("ok", f"{sensor_type}={value} {unit_str} within plausible band.")
+    return QAReport(
+        data_source="measured",
+        model="MRV quality assurance (mrv.qa)",
+        qa_status="ok",
+        message=f"{sensor_type}={value} {unit_str} within plausible band.",
+    )
 
 
 def validate_satellite_index(index: str, value: float) -> QAReport:

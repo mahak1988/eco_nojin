@@ -9,7 +9,9 @@ const page = await browser.newPage();
 const logs = [];
 page.on('console', (m) => logs.push(`[console:${m.type()}] ${m.text()}`));
 page.on('pageerror', (e) => logs.push(`[pageerror] ${e.message}`));
-page.on('requestfailed', (r) => logs.push(`[requestfailed] ${r.url()} :: ${r.failure()?.errorText}`));
+page.on('requestfailed', (r) =>
+  logs.push(`[requestfailed] ${r.url()} :: ${r.failure()?.errorText}`),
+);
 
 await page.goto(`${base}/fa`, { waitUntil: 'domcontentloaded' });
 await page.waitForTimeout(1500);

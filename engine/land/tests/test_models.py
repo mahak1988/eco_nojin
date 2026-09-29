@@ -17,10 +17,24 @@ from engine.land.models import (
 class TestSlopeAspectResult:
     """تست‌های SlopeAspectResult"""
 
+    # Every construction below passes provenance explicitly. SlopeAspectResult
+    # requires data_source and model, and pydantic's ValidationError subclasses
+    # ValueError -- so a call that simply forgot the two arguments satisfied the
+    # three `pytest.raises(ValueError)` blocks in test_slope_bounds for the
+    # wrong reason, and the slope bounds went untested.
+    P = {
+        "data_source": "modelled",
+        "model": "terrain_analysis (Horn 1981)",
+    }
+
     def test_valid_slope_aspect(self):
         """تست شیب و جهت معتبر"""
         result = SlopeAspectResult(
-            slope_degrees=15.5, slope_percent=27.7, aspect_degrees=180.0, aspect_cardinal="S"
+            **self.P,
+            slope_degrees=15.5,
+            slope_percent=27.7,
+            aspect_degrees=180.0,
+            aspect_cardinal="S",
         )
 
         assert result.slope_degrees == 15.5
@@ -31,25 +45,43 @@ class TestSlopeAspectResult:
     def test_slope_bounds(self):
         """تست محدوده شیب"""
         # Valid
-        SlopeAspectResult(slope_degrees=0, slope_percent=0, aspect_degrees=0, aspect_cardinal="N")
         SlopeAspectResult(
-            slope_degrees=90, slope_percent=10000, aspect_degrees=360, aspect_cardinal="N"
+            **self.P, slope_degrees=0, slope_percent=0, aspect_degrees=0, aspect_cardinal="N"
+        )
+        SlopeAspectResult(
+            **self.P,
+            slope_degrees=90,
+            slope_percent=10000,
+            aspect_degrees=360,
+            aspect_cardinal="N",
         )
 
         # Invalid
         with pytest.raises(ValueError):
             SlopeAspectResult(
-                slope_degrees=-1, slope_percent=0, aspect_degrees=0, aspect_cardinal="N"
+                **self.P,
+                slope_degrees=-1,
+                slope_percent=0,
+                aspect_degrees=0,
+                aspect_cardinal="N",
             )
 
         with pytest.raises(ValueError):
             SlopeAspectResult(
-                slope_degrees=91, slope_percent=0, aspect_degrees=0, aspect_cardinal="N"
+                **self.P,
+                slope_degrees=91,
+                slope_percent=0,
+                aspect_degrees=0,
+                aspect_cardinal="N",
             )
 
         with pytest.raises(ValueError):
             SlopeAspectResult(
-                slope_degrees=0, slope_percent=0, aspect_degrees=361, aspect_cardinal="N"
+                **self.P,
+                slope_degrees=0,
+                slope_percent=0,
+                aspect_degrees=361,
+                aspect_cardinal="N",
             )
 
 

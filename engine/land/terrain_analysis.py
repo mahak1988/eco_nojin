@@ -4,6 +4,7 @@ from typing import Any
 
 import numpy as np
 
+from engine.land.hydrology import flow_accumulation, flow_direction
 from engine.land.models import (
     CurvatureResult,
     LandformType,
@@ -92,6 +93,9 @@ def calculate_slope_aspect(
     slope_rad = np.full_like(dem, np.nan, dtype=np.float64)
     aspect_rad = np.full_like(dem, np.nan, dtype=np.float64)
 
+    # Grid axes: rows increase southward, columns increase eastward. So dz_dx is
+    # the derivative toward east and dz_dy the derivative toward south, both
+    # positive toward the higher ground.
     for i in range(1, rows - 1):
         for j in range(1, cols - 1):
             z = dem[i - 1 : i + 2, j - 1 : j + 2]
@@ -105,103 +109,24 @@ def calculate_slope_aspect(
             )
 
             slope_rad[i, j] = np.arctan2(np.sqrt(dz_dx**2 + dz_dy**2), 1.0)
-            # Aspect: arctan2(-dz_dy, dz_dx) gives direction of steepest descent
-            aspect_rad[i, j] = np.arctan2(-dz_dy, dz_dx)
+            # Aspect is the compass azimuth of steepest descent, 0 = north and
+            # increasing clockwise. A compass azimuth theta has the (east,
+            # south) components (sin theta, -cos theta), so the downslope
+            # vector (-dz_dx, -dz_dy) gives sin(theta) ~ -dz_dx and
+            # cos(theta) ~ dz_dy. atan2 must therefore be handed the east
+            # component first and the south component second.
+            #
+            # arctan2(-dz_dy, dz_dx) — the form this used to take — transposes
+            # those two components. It is a reflection of the aspect field, not
+            # a rotation, so no constant offset recovers it: a slope descending
+            # due south scored 270 (west) and a slope descending due west
+            # scored 180 (south).
+            aspect_rad[i, j] = np.arctan2(-dz_dx, dz_dy)
 
     slope_deg = np.degrees(slope_rad)
     aspect_deg = (np.degrees(aspect_rad) + 360) % 360
 
     return slope_deg, aspect_deg
-
-
-def _d8_flow_direction(dem: np.ndarray) -> np.ndarray:
-    """D8 flow direction (steepest descent)."""
-    rows, cols = dem.shape
-    flow_dir = np.zeros((rows, cols), dtype=np.float64)
-
-    _CARDINAL_DIRS = {1, 3, 5, 7}
-
-    for i in range(1, rows - 1):
-        for j in range(1, cols - 1):
-            center = dem[i, j]
-            if not np.isfinite(center):
-                continue
-
-            neighbors_vals = np.array(
-                [
-                    dem[i - 1, j - 1],
-                    dem[i - 1, j],
-                    dem[i - 1, j + 1],
-                    dem[i, j - 1],
-                    dem[i, j + 1],
-                    dem[i + 1, j - 1],
-                    dem[i + 1, j],
-                    dem[i + 1, j + 1],
-                ]
-            )
-            directions = np.array([1, 2, 3, 4, 5, 6, 7, 8], dtype=float)
-
-            valid_mask = np.isfinite(neighbors_vals) & (neighbors_vals < center)
-            if not np.any(valid_mask):
-                continue
-
-            dists = np.where(np.isin(directions, list(_CARDINAL_DIRS)), 1.0, np.sqrt(2))
-            slopes = np.where(valid_mask, (center - neighbors_vals) / dists, -np.inf)
-            best_idx = int(np.argmax(slopes))
-            flow_dir[i, j] = directions[best_idx]
-
-    return flow_dir
-
-
-def _d8_flow_accumulation(flow_dir: np.ndarray) -> np.ndarray:
-    """D8 flow accumulation using iterative topological ordering."""
-    rows, cols = flow_dir.shape
-    acc = np.ones((rows, cols), dtype=np.float64)
-
-    _DIR_OFFSETS = {
-        1: (-1, 0),
-        2: (-1, 1),
-        3: (0, 1),
-        4: (1, 1),
-        5: (1, 0),
-        6: (1, -1),
-        7: (0, -1),
-        8: (-1, -1),
-    }
-
-    downstream = np.full((rows, cols, 2), -1, dtype=np.int32)
-    upstream_count = np.zeros((rows, cols), dtype=np.int32)
-
-    for i in range(rows):
-        for j in range(cols):
-            d = int(flow_dir[i, j])
-            if d == 0:
-                continue
-            di, dj = _DIR_OFFSETS[d]
-            ni, nj = i + di, j + dj
-            if 0 <= ni < rows and 0 <= nj < cols:
-                downstream[i, j, 0] = ni
-                downstream[i, j, 1] = nj
-                upstream_count[ni, nj] += 1
-
-    from collections import deque
-
-    queue = deque()
-    for i in range(rows):
-        for j in range(cols):
-            if upstream_count[i, j] == 0:
-                queue.append((i, j))
-
-    while queue:
-        i, j = queue.popleft()
-        ni, nj = int(downstream[i, j, 0]), int(downstream[i, j, 1])
-        if 0 <= ni < rows and 0 <= nj < cols:
-            acc[ni, nj] += acc[i, j]
-            upstream_count[ni, nj] -= 1
-            if upstream_count[ni, nj] == 0:
-                queue.append((ni, nj))
-
-    return acc
 
 
 def calculate_curvature(dem: np.ndarray, resolution: float = 30.0) -> dict[str, np.ndarray]:
@@ -304,9 +229,10 @@ def calculate_twi(dem: np.ndarray, resolution: float = 30.0) -> np.ndarray:
     dem = np.asarray(dem, dtype=float)
     _rows, _cols = dem.shape
 
-    # Flow accumulation
-    flow_dir = _d8_flow_direction(dem)
-    acc = _d8_flow_accumulation(flow_dir)  # number of upstream cells
+    # Flow accumulation (number of upstream cells) from the shared D8
+    # implementation, which is the one engine.land.drainage also uses.
+    flow_dir = flow_direction(dem)
+    acc = flow_accumulation(flow_dir, dem)
 
     # Specific catchment area = acc * cell_size (in meters)
     # TWI requires slope in radians

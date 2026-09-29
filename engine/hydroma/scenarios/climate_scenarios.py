@@ -14,14 +14,17 @@ from dataclasses import dataclass
 @dataclass
 class ClimateProjection:
     """Climate projection for a specific scenario and time horizon."""
+    data_source: str = 'simulated'
+    model: str = 'SSP scenario projection'
+    computed: bool = True
 
-    scenario: str
-    time_horizon: int  # Year
-    delta_temp: float  # °C change from baseline
-    delta_precip: float  # % change from baseline
-    delta_et0: float  # % change in reference evapotranspiration
-    confidence: str  # low, medium, high
-    description: str
+    scenario: str | None = None
+    time_horizon: int | None = None
+    delta_temp: float | None = None
+    delta_precip: float | None = None
+    delta_et0: float | None = None
+    confidence: str | None = None
+    description: str | None = None
 
 
 # Simplified regional projections (Middle East / Iran region)
