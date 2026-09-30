@@ -1,49 +1,30 @@
 {
-  "name": "eco-nojin-monorepo",
-  "version": "0.2.0",
-  "private": true,
-  "description": "Eco Nojin Monorepo — Digital Twin for Landscape Restoration",
-  "scripts": {
-    "dev": "pnpm -C apps/web dev",
-    "build": "pnpm -C apps/web build",
-    "start": "pnpm -C apps/web start",
-    "lint": "pnpm -C apps/web lint",
-    "format": "pnpm -C apps/web format",
-    "format:check": "pnpm -C apps/web format:check",
-    "test": "pnpm -C apps/web test",
-    "test:e2e": "pnpm -C apps/web test:e2e",
-    "type-check": "pnpm -C apps/web type-check",
-    "generate:api": "pnpm -C apps/web generate:api",
-    "check:site-url": "node scripts/check-site-url.mjs",
-    "check:messages": "node scripts/check-message-usage.mjs",
-    "check:locales": "node scripts/check-locale-depth.mjs",
-    "check:locale-encoding": "node scripts/check-locale-encoding.mjs",
-    "check:page-meta": "node scripts/check-page-meta.mjs",
-    "check:font-coverage": "node scripts/check-font-coverage.mjs",
-    "check:ui-kit": "node scripts/check-ui-kit.mjs",
-    "check:orphan-components": "node scripts/check-orphan-components.mjs",
-    "quality": "pnpm -C apps/web quality",
-    "backend:test": "python -m pytest -q",
-    "test:all": "pnpm test && pnpm backend:test"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^2.5.14",
-    "@next/bundle-analyzer": "15.5.25",
-    "@types/node": "^22.15.0",
-    "@types/react": "19.0.0",
-    "@types/react-dom": "19.0.0",
-    "orval": "^8.35.0",
-    "turbo": "^2.5.4",
-    "typescript": "^5.9.3"
-  },
-  "dependencies": {
-    "clsx": "^2.1.1",
-    "geotiff": "^3.0.5",
-    "tailwind-merge": "^3.6.0"
-  },
-  "packageManager": "pnpm@11.4.0",
-  "engines": {
-    "node": ">=20.0.0",
-    "pnpm": ">=9.0.0"
-  }
+    "name":  "eco-nojin-monorepo",
+    "version":  "0.2.0",
+    "private":  true,
+    "description":  "Eco Nojin Monorepo â€” Digital Twin for Landscape Restoration",
+    "scripts":  {
+                    "backend:test":  "python -m pytest -q",
+                    "test:all":  "pnpm backend:test"
+                },
+    "devDependencies":  {
+                            "@biomejs/biome":  "^2.5.14",
+                            "@next/bundle-analyzer":  "15.5.25",
+                            "@types/node":  "^22.15.0",
+                            "@types/react":  "19.0.0",
+                            "@types/react-dom":  "19.0.0",
+                            "orval":  "^8.35.0",
+                            "turbo":  "^2.5.4",
+                            "typescript":  "^5.9.3"
+                        },
+    "dependencies":  {
+                         "clsx":  "^2.1.1",
+                         "geotiff":  "^3.0.5",
+                         "tailwind-merge":  "^3.6.0"
+                     },
+    "packageManager":  "pnpm@11.4.0",
+    "engines":  {
+                    "node":  "\u003e=20.0.0",
+                    "pnpm":  "\u003e=9.0.0"
+                }
 }

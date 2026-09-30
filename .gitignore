@@ -248,11 +248,9 @@ foundry.zip
 foundry.lock
 
 # Applier backup: written only when a pass removes catalogue entries
-apps/web/messages/*.bak
 # --- 15. Build and test output added with Storybook and the CWV harness ---
 # A built Storybook is an artefact of the source, not a source. Committing it is how a
 # 12 MB directory of screenshots ends up in a diff.
-apps/web/storybook-static/
 data/pytest/
 reports/*_final.xml
 

@@ -1,166 +1,200 @@
-# AGENTS.md — Eco Nojin Agent Instructions
+# AGENTS.md — instructions for coding agents in this repository
 
-## Project Overview
-Eco Nojin is a modular, service-oriented platform for ecological intelligence, combining:
-- **Scientific Engine** (HyDroMa): Soil, hydrology, climate, erosion, carbon modeling
-- **API Gateway** (FastAPI): REST, GraphQL, gRPC, SSE, Webhooks
-- **Frontend** (Next.js 15 + React 19 + TypeScript): PWA, offline-first, 14 languages
-- **Event Bus** (NATS JetStream): Event-driven architecture
-- **AI/ML**: RAG, embeddings, multi-agent orchestration
+> **This file is the authoritative source for how to work in this repository.**
+> Anything not written here is not a rule. Where a document and the code disagree,
+> the code wins and the document is history.
 
-## Architecture Principles
-1. **Offline-first** — All mobile features work without internet
-2. **Inclusive access** — Feature phones via USSD/SMS/Voice
-3. **Scientific rigor** — Peer-reviewed methodologies (FAO, IPCC, OGC)
-4. **Performance** — Numba JIT, C++20 kernels, Rust for hot paths
-5. **Multi-language** — 14 languages with RTL/LTR support
-6. **Modularity** — Each module independently testable
-7. **Open standards** — FAO, IPCC, OGC compliance
+Read this before proposing a plan, running a command, or writing code.
 
-## Language Strategy (ADR 0001)
-| Language | Domain | Rationale |
-|----------|--------|-----------|
-| **Python** | Business logic, AI/ML, scientific computing, orchestration | Ecosystem, team expertise |
-| **Go** | Gateway, event bus, webhooks, gRPC gateway | Concurrency, fast startup, single binary |
-| **Rust** | Offline sync, geospatial, high-perf kernels | Memory safety, WASM, zero-cost abstractions |
-| **TypeScript** | Frontend, shared types, edge functions | Type safety, shared schemas |
-| **C++20** | Numerical kernels (existing via pybind11) | Performance-critical numerics |
+---
 
-## Current Phase
-**Phase 1: Foundation** — Week 1-4
-- Sprint 1.1: Observability & Cache (Week 1-2)
-- Sprint 1.2: Load Testing & CI/CD (Week 3-4)
+## What this repository is
 
-## Key Files & Patterns
+A **backend-only** Python monorepo. A FastAPI gateway in front of a scientific
+modelling engine for soil, water, climate, erosion, carbon and MRV.
 
-### Settings & Configuration
-- Single source of truth: `engine/hydroma/config/settings.py` (pydantic-settings v2)
-- All config via `.env` (never committed, in `.gitignore`)
-- Feature flags: `ENABLE_*` in settings
+| Path | What it is |
+|---|---|
+| `engine/` | The scientific core — 290 Python modules |
+| `services/api_gateway/` | The FastAPI app — 85 routers, 751 endpoints |
+| `services/models/` | Model registry and model implementations |
+| `database/`, `alembic/` | SQLAlchemy 2.0 models and migrations |
+| `tests/` | 185 Python test files |
+| `contracts/` | OpenAPI and interface contracts |
 
-### API Gateway Structure
-```
-services/api_gateway/
-├── main.py                 # FastAPI app entry
-├── routers/                # API endpoints per module
-├── middleware/             # Auth, rate limit, cache, logging
-├── security/               # HTTPS, rate limit, headers, CSRF
-├── observability/          # Logging, metrics, tracing
-├── cache/                  # Redis cache layer
-└── resilience/             # Circuit breaker, retry
-```
+**There is no frontend.** A Next.js application under `apps/web`, a workspace
+package `packages/ui`, and `docs/frontend/` were removed on 2026-09-30 at the
+owner's direction. Do not create a web client, a design system, a PWA, a
+translation bundle, or a component library. Do not add a Node build step.
 
-### Database
-- SQLAlchemy 2.0 + async (SQLite dev, PostgreSQL prod)
-- Alembic migrations in `alembic/versions/`
-- Models in `database/models.py`
+`packages/api-client`, `packages/config` and `packages/types` are Python-adjacent
+workspace packages and remain. The generated Orval client under
+`packages/api-client` is **not regenerated** — the generator was part of the
+frontend toolchain and is gone.
 
-### Frontend
-- Next.js 15 App Router + React 19 + TypeScript in `apps/web`
-- TanStack Query v5 + Zustand + React Hook Form + Zod
-- PWA with Workbox, offline-first with IndexedDB (Dexie.js)
-- 14 locales (i18n) with RTL support
-- Tests: `apps/web/src/**/*.test.ts` (vitest + jsdom)
+---
 
-### Testing Strategy
-- **Contract**: schemathesis (OpenAPI) + Pact (consumer-driven)
-- **Unit**: pytest + pytest-asyncio (target ≥80% coverage)
-- **Integration**: pytest with testcontainers (Redis, PostgreSQL)
-- **Load**: Locust (target P99 < 200ms)
-- **Mutation**: mutmut (target ≥70% score)
-- **Chaos**: Chaos Mesh (latency, error, partition injection)
+## Setup
 
-## Development Workflow
-1. **Branch**: `feature/{ticket-id}-{short-desc}` from `main`
-2. **Commit**: Conventional Commits (`feat:`, `fix:`, `refactor:`, `test:`, `docs:`)
-3. **PR**: Target `main`, require CI green + 1 review
-4. **Merge**: Squash merge, delete branch
-5. **Release**: Immutable `vX.Y.Z` tag → GitHub Release; no branch publish
-
-## Code Quality Gates
-- **Lint**: Ruff (replaces flake8, isort, black) — `ruff check . && ruff format --check .`
-- **Type**: MyPy strict — `mypy --strict engine/hydroma/config/settings.py services/api_gateway/`
-- **Format**: Ruff format — `ruff format .`
-- **Test**: pytest with coverage ≥80% — `pytest --cov=engine --cov=services --cov-fail-under=80`
-- **Mutation**: mutmut — `mutmut run --paths-to-mutate=engine,services --tests-dir=tests --runner="pytest -x"`
-
-## Environment Variables
-All secrets in `.env` (never committed):
-- **Required**: `SECRET_KEY`, `JWT_SECRET`, `DATABASE_URL`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
-- **Feature Flags**: `ENABLE_SUPABASE_SYNC`, `ENABLE_REALTIME_SSE`, `ENABLE_BLOCKCHAIN`, etc.
-- **External**: `SUPABASE_*`, `TELEGRAM_BOT_TOKEN`, `CDSE_*`, `CDS_*`, `ALCHEMY_API_KEY`, etc.
-
-## Deployment
-- **Staging**: Disabled until required checks and deployment contract are green
-- **Production**: Disabled until immutable artifact promotion and reviewer gates are configured
-- **Containers**: Multi-stage Dockerfile, GHCR registry
-- **Orchestration**: Kubernetes (staging/prod namespaces)
-- **Secrets**: External Secrets Operator → AWS Secrets Manager / Vault
-
-## Key Commands
 ```bash
-# Local development (no container runtime required)
 python -m venv .venv
-.venv\Scripts\python.exe -m pip install -r requirements.txt -r requirements-local-api.txt
-.venv\Scripts\python.exe -m uvicorn services.api_gateway.main:app --reload --port 8000
-pnpm -C apps/web dev
-
-# Optional full local dependency stack (Podman; not required for SQLite-only dev)
-podman compose -f deploy/docker-compose.yml up -d
-
-# Testing (no-container lane)
-.venv\Scripts\python.exe -m pytest tests/unit -q
-.venv\Scripts\python.exe -m pytest tests/integration/test_sqlite_migrations.py -q
-.venv\Scripts\python.exe -m pytest tests/contract -q
-pnpm -C apps/web test
-pnpm -C apps/web type-check
-locust -f tests/load/locustfile.py --headless -u 50 -t 60s
-
-# Linting
-ruff check . && ruff format --check .
-mypy --strict engine/hydroma/config/settings.py services/api_gateway/
-
-# Database
-.venv\Scripts\python.exe -m alembic upgrade heads
-.venv\Scripts\python.exe -m alembic revision --autogenerate -m "description"
-
-# Pre-commit
-pre-commit run --all-files
-
-
-
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+.venv\Scripts\python.exe -m pip install -r requirements-dev.txt   # ruff, mypy, pre-commit
 ```
 
-## Important Notes for Agents
-- **Never commit `.env`** — verified in `.gitignore`
-- **Never hardcode secrets** — always use `get_settings()`
-- **Use feature flags** for new functionality — `settings.enable_xxx`
-- **Add correlation IDs** to logs — `request.headers.get("X-Request-ID")`
-- **Write contract tests** for new endpoints — `tests/test_contract.py`
-- **Update OpenAPI schema** after API changes — `.venv\Scripts\python.exe scripts/generate_openapi_schema.py`
-- **Write ADRs** for architectural decisions — `docs/adr/NNNN-title.md`
-- **Prefer composition over inheritance** — dependency injection via FastAPI `Depends`
-- **Use structured logging** — `logger.info("event", extra={"key": value})`
-- **Handle errors explicitly** — custom exceptions with error codes
-- **Every claim in a document needs a reproduction path** — a figure you cannot regenerate is an assertion, not a finding. Three rules:
-  1. **Derive, don't transcribe.** Copying a number from another document or a comment block is forbidden. Extract it from the source of truth, or mark it `NOT VERIFIED` and say why. (On 2026-09-29 an analysis asserted six functions returned constants; all six were wrong — one file was deleted, five were fully implemented. The source was a stale comment in `tolerated-degradations.yaml`.)
-  2. **Ship the derivation.** If a document states a figure, a runnable command must exist that produces that figure. A command referenced in prose but absent from `scripts/` is a phantom reference and counts as a defect.
-  3. **Check that referenced paths exist.** After editing any document, grep every `path:line` and file reference it makes. `docs/ENGINEERING_INDEX_FA.md` currently has 20 of 20 links broken; `docs/standards/S-SEC.md` describes five security modules that were deliberately deleted, which tells a reader the wrong thing in the unsafe direction.
-  - When research fails or cannot be verified, **record the negative result** in the document. A documented "could not verify" is required output, not a gap to be quietly removed.
+Configuration is a single source of truth:
+`engine/hydroma/config/settings.py` — pydantic-settings v2, loaded from the
+environment. `SECRET_KEY`, `JWT_SECRET` and `DATABASE_URL` have no safe defaults
+and the app will not start without them.
 
-## Analysis Document Standards
-- **Label every figure** — `measured` (taken from a primary source) or `estimated` (assumption). Never present an estimate as a measurement.
-- **Cite primary sources with a retrieval date** — a vendor pricing page, a LICENSE file, an official doc. A citation without a date is a citation without a guarantee.
-- **Distinguish "the manifest as written" from "what is running"** — `docs/ENGINEERING_INDEX_FA.md §۴٫۱` forbids describing intent as status. A cost or capability figure must say which one it measures.
-- **Name the thing you could not verify** — unverified claims are part of the deliverable. Do not smooth over a failed lookup.
-- **A standard is only real if a test enforces it** — each rule in `docs/standards/` must name the test that blocks a violation. A standard with no test is a wish.
-- **A report describes the repository on its date** — when `reports/` disagrees with code, code wins and the report is history. Never cite a dated report as current state.
+`.env` is gitignored. **Never commit it.**
 
-## Current Sprint Focus (Week 1-2)
-**Sprint 1.1: Observability & Cache**
-- [ ] Structured JSON logger with correlation IDs
-- [ ] Redis cache layer (L1/L2, tags, invalidation) — innovation item 19 (W0)
-- [ ] Cache invalidator via Redis pub/sub
-- [ ] Alert rules (latency, error rate, saturation)
+## Run
 
-**Next**: Sprint 1.2 (Load Testing & CI/CD) — Week 3-4
+```bash
+.venv\Scripts\python.exe -m alembic upgrade heads
+.venv\Scripts\python.exe -m uvicorn services.api_gateway.main:app --reload --port 8000
+```
+
+Health: `GET /health`, `GET /ready`.
+
+## Test and lint
+
+```bash
+.venv\Scripts\python.exe -m pytest -q
+ruff check .
+ruff format --check .
+mypy --strict engine/hydroma/config/settings.py services/api_gateway/
+pre-commit run --all-files
+```
+
+**On PowerShell 5.1** use `; if ($?) { … }` — `&&` does not exist in that shell.
+Every command block in this file is written for it.
+
+---
+
+## The coverage floor is 36, not 80
+
+`pyproject.toml` sets `[tool.coverage.report] fail_under = 36`, and
+`tests/contract/test_g3_g4_coverage_and_deadcode.py:33` asserts the value is a
+rung on `{36, 60, 70, 80}` and that it has never been lowered. An earlier version
+of this file asserted ≥80% and that assertion was never true of any
+configuration in the repository. The test at that path exists **because** the
+claim was wrong.
+
+Do not write `--cov-fail-under=80`. To raise the floor, add tests.
+
+## Two CI jobs report and cannot fail
+
+- The broad `schemathesis run --checks=all` step in `ci-cd.yml` ends in
+  `|| true`. The narrower `pytest tests/test_contract.py` job is the enforced one.
+- `mutmut` runs in CI and its step also ends in `|| true`, against
+  `engine/hydroma/{models,soil,climate_adaptation}` only.
+
+Treat both as **not enforced**. Do not describe them as gates.
+
+## `tests/test_contract.py` is broken for CI
+
+Lines 12 and 22 hardcode `D:/eco_nojin`. That is a relative path on any
+non-Windows runner, so the file cannot pass in CI as written. Fix it before
+relying on it.
+
+---
+
+## Deployment is not available
+
+Staging and production are **disabled**. There is no immutable artifact promotion
+and no reviewer gate.
+
+A Helm chart exists at `helm/eco-nojin/` and is **not applied** — `deploy/k8s/`
+holds only `.gitkeep` and there are no staging or production namespaces. A
+chance that a manifest is written does not mean an environment exists. Do not
+describe intent as status.
+
+External Secrets Operator is **not wired**: 0 references under `deploy/`. Treat
+it as unimplemented, not as configured-but-idle.
+
+---
+
+## How to work
+
+1. **Branch** `feature/{ticket}-{desc}` from `main`.
+2. **Commit** Conventional Commits (`feat:`, `fix:`, `refactor:`, `test:`, `docs:`).
+3. **PR** targets `main`; CI green and one review. Squash merge, delete the branch.
+4. **Release** an immutable `vX.Y.Z` tag → GitHub Release.
+
+### Rules that are not negotiable
+
+- **Never commit `.env`.** It is in `.gitignore`.
+- **Never hardcode a secret.** Go through `get_settings()`.
+- **Gate new behaviour behind a feature flag** — the `ENABLE_*` settings.
+- **Add a correlation id to logs** — read `X-Request-ID` from the request.
+- **Write contract tests for new endpoints** — `tests/test_contract.py`.
+- **Update the OpenAPI schema after an API change** —
+  `python scripts/generate_openapi_schema.py`.
+- **Write an ADR for an architectural decision** — `docs/adr/NNNN-title.md`.
+- **Prefer composition over inheritance** — inject through FastAPI `Depends`.
+- **Use structured logging** — `logger.info("event", extra={"key": value})`.
+- **Handle errors explicitly** — custom exceptions carrying an error code.
+
+### The measurement rule
+
+**Every figure in a document needs a command that reproduces it.** A number you
+cannot regenerate is an assertion, not a finding. Derive it from the source of
+truth, or mark it `NOT VERIFIED` and say why.
+
+Label every figure `measured` (taken from a primary source) or `estimated` (an
+assumption). Never present an estimate as a measurement. Cite a primary source
+with a retrieval date.
+
+**A report describes the repository on its date.** When a report and the code
+disagree, the code wins and the report is history. Never cite a dated report as
+current state.
+
+**Record negative results.** "Could not verify" is required output. Do not delete
+a failed lookup to make a document look clean.
+
+### The standard rule
+
+**A standard is only real if a test enforces it.** Every rule under
+`docs/standards/` names the test that blocks its violation. A rule with no test
+is a wish. If you add a rule, add the test in the same change.
+
+---
+
+## Conventions that were removed, and why
+
+These were true on 2026-09-29 and are no longer true of this tree. Do not
+reintroduce them, and do not write code as if they hold:
+
+- **Zustand** — never existed in this project. The frontend used `useState` plus
+  React context. There is no frontend now.
+- **React Hook Form** — declared in the frontend `package.json` and imported in
+  zero files. The frontend is gone.
+- **Zod client-side validation** — did not exist. Zod was used server-side only.
+- **GraphQL / gRPC** — there is no GraphQL layer. `strawberry`, `graphene` and
+  `graphql` have 0 references in the gateway. The single `grpc` hit is
+  `services/api_gateway/tracing.py:39`, an OpenTelemetry OTLP **trace exporter**
+  import, not a server.
+- **`services/api_gateway/security/`, `cache/`, `resilience/` directories** — never
+  existed. `security` is the module `services/api_gateway/security.py`; cache and
+  resilience are the settings `enable_cache` and `enable_retry`.
+- **Chao Mesh, External Secrets** — 0 references under `deploy/`.
+- **Workbox** — the PWA used Serwist, a Workbox fork. Both are gone with the app.
+
+`docs/ENGINEERING_INDEX_FA.md` previously carried a claim about 20 of 20 broken
+links in this file. That is history, not a current gap.
+
+---
+
+## A trap in this repository
+
+Routes in the deleted frontend lived under directories literally named
+`[locale]`, and PowerShell treats `[...]` as a character class. `Select-String
+-Path` **silently skipped every such file and still exited 0**. A zero survived
+that mistake; a positive count did not. If you ever recreate a bracketed
+directory, use `Select-String -LiteralPath` or read the file directly.
+
+The same trap exists in **regex-based extraction**: a non-greedy pattern scoped to
+one rule can run past its closing brace into the next one. Prefer a parser over a
+regex when the structure matters.

@@ -20,7 +20,6 @@
     ".env.example",
     ".env.template",
     "contracts/.env.example",
-    "apps/web/.env.example",
     "packages/**/*.json",
     "tests/**/*.py",
     "docs/**/*.md",

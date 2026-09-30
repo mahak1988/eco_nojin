@@ -1,7 +1,0 @@
-# Playwright's per-run output, and the accessibility report the run writes.
-#
-# `__screenshots__/` is deliberately *not* ignored: the committed baseline is the
-# point of the gate, and 122 PNGs at 2.4 MB is the whole cost.
-test-results/
-a11y-report.json
-a11y-report.jsonl

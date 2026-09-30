@@ -1,89 +1,22 @@
-# CLAUDE.md — Eco Nojin Instructions for Claude
+# CLAUDE.md
 
-## Quick Reference
-- **Project**: Eco Nojin — Ecological Intelligence Platform
-- **Stack**: Python/FastAPI, Go, Rust, TypeScript/Next.js, C++20
-- **Architecture**: Modular, service-oriented, offline-first, event-driven
-- **Key Docs**: `AGENTS.md`, `docs/ARCHITECTURE.md`, `docs/API_REFERENCE.md`
+> این فایل فقط یک اشاره است. **قواعد کامل کار در `AGENTS.md` است** — لطفاً اول آن را بخوانید.
 
-## Current Sprint
-**Phase 1: Foundation** — Sprint 1.1 (Week 1-2): Observability & Cache
+این مخزن یک **مونوریپوی فقط-بک‌اند** است. یک FastAPI gateway پشت یک موتور
+مدل‌سازی علمی.
 
-## Commands
-```bash
-# Dev (no container runtime required)
-python -m venv .venv
-.venv\Scripts\python.exe -m pip install -r requirements.txt -r requirements-local-api.txt
-.venv\Scripts\python.exe -m uvicorn services.api_gateway.main:app --reload --port 8000
-pnpm -C apps/web dev
+## شروع کار
 
-# Optional full local dependency stack (Podman)
-podman compose -f deploy/docker-compose.yml up -d
+قبل از نوشتن هر کدی، `AGENTS.md` را کامل بخوانید. قواعد، اعداد قابل بازتولید،
+و تله‌های این مخزن آنجا فهرست شده‌اند.
 
-# Test (no-container lane)
-pytest tests/unit -q
-pytest tests/integration/test_sqlite_migrations.py -q
-pytest tests/contract -q
-locust -f tests/load/locustfile.py --headless -u 50 -t 60s
+## چه چیزی در این مخزن نیست
 
-# Lint
-ruff check . && ruff format --check .
-mypy --strict engine/hydroma/config/settings.py services/api_gateway/
+فرانت‌اند حذف شده است. `apps/web`، `packages/ui` و `docs/frontend` در ۲۰۲۶-۰۹-۳۰
+به دستور مالک مخزن حذف شدند. اگر دنبال رابط کاربری می‌گردید، اینجا نیست.
 
-# DB
-python -m alembic upgrade heads
-python -m alembic revision --autogenerate -m "description"
+## اعداد را خودتان راستی‌آزمایی کنید
 
-# Pre-commit
-pre-commit run --all-files
-```
-
-## Code Style
-- **Python**: Ruff + MyPy strict + type hints everywhere
-- **TypeScript**: Strict mode, Zod for validation, TanStack Query v5
-- **Go**: Standard library first, gofmt, golangci-lint
-- **Rust**: Clippy, rustfmt, cargo-nextest
-- **C++20**: clang-format, CMake, pybind11
-
-## Architecture Rules
-1. **Settings only via `get_settings()`** — never `os.getenv()` directly
-2. **Feature flags** for all new features: `settings.enable_xxx`
-3. **Correlation IDs** in all logs: `request.headers.get("X-Request-ID")`
-4. **Structured logging**: `logger.info("event", extra={"key": value})`
-5. **Custom exceptions** with error codes for all errors
-6. **Contract tests** for new endpoints: `tests/test_contract.py`
-4. **ADRs** for architectural decisions: `docs/adr/NNNN-title.md`
-5. **Prefer composition** — dependency injection via FastAPI `Depends`
-
-## Testing Requirements
-- Unit tests for all new functions (target ≥80% coverage)
-- Contract tests for all new endpoints (schemathesis + Pact)
-- Mutation testing for critical paths (target ≥70%)
-- Load testing for new endpoints (Locust)
-
-## Current Focus
-**Sprint 1.1: Observability & Cache**
-- [ ] Structured JSON logger with correlation IDs
-- [ ] Redis cache layer (L1/L2, tags, invalidation)
-- [ ] Cache invalidator via Redis pub/sub
-- [ ] Alert rules (latency, error rate, saturation)
-
-## Key Files to Know
-| File | Purpose |
-|------|---------|
-| `engine/hydroma/config/settings.py` | All configuration |
-| `services/api_gateway/main.py` | FastAPI app entry |
-| `services/api_gateway/routers/` | API endpoints |
-| `database/models.py` | SQLAlchemy models |
-| `database/hub.py` | Database access layer |
-| `apps/web/src/lib/api/client.ts` | Frontend API client |
-| `apps/web/src/lib/offline/` | Offline cache logic |
-
-## Don't Do
-- ❌ Commit `.env` or secrets
-- ❌ Hardcode configuration values
-- ❌ Skip tests for new features
-- ❌ Use `print()` for logging
-- ❌ Bypass feature flags
-- ❌ Direct SQL in business logic (use repositories)
-- ❌ Blocking I/O in async functions
+هر عددی در این مخزن باید **مسیر بازتولید** داشته باشد. عددی که نتوانید
+دوباره بسازید، یک ادعاست نه یک یافته. آن را از منبع اصلی استخراج کنید یا
+`NOT VERIFIED` علامت بزنید و بگویید چرا.

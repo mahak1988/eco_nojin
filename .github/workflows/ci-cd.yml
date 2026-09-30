@@ -45,48 +45,6 @@ jobs:
         run: mypy --strict engine/hydroma/config/settings.py services/api_gateway/
 
   # =============================================================================
-  # FRONTEND LINT & BUILD
-  # =============================================================================
-  frontend:
-    name: Frontend Lint & Build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'pnpm'
-          cache-dependency-path: pnpm-lock.yaml
-
-      - name: Install dependencies
-        run: |
-          cd apps/web
-          pnpm install --frozen-lockfile
-
-      - name: Run Lint (Biome)
-        run: |
-          cd apps/web
-          pnpm lint
-
-      - name: Run Format Check (Biome)
-        run: |
-          cd apps/web
-          pnpm format:check
-
-      - name: Run TypeScript check
-        run: |
-          cd apps/web
-          pnpm type-check
-
-      - name: Build
-        run: |
-          cd apps/web
-          pnpm build
-
-  # =============================================================================
   # CONTRACT TESTS (Schemathesis)
   # =============================================================================
   contract-tests:

@@ -1,6 +1,42 @@
 # Git LFS tracking for Eco Nojin large files
 # Run: git lfs install && git lfs track
 
+# ---------- Text normalisation ----------
+#
+# WHY this block exists, and why it is not optional.
+#
+# This machine (and every Windows contributor's machine) has
+# `core.autocrlf = true`, so Git rewrites LF in the repository to CRLF in the
+# working tree on checkout and back again on commit. Biome's formatter has no
+# such setting: `formatter.lineEnding` defaults to `lf`. The two disagree, and
+# the disagreement is not self-healing — an editor or a tool that writes the
+# file back with CRLF produces a working-tree-only difference that Biome
+# reports as a formatting error on a file nobody touched. That is exactly how
+# and failed `pnpm lint` and `pnpm format:check` in CI.
+#
+# The failure is recurring rather than a one-off because it is a property of the
+# environment, not of any one file: any future Windows checkout reproduces it.
+# Fixing the one file fixes the symptom; pinning the attribute in the repository
+# fixes the cause. `core.autocrlf` is a per-machine local setting that is not
+# committed, so it cannot carry the guarantee — `.gitattributes` is.
+#
+# `text=auto` keeps Git's binary sniffing, so genuinely binary files are still
+# left alone. `eol=lf` then states the working-tree ending explicitly, which
+# overrides `core.autocrlf` for every path matched here. `bin/` and the LFS
+# patterns below keep their own `-text`, so the ordering of the file matters:
+# see the note at the end of this block.
+#
+# This is what makes a checkout byte-identical on Windows, macOS, and Linux,
+# which is the only reason a formatter gate can be trusted in CI.
+* text=auto eol=lf
+
+# --- LFS patterns: the rules above this line only set the repository default.
+#     Every LFS-tracked extension below re-asserts `-text`, so the ordering is
+#     load-bearing: `-text` on an LFS pointer keeps the pointer LF-clean and
+#     keeps Git from attempting EOL conversion on a multi-gigabyte binary.
+#     Do not move the normalisation block below these rules. The lines from
+#     "Geospatial data" onward are unchanged from the original file.
+
 # Geospatial data
 *.duckdb filter=lfs diff=lfs merge=lfs -text
 *.sqlite filter=lfs diff=lfs merge=lfs -text
