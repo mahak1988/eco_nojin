@@ -5,7 +5,8 @@ Reference data for strains and formulations.
 Auto-generated on 2026-08-24T00:15:57.513648
 """
 
-from datetime import date as date_type, datetime
+from datetime import date as date_type
+
 # The call sites below are spelled date_type(...) because this module was
 # written assuming ``import datetime``. Importing the class under its own
 # name and using it directly is the same expression without the ambiguity:

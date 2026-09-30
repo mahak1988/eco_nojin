@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 import logging
-from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 from services.api_gateway.auth import require_admin_with_mfa
@@ -20,9 +19,9 @@ class ModelResponse(BaseModel):
     size: str
     modified_at: str
     digest: str
-    family: Optional[str] = None
-    parameter_size: Optional[str] = None
-    quantization_level: Optional[str] = None
+    family: str | None = None
+    parameter_size: str | None = None
+    quantization_level: str | None = None
     running: bool = False
 
 
@@ -65,7 +64,7 @@ MODEL_STORE = {
 }
 
 
-@router.get("", response_model=List[ModelResponse])
+@router.get("", response_model=list[ModelResponse])
 async def list_models(
     current_user=Depends(require_admin_with_mfa),
 ):

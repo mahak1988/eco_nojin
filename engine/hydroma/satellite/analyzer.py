@@ -4,6 +4,7 @@ Combines providers and processors to deliver actionable insights
 for farmers, pastoralists, and ecosystem managers.
 """
 
+import logging
 from dataclasses import dataclass
 from datetime import date, timedelta
 from typing import Any
@@ -20,6 +21,8 @@ from .processors.indices import (
 )
 from .providers.earth_search import EarthSearchProvider
 from .providers.nasa_power import NasaPowerProvider
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -119,11 +122,13 @@ class SatelliteAnalyzer:
         # unusable rather than emitting NaN into the interpretation, where
         # every comparison against NaN is False and the first branch always wins.
         if not all(np.isfinite(v) for v in (ndvi, evi, savi, ndwi, nbr)):
-            logger.warning(
-                "no valid (unclouded) pixels in the tile for %s, %s", lat, lon
-            )
+            logger.warning("no valid (unclouded) pixels in the tile for %s, %s", lat, lon)
             return self._all_clouded_analysis(
-                lat, lon, analysis_date, tile.cloud_cover, tile.data_source,
+                lat,
+                lon,
+                analysis_date,
+                tile.cloud_cover,
+                tile.data_source,
                 getattr(tile, "quality_flags", None),
             )
 
@@ -147,7 +152,11 @@ class SatelliteAnalyzer:
             data_quality="good" if tile.cloud_cover < 10 else "moderate",
             recommendation=recommendation,
             quality_flags=getattr(tile, "quality_flags", None),
-            data_source="modelled",
+            # Real Sentinel-2 pixels were retrieved and the indices above were
+            # computed from them. The previous hard-coded "modelled" was the
+            # opposite error: a measurement was presented as a simulation,
+            # which tells a reader to discount a number that is fine.
+            data_source="measured",
         )
 
     def _all_clouded_analysis(
@@ -186,7 +195,10 @@ class SatelliteAnalyzer:
                 "field observations."
             ),
             quality_flags={"reason": "all_pixels_clouded", **(quality_flags or {})},
-            data_source="modelled",
+            # No index was computed: every retrieved scene was fully clouded
+            # and the values above are None. Labelling this "modelled" claimed
+            # a simulation ran.
+            data_source="unavailable",
         )
 
     def _fallback_analysis(self, lat: float, lon: float, analysis_date: date) -> FieldAnalysis:
@@ -212,7 +224,9 @@ class SatelliteAnalyzer:
             data_quality="poor",
             recommendation="Satellite data temporarily unavailable. Please try again later or provide manual field observations.",
             quality_flags={"reason": "no_tiles"},
-            data_source="modelled",
+            # No tile was retrieved and no index was computed. Every value above
+            # is None, which is an absence, not a simulation result.
+            data_source="unavailable",
         )
 
     def _generate_recommendation(

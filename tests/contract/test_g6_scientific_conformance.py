@@ -27,7 +27,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "tests" / "contract"))
 
-from gates import scan_motor_conformance  # noqa: E402
+from gates import scan_motor_conformance
 
 BASELINE = ROOT / "docs" / "metrics" / "baseline.json"
 

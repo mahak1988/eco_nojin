@@ -7,9 +7,9 @@ anchor lines are not unique.
 
 اجرا:  python scripts/hp06_ch12.py
 """
+
 from __future__ import annotations
 
-import io
 import os
 import re
 import sys
@@ -68,12 +68,13 @@ TAIL_TAIL = [
 
 
 def main() -> int:
-    text = io.open(TARGET, encoding="utf-8").read()
+    with open(TARGET, encoding="utf-8") as _fh:
+        text = _fh.read()
     if text.count(CH12_END) != 1 or text.count(ASSET_ANCHOR) != 1 or text.count(ASSET_OLD) != 0:
         print("لنگر یکتا نیست — نوشتن انجام نشد", file=sys.stderr)
         return 1
     head, rest = text.split(CH12_END, 1)
-    tail, apx = rest.split(APX, 1)
+    _tail, apx = rest.split(APX, 1)
 
     lines = head.split("\n")
     figs = [l for l in lines if FIG_RE.match(l)]
@@ -81,7 +82,7 @@ def main() -> int:
     tabs = [l for l in tabs if not l.startswith("جدول ۲٫۷ هر") and not l.startswith("جدول ۸٫۱ یک")]
     tabs = [l for l in tabs if not l.startswith("جدول ۱۲٫۴") and not l.startswith("جدول ۱۲٫۵")]
 
-    out = [CH12_END] + TAIL_HEAD
+    out = [CH12_END, *TAIL_HEAD]
     for i, t in enumerate(tabs, start=1):
         out.append(f"{i}\t{t}")
     out.append(f"جمع\t{len(tabs)} جدول در این کتابچه\t—\t—\tشمارش استخراج‌شده از متن")
@@ -97,16 +98,19 @@ def main() -> int:
         print("نشانگر فرمول یافت نشد — نوشتن انجام نشد", file=sys.stderr)
         return 1
     add = [f"{a}\t{b}\t{c}\t{d}" for a, b, c, d in NEW_FORMULAS]
-    add.append("جمع\t۲۰ فرمول در این کتابچه\t—\t—\tشش فرمول بندهای ۳٫۲ تا ۳٫۸ و چهارده فرمول بندهای ۳٫۹ تا ۳٫۲۰")
+    add.append(
+        "جمع\t۲۰ فرمول در این کتابچه\t—\t—\tشش فرمول بندهای ۳٫۲ تا ۳٫۸ و چهارده فرمول بندهای ۳٫۹ تا ۳٫۲۰"
+    )
     head = head.replace(marker, marker + "\n" + "\n".join(add), 1)
 
     new_body = "\n".join(out)
     asset = f"{len(figs)} شکل + {len(tabs)} جدول + ۲۰ فرمول"
     head = head.replace(ASSET_ANCHOR, ASSET_ANCHOR + "\n" + asset, 1)
-    io.open(TARGET, "w", encoding="utf-8", newline="").write(
-        head + new_body + "\n" + APX + apx
+    with open(TARGET, "w", encoding="utf-8", newline="") as _fh:
+        _fh.write(head + new_body + "\n" + APX + apx)
+    print(
+        f"بند ۱۲٫۴ و ۱۲٫۵ و ۱۲٫۶ افزوده شد — جدول: {len(tabs)} · شکل: {len(figs)} · سطر دارایی: {asset}"
     )
-    print(f"بند ۱۲٫۴ و ۱۲٫۵ و ۱۲٫۶ افزوده شد — جدول: {len(tabs)} · شکل: {len(figs)} · سطر دارایی: {asset}")
     return 0
 
 

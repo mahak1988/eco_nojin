@@ -4,15 +4,13 @@ from __future__ import annotations
 
 import logging
 from datetime import UTC, datetime
-from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, ConfigDict
-from sqlalchemy import desc, or_, select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import desc, select
 
 from database.hub import hub
-from database.models import ContentItem, ContentVersion, ContentTranslation
+from database.models import ContentItem, ContentTranslation, ContentVersion
 from services.api_gateway.auth import require_content_admin
 
 logger = logging.getLogger(__name__)
@@ -27,10 +25,10 @@ class ContentCreate(BaseModel):
 
 
 class ContentUpdate(BaseModel):
-    title: Optional[str] = None
-    body: Optional[str] = None
-    category: Optional[str] = None
-    status: Optional[str] = None
+    title: str | None = None
+    body: str | None = None
+    category: str | None = None
+    status: str | None = None
 
 
 class ContentResponse(BaseModel):
@@ -42,7 +40,7 @@ class ContentResponse(BaseModel):
     language: str
     created_at: str
     updated_at: str
-    published_at: Optional[str] = None
+    published_at: str | None = None
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -87,15 +85,15 @@ class ScheduleRequest(BaseModel):
 router = APIRouter(prefix="/content", tags=["admin-content"])
 
 
-@router.get("", response_model=List[ContentResponse])
+@router.get("", response_model=list[ContentResponse])
 async def list_content(
-    status: Optional[str] = Query(None),
-    language: Optional[str] = Query(None),
-    category: Optional[str] = Query(None),
+    status: str | None = Query(None),
+    language: str | None = Query(None),
+    category: str | None = Query(None),
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
     current_user=Depends(require_content_admin),
-    db: AsyncSession = Depends(hub.get_async_session),
+    db=Depends(hub.get_async_session),
 ):
     """List content items with filters."""
     stmt = select(ContentItem)
@@ -117,7 +115,7 @@ async def list_content(
 async def create_content(
     payload: ContentCreate,
     current_user=Depends(require_content_admin),
-    db: AsyncSession = Depends(hub.get_async_session),
+    db=Depends(hub.get_async_session),
 ):
     """Create new content (draft)."""
     existing = await db.execute(select(ContentItem).where(ContentItem.title == payload.title))
@@ -144,7 +142,7 @@ async def update_content(
     item_id: int,
     payload: ContentUpdate,
     current_user=Depends(require_content_admin),
-    db: AsyncSession = Depends(hub.get_async_session),
+    db=Depends(hub.get_async_session),
 ):
     """Update content item."""
     content = await db.get(ContentItem, item_id)
@@ -165,7 +163,7 @@ async def update_content(
 async def publish_content(
     item_id: int,
     current_user=Depends(require_content_admin),
-    db: AsyncSession = Depends(hub.get_async_session),
+    db=Depends(hub.get_async_session),
 ):
     """Publish content."""
     content = await db.get(ContentItem, item_id)
@@ -184,7 +182,7 @@ async def publish_content(
 async def delete_content(
     item_id: int,
     current_user=Depends(require_content_admin),
-    db: AsyncSession = Depends(hub.get_async_session),
+    db=Depends(hub.get_async_session),
 ):
     """Archive content (soft delete)."""
     content = await db.get(ContentItem, item_id)
@@ -197,24 +195,28 @@ async def delete_content(
     return {"message": "Content archived"}
 
 
-@router.get("/{item_id}/versions", response_model=List[ContentVersionResponse])
+@router.get("/{item_id}/versions", response_model=list[ContentVersionResponse])
 async def get_content_versions(
     item_id: int,
     current_user=Depends(require_content_admin),
-    db: AsyncSession = Depends(hub.get_async_session),
+    db=Depends(hub.get_async_session),
 ):
     """Get version history for content."""
-    stmt = select(ContentVersion).where(ContentVersion.content_id == item_id).order_by(desc(ContentVersion.version))
+    stmt = (
+        select(ContentVersion)
+        .where(ContentVersion.content_id == item_id)
+        .order_by(desc(ContentVersion.version))
+    )
     result = await db.execute(stmt)
     versions = result.scalars().all()
     return versions
 
 
-@router.get("/{item_id}/translations", response_model=List[ContentTranslationResponse])
+@router.get("/{item_id}/translations", response_model=list[ContentTranslationResponse])
 async def get_content_translations(
     item_id: int,
     current_user=Depends(require_content_admin),
-    db: AsyncSession = Depends(hub.get_async_session),
+    db=Depends(hub.get_async_session),
 ):
     """Get translations for content."""
     stmt = select(ContentTranslation).where(ContentTranslation.content_id == item_id)
@@ -228,7 +230,7 @@ async def translate_content(
     item_id: int,
     payload: TranslateRequest,
     current_user=Depends(require_content_admin),
-    db: AsyncSession = Depends(hub.get_async_session),
+    db=Depends(hub.get_async_session),
 ):
     """AI translate content to target locale."""
     # Check source content exists
@@ -265,7 +267,7 @@ async def schedule_publish(
     item_id: int,
     payload: ScheduleRequest,
     current_user=Depends(require_content_admin),
-    db: AsyncSession = Depends(hub.get_async_session),
+    db=Depends(hub.get_async_session),
 ):
     """Schedule content publishing."""
     content = await db.get(ContentItem, item_id)
@@ -283,7 +285,7 @@ async def schedule_publish(
 async def cancel_schedule(
     item_id: int,
     current_user=Depends(require_content_admin),
-    db: AsyncSession = Depends(hub.get_async_session),
+    db=Depends(hub.get_async_session),
 ):
     """Cancel scheduled publishing."""
     content = await db.get(ContentItem, item_id)

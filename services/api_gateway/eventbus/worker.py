@@ -179,6 +179,13 @@ class EventWorker:
         done = asyncio.Event()
 
         async def dispatch(payload: dict[str, Any], headers: dict[str, str]) -> None:
+            # ``process_message`` runs against a synthetic stand-in because
+            # the real NATS message is not reachable from this callback.
+            # That stand-in's ack/nak/term are local booleans and are
+            # deliberately ignored: the real message is settled by
+            # ``NATSManager.subscribe``, which owns it. Verified: a failing
+            # handler on the real subscribe path leaves the message
+            # un-acknowledged and terminated, never acked.
             message = _SyntheticMessage(headers=headers, payload=payload)
             await self.process_message(message)
             if stop_event is not None and stop_event.is_set():

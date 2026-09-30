@@ -6,6 +6,7 @@ Run with: pytest tests/contract/test_admin_contract.py -v
 
 import pytest
 from fastapi.testclient import TestClient
+
 from services.api_gateway.main import app
 
 client = TestClient(app)
@@ -16,11 +17,11 @@ def test_openapi_schema_valid():
     schema = app.openapi()
     assert "openapi" in schema
     assert "paths" in schema
-    
+
     # Check admin endpoints exist in schema
     admin_paths = [p for p in schema["paths"] if p.startswith("/api/v1/admin/")]
     assert len(admin_paths) > 0, "No admin endpoints found in OpenAPI schema"
-    
+
     # Check key admin endpoints
     expected_endpoints = [
         "/api/v1/admin/overview",
@@ -35,7 +36,7 @@ def test_openapi_schema_valid():
         "/api/v1/admin/settings",
         "/api/v1/admin/models",
     ]
-    
+
     for endpoint in expected_endpoints:
         assert endpoint in schema["paths"], f"Missing endpoint in schema: {endpoint}"
 
@@ -44,7 +45,7 @@ def test_admin_health_endpoint():
     """Test the admin health endpoint."""
     response = client.get("/api/v1/admin/overview/health")
     assert response.status_code in (200, 401, 403)  # 401/403 if auth required
-    
+
     if response.status_code == 200:
         data = response.json()
         assert "status" in data

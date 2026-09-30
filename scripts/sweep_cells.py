@@ -1,4 +1,4 @@
-﻿"""Cell-level dead-end sweeper for the HP-16 booklet.
+"""Cell-level dead-end sweeper for the HP-16 booklet.
 
 Operates on the tab-delimited rows of the booklet's tables. For each rule the
 row is located by its first cell (exact match) inside a line range, and one cell
@@ -11,6 +11,7 @@ Rules are read from a JSON file: {"start": int, "end": int, "rules": [
 ]}
 Nothing is written unless every rule verifies.
 """
+
 import json
 import sys
 
@@ -29,8 +30,10 @@ def norm(s: str) -> str:
 
 
 def main() -> int:
-    spec = json.load(open(sys.argv[1], encoding="utf-8"))
-    text = open(PATH, encoding="utf-8").read()
+    with open(sys.argv[1], encoding="utf-8") as _fh:
+        spec = json.load(_fh)
+    with open(PATH, encoding="utf-8") as _fh:
+        text = _fh.read()
     eol = "\r\n" if "\r\n" in text else "\n"
     lines = text.split(eol)
     lo, hi = spec["start"], spec["end"]
@@ -93,7 +96,8 @@ def main() -> int:
         return 1
 
     out = eol.join(staged)
-    open(PATH, "w", encoding="utf-8", newline="").write(out)
+    with open(PATH, "w", encoding="utf-8", newline="") as _fh:
+        _fh.write(out)
     print(f"OK rows_rewritten={done} physical_lines={out.count(chr(10)) + 1}")
     before = {k: text.count(k) for k in BANNED}
     after = {k: out.count(k) for k in BANNED}

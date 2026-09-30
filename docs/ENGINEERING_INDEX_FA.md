@@ -12,36 +12,36 @@
 
 | سند | چه چیزی |
 |---|---|
-| [`reports/TECHNICAL_AUDIT_FA_2026-09-25.md`](reports/TECHNICAL_AUDIT_FA_2026-09-25.md) | ممیزی ۲۸ یافته‌ای بک‌اند و موتور |
-| [`reports/REMEDIATION_PLAN_FA_2026-09-25.md`](reports/REMEDIATION_PLAN_FA_2026-09-25.md) | برنامهٔ هفت‌موجی، ۱۸ محور ادغام |
-| [`reports/WAVE_3_INTEGRATION_PLAN_FA_2026-09-26.md`](reports/WAVE_3_INTEGRATION_PLAN_FA_2026-09-26.md) | موج ۳: ادغام، ۱۸ محور با اندازه‌گیری تازه |
-| [`reports/WBI_Q1_Q2_PLAN_FA_2026-09-26.md`](reports/WBI_Q1_Q2_PLAN_FA_2026-09-26.md) | Q1 و Q2 شاخص WBI |
-| [`reports/OPEN_ITEMS_FA_2026-09-26.md`](reports/OPEN_ITEMS_FA_2026-09-26.md) | مشخصات دو قلم باز، برای تصمیم مشترک |
+| [`reports/TECHNICAL_AUDIT_FA_2026-09-25.md`](../reports/TECHNICAL_AUDIT_FA_2026-09-25.md) | ممیزی ۲۸ یافته‌ای بک‌اند و موتور |
+| [`reports/REMEDIATION_PLAN_FA_2026-09-25.md`](../reports/REMEDIATION_PLAN_FA_2026-09-25.md) | برنامهٔ هفت‌موجی، ۱۸ محور ادغام |
+| [`reports/WAVE_3_INTEGRATION_PLAN_FA_2026-09-26.md`](../reports/WAVE_3_INTEGRATION_PLAN_FA_2026-09-26.md) | موج ۳: ادغام، ۱۸ محور با اندازه‌گیری تازه |
+| [`reports/WBI_Q1_Q2_PLAN_FA_2026-09-26.md`](../reports/WBI_Q1_Q2_PLAN_FA_2026-09-26.md) | Q1 و Q2 شاخص WBI |
+| [`reports/OPEN_ITEMS_FA_2026-09-26.md`](../reports/OPEN_ITEMS_FA_2026-09-26.md) | مشخصات دو قلم باز، برای تصمیم مشترک |
 
 ## ۲. وضع موجود موتور
 
 | سند | چه چیزی |
 |---|---|
-| [`engine/cpp_core/README_BUILD_STATUS_FA.md`](engine/cpp_core/README_BUILD_STATUS_FA.md) | هستهٔ بومی: چگونه ساخته می‌شود، چه چیزی هست و چه چیزی نیست |
-| [`engine/hydroma/cpp_bridge/README_STATUS_FA.md`](engine/hydroma/cpp_bridge/README_STATUS_FA.md) | پل، گزینش backend، و یک بارگذار |
-| [`engine/hydroma/formulas/README_STATUS_FA.md`](engine/hydroma/formulas/README_STATUS_FA.md) | دفترچهٔ فرمول: وضعیت هر کمیت |
+| [`engine/cpp_core/README_BUILD_STATUS_FA.md`](../engine/cpp_core/README_BUILD_STATUS_FA.md) | هستهٔ بومی: چگونه ساخته می‌شود، چه چیزی هست و چه چیزی نیست |
+| [`engine/hydroma/cpp_bridge/README_STATUS_FA.md`](../engine/hydroma/cpp_bridge/README_STATUS_FA.md) | پل، گزینش backend، و یک بارگذار |
+| [`engine/hydroma/formulas/README_STATUS_FA.md`](../engine/hydroma/formulas/README_STATUS_FA.md) | دفترچهٔ فرمول: وضعیت هر کمیت |
 
 ## ۳. مراجع کد
 
 | مسیر | چه چیزی |
 |---|---|
-| [`engine/hydroma/formulas/records.py`](engine/hydroma/formulas/records.py) | شکل رکورد: منشأ از وضعیت جداست |
-| [`engine/hydroma/formulas/registry.py`](engine/hydroma/formulas/registry.py) | چهار قاعدهٔ اعمال‌شده |
-| [`engine/hydroma/formulas/catalog.py`](engine/hydroma/formulas/catalog.py) | رکوردها |
-| [`engine/hydroma/formulas/research/`](engine/hydroma/formulas/research/) | **تعریف تحقیقاتی** سهم‌های پژوهشی |
-| [`engine/hydroma/models/validation/loader.py`](engine/hydroma/models/validation/loader.py) | بارگذار مجموعهٔ اعتبارسنجی |
-| [`engine/hydroma/models/validation/runner.py`](engine/hydroma/models/validation/runner.py) | تفکیک «عدم تطابق کد» از «مورد ناسازگار» |
-| [`engine/cpp_core/build_pybind.bat`](engine/cpp_core/build_pybind.bat) | ساخت ماژول بومی |
-| [`engine/cpp_core/build_tests.bat`](engine/cpp_core/build_tests.bat) | ساخت آزمون‌های بومی، هسته یک‌بار |
-| [`scripts/run_cpp_tests.py`](scripts/run_cpp_tests.py) | دروازهٔ آزمون بومی |
-| [`scripts/run_tests.py`](scripts/run_tests.py) | اجرای هر دو مجموعه |
-| [`scripts/doc_coverage.py`](scripts/doc_coverage.py) | گزارش پوشش مستندات |
-| [`tests/db_support.py`](tests/db_support.py) | بازنشانی مستقل‌از‌ترتیب شِما |
+| [`engine/hydroma/formulas/records.py`](../engine/hydroma/formulas/records.py) | شکل رکورد: منشأ از وضعیت جداست |
+| [`engine/hydroma/formulas/registry.py`](../engine/hydroma/formulas/registry.py) | چهار قاعدهٔ اعمال‌شده |
+| [`engine/hydroma/formulas/catalog.py`](../engine/hydroma/formulas/catalog.py) | رکوردها |
+| [`engine/hydroma/formulas/research/`](../engine/hydroma/formulas/research/) | **تعریف تحقیقاتی** سهم‌های پژوهشی |
+| [`engine/hydroma/models/validation/loader.py`](../engine/hydroma/models/validation/loader.py) | بارگذار مجموعهٔ اعتبارسنجی |
+| [`engine/hydroma/models/validation/runner.py`](../engine/hydroma/models/validation/runner.py) | تفکیک «عدم تطابق کد» از «مورد ناسازگار» |
+| [`engine/cpp_core/build_pybind.bat`](../engine/cpp_core/build_pybind.bat) | ساخت ماژول بومی |
+| [`engine/cpp_core/build_tests.bat`](../engine/cpp_core/build_tests.bat) | ساخت آزمون‌های بومی، هسته یک‌بار |
+| [`scripts/run_cpp_tests.py`](../scripts/run_cpp_tests.py) | دروازهٔ آزمون بومی |
+| [`scripts/run_tests.py`](../scripts/run_tests.py) | اجرای هر دو مجموعه |
+| [`scripts/doc_coverage.py`](../scripts/doc_coverage.py) | گزارش پوشش مستندات |
+| [`tests/db_support.py`](../tests/db_support.py) | بازنشانی مستقل‌از‌ترتیب شِما |
 
 ## ۴. سه تمایز که همهٔ اسناد بر آن تکیه می‌کنند
 

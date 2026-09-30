@@ -15,7 +15,7 @@ from datetime import UTC, datetime, timedelta
 
 import structlog
 from cryptography.fernet import Fernet
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -1248,14 +1248,27 @@ async def export_data(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_async_db),
 ):
-    """Export all user data as a JSON download."""
-    return {
-        "status": "success",
-        "data": {
-            "download_url": "/api/v1/auth/export-data/download?token=placeholder",
-            "expires_at": datetime.now(UTC).isoformat(),
+    """Export all user data as a JSON download.
+
+    Not implemented. An earlier version returned a 200 with a download URL
+    pointing at ``/export-data/download?token=placeholder``, an endpoint that
+    does not exist. A caller was told the export had worked and received
+    nothing, which is the worst possible answer for a data-access request: it
+    reads as a completed right of access.
+
+    Refusing honestly is the correct behaviour until the export is built.
+    ``S-HONEST`` requires the status envelope to match reality.
+    """
+    raise HTTPException(
+        status_code=status.HTTP_501_NOT_IMPLEMENTED,
+        detail={
+            "error": "export_not_implemented",
+            "message": (
+                "Personal data export is not available yet. No data was "
+                "exported. This endpoint does not pretend to succeed."
+            ),
         },
-    }
+    )
 
 
 # ============================================================================

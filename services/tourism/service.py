@@ -203,10 +203,11 @@ class TourismService:
             raise ValueError(f"حداکثر {tour.max_participants} شرکت‌کننده مجاز است")
 
         # بررسی ظرفیت برد اکولوژیک
-        if tour.ecological_capacity:
-            if tour.current_bookings + participants_count > tour.ecological_capacity:
-                available = tour.ecological_capacity - tour.current_bookings
-                raise ValueError(f"ظرفیت برد اکولوژیک تکمیل است. فقط {available} نفر باقی مانده")
+        if tour.ecological_capacity and (
+            tour.current_bookings + participants_count > tour.ecological_capacity
+        ):
+            available = tour.ecological_capacity - tour.current_bookings
+            raise ValueError(f"ظرفیت برد اکولوژیک تکمیل است. فقط {available} نفر باقی مانده")
 
         # بررسی تاریخ
         if tour_date <= datetime.now(UTC):

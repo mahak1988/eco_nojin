@@ -177,9 +177,9 @@ class TestResilience:
             raise ValueError("fail")
 
         # First two calls should raise ValueError
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"^fail$"):
             failing_func()
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"^fail$"):
             failing_func()
 
         # Third call should raise CircuitOpenError

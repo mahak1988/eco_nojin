@@ -16,7 +16,6 @@ from __future__ import annotations
 
 import csv
 import glob
-import io
 import os
 import re
 import sys
@@ -29,7 +28,19 @@ REGISTER = os.path.join(BOOKS, "_مرجع", "HDR.csv")
 OUT_CSV = os.path.join(HERE, "hdr_candidates.csv")
 OUT_MD = os.path.join(HERE, "hdr_candidates.md")
 
-FIELDS = ["id", "domain", "indicator", "value", "unit", "source_primary", "year", "confidence", "consumers", "action", "status"]
+FIELDS = [
+    "id",
+    "domain",
+    "indicator",
+    "value",
+    "unit",
+    "source_primary",
+    "year",
+    "confidence",
+    "consumers",
+    "action",
+    "status",
+]
 
 # خانوادهٔ شناسه بر پایهٔ حوزهٔ موضوعی، از استاندارد نگارش بند ۱٫۳
 DOMAIN_FAMILY = {
@@ -96,14 +107,14 @@ def appendix_rows(text: str) -> list[list[str]]:
         if not is_header(line):
             continue
         # سرستون باید پس از عنوان پیوست الف آمده باشد
-        window = "\n".join(lines[max(0, i - 20): i])
+        window = "\n".join(lines[max(0, i - 20) : i])
         if "پیوست الف" in window:
             start = i
     if start is None:
         return []
 
     out: list[list[str]] = []
-    for line in lines[start + 1:]:
+    for line in lines[start + 1 :]:
         if "راهنمای اجرایی کشاورز" in line and out:
             break
         if "\t" not in line:
@@ -207,7 +218,6 @@ def main() -> int:
     taken, _ = read_register()
     candidates: list[dict] = []
     per_book: dict[str, int] = {}
-    skipped: list[str] = []
 
     for path in sorted(glob.glob(os.path.join(BOOKS, "HP-*.txt"))):
         name = os.path.basename(path)
@@ -215,7 +225,8 @@ def main() -> int:
         if not match:
             continue
         code = f"HP-{match.group(1)}"
-        text = io.open(path, encoding="utf-8").read()
+        with open(path, encoding="utf-8") as _fh:
+            text = _fh.read()
 
         count = 0
         for cells in appendix_rows(text):
@@ -230,7 +241,10 @@ def main() -> int:
             if not value or not indicator:
                 continue
             # ردیف‌های خوداظهاری و ثابت، شناسهٔ ثابت دارند و تکراری‌اند
-            if re.search(r"تعداد (شکل|جدول|فرمول)|بازهٔ زمانی اعداد|شروع رسمی طرح|نرخ ارز مرجع|تعداد ردیف", indicator):
+            if re.search(
+                r"تعداد (شکل|جدول|فرمول)|بازهٔ زمانی اعداد|شروع رسمی طرح|نرخ ارز مرجع|تعداد ردیف",
+                indicator,
+            ):
                 continue
             if len(indicator) < 3:
                 continue
@@ -314,7 +328,9 @@ def main() -> int:
         write(f"- ردیف‌های لنگرگاه‌دار: {anchored} · بی‌لنگرگاه: {unanchored}\n")
         write("- ردیف بی‌لنگرگاه نباید در رجیستر درج شود تا وقتی بند متناظرش تعیین گردد.\n")
         write("- هر ردیف باید پیش از درج، در بند متناظر کتابچه دیده شود.\n")
-        write("- ردیف‌هایی که مقدارشان در کتابچه محاسبه نشده، باید یا محاسبه شوند یا از رجیستر حذف شوند.\n")
+        write(
+            "- ردیف‌هایی که مقدارشان در کتابچه محاسبه نشده، باید یا محاسبه شوند یا از رجیستر حذف شوند.\n"
+        )
         write("- ستون `action` پیشنهادی است و باید با وضعیت واقعی هر بسته تطبیق داده شود.\n")
 
     print(f"ردیف‌های پیشنهادی: {len(candidates)}")

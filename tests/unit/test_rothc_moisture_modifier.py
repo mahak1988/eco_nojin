@@ -11,6 +11,8 @@ different rate.
 
 from __future__ import annotations
 
+import itertools
+
 import numpy as np
 import pytest
 
@@ -39,7 +41,7 @@ def test_monotonically_decreasing_across_the_whole_range():
     smd = np.linspace(0.0, MAX_SMD, 2001)
     values = [water_factor(float(s), MAX_SMD) for s in smd]
 
-    for prev, nxt in zip(values, values[1:]):
+    for prev, nxt in itertools.pairwise(values):
         assert nxt <= prev + 1e-12, f"moisture modifier increased while drying: {prev} -> {nxt}"
 
 

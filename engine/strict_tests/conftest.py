@@ -13,8 +13,7 @@ import math
 from pathlib import Path
 
 import pytest
-from hypothesis import HealthCheck, settings
-from hypothesis import strategies as st
+from hypothesis import HealthCheck, settings, strategies as st
 
 # The engine root, not this suite's directory. Four things in test_s01 depend on
 # that distinction and all four agree: _discover_modules builds dotted paths as
@@ -219,8 +218,11 @@ def _oracle_ra(latitude: float, doy: int) -> float:
     delta = 0.409 * math.sin(2.0 * math.pi * doy / 365.0 - 1.39)
     cos_ws = -math.tan(phi) * math.tan(delta)
     ws = math.acos(max(-1.0, min(1.0, cos_ws)))
-    return (24.0 * 60.0 / math.pi) * 0.082 * dr * (
-        ws * math.sin(phi) * math.sin(delta) + math.cos(phi) * math.cos(delta) * math.sin(ws)
+    return (
+        (24.0 * 60.0 / math.pi)
+        * 0.082
+        * dr
+        * (ws * math.sin(phi) * math.sin(delta) + math.cos(phi) * math.cos(delta) * math.sin(ws))
     )
 
 

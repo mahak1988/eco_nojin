@@ -539,8 +539,8 @@ FAO‑56 معادلهٔ ۵۲ (هارگریوز) را به‌عنوان **جان�
 ### ۴.۴ منحنی برون: تابعی که به ورودی خودش پاسخ نمی‌دهد
 
 ```python
-ratio = storage_req_m3 / runoff_m3     # نسبت حجم رسوب به حجم آب
-trap_efficiency = 1 - 0.05/sqrt(ratio)
+ratio = storage_req_m3 / runoff_m3  # نسبت حجم رسوب به حجم آب
+trap_efficiency = 1 - 0.05 / sqrt(ratio)
 ```
 
 هر دو صورت و مخرج با مساحت حوضه خطی‌اند ⇒ نسبت ناوردای مقیاس:

@@ -646,7 +646,7 @@ def deep_scan(root: Path) -> dict:
                 endpoints.append((m.group(1).upper(), m.group(2), rel))
 
         # --- localhost هاردکد ---
-        for m in re.finditer(r"https?://(?:localhost|127\.0\.0\.1)[^\s\"'<>]*", text):
+        for _m in re.finditer(r"https?://(?:localhost|127\.0\.0\.1)[^\s\"'<>]*", text):
             localhost_files[rel] += 1
 
         # --- CDN در HTML ---
@@ -857,14 +857,12 @@ def find_duplicates(root: Path, min_block: int = 8, max_windows: int = 800):
             continue
         rel = f.relative_to(root).as_posix()
         step = max(1, min_block // 2)
-        count = 0
-        for s in range(0, len(kept) - min_block + 1, step):
+        for count, s in enumerate(range(0, len(kept) - min_block + 1, step)):
             h = hashlib.md5("\n".join(kept[s : s + min_block]).encode("utf-8")).hexdigest()
             lst = window_map[h]
             if sum(1 for r, _ in lst if r == rel) < 2:
                 lst.append((rel, s + 1))
-            count += 1
-            if count >= max_windows:
+            if count + 1 >= max_windows:
                 break
     groups = [(h, locs) for h, locs in window_map.items() if len(locs) > 1]
     groups.sort(key=lambda x: len(x[1]), reverse=True)

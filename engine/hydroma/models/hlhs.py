@@ -10,9 +10,9 @@ Reference: Shannon (1948), Nagendra (2002)
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, ClassVar
 
-from .base import ScientificModel, ValidationResult
+from .base import ScientificModel, ValidationResult, validate_finite
 
 
 @dataclass
@@ -20,20 +20,20 @@ class LandscapeMetrics:
     """Input metrics for HLHS calculation"""
 
     ndvi_mean: float = 0.0
-    ewsı_mean: float = 0.0
+    ewsi_mean: float = 0.0
     soc_t_ha: float = 0.0
     shdi: float = 0.0  # Shannon Diversity Index
-    ecsı_t_co2_ha_yr: float = 0.0
+    ecsi_t_co2_ha_yr: float = 0.0
     slope_stability: float = 0.0  # 0 to 1
     connectivity: float = 0.0  # 0 to 1
 
     def to_dict(self) -> dict[str, float]:
         return {
             "ndvi_mean": self.ndvi_mean,
-            "ewsı_mean": self.ewsı_mean,
+            "ewsi_mean": self.ewsi_mean,
             "soc_t_ha": self.soc_t_ha,
             "shdi": self.shdi,
-            "ecsı_t_co2_ha_yr": self.ecsı_t_co2_ha_yr,
+            "ecsi_t_co2_ha_yr": self.ecsi_t_co2_ha_yr,
             "slope_stability": self.slope_stability,
             "connectivity": self.connectivity,
         }
@@ -46,12 +46,12 @@ class HLHS(ScientificModel):
     version = "1.0.0"
     description = "Composite Landscape Health Score for fund management"
 
-    REFERENCES = {
+    REFERENCES: ClassVar[dict[str, str]] = {
         "Shannon1948": "Shannon, C.E. (1948). A Mathematical Theory of Communication.",
         "Nagendra2002": "Nagendra, H. (2002). Opposite trends in response for the Shannon and Simpson indices.",
     }
 
-    WEIGHTS = {
+    WEIGHTS: ClassVar[dict[str, float]] = {
         "vegetation": 0.20,
         "water": 0.20,
         "soil": 0.15,
@@ -61,7 +61,7 @@ class HLHS(ScientificModel):
         "connectivity": 0.05,
     }
 
-    BOUNDS = {
+    BOUNDS: ClassVar[dict[str, Any]] = {
         "vegetation": (0.0, 0.8),
         "water": (0.0, 1.0),
         "soil": (0, 100),
@@ -72,10 +72,29 @@ class HLHS(ScientificModel):
     }
 
     def validate_inputs(self, metrics: LandscapeMetrics) -> tuple[bool, list[str]]:
-        errors = []
+        # A dataclass is checked field by field: a NaN in any metric compares
+        # False against every range below and would otherwise reach the
+        # weighted sum and turn the whole landscape score into a NaN.
+        errors = validate_finite(
+            "HLHS",
+            {
+                field: getattr(metrics, field)
+                for field in (
+                    "ndvi_mean",
+                    "ewsi_mean",
+                    "soc_t_ha",
+                    "shdi",
+                    "ecsi_t_co2_ha_yr",
+                    "slope_stability",
+                    "connectivity",
+                )
+            },
+        )
+        if errors:
+            return False, errors
         if not (0 <= metrics.ndvi_mean <= 1):
             errors.append("NDVI mean out of range")
-        if not (0 <= metrics.ewsı_mean <= 1):
+        if not (0 <= metrics.ewsi_mean <= 1):
             errors.append("EWSI mean out of range")
         if metrics.soc_t_ha < 0:
             errors.append("SOC must be non-negative")
@@ -101,12 +120,12 @@ class HLHS(ScientificModel):
 
         components = {
             "vegetation": self.normalize(metrics.ndvi_mean, b["vegetation"][0], b["vegetation"][1]),
-            "water": self.normalize(1 - metrics.ewsı_mean, 0, 1),
+            "water": self.normalize(1 - metrics.ewsi_mean, 0, 1),
             "soil": self.normalize(metrics.soc_t_ha, b["soil"][0], b["soil"][1]),
             "biodiversity": self.normalize(
                 metrics.shdi, b["biodiversity"][0], b["biodiversity"][1]
             ),
-            "carbon": self.normalize(metrics.ecsı_t_co2_ha_yr, b["carbon"][0], b["carbon"][1]),
+            "carbon": self.normalize(metrics.ecsi_t_co2_ha_yr, b["carbon"][0], b["carbon"][1]),
             "topography": self.normalize(metrics.slope_stability, 0, 1),
             "connectivity": self.normalize(metrics.connectivity, 0, 1),
         }

@@ -179,15 +179,31 @@ def calculate_available_water(theta_fc: float, theta_wp: float, root_depth: floa
     """Calculate plant available water capacity.
 
     Args:
-        theta_fc: Water content at field capacity
-        theta_wp: Water content at wilting point
+        theta_fc: Water content at field capacity (cm3/cm3)
+        theta_wp: Water content at wilting point (cm3/cm3)
         root_depth: Root zone depth (cm)
 
     Returns:
         Dict: Available water calculations
+
+    Raises:
+        ValueError: if either water content lies outside the physical range of a
+            volumetric water content, if field capacity is not above wilting
+            point, or if the root zone depth is negative. A theta of 2.0 is not
+            a soil that holds twice its own volume of water, and a root depth of
+            -50 cm is not a root zone; either one produced a store of water
+            with the wrong sign and no indication that the input was the
+            problem. A root depth of exactly zero is a degenerate but possible
+            root zone and is served as an empty store.
     """
+    if not 0.0 <= theta_wp <= 1.0:
+        raise ValueError(f"Wilting point water content must lie in [0, 1] cm3/cm3, got {theta_wp}")
+    if not 0.0 <= theta_fc <= 1.0:
+        raise ValueError(f"Field capacity water content must lie in [0, 1] cm3/cm3, got {theta_fc}")
     if theta_fc <= theta_wp:
         raise ValueError("Field capacity must be greater than wilting point")
+    if root_depth < 0.0:
+        raise ValueError(f"Root zone depth must be non-negative, got {root_depth} cm")
 
     # Available water capacity (cm water / cm soil)
     awc = theta_fc - theta_wp

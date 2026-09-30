@@ -6,8 +6,6 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-import services.marketplace.models
-import services.marketplace.models.marketplace_payment  # noqa: F401
 from database.base import Base
 from services.marketplace.models.marketplace_payment import MarketplacePayment
 from services.marketplace.payments_service import (

@@ -134,10 +134,8 @@ class SWATPlusMotor(AbstractScientificMotor):
         et_potential = xr.full_like(dem, 4.0, dtype=np.float32)
 
         # Total precipitation (sum over time period)
-        if hasattr(rainfall, "time"):
-            p_total = rainfall.sum(dim="time")
-        else:
-            p_total = rainfall  # assume single value
+        # a bare scalar has no time axis to sum over
+        p_total = rainfall.sum(dim="time") if hasattr(rainfall, "time") else rainfall
 
         # SCS-CN runoff
         s = (1000.0 / cn - 10.0) * 25.4  # retention

@@ -10,7 +10,6 @@ import logging
 from dataclasses import dataclass, field
 from enum import StrEnum
 from typing import Any
-from engine.hydroma.provenance import Provenance
 
 logger = logging.getLogger(__name__)
 
@@ -43,8 +42,9 @@ class MotorResult:
 @dataclass
 class UnifiedLandAnalysis:
     """Complete unified analysis from all motors"""
-    data_source: str = 'modelled'
-    model: str = 'motors_hub facade'
+
+    data_source: str = "modelled"
+    model: str = "motors_hub facade"
     computed: bool = True
 
     soil_analysis: MotorResult | None = None
@@ -56,6 +56,39 @@ class UnifiedLandAnalysis:
     overall_confidence: float = 0.0
     motors_available: int = 0
     motors_total: int = 7
+
+
+#: Site attributes each motor genuinely needs. A motor handed a default for
+#: one of these is advising on a site that was never described, so the motor is
+#: skipped rather than run on invented values.
+REQUIRED_SITE_INPUTS: dict[str, tuple[str, ...]] = {
+    "crop_advisor": ("soil_ph", "annual_precip_mm", "mean_temp_c"),
+    "erosion": ("annual_precip_mm", "slope_pct", "rainfall_erosivity", "soil_erodibility"),
+    "irrigation": ("soil_type", "soil_depth_cm", "annual_precip_mm"),
+}
+
+
+class _MissingSiteInput(RuntimeError):
+    """Raised when a motor has no measured value for a required attribute."""
+
+
+def _site_inputs(motor: str, inputs: dict[str, Any]) -> dict[str, Any]:
+    """The motor's inputs, refusing to invent a site.
+
+    The four motors each filled their missing attributes with plausible
+    constants: pH 6.5, 600 mm of rain, 20 C, 100 cm of soil. A crop
+    recommendation for a site whose rainfall was invented is not a
+    recommendation, and nothing in the result said so.
+    """
+    required = REQUIRED_SITE_INPUTS.get(motor, ())
+    missing = [name for name in required if inputs.get(name) is None]
+    if missing:
+        raise _MissingSiteInput(
+            f"{motor} needs measured site values for {', '.join(missing)}; no "
+            "default is assumed, because a fabricated site produces advice "
+            "that looks site-specific"
+        )
+    return {name: inputs.get(name) for name in required}
 
 
 class ScientificMotorsHub:
@@ -150,12 +183,7 @@ class ScientificMotorsHub:
                     error_message="Motor not loaded",
                 )
 
-            motor_input = {
-                "soil_ph": inputs.get("soil_ph", 6.5),
-                "soil_depth_cm": inputs.get("soil_depth_cm", 100),
-                "annual_precip_mm": inputs.get("annual_precip_mm", 600),
-                "mean_temp_c": inputs.get("mean_temp_c", 20),
-            }
+            motor_input = _site_inputs("crop_advisor", inputs)
 
             output = motor.execute(**motor_input)
 
@@ -188,11 +216,7 @@ class ScientificMotorsHub:
                     error_message="Motor not loaded",
                 )
 
-            motor_input = {
-                "soil_type": inputs.get("soil_type", "loam"),
-                "soil_depth_cm": inputs.get("soil_depth_cm", 100),
-                "annual_precip_mm": inputs.get("annual_precip_mm", 600),
-            }
+            motor_input = _site_inputs("irrigation", inputs)
 
             output = motor.execute(**motor_input)
 
@@ -223,11 +247,7 @@ class ScientificMotorsHub:
                     error_message="Motor not loaded",
                 )
 
-            motor_input = {
-                "rainfall_erosivity": inputs.get("rainfall_erosivity", 100),
-                "soil_erodibility": inputs.get("soil_erodibility", 0.3),
-                "slope_pct": inputs.get("slope_pct", 3.0),
-            }
+            motor_input = _site_inputs("erosion", inputs)
 
             output = motor.execute(**motor_input)
 
@@ -258,11 +278,7 @@ class ScientificMotorsHub:
                     error_message="Motor not loaded",
                 )
 
-            motor_input = {
-                "initial_soc": inputs.get("initial_soc", 30),
-                "mean_temp_c": inputs.get("mean_temp_c", 20),
-                "clay_pct": inputs.get("clay_pct", 25),
-            }
+            motor_input = _site_inputs("irrigation", inputs)
 
             output = motor.execute(**motor_input)
 

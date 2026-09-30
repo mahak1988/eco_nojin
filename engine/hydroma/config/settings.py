@@ -9,7 +9,6 @@ from typing import Literal
 from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
 #: Sentinel distinguishing "key absent" from "key present and explicitly None".
 #: ``values.get("_env_file")`` cannot make this distinction: it returns ``None``
 #: both when the caller passed ``_env_file=None`` and when the caller passed
@@ -53,9 +52,11 @@ class Settings(BaseSettings):
                 .lower()
                 .strip()
             )
-            ambient_env = str(
-                os.environ.get("ENVIRONMENT") or os.environ.get("APP_ENV") or ""
-            ).lower().strip()
+            ambient_env = (
+                str(os.environ.get("ENVIRONMENT") or os.environ.get("APP_ENV") or "")
+                .lower()
+                .strip()
+            )
             if not ({env_val, ambient_env} & {"production", "prod"}):
                 values.setdefault("secret_key", "dev-secret-key")
                 values.setdefault("jwt_secret", values.get("secret_key", "dev-jwt-secret"))
@@ -164,6 +165,17 @@ class Settings(BaseSettings):
     nats_max_retries: int = int(os.environ.get("NATS_MAX_RETRIES", "5"))
     nats_retry_base_delay: float = float(os.environ.get("NATS_RETRY_BASE_DELAY", "1.0"))
     nats_retry_max_delay: float = float(os.environ.get("NATS_RETRY_MAX_DELAY", "60.0"))
+    # Retry attempts before a message is dead-lettered. Separate from
+    # nats_max_retries: retries govern our own backoff, this governs the
+    # JetStream consumer's own delivery cap. Conflating the two meant a
+    # settings key was read that did not exist, so the getattr always fell
+    # back and there was no way to configure the cap.
+    nats_max_deliver: int = int(os.environ.get("NATS_MAX_DELIVER", "5"))
+    nats_retry_jitter: bool = os.environ.get("NATS_RETRY_JITTER", "true").lower() in {
+        "1",
+        "true",
+        "yes",
+    }
     nats_connect_timeout: float = float(os.environ.get("NATS_CONNECT_TIMEOUT", "2.0"))
     satellite_api_key: str = ""
     nasa_power_base_url: str = "https://power.larc.nasa.gov/api"
@@ -608,12 +620,15 @@ class Settings(BaseSettings):
             RuntimeError: With specific message for each violation
         """
         # Fail-fast: secret_key must be set (non-empty) in any non-test environment
-        if not self.is_production and str(self.environment or "").lower().strip() not in ("test",):
-            if not self.secret_key:
-                raise RuntimeError(
-                    "SECRET_KEY must be set in environment. "
-                    'Generate with: python -c "import secrets; print(secrets.token_urlsafe(64))"'
-                )
+        if (
+            not self.is_production
+            and str(self.environment or "").lower().strip() not in ("test",)
+            and not self.secret_key
+        ):
+            raise RuntimeError(
+                "SECRET_KEY must be set in environment. "
+                'Generate with: python -c "import secrets; print(secrets.token_urlsafe(64))"'
+            )
 
         if not self.is_production:
             return self

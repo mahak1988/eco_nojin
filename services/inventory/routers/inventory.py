@@ -144,7 +144,7 @@ async def create_sku(
             body.warehouse_id,
         )
     except EcoNojinException as e:
-        raise HTTPException(status_code=e.status_code or 400, detail=e.message)
+        raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
     return {"id": sku.id, "sku_code": sku.sku_code, "name": sku.name, "uom": sku.uom}
 
 
@@ -232,7 +232,7 @@ async def receipt(
             created_by=_uid(user),
         )
     except EcoNojinException as e:
-        raise HTTPException(status_code=e.status_code or 400, detail=e.message)
+        raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
     return {"movement_id": m.id, "type": m.movement_type, "qty": str(m.qty)}
 
 
@@ -249,7 +249,7 @@ async def issue(body: IssueRequest, db: AsyncSession = Depends(get_db), user=Dep
             created_by=_uid(user),
         )
     except EcoNojinException as e:
-        raise HTTPException(status_code=e.status_code or 400, detail=e.message)
+        raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
     return {"movement_id": m.id, "type": m.movement_type, "qty": str(m.qty)}
 
 
@@ -269,7 +269,7 @@ async def transfer(
             created_by=_uid(user),
         )
     except EcoNojinException as e:
-        raise HTTPException(status_code=e.status_code or 400, detail=e.message)
+        raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
     return {"movement_id": m.id, "type": m.movement_type, "qty": str(m.qty)}
 
 
@@ -287,7 +287,7 @@ async def adjust(
             created_by=_uid(user),
         )
     except EcoNojinException as e:
-        raise HTTPException(status_code=e.status_code or 400, detail=e.message)
+        raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
     return {"movement_id": m.id, "type": m.movement_type, "qty": str(abs(m.qty))}
 
 
@@ -307,7 +307,7 @@ async def return_goods(
             created_by=_uid(user),
         )
     except EcoNojinException as e:
-        raise HTTPException(status_code=e.status_code or 400, detail=e.message)
+        raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
     return {"movement_id": m.id, "type": m.movement_type, "qty": str(m.qty)}
 
 
@@ -325,7 +325,7 @@ async def scrap(
             created_by=_uid(user),
         )
     except EcoNojinException as e:
-        raise HTTPException(status_code=e.status_code or 400, detail=e.message)
+        raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
     return {"movement_id": m.id, "type": m.movement_type, "qty": str(m.qty)}
 
 
@@ -412,7 +412,7 @@ async def reserve_stock(
             created_by=_uid(user),
         )
     except EcoNojinException as e:
-        raise HTTPException(status_code=e.status_code or 400, detail=e.message)
+        raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
     return {"reservation_id": r.id, "qty": str(r.qty), "status": r.status}
 
 
@@ -429,7 +429,7 @@ async def consume_reservation(
     try:
         m = await service.consume_reservation(reservation_id, qty)
     except EcoNojinException as e:
-        raise HTTPException(status_code=e.status_code or 400, detail=e.message)
+        raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
     return {"movement_id": m.id, "qty": str(m.qty)}
 
 
@@ -441,7 +441,7 @@ async def release_reservation(
     try:
         r = await service.release_reservation(reservation_id)
     except EcoNojinException as e:
-        raise HTTPException(status_code=e.status_code or 400, detail=e.message)
+        raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
     return {"reservation_id": r.id, "status": r.status}
 
 

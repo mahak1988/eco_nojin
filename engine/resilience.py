@@ -94,20 +94,20 @@ class CircuitBreaker:
     def state(self) -> CircuitState:
         """Current circuit state (may transition from OPEN to HALF_OPEN)."""
         with self._lock:
-            if self._state == CircuitState.OPEN:
-                if time.time() - self._last_failure_time >= self.recovery_timeout:
-                    self._state = CircuitState.HALF_OPEN
-                    self._success_count = 0
-                    logger.info(f"Circuit '{self.name}' transitioning to HALF_OPEN")
+            if (
+                self._state == CircuitState.OPEN
+                and time.time() - self._last_failure_time >= self.recovery_timeout
+            ):
+                self._state = CircuitState.HALF_OPEN
+                self._success_count = 0
+                logger.info(f"Circuit '{self.name}' transitioning to HALF_OPEN")
             return self._state
 
     def allow_request(self) -> bool:
         """Check if request should be allowed."""
         state = self.state
-        if state == CircuitState.CLOSED or state == CircuitState.HALF_OPEN:
-            return True
-        else:  # OPEN
-            return False
+        # OPEN is the only state that does not admit a request
+        return state in (CircuitState.CLOSED, CircuitState.HALF_OPEN)
 
     def record_success(self):
         """Record a successful call."""
@@ -265,7 +265,9 @@ def with_timeout(timeout_seconds: float, fallback: Any = None):
                     logger.warning(f"Timeout after {timeout_seconds}s in {func.__name__}")
                     if fallback is not None:
                         return fallback
-                    raise TimeoutError(f"Function {func.__name__} exceeded {timeout_seconds}s")
+                    raise TimeoutError(
+                        f"Function {func.__name__} exceeded {timeout_seconds}s"
+                    ) from None
 
         return wrapper
 

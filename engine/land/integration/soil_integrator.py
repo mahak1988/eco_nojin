@@ -434,7 +434,12 @@ class SoilIntegrator:
                 recommendations=recommendations,
                 integration_time_ms=integration_time_ms,
                 data_quality_level="L0",  # Global model
-                data_source="modelled",
+                # build_default_profile ignores latitude and longitude and
+                # returns GLOBAL_MEAN_SOIL, so every site receives the same
+                # profile. That is a global mean, not a site-specific
+                # simulation, and the label has to say which a reader is
+                # looking at.
+                data_source="global_mean",
                 model="soil integrator",
             )
 

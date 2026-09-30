@@ -115,9 +115,28 @@ ALIASES = {
 }
 
 ACCESSORS = {
-    "to_dict", "from_dict", "model_dump", "dict", "json", "validate", "get", "set",
-    "copy", "items", "keys", "values", "register", "run", "execute", "close",
-    "clear", "store", "load", "warm", "cfg", "draw",
+    "to_dict",
+    "from_dict",
+    "model_dump",
+    "dict",
+    "json",
+    "validate",
+    "get",
+    "set",
+    "copy",
+    "items",
+    "keys",
+    "values",
+    "register",
+    "run",
+    "execute",
+    "close",
+    "clear",
+    "store",
+    "load",
+    "warm",
+    "cfg",
+    "draw",
 }
 
 
@@ -247,7 +266,8 @@ def test_every_formula_bearing_model_is_registered():
 def test_the_machinery_exclusions_are_justified():
     """An exclusion without a stated reason is an unexamined gap."""
     for name, reason in MACHINERY.items():
-        assert reason and not reason.startswith("see"), f"{name} has no reason recorded"
+        assert reason, f"{name} has no reason recorded"
+        assert not reason.startswith("see"), f"{name} points elsewhere: {reason!r}"
 
 
 def test_no_registered_formula_is_unreachable():

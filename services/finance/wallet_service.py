@@ -164,10 +164,10 @@ class WalletService:
 
                 return amount, wallet.balance
 
-            except Exception:
+            except Exception as e:
                 await self.db.rollback()
                 if attempt == 2:
-                    raise ValueError("Failed to update wallet after retries")
+                    raise ValueError("Failed to update wallet after retries") from e
 
         raise ValueError("Failed to process earning")
 
@@ -224,10 +224,10 @@ class WalletService:
             except ValueError:
                 await self.db.rollback()
                 raise
-            except Exception:
+            except Exception as e:
                 await self.db.rollback()
                 if attempt == 2:
-                    raise ValueError("Failed to update wallet after retries")
+                    raise ValueError("Failed to update wallet after retries") from e
 
         raise ValueError("Failed to process redemption")
 
@@ -295,10 +295,10 @@ class WalletService:
 
                 return True
 
-            except Exception:
+            except Exception as e:
                 await self.db.rollback()
                 if attempt == 2:
-                    raise ValueError("Transfer failed after retries")
+                    raise ValueError("Transfer failed after retries") from e
 
         return False
 

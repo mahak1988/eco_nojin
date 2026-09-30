@@ -39,8 +39,6 @@ import ast
 import collections
 from pathlib import Path
 
-import pytest
-
 from engine.strict_tests.conftest import ENGINE_ROOT
 
 ROOT = ENGINE_ROOT.parent
@@ -200,7 +198,6 @@ class TestModuleShadowing:
             assert hasattr(models, name), f"{name} is not reachable from database.models"
 
     def test_the_six_tables_are_registered_on_the_shared_base(self) -> None:
-        import database.models  # noqa: F401
         from database.base import Base
 
         for table in (
@@ -249,7 +246,6 @@ class TestModuleShadowing:
         has no other reason to touch. What has to hold is that the registry holds
         one table object per name.
         """
-        import database.models  # noqa: F401
         from database.base import Base
 
         names = [t.name for t in Base.metadata.tables.values()]

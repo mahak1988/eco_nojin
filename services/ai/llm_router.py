@@ -13,7 +13,7 @@ from typing import Any
 
 import httpx
 from openai import AsyncOpenAI
-from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 
 class LLMProvider(Enum):
@@ -112,6 +112,7 @@ class QuotaState:
 
     def can_make_request(self, config: ProviderConfig) -> bool:
         from datetime import datetime
+
         now = datetime.utcnow()
         today = now.strftime("%Y-%m-%d")
         minute = now.strftime("%Y-%m-%d-%H-%M")
@@ -125,8 +126,7 @@ class QuotaState:
             self.last_reset_minute = minute
 
         return (
-            self.requests_today < config.rpd_limit
-            and self.requests_this_minute < config.rpm_limit
+            self.requests_today < config.rpd_limit and self.requests_this_minute < config.rpm_limit
         )
 
     def record_request(self):
@@ -147,6 +147,7 @@ class QuotaTracker:
     def _load(self):
         if self.state_file and os.path.exists(self.state_file):
             import json
+
             with open(self.state_file) as f:
                 data = json.load(f)
             for k, v in data.items():
@@ -160,6 +161,7 @@ class QuotaTracker:
     def _save(self):
         if self.state_file:
             import json
+
             data = {
                 k: {
                     "requests_today": v.requests_today,
@@ -288,9 +290,7 @@ class LLMRouter:
         **kwargs,
     ):
         """Streaming chat with fallback."""
-        async for chunk in await self.chat(
-            messages, model_alias, tools, stream=True, **kwargs
-        ):
+        async for chunk in await self.chat(messages, model_alias, tools, stream=True, **kwargs):
             yield chunk
 
     def get_available_providers(self) -> list[dict]:

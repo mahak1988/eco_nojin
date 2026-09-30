@@ -23,6 +23,7 @@ from engine.hydroma.models.base import (
     ModelInput,
     ModelOutput,
     ScientificModel,
+    unavailable_output,
 )
 from engine.hydroma.models.expansion.registry import (
     ModelDomain,
@@ -161,11 +162,14 @@ class GPSurrogateModel(ScientificModel):
         """Validate inputs."""
         if self.input_dim is not None:
             query_points = inputs.get("query_points")
-            if query_points is not None and isinstance(query_points, np.ndarray):
-                if query_points.shape[1] != self.input_dim:
-                    raise ValueError(
-                        f"Expected {self.input_dim} input dimensions, got {query_points.shape[1]}"
-                    )
+            if (
+                query_points is not None
+                and isinstance(query_points, np.ndarray)
+                and query_points.shape[1] != self.input_dim
+            ):
+                raise ValueError(
+                    f"Expected {self.input_dim} input dimensions, got {query_points.shape[1]}"
+                )
         return True
 
     def train_on_data(
@@ -369,23 +373,33 @@ class GPSurrogateModel(ScientificModel):
 
     def compute(self, inputs: ModelInput) -> ModelOutput:
         """Predict using trained GP."""
-        if not self._trained:
-            return ModelOutput(
-                success=False,
-                error_message="GP not trained",
-                outputs={},
-                data_source="modelled",
-                model="scientific model",
-            )
-
         query_points = inputs.get("query_points")
         if query_points is None:
-            return ModelOutput(
-                success=False,
-                error_message="query_points required",
-                outputs={},
-                data_source="modelled",
-                model="scientific model",
+            return unavailable_output(
+                "GP surrogate",
+                "No query_points were supplied, so nothing was evaluated.",
+                remedy="pass inputs={'query_points': [[...]]}",
+            )
+
+        if not GPYTORCH_AVAILABLE:
+            # Without gpytorch the exact-GP forward pass returns None and
+            # _predict_mock used to supply random numbers. A caller received
+            # a draw from a normal distribution labelled as a modelled
+            # hydrology result, which is the shape of the defect that was
+            # fixed in modflow6. Refuse instead.
+            return unavailable_output(
+                "GP surrogate",
+                "The surrogate cannot run because gpytorch is not installed, "
+                "so no approximation of the underlying model exists.",
+                missing="gpytorch",
+                remedy="pip install gpytorch, then fit() on training data",
+            )
+
+        if not self._trained:
+            return unavailable_output(
+                "GP surrogate",
+                "The surrogate has not been fitted, so there is no model to predict with.",
+                remedy="call fit(X, y) on data from the model being emulated",
             )
 
         X = np.array(query_points)
@@ -449,11 +463,26 @@ class GPSurrogateModel(ScientificModel):
                 return mean, None
 
     def _predict_mock(self, X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-        """Mock prediction."""
-        n = X.shape[0]
-        mean = np.random.randn(n) * 10
-        std = np.abs(np.random.randn(n)) + 0.1
-        return mean, std
+        """Placeholder prediction when gpytorch is absent.
+
+        Returns zeros rather than ``np.random.randn(n) * 10``. The random form
+        was shaped like a GP prediction and was returned to callers as
+        ``data_source="modelled"``, so a hydrology result could be a draw from
+        a normal distribution. A surrogate is only meaningful as a
+        approximation of a trained model; with no gpytorch there is no model,
+        and no number should stand in for it.
+
+        ``compute`` checks availability before reaching this method, so a
+        caller using the public API never sees these values. The method raises
+        instead, so a direct ``predict()`` call fails loudly rather than
+        silently.
+        """
+        raise RuntimeError(
+            "GP surrogate prediction requires gpytorch, which is not "
+            "installed. Install gpytorch, or use the trained model persisted by "
+            "fit(). Returning a placeholder would misrepresent a random draw "
+            "as a modelled result."
+        )
 
     def predict_with_gradients(
         self,

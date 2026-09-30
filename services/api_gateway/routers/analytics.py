@@ -18,6 +18,7 @@ def get_db():
 from database.models import (
     CarbonProject,
     EcoTransaction,
+    EcoWallet,
     Farm,
     SatelliteAnalysis,
     ScenarioRun,

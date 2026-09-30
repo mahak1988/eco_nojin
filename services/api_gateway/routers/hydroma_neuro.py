@@ -97,7 +97,7 @@ async def analyze_from_signals(request: ElectricalSignalRequest) -> StressAssess
         )
     except Exception as e:
         logger.error("Signal analysis failed: %s", e)
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.post("/analyze/voc", response_model=StressAssessmentResponse)
@@ -124,7 +124,7 @@ async def analyze_from_voc(request: VOCAnalysisRequest) -> StressAssessmentRespo
         )
     except Exception as e:
         logger.error("VOC analysis failed: %s", e)
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.post("/analyze/combined", response_model=StressAssessmentResponse)
@@ -166,10 +166,10 @@ async def analyze_combined(request: CombinedAnalysisRequest) -> StressAssessment
             recommendations=assessment.recommendations,
         )
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:
         logger.error("Combined analysis failed: %s", e)
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.get("/stress-levels", response_model=list[str])

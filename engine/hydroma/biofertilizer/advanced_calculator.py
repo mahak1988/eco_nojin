@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -61,8 +61,8 @@ class FormulationSolution:
     water_saving_pct: float | None = None
     is_feasible: bool | None = None
     warnings: list[str] = field(default_factory=list)
-    data_source: str = 'modelled'
-    model: str = 'formulation optimizer (greedy)'
+    data_source: str = "modelled"
+    model: str = "formulation optimizer (greedy)"
     computed: bool = True
     notes: list[str] = field(default_factory=list)
 
@@ -85,7 +85,7 @@ class FormulationOptimizer:
     """
 
     # Target nutrient requirements (kg/ha/year) for general restoration
-    DEFAULT_REQUIREMENTS = {
+    DEFAULT_REQUIREMENTS: ClassVar[dict[str, float]] = {
         "N_min_kg_ha": 50.0,
         "P_min_kg_ha": 20.0,
         "K_min_kg_ha": 30.0,
@@ -926,12 +926,9 @@ class CostBenefitCalculator:
                 # Default: assume 3 years if not specified
                 persistence = 3.0
 
-            if persistence >= analysis_years:
-                # Long-lasting material - no reinvestment during analysis
-                annual_cost = 0.0
-            else:
-                # Needs reapplication
-                annual_cost = material_cost / persistence
+            # Long-lasting material needs no reinvestment during the
+            # analysis window; otherwise it must be reapplied
+            annual_cost = 0.0 if persistence >= analysis_years else material_cost / persistence
 
             total_annual_reinvest += annual_cost
 
@@ -1149,7 +1146,7 @@ class ScaleCalculator:
     - Economies of scale
     """
 
-    SCALE_CATEGORIES = {
+    SCALE_CATEGORIES: ClassVar[dict[Any, Any]] = {
         (0.1, 1): "micro",
         (1, 10): "small",
         (10, 50): "medium",

@@ -1,5 +1,7 @@
 """Tests for post-quantum cryptography module."""
 
+import importlib.util
+
 import pytest
 
 from services.security.pqcrypto import available, hybrid_kem, hybrid_sign, status
@@ -14,17 +16,12 @@ class TestPQCStatus:
         assert "signature" in s
 
     def test_available_matches_liboqs(self):
-        try:
-            import oqs  # noqa: F401
-
-            has_liboqs = True
-        except Exception:
-            try:
-                import liboqs  # noqa: F401
-
-                has_liboqs = True
-            except Exception:
-                has_liboqs = False
+        # find_spec, not a bare import: the test asserts what the module
+        # reports about availability, so it must not be the thing that decides
+        # availability by importing it.
+        has_liboqs = importlib.util.find_spec("oqs") is not None or (
+            importlib.util.find_spec("liboqs") is not None
+        )
         assert available() == has_liboqs
 
 

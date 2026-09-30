@@ -34,8 +34,8 @@ class RegionAnalysis:
     region_name: str | None = None
     kgc: dict[str, Any] | None = None
     wbi: dict[str, Any] | None = None
-    data_source: str = 'modelled'
-    model: str = 'Koppen + WBI regional assessment'
+    data_source: str = "modelled"
+    model: str = "Koppen + WBI regional assessment"
     computed: bool = True
     timestamp: str | None = None
 

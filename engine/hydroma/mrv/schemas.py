@@ -29,8 +29,9 @@ class IoTReading(BaseModel):
 
 class CitizenReport(BaseModel):
     """Offline citizen field observation (MRV level 3)."""
-    data_source: str = 'measured'
-    model: str = 'citizen report (submitted)'
+
+    data_source: str = "measured"
+    model: str = "citizen report (submitted)"
 
     site_id: str = Field(..., min_length=1, max_length=200)
     observer: str = Field(..., min_length=1, max_length=200, description="Observer name/ID")

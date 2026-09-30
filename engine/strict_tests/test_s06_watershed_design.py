@@ -341,15 +341,6 @@ class TestHalfMoon:
         steep_wet = design_half_moon(40.0, 10_000.0, rainfall_mm=500.0)
         assert gentle_dry != steep_wet
 
-    @pytest.mark.xfail(
-        strict=True,
-        reason=(
-            "design_half_moon does not validate area_m2. A negative area makes "
-            "math.ceil return a non-positive count, so the function reports zero "
-            "half-moons and zero cost for an impossible catchment instead of "
-            "raising."
-        ),
-    )
     @pytest.mark.parametrize("area", [0.0, -1.0, -16.0])
     def test_rejects_non_positive_area(self, area: float) -> None:
         with pytest.raises(ValueError):
@@ -396,17 +387,6 @@ class TestTerrace:
             )
             assert out["channel_depth_m"] == pytest.approx(0.3)
 
-    @pytest.mark.xfail(
-        strict=True,
-        reason=(
-            "design_terrace accepts terrace_width_m (line 250) and never uses it; "
-            "line 273 hard-codes channel_volume_per_m = 0.135 m3/m instead. With a "
-            "reported channel depth of 0.3 m that implies a 0.45 m wide channel, "
-            "which contradicts both the terrace width the caller supplied and the "
-            "0.135 m3/m figure's own comment. Three quantities for one channel "
-            "section, none of them linked."
-        ),
-    )
     def test_terrace_width_changes_the_channel_geometry(self) -> None:
         narrow = design_terrace(5.0, 1_000_000.0, terrace_width_m=1.0)
         wide = design_terrace(5.0, 1_000_000.0, terrace_width_m=4.0)
@@ -588,16 +568,6 @@ class TestStrahlerOrdering:
         elapsed = time.perf_counter() - start
         assert elapsed < 0.5, f"{elapsed:.2f} s for 1025 edges"
 
-    @pytest.mark.xfail(
-        strict=True,
-        reason=(
-            "engine/hydroma/watershed/calculator.py:432-436 finds the outgoing "
-            "edge by scanning for from_node == node and then assigns the new order "
-            "to EVERY match. A node with two outgoing edges, i.e. a distributary or "
-            "a bifurcation in the channel network, gives both branches the same "
-            "upstream order even though they have different upstream contributions."
-        ),
-    )
     def test_bifurcating_outflow_carries_the_node_order(self) -> None:
         """Every reach leaving a node carries that node's order.
 
@@ -652,18 +622,6 @@ class TestHortonRatios:
         result = calculate_strahler_order(net)
         assert calculate_horton_ratios(result, {"a": 1.0}) == {"Rb": 0, "Rl": 0, "Ra": 0}
 
-    @pytest.mark.xfail(
-        strict=True,
-        reason=(
-            "engine/hydroma/watershed/calculator.py:508 returns the integer 0 from "
-            "the max_order < 2 branch while line 508 of the general path returns "
-            "np.mean(...), a numpy.float64. The same field therefore has two "
-            "different types depending on the network. Low severity: numpy.float64 "
-            "subclasses float so json.dumps still works, which test_"
-            "result_is_json_serialisable confirms. It matters for schema "
-            "generation and for any code that dispatches on type."
-        ),
-    )
     def test_ratio_types_are_consistent(self) -> None:
         ratios = calculate_horton_ratios(self._network(), {"a": 1.0, "b": 1.0, "c": 1.0})
         degenerate = calculate_horton_ratios(
@@ -805,16 +763,6 @@ class TestMuskingumRouting:
         out = muskingum_route(inflow, k, x, dt)
         assert np.all(out >= 0.0), f"negative discharge {out.min():.4f} for K={k} x={x} dt={dt}"
 
-    @pytest.mark.xfail(
-        strict=True,
-        reason=(
-            "engine/hydroma/watershed/calculator.py:597 uses np.zeros_like(inflow), "
-            "so an integer input array yields an int64 output array and every "
-            "fractional routing result is truncated toward zero. A caller passing a "
-            "discharge table read from a file as integers silently loses precision on "
-            "every step."
-        ),
-    )
     def test_output_dtype_survives_integer_input(self) -> None:
         out = muskingum_route(np.array([0, 10, 25, 15, 5], dtype=np.int64), 1.0, 0.2, 1.0)
         assert np.issubdtype(out.dtype, np.floating), out.dtype

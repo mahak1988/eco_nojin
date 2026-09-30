@@ -16,8 +16,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from engine.hydroma.cpp_bridge import get_module
-from engine.hydroma.cpp_bridge import hydrology_fast as hf
+from engine.hydroma.cpp_bridge import get_module, hydrology_fast as hf
 
 core = get_module()
 
@@ -60,7 +59,7 @@ def test_travel_time_scales_with_reach_count():
         ratios.append(base.travel_time / r.travel_time)
 
     # K is proportional to reach length, so the ratio must track n.
-    for n, ratio in zip((2, 4, 8), ratios):
+    for n, ratio in zip((2, 4, 8), ratios, strict=False):
         assert ratio == pytest.approx(n, rel=0.02), (
             f"n={n}: travel time ratio {ratio:.3f}, expected {n}. "
             "A reach is not covering its own share of the channel."
@@ -81,7 +80,7 @@ def test_multi_reach_preserves_the_peak_within_numerical_tolerance():
         for n in (1, 2, 4, 8)
     ]
     base = max(peaks)
-    for n, peak in zip((1, 2, 4, 8), peaks):
+    for n, peak in zip((1, 2, 4, 8), peaks, strict=False):
         assert peak <= base * 1.005, f"n={n}: peak {peak} inflates beyond 0.5% of {base}"
 
 
@@ -103,9 +102,7 @@ def test_reach_count_only_shortens_each_reach():
 def test_negative_discharge_is_rejected():
     """Discharge is non-negative; a negative inflow used to route into the output."""
     with pytest.raises(Exception, match="non-negative"):
-        core.route_flood_wave(
-            [-50.0, 0.0, 100.0, 0.0, 20.0], LENGTH, 1, MANNING, SLOPE, DT, WIDTH
-        )
+        core.route_flood_wave([-50.0, 0.0, 100.0, 0.0, 20.0], LENGTH, 1, MANNING, SLOPE, DT, WIDTH)
 
 
 @needs_cpp

@@ -143,7 +143,7 @@ async def retry_job(
             raise HTTPException(status_code=404, detail="Job not found")
         return JobResponse.model_validate(job)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get("/stats/summary", response_model=JobStatsResponse)

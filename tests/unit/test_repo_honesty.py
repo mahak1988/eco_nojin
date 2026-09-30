@@ -32,9 +32,7 @@ class TestLicenseOwnership:
     def test_no_unfilled_placeholder(self):
         text = LICENSE.read_text(encoding="utf-8")
         assert "[YEAR]" not in text, "LICENSE still has an unfilled year"
-        assert "[COPYRIGHT HOLDER]" not in text, (
-            "LICENSE still has an unfilled copyright holder"
-        )
+        assert "[COPYRIGHT HOLDER]" not in text, "LICENSE still has an unfilled copyright holder"
 
     def test_named_holder_and_year(self):
         text = LICENSE.read_text(encoding="utf-8")
@@ -46,9 +44,7 @@ class TestLicenseOwnership:
     def test_remaining_gaps_are_declared_not_forgotten(self):
         """Items only the company can supply must be flagged, not silently blank."""
         text = LICENSE.read_text(encoding="utf-8")
-        assert "TO BE SUPPLIED" in text, (
-            "the registration number is still an undeclared gap"
-        )
+        assert "TO BE SUPPLIED" in text, "the registration number is still an undeclared gap"
 
     def test_contributor_agreement_exists(self):
         text = CONTRIBUTING.read_text(encoding="utf-8")
@@ -61,9 +57,7 @@ class TestLicenseOwnership:
     def test_authors_file_names_the_holder(self):
         text = AUTHORS.read_text(encoding="utf-8")
         assert "دشت امید نارون" in text
-        assert "dependency" in text.lower(), (
-            "AUTHORS must disclose vendored third-party code"
-        )
+        assert "dependency" in text.lower(), "AUTHORS must disclose vendored third-party code"
 
 
 class TestNoOverstatedCapability:
@@ -121,9 +115,7 @@ class TestNoPromiseWeCannotKeep:
 
     def test_its_removal_is_recorded(self):
         src = REDEMPTION.read_text(encoding="utf-8")
-        assert '"insurance_discount"' in src, (
-            "the removal must stay auditable, not silent"
-        )
+        assert '"insurance_discount"' in src, "the removal must stay auditable, not silent"
 
     def test_market_access_claim_was_replaced_not_deleted(self):
         src = REDEMPTION.read_text(encoding="utf-8")
@@ -150,9 +142,7 @@ class TestNoPromiseWeCannotKeep:
         options = src.count("RedemptionOption(")
         boundaries = src.count("not_included=")
         assert options > 0, "no redemption options found"
-        assert boundaries == options, (
-            f"{options - boundaries} option(s) declare no boundary"
-        )
+        assert boundaries == options, f"{options - boundaries} option(s) declare no boundary"
 
 
 class TestDataQualityGate:
@@ -168,15 +158,12 @@ class TestDataQualityGate:
     def test_issuance_gate_fails_closed(self):
         src = CREDIT_BRIDGE.read_text(encoding="utf-8")
         assert "TokenIssuanceNotPermitted" in src
-        assert "raise TokenIssuanceNotPermitted" in src, (
-            "the gate must raise, not merely log"
-        )
+        assert "raise TokenIssuanceNotPermitted" in src, "the gate must raise, not merely log"
 
     def test_state_vocabulary_cannot_silently_diverge(self):
         src = CREDIT_BRIDGE.read_text(encoding="utf-8")
         assert "TRANSFERRED" in src, (
-            "TokenStatus.TRANSFERRED was missing, so every transfer reported a "
-            "false DISCREPANCY"
+            "TokenStatus.TRANSFERRED was missing, so every transfer reported a false DISCREPANCY"
         )
         assert "Unknown off-chain credit state" in src, (
             "an unknown state must raise rather than look like a mismatch"

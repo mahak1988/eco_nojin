@@ -26,7 +26,6 @@ from engine.hydroma.formulas import (
     novel,
     research_definition,
     summary,
-    verified,
 )
 from engine.hydroma.formulas.records import Provenance
 
@@ -45,15 +44,15 @@ def _isolate_registry():
 
 
 def _record(**overrides) -> FormulaRecord:
-    base = dict(
-        quantity="test_quantity",
-        canonical="somewhere.py",
-        literature_ref="something",
-        units="dimensionless",
-        domain="scalar",
-        backend_priority=("python",),
-        parity_tests=("a_test",),
-    )
+    base = {
+        "quantity": "test_quantity",
+        "canonical": "somewhere.py",
+        "literature_ref": "something",
+        "units": "dimensionless",
+        "domain": "scalar",
+        "backend_priority": ("python",),
+        "parity_tests": ("a_test",),
+    }
     base.update(overrides)
     return FormulaRecord(**base)
 
@@ -174,7 +173,7 @@ def test_a_research_definition_states_its_domain_and_rationale():
         # Every definition must account for its coefficients: either as sourced
         # or explicitly as unsourced. A definition that says neither is the
         # situation the registry exists to prevent.
-        assert ("sourced" in lowered or "anchor" in lowered), (
+        assert "sourced" in lowered or "anchor" in lowered, (
             f"{name}: does not account for where its coefficients come from"
         )
 
@@ -183,7 +182,8 @@ def test_research_definition_accessor_resolves_by_quantity():
     text = research_definition("nojin_biofertilizer_suitability")
 
     assert text
-    assert "unsuitable" in text and "unrated" in text
+    assert "unsuitable" in text
+    assert "unrated" in text
 
 
 def test_unknown_quantity_has_no_definition():
@@ -255,7 +255,6 @@ def test_a_contribution_with_unsourced_coefficients_is_stub_not_verified():
     hatch, and it has to be explicit: a record may be verified for the part it
     proves and nothing more.
     """
-    from engine.hydroma.formulas import all_records
 
     for quantity, record in {**novel(), **composite()}.items():
         if "UNSOURCED" not in (research_definition(quantity) or ""):
@@ -284,9 +283,7 @@ def test_every_stub_says_why_it_is_a_stub():
     assert stubs, "expected the catalogue to contain stubs while gaps remain"
 
     for quantity, record in stubs.items():
-        assert record.stub_reason.strip(), (
-            f"{quantity} is a stub with no stated reason"
-        )
+        assert record.stub_reason.strip(), f"{quantity} is a stub with no stated reason"
         assert len(record.stub_reason) > 30, (
             f"{quantity} gives a reason too short to be one: {record.stub_reason!r}"
         )

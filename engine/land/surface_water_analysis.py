@@ -97,8 +97,6 @@ class SurfaceWaterAnalyzer:
             logger.error("Could not calculate flow accumulation.")
             return {}
 
-        rows, cols = dem_data.shape
-
         # Calculate flow accumulation
         flow_acc = self.identify_flow_accumulation()
 
@@ -134,10 +132,6 @@ class SurfaceWaterAnalyzer:
             cell_area_km2 = (self.dem_proc._dataset.res[0] * self.dem_proc._dataset.res[1]) / 1e6
 
         watershed_area_km2 = float(np.sum(np.isfinite(dem_data))) * cell_area_km2
-        if watershed_area_km2 <= 0:
-            watershed_area_km2 = (
-                (rows * cols * resolution**2) / 1e6 if hasattr(self, "resolution") else 1.0
-            )
 
         stream_length_km = (
             float(np.sum(watercourse_mask)) * self._get_cell_size() / 1000.0

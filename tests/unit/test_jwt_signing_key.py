@@ -83,9 +83,11 @@ def test_token_creation_rejects_dev_literal_key():
         s = Settings(_env_file=None, environment="development")
         assert s.jwt_signing_key in gw_auth._WEAK_SIGNING_KEYS
 
-        with patch.object(gw_auth, "_settings", s):
-            with pytest.raises(RuntimeError, match="signing key"):
-                gw_auth.create_access_token({"sub": "attacker", "role": "admin"})
+        with (
+            patch.object(gw_auth, "_settings", s),
+            pytest.raises(RuntimeError, match="signing key"),
+        ):
+            gw_auth.create_access_token({"sub": "attacker", "role": "admin"})
 
 
 def test_token_roundtrip_uses_the_resolved_key():

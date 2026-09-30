@@ -1,4 +1,4 @@
-"""رفع فساد بایت NUL و یکسان‌سازی سرفصل فصل‌ها در یک کتابچه.
+r"""رفع فساد بایت NUL و یکسان‌سازی سرفصل فصل‌ها در یک کتابچه.
 
 کارگر نگارش HP-15 هنگام نرمال‌سازی CRLF با Array.Copy اشتباه، بایت NUL
 وارد فایل کرد. این ابزار فساد را برطرف می‌کند، سطرهای NUL را حذف می‌کند،
@@ -10,7 +10,6 @@
 
 from __future__ import annotations
 
-import io
 import os
 import re
 import sys
@@ -29,10 +28,12 @@ def main() -> int:
         print(f"یافت نشد: {path}", file=sys.stderr)
         return 2
 
-    raw = open(path, "rb").read()
+    with open(path, "rb") as _fh:
+        raw = _fh.read()
     nul_count = raw.count(b"\x00")
     backup = f"{path}.{time.strftime('%Y%m%d-%H%M')}.pre-repair.bak"
-    open(backup, "wb").write(raw)
+    with open(backup, "wb") as _fh:
+        _fh.write(raw)
 
     text = raw.decode("utf-8", errors="replace")
     # بایت NUL و نویسهٔ جایگزینِ ناشی از آن
@@ -49,10 +50,11 @@ def main() -> int:
     if lines:
         lines.append("")
 
-    with io.open(path, "w", encoding="utf-8", newline="") as handle:
+    with open(path, "w", encoding="utf-8", newline="") as handle:
         handle.write("\r\n".join(lines))
 
-    check = open(path, "rb").read()
+    with open(path, "rb") as _fh:
+        check = _fh.read()
     after_nul = check.count(b"\x00")
     print(f"بایت NUL پیش از تعمیر: {nul_count}  ·  پس از تعمیر: {after_nul}")
     print(f"سطرها: {len(lines)}  ·  اندازه: {len(check)} بایت")

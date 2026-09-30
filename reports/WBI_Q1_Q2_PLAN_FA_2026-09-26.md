@@ -16,11 +16,16 @@
 `wbi.py:208-231` متد `validate_against_wri` این را می‌سنجد:
 
 ```python
-if wri_level < 1: expected = (0, 25)
-elif wri_level < 2: expected = (10, 45)
-elif wri_level < 3: expected = (25, 60)
-elif wri_level < 4: expected = (40, 80)
-else:            expected = (60, 100)
+if wri_level < 1:
+    expected = (0, 25)
+elif wri_level < 2:
+    expected = (10, 45)
+elif wri_level < 3:
+    expected = (25, 60)
+elif wri_level < 4:
+    expected = (40, 80)
+else:
+    expected = (60, 100)
 
 in_range = expected[0] <= wbi <= expected[1]
 ```

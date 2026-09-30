@@ -427,11 +427,11 @@ class TraceRecord:
 
 # payments (plan v2.1 multi-gateway + escrow)
 # founders (plan v2.0 phase 1.1-b)
-from .marketplace_founder import MarketplaceFounder  # noqa: E402
-from .marketplace_payment import MarketplaceEscrowEntry, MarketplacePayment  # noqa: E402
+from .marketplace_founder import MarketplaceFounder
+from .marketplace_payment import MarketplaceEscrowEntry, MarketplacePayment
 
 # village development hub (village capabilities, opportunities, projects)
-from .village_hub import (  # noqa: E402
+from .village_hub import (
     B2BDemand,
     CapabilityCategory,
     ConfidenceLevel,

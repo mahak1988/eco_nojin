@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import pytest
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
 from fastapi.testclient import TestClient
 
 from services.api_gateway import main as gw_main

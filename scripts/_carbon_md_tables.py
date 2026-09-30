@@ -5,7 +5,6 @@
 
 from __future__ import annotations
 
-import io
 import sys
 
 
@@ -13,15 +12,16 @@ def blocks(path: str) -> dict[str, int]:
     out: dict[str, int] = {}
     label = "booting"
     prev_blank = True
-    for line in io.open(path, encoding="utf-8").read().split("\n"):
-        if line.startswith("|"):
-            if prev_blank:
-                label = line[:70]
-                out.setdefault(label, 0)
-            out[label] += 1
-            prev_blank = False
-        else:
-            prev_blank = not line.strip()
+    with open(path, encoding="utf-8") as _fh:
+        for line in _fh.read().split("\n"):
+            if line.startswith("|"):
+                if prev_blank:
+                    label = line[:70]
+                    out.setdefault(label, 0)
+                out[label] += 1
+                prev_blank = False
+            else:
+                prev_blank = not line.strip()
     return out
 
 

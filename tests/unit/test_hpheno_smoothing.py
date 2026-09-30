@@ -88,9 +88,7 @@ def test_smoothing_reduces_noise():
     # Stay clear of the reflect-padded edges, where the boundary treatment shows.
     interior = slice(10, -10)
 
-    assert np.std(smoothed[interior] - clean[interior]) < np.std(
-        noisy[interior] - clean[interior]
-    )
+    assert np.std(smoothed[interior] - clean[interior]) < np.std(noisy[interior] - clean[interior])
 
 
 def test_result_is_derivative_preserving():
@@ -118,7 +116,7 @@ def test_output_length_always_matches_input(n: int):
     assert out.shape == (n,)
 
 
-@pytest.mark.parametrize("window,polyorder", [(3, 3), (2, 1), (5, 5), (4, 2)])
+@pytest.mark.parametrize(("window", "polyorder"), [(3, 3), (2, 1), (5, 5), (4, 2)])
 def test_invalid_requests_are_clamped_not_raised(window: int, polyorder: int):
     """An even window, or polyorder >= window, must not raise.
 

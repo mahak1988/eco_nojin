@@ -105,9 +105,7 @@ class Sponsorship(Base):
     tagline_fa = Column(String(200), nullable=True)
 
     tier = Column(SQLEnum(SponsorTier), nullable=False, default=SponsorTier.PAGE)
-    status = Column(
-        SQLEnum(SponsorshipStatus), default=SponsorshipStatus.PROSPECT, index=True
-    )
+    status = Column(SQLEnum(SponsorshipStatus), default=SponsorshipStatus.PROSPECT, index=True)
     placement = Column(SQLEnum(SlotPlacement), nullable=False)
 
     amount = Column(Numeric(15, 2), nullable=False)
@@ -213,7 +211,7 @@ FORBIDDEN_PLACEMENTS = (
     "/monitoring",
     "/settings",
     "/profile",
-    "/telecom",          # مسیر USSD/کانال
+    "/telecom",  # مسیر USSD/کانال
 )
 
 MAX_VISUAL_WEIGHT_PCT = 12
@@ -627,7 +625,7 @@ def test_slot_is_absent_when_no_active_sponsor(client):
 
 ```python
 # settings.py
-ENABLE_SPONSOR_SLOT = False   # پیش‌فرض خاموش
+ENABLE_SPONSOR_SLOT = False  # پیش‌فرض خاموش
 ```
 
 **اسلات در حالت پیش‌فرض خاموش است.** فعال‌سازی یک عملیات عمدی است. اگر روزی همه‌چیز خراب شد، یک تغییر پرچم کل سیستم را خاموش می‌کند — بدون استقرار.

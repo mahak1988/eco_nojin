@@ -19,8 +19,9 @@ down_revision = "20260926_020000_sponsorships"
 branch_labels = None
 depends_on = None
 
-import sqlalchemy as sa  # noqa: E402
-from alembic import op  # noqa: E402
+import sqlalchemy as sa
+
+from alembic import op
 
 # (table, columns, [(index_name, indexed_column), ...])
 TABLE_SPECS = [

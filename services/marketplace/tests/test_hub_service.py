@@ -13,9 +13,6 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-import services.landscape.models
-import services.marketplace.models
-import services.marketplace.models.village_hub  # noqa: F401  (register tables)
 from database.base import Base
 from services.landscape.models import LandscapeGovernanceMember, LandscapeVillage
 from services.marketplace.hub_service import VillageDevelopmentHubService

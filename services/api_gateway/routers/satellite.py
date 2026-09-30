@@ -72,8 +72,8 @@ class SatelliteAnalyzeRequest(BaseModel):
         try:
             date.fromisoformat(v)
             return v
-        except ValueError:
-            raise ValueError("analysis_date must be in ISO format (YYYY-MM-DD)")
+        except ValueError as e:
+            raise ValueError("analysis_date must be in ISO format (YYYY-MM-DD)") from e
 
 
 class SatelliteAnalyzeResponse(BaseModel):

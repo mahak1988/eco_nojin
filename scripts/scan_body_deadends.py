@@ -16,7 +16,6 @@ from __future__ import annotations
 
 import csv
 import glob
-import io
 import os
 import re
 import sys
@@ -29,7 +28,19 @@ REGISTER = os.path.join(BOOKS, "_مرجع", "HDR.csv")
 OUT_CSV = os.path.join(HERE, "hdr_body_candidates.csv")
 OUT_MD = os.path.join(HERE, "hdr_body_candidates.md")
 
-FIELDS = ["id", "domain", "indicator", "value", "unit", "source_primary", "year", "confidence", "consumers", "action", "status"]
+FIELDS = [
+    "id",
+    "domain",
+    "indicator",
+    "value",
+    "unit",
+    "source_primary",
+    "year",
+    "confidence",
+    "consumers",
+    "action",
+    "status",
+]
 
 # بند ۲٫۵ استاندارد STD-HYD-WRITE-v1.0
 DEAD = ("فاقد شناسه", "تأییدنشده", "نیازمند خط پایه")
@@ -41,24 +52,53 @@ UNIT = r"(?:دلار|متر|سانتی‌متر|میلی‌متر|میلی‌م�
 PACKAGE = re.compile(r"^HP-(\d+)")
 
 DOMAIN_HINT = {
-    "قیمت": ("قیمت", "PR"), "هزینه": ("مالی", "FN"), "نرخ": ("مالی", "FN"),
-    "بازگشت": ("مالی", "FN"), "B/C": ("مالی", "FN"), "نسبت": ("مالی", "FN"),
-    "CAPEX": ("مالی", "FN"), "OPEX": ("مالی", "FN"),
-    "مساحت": ("مقیاس", "SC"), "هکتار": ("مقیاس", "SC"), "سطح": ("مقیاس", "SC"),
-    "خدمات اکوسیستمی": ("خدمات اکوسیستمی", "ES"), "گرده": ("خدمات اکوسیستمی", "ES"),
-    "ترسیب": ("خدمات اکوسیستمی", "ES"), "کربن": ("کربن", "CB"),
-    "استاندارد": ("استاندارد", "ST"), "ISO": ("استاندارد", "ST"), "آزمون": ("استاندارد", "ST"),
-    "مدل": ("مدل شبیه‌سازی", "MD"), "RUSLE": ("مدل شبیه‌سازی", "MD"), "WEPP": ("مدل شبیه‌سازی", "MD"),
-    "پایلوت": ("پایلوت", "PL"), "PL-": ("پایلوت", "PL"),
+    "قیمت": ("قیمت", "PR"),
+    "هزینه": ("مالی", "FN"),
+    "نرخ": ("مالی", "FN"),
+    "بازگشت": ("مالی", "FN"),
+    "B/C": ("مالی", "FN"),
+    "نسبت": ("مالی", "FN"),
+    "CAPEX": ("مالی", "FN"),
+    "OPEX": ("مالی", "FN"),
+    "مساحت": ("مقیاس", "SC"),
+    "هکتار": ("مقیاس", "SC"),
+    "سطح": ("مقیاس", "SC"),
+    "خدمات اکوسیستمی": ("خدمات اکوسیستمی", "ES"),
+    "گرده": ("خدمات اکوسیستمی", "ES"),
+    "ترسیب": ("خدمات اکوسیستمی", "ES"),
+    "کربن": ("کربن", "CB"),
+    "استاندارد": ("استاندارد", "ST"),
+    "ISO": ("استاندارد", "ST"),
+    "آزمون": ("استاندارد", "ST"),
+    "مدل": ("مدل شبیه‌سازی", "MD"),
+    "RUSLE": ("مدل شبیه‌سازی", "MD"),
+    "WEPP": ("مدل شبیه‌سازی", "MD"),
+    "پایلوت": ("پایلوت", "PL"),
+    "PL-": ("پایلوت", "PL"),
     "آمار": ("آمار ملی", "NS"),
-    "بذر": ("گونه", "SP"), "گونه": ("گونه", "SP"), "درخت": ("گونه", "SP"), "بوته": ("گونه", "SP"),
-    "سنگ": ("مواد", "M"), "چوب": ("مواد", "M"), "لوله": ("مواد", "M"), "خاک": ("مواد", "M"),
-    "مالچ": ("مواد", "M"), "ماده": ("مواد", "M"),
-    "حسگر": ("تجهیزات", "EM"), "آبشخور": ("تجهیزات", "EM"), "شیر": ("تجهیزات", "EM"),
-    "ریسک": ("ریسک", "R"), "خطر": ("ریسک", "R"), "خرابی": ("ریسک", "R"),
-    "سهم": ("حکمرانی", "GV"), "کارگروه": ("حکمرانی", "GV"), "کمیته": ("حکمرانی", "GV"),
-    "تنوع": ("محیط زیست", "S"), "محیط": ("محیط زیست", "S"),
-    "ارز": ("هدف فنی", "TO"), "هدف": ("هدف فنی", "TO"),
+    "بذر": ("گونه", "SP"),
+    "گونه": ("گونه", "SP"),
+    "درخت": ("گونه", "SP"),
+    "بوته": ("گونه", "SP"),
+    "سنگ": ("مواد", "M"),
+    "چوب": ("مواد", "M"),
+    "لوله": ("مواد", "M"),
+    "خاک": ("مواد", "M"),
+    "مالچ": ("مواد", "M"),
+    "ماده": ("مواد", "M"),
+    "حسگر": ("تجهیزات", "EM"),
+    "آبشخور": ("تجهیزات", "EM"),
+    "شیر": ("تجهیزات", "EM"),
+    "ریسک": ("ریسک", "R"),
+    "خطر": ("ریسک", "R"),
+    "خرابی": ("ریسک", "R"),
+    "سهم": ("حکمرانی", "GV"),
+    "کارگروه": ("حکمرانی", "GV"),
+    "کمیته": ("حکمرانی", "GV"),
+    "تنوع": ("محیط زیست", "S"),
+    "محیط": ("محیط زیست", "S"),
+    "ارز": ("هدف فنی", "TO"),
+    "هدف": ("هدف فنی", "TO"),
 }
 
 
@@ -104,7 +144,7 @@ def harvest(text: str, code: str) -> list[dict]:
         # حالت جمله: برچسب و مقدار پیش از بن‌بست در همان جمله
         for mark in DEAD:
             for match in re.finditer(re.escape(mark), line):
-                left = line[max(0, match.start() - 90): match.start()]
+                left = line[max(0, match.start() - 90) : match.start()]
                 number_match = None
                 for candidate in reversed(list(re.finditer(NUMBER, left))):
                     number_match = candidate
@@ -116,7 +156,7 @@ def harvest(text: str, code: str) -> list[dict]:
                 label = re.sub(r"\s+", " ", label_part)[-70:].strip()
                 if len(label) < 4 or label in seen:
                     continue
-                tail = line[match.end(): match.end() + 40]
+                tail = line[match.end() : match.end() + 40]
                 unit_match = re.match(rf"\s*({UNIT})", tail)
                 unit = unit_match.group(1) if unit_match else ""
                 seen.add(label)
@@ -159,7 +199,8 @@ def main() -> int:
         if not match:
             continue
         code = f"HP-{match.group(1)}"
-        text = io.open(path, encoding="utf-8").read()
+        with open(path, encoding="utf-8") as _fh:
+            text = _fh.read()
         found = harvest(text, code)
         per_book[code] = len(found)
         rows.extend(found)

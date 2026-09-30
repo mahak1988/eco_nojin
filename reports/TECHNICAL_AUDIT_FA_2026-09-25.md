@@ -141,13 +141,13 @@ Engine (حافظهٔ فرایند)
 # database/hub/hub.py:45-50
 def normalize_database_url(url):
     if url.startswith("postgres://"):
-        return "postgresql+psycopg://" + url[13:]   # درایور همگام
+        return "postgresql+psycopg://" + url[13:]  # درایور همگام
 ```
 
 ```python
 # database/hub/hub.py:242, 254
-async_url = database_url                        # هنوز postgresql+psycopg
-self._async_engine = create_async_engine(async_url, ...)   # ناهمگام
+async_url = database_url  # هنوز postgresql+psycopg
+self._async_engine = create_async_engine(async_url, ...)  # ناهمگام
 ```
 
 `normalize_database_url` **تمام** طرح‌واره‌ها را به درایور همگام `psycopg` تبدیل می‌کند، سپس همان رشته به `create_async_engine` داده می‌شود. دیالکت `postgresql+psycopg` در SQLAlchemy 2.0.52 صریحاً `is_async = False` اعلام می‌کند و ساخت موتور در همان لحظه شکست می‌خورد. گونهٔ ناهمگام درست `postgresql+psycopg_async` یا `postgresql+asyncpg` است — و هیچ‌کدام در مخزن ارجاع نشده‌اند.
@@ -425,8 +425,8 @@ return 0.2 * (1.444 * max_smd_mm - smd_mm) / (0.556 * max_smd_mm)
 # settings.py:16-49
 def __init__(self, **values):
     env_val = str(values.get("environment") or values.get("app_env") or "development")
-    is_prod = env_val in ("production", "prod")      # فقط kwargs صریح
-    if values.get("_env_file") is None:              # برای Settings() هم True است!
+    is_prod = env_val in ("production", "prod")  # فقط kwargs صریح
+    if values.get("_env_file") is None:  # برای Settings() هم True است!
         if not is_prod:
             values.setdefault("secret_key", "dev-secret-key")
             values.setdefault("environment", "development")
@@ -572,7 +572,7 @@ indices_fast.py:39 →  rows, cols = red.shape
 # engine/resilience.py:259-268
 with ThreadPoolExecutor(max_workers=1) as executor:
     future = executor.submit(func, *args, **kwargs)
-    return future.result(timeout=timeout_seconds)   # ← TimeoutError
+    return future.result(timeout=timeout_seconds)  # ← TimeoutError
 ```
 
 `ThreadPoolExecutor.__exit__` صدا زدن `shutdown(wait=True)` را فرا می‌خواند. یعنی **`@with_timeout(5.0)` روی تابعی که ۱۰ ثانیه طول می‌کشد، ۱۰ ثانیه طول می‌کشد** و بعد استثنا می‌دهد. نخ همچنان ادامه می‌دهد و همهٔ قفل‌ها و اتصال‌های پایگاه‌داده را در اختیار دارد. افزون بر آن، **یک استخر نخ و یک نخ جدید به‌ازای هر فراخوانی** — طوفان ایجاد نخ زیر بار.

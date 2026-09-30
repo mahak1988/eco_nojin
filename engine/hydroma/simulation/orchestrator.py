@@ -95,9 +95,7 @@ def _run_rusle(input_data: RUSLEInput, scenario: ScenarioParams) -> dict:
     }
 
 
-def _run_rothc(
-    input_data: RothCInput, monthly: list[MonthClimate], years: int = 1
-) -> dict:
+def _run_rothc(input_data: RothCInput, monthly: list[MonthClimate], years: int = 1) -> dict:
     """Run the real RothC-26.3 port in ``runners/rothc_runner.py``.
 
     The previous implementation returned ``soc_after = soc_before * 0.95`` --

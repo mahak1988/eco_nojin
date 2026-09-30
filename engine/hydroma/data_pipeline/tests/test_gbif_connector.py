@@ -159,7 +159,11 @@ class TestGBIFConnector:
 
         self.connector.fetch({"type": "checklist", "country": "IR"})
 
-        called_url = mock_get.call_args[0][0] if mock_get.call_args[0] else mock_get.call_args.kwargs.get("url", "")
+        called_url = (
+            mock_get.call_args[0][0]
+            if mock_get.call_args[0]
+            else mock_get.call_args.kwargs.get("url", "")
+        )
         assert "/species/search" in called_url, (
             "the checklist path no longer calls species/search; if this now hits "
             "the real checklist API, update the tag and this test together"

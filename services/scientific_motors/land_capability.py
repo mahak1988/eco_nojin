@@ -6,7 +6,7 @@ USDA-based land capability classification for sustainable land use planning.
 from __future__ import annotations
 
 import time
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 import xarray as xr
@@ -44,7 +44,7 @@ class LandCapabilityMotor(AbstractScientificMotor):
     - Drainage
     """
 
-    LCC_DESCRIPTIONS = {
+    LCC_DESCRIPTIONS: ClassVar[dict[Any, Any]] = {
         1: "Excellent - No limitations for cultivation",
         2: "Good - Moderate limitations, simple conservation needed",
         3: "Moderate - Severe limitations, special conservation practices",

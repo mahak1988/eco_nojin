@@ -29,7 +29,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "tests" / "contract"))
 
-from gates import scan_fabrications  # noqa: E402
+from gates import scan_fabrications
 
 REGISTRY = ROOT / "docs" / "standards" / "tolerated-degradations.yaml"
 BASELINE = ROOT / "docs" / "metrics" / "baseline.json"
@@ -241,15 +241,12 @@ class TestDetectorItself:
             "two different returns; a judgement call, not a mechanical one",
         ),
         (
-            "def validate_everything(x):\n"
-            "    check(x)\n"
-            "    return True\n",
+            "def validate_everything(x):\n    check(x)\n    return True\n",
             True,
             "no path returns anything else",
         ),
         (
-            "def check_solution(x):\n"
-            "    return False\n",
+            "def check_solution(x):\n    return False\n",
             True,
             "a single constant return",
         ),

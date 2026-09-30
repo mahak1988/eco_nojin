@@ -430,39 +430,41 @@ class CopernicusClient:
         """
         out: list[dict[str, float]] = []
         try:
-            with MemoryFile(red_data) as mem_r, MemoryFile(nir_data) as mem_n:
-                with mem_r.open() as src_r, mem_n.open() as src_n:
-                    if src_r.crs is None or src_n.crs is None:
-                        return out
-                    xs_arr, ys_arr = transform("EPSG:4326", src_r.crs, [lon], [lat])
-                    xs, ys = float(xs_arr[0]), float(ys_arr[0])
-                    row, col = src_r.index(xs, ys)
-                    res = abs(src_r.transform.a) or 10.0
-                    step = max(1, round(spacing_m / res))
-                    half = (n * step) // 2
-                    win = rasterio.windows.Window(col - half, row - half, n * step, n * step)
-                    red = src_r.read(1, window=win).astype(np.float64)
-                    nir = src_n.read(1, window=win).astype(np.float64)
-                    rows, cols = red.shape
-                    for i in range(0, rows, step):
-                        for j in range(0, cols, step):
-                            r, nr = red[i, j], nir[i, j]
-                            if r <= 0 or nr <= 0 or r >= 10000 or nr >= 10000:
-                                continue
-                            nd = (nr - r) / (nr + r + 1e-9)
-                            if not -1.0 <= nd <= 1.0:
-                                continue
-                            gx, gy = src_r.xy(row - half + i, col - half + j)
-                            gx_arr, gy_arr = transform(
-                                src_r.crs, "EPSG:4326", [float(gx)], [float(gy)]
-                            )
-                            out.append(
-                                {
-                                    "lon": round(float(gx_arr[0]), 6),
-                                    "lat": round(float(gy_arr[0]), 6),
-                                    "ndvi": round(float(nd), 4),
-                                }
-                            )
+            with (
+                MemoryFile(red_data) as mem_r,
+                MemoryFile(nir_data) as mem_n,
+                mem_r.open() as src_r,
+                mem_n.open() as src_n,
+            ):
+                if src_r.crs is None or src_n.crs is None:
+                    return out
+                xs_arr, ys_arr = transform("EPSG:4326", src_r.crs, [lon], [lat])
+                xs, ys = float(xs_arr[0]), float(ys_arr[0])
+                row, col = src_r.index(xs, ys)
+                res = abs(src_r.transform.a) or 10.0
+                step = max(1, round(spacing_m / res))
+                half = (n * step) // 2
+                win = rasterio.windows.Window(col - half, row - half, n * step, n * step)
+                red = src_r.read(1, window=win).astype(np.float64)
+                nir = src_n.read(1, window=win).astype(np.float64)
+                rows, cols = red.shape
+                for i in range(0, rows, step):
+                    for j in range(0, cols, step):
+                        r, nr = red[i, j], nir[i, j]
+                        if r <= 0 or nr <= 0 or r >= 10000 or nr >= 10000:
+                            continue
+                        nd = (nr - r) / (nr + r + 1e-9)
+                        if not -1.0 <= nd <= 1.0:
+                            continue
+                        gx, gy = src_r.xy(row - half + i, col - half + j)
+                        gx_arr, gy_arr = transform(src_r.crs, "EPSG:4326", [float(gx)], [float(gy)])
+                        out.append(
+                            {
+                                "lon": round(float(gx_arr[0]), 6),
+                                "lat": round(float(gy_arr[0]), 6),
+                                "ndvi": round(float(nd), 4),
+                            }
+                        )
         except (rasterio.errors.RasterioIOError, ValueError, IndexError) as exc:
             logger.warning("NDVI grid sampling failed: %s", exc)
         return out

@@ -22,8 +22,9 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class QAReport:
     """Outcome of a QA/QC check."""
-    data_source: str = 'modelled'
-    model: str = 'MRV quality assurance (mrv.qa)'
+
+    data_source: str = "modelled"
+    model: str = "MRV quality assurance (mrv.qa)"
     computed: bool = True
 
     qa_status: str | None = None
@@ -61,7 +62,8 @@ def validate_reading(sensor_type: str, value: float, unit: str | None = None) ->
             data_source="measured",
             model="MRV quality assurance (mrv.qa)",
             qa_status="rejected",
-            message=f"Unknown sensor_type '{sensor_type}'; cannot validate.")
+            message=f"Unknown sensor_type '{sensor_type}'; cannot validate.",
+        )
     unit_str = unit or band["unit"]
     if band["max"] is None:
         hard_ok = value >= band["min"]

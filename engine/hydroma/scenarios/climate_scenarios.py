@@ -14,8 +14,9 @@ from dataclasses import dataclass
 @dataclass
 class ClimateProjection:
     """Climate projection for a specific scenario and time horizon."""
-    data_source: str = 'simulated'
-    model: str = 'SSP scenario projection'
+
+    data_source: str = "simulated"
+    model: str = "SSP scenario projection"
     computed: bool = True
 
     scenario: str | None = None

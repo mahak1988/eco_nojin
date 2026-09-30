@@ -204,10 +204,6 @@ PILOT_PRODUCTS = [
 ]
 
 
-def hash_password(password: str) -> str:
-    return hashlib.sha256(password.encode()).hexdigest()
-
-
 def seed_database():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -355,8 +351,8 @@ def clean_test_data():
     for table in VALID_TABLES_WITH_NAME:
         try:
             cursor.execute(
-                'DELETE FROM {} WHERE name LIKE ? OR name LIKE ? OR name LIKE ?'.format(table),
-                ("%test%", "%Test%", "%TEST%")
+                f"DELETE FROM {table} WHERE name LIKE ? OR name LIKE ? OR name LIKE ?",
+                ("%test%", "%Test%", "%TEST%"),
             )
             if cursor.rowcount:
                 print(f"Cleaned {cursor.rowcount} test records from {table}")
@@ -366,8 +362,7 @@ def clean_test_data():
     for table in VALID_TABLES_WITH_EMAIL:
         try:
             cursor.execute(
-                'DELETE FROM {} WHERE email LIKE ? OR email LIKE ?'.format(table),
-                ("%test%", "%Test%")
+                f"DELETE FROM {table} WHERE email LIKE ? OR email LIKE ?", ("%test%", "%Test%")
             )
             if cursor.rowcount:
                 print(f"Cleaned {cursor.rowcount} test records from {table}")

@@ -208,5 +208,52 @@
       "reason": "Zero importers. ADR 0002 calls for an opaque server-side session cookie with server-held state, and this was the module meant to provide it, but it was never wired to the auth router. It also used the KEYS \"session:*\" pattern, which is O(N) over the keyspace and wrong on a shared Redis.",
       "verified_by": "AST importer scan: 0 sites. The 2FA gap it duplicated is closed: services/two_factor.py is now consumed by passkey_router."
     }
-  ]
+  ],
+  "restore_audit": {
+    "audited": "2026-09-29",
+    "finding": "The documented undo command `git checkout HEAD -- <path>` does not work for these entries. They were deleted before the deletion was committed, so the files were never present in HEAD. The standard requires a logged deletion to be recoverable; these are not.",
+    "cause": "commit faeda9d9 ('one-shot final cleanup') added and removed these paths in the same commit, so no ancestor tree contains them either.",
+    "action_taken": "none - no source tree may reconstruct them",
+    "affected": 27,
+    "recoverable_from_history": [
+      "services/map_engine/api/__init__.py",
+      "services/map_engine/smart_service.py",
+      "services/models/cpp_bridge.py",
+      "engine/cpp_core/bindings/c_api.cpp",
+      "engine/hydroma/core.py",
+      "database/models/database_models.py",
+      "services/map_engine/test_hydroma_motors.py",
+      "services/scientific_motors/test_lcc.py",
+      "services/security/ssrf.py",
+      "services/security/headers.py",
+      "services/security/redis_rate_limit.py",
+      "services/session_manager.py"
+    ],
+    "unrecoverable": [
+      "services/event_bus/config.py",
+      "services/event_bus/publisher.py",
+      "services/event_bus/consumer.py",
+      "services/event_bus/worker.py",
+      "services/event_bus/retry.py",
+      "services/event_bus/__init__.py",
+      "services/api_gateway/eventbus/dlq.py",
+      "services/api_gateway/resilience/circuit_breaker.py",
+      "services/api_gateway/resilience/retry.py",
+      "services/api_gateway/resilience/timeout.py",
+      "services/api_gateway/resilience/__init__.py",
+      "services/api_gateway/cache/redis_cache.py",
+      "services/api_gateway/cache/cache_invalidator.py",
+      "services/api_gateway/cache/__init__.py",
+      "services/security/slowloris.py"
+    ],
+    "note": "Recording this is not cosmetic. Until it is resolved, the deletion log overstates recoverability, and test_deletion_safety.py correctly fails."
+  },
+  "supersession_audit": {
+    "audited": "2026-09-29",
+    "finding": "engine/resilience.py is named as the replacement for the deleted services/api_gateway/resilience/ package, but it has zero importers. The supersession was declared, not performed: nothing in services/ or the eventbus calls get_circuit_breaker or circuit_breaker.",
+    "consequence": "Outbound calls have no circuit breaker. Retry and timeout behaviour comes only from the HTTP client libraries, so the resilience layer the log implies exists does not run.",
+    "decision": "not wired",
+    "reason": "Azure Architecture Center lists a circuit breaker as NOT suitable when the dependency already retries, and Google SRE ch.22 warns that layered retries multiply load. The correct next step is an inventory of which outbound calls actually need one, not wiring it everywhere.",
+    "verified_by": "grep for get_circuit_breaker / circuit_breaker across services/ and engine/ consumers: 0 matches"
+  }
 }

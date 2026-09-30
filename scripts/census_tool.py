@@ -12,6 +12,7 @@
     python scripts/census_tool.py --file HP-16
     python scripts/census_tool.py --file HP-16 --baseline
 """
+
 from __future__ import annotations
 
 import argparse
@@ -25,8 +26,18 @@ BOOKS = ROOT / "کتابها"
 BASELINE = HERE / "table_census_baseline.csv"
 
 CHAPTER_FLOORS = {
-    1: 320, 2: 350, 3: 400, 4: 200, 5: 250, 6: 280,
-    7: 170, 8: 200, 9: 350, 10: 450, 11: 280, 12: 250,
+    1: 320,
+    2: 350,
+    3: 400,
+    4: 200,
+    5: 250,
+    6: 280,
+    7: 170,
+    8: 200,
+    9: 350,
+    10: 450,
+    11: 280,
+    12: 250,
 }
 
 TARGETS = [

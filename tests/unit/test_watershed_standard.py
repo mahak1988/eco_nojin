@@ -80,7 +80,7 @@ class TestContourTrenchFao:
         assert "calibrate" in d["infiltration_note"]
 
     def test_invalid_slope_rejected(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="slope_pct must be positive"):
             design_contour_trench(0.0, 20_000.0)
 
 
@@ -93,5 +93,5 @@ class TestDispatcher:
         assert b["storage_required_m3"] > a["storage_required_m3"]
 
     def test_unknown_structure_rejected(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="Unknown structure type"):
             design_watershed_structure("not_a_structure", 10.0, 1000.0)

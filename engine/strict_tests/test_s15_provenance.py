@@ -26,6 +26,7 @@ import re
 from pathlib import Path
 
 import pytest
+from pydantic import ValidationError
 
 from engine.hydroma.provenance import DataSource, Provenance
 
@@ -119,9 +120,7 @@ def _has_provenance_field(body: str) -> bool:
         return True
     if re.search(r"class\s+\w+\s*\(\s*Provenance\s*,", body):
         return True
-    if re.search(r"class\s+\w+\s*\(\s*ProvenanceCarrier\s*\)", body):
-        return True
-    return False
+    return bool(re.search(r"class\s+\w+\s*\(\s*ProvenanceCarrier\s*\)", body))
 
 
 def _has_data_source_default(body: str) -> bool:
@@ -132,9 +131,7 @@ def _has_data_source_default(body: str) -> bool:
     searched anywhere on the line and matched the word `data_source: str = ...`
     inside this file's own explanatory comments.
     """
-    return bool(
-        re.search(r"^\s{2,}data_source\s*:\s*[^=\n]+=", body, re.M)
-    )
+    return bool(re.search(r"^\s{2,}data_source\s*:\s*[^=\n]+=", body, re.M))
 
 
 RESULT_CLASSES = _result_classes()
@@ -158,7 +155,7 @@ class TestProvenanceIsDeclared:
         )
 
     @pytest.mark.parametrize(
-        "path,name,body",
+        ("path", "name", "body"),
         RESULT_CLASSES,
         ids=[f"{n}" for _, n, _ in RESULT_CLASSES],
     )
@@ -192,8 +189,7 @@ class TestProvenanceIsDeclared:
         offenders = [
             f"{p}::{n}"
             for p, n, b in RESULT_CLASSES
-            if n in STRICT_PROVENANCE
-            and _has_data_source_default(b)
+            if n in STRICT_PROVENANCE and _has_data_source_default(b)
         ]
         assert not offenders, (
             "these results gave data_source a default, which makes the "
@@ -210,20 +206,23 @@ class TestProvenanceIsDeclared:
             rows = [b for _, n, b in RESULT_CLASSES if n == name]
             assert rows, f"{name} is in STRICT_PROVENANCE but was not found by the sweep"
             body = rows[0]
-            assert (
-                "data_source" in body
-            ), f"{name} is in STRICT_PROVENANCE but declares no data_source"
+            assert "data_source" in body, (
+                f"{name} is in STRICT_PROVENANCE but declares no data_source"
+            )
 
 
 class TestProvenanceType:
     def test_provenance_requires_its_fields(self) -> None:
-        with pytest.raises(Exception):
+        # pydantic's ValidationError, not a bare Exception: a blind `Exception`
+        # here would also pass if the import failed, which is the vacuous green
+        # this rule exists to prevent.
+        with pytest.raises(ValidationError):
             Provenance()  # type: ignore[call-arg]
 
     def test_data_source_is_a_closed_set(self) -> None:
         for good in ("measured", "modelled", "simulated", "unavailable"):
             Provenance(data_source=good, model="x")  # type: ignore[arg-type]
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             Provenance(data_source="real", model="x")  # type: ignore[arg-type]
 
     def test_computed_defaults_true_but_is_explicitly_settable(self) -> None:

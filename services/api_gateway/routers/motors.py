@@ -412,7 +412,7 @@ async def motor_health():
 # ============================================================================
 
 
-from fastapi import Depends as _Depends  # noqa: E402
+from fastapi import Depends as _Depends
 
 from services.api_gateway.auth import (
     get_current_user as _get_current_user,
@@ -534,7 +534,7 @@ async def run_motor_for_site(
         else:
             raise HTTPException(status_code=400, detail=f"unknown motor '{motor}'")
     except ValueError as exc:
-        raise HTTPException(status_code=422, detail=str(exc))
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     result = await runner.execute(bundle["inputs"], bundle["parameters"])
     return {

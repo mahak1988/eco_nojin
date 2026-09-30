@@ -108,7 +108,7 @@ def validate_climate_value(value: Any, default: float = 0.0) -> float:
         return default
 
 
-def _valid_or_none(value: Any) -> Optional[float]:
+def _valid_or_none(value: Any) -> float | None:
     """Return a float for a real measurement, None for missing/NASA fill."""
     try:
         v = float(value)

@@ -45,6 +45,7 @@ class ScenarioAgent:
 
         # We need raw data to modify - fetch again
         from services.analysis.drought_agent import DroughtAgent
+
         agent = DroughtAgent()
         df = await agent._fetch_weather(self.config.base_lat, self.config.base_lon, months)
         await agent.close()
@@ -54,24 +55,22 @@ class ScenarioAgent:
 
         # Modify data
         precip_modified = df["precip"].values * (1 + precip_change_pct / 100)
-        temp_modified = df.get("t2m_mean", (df["t2m_max"] + df["t2m_min"]) / 2).values + temp_change_c
+        df.get("t2m_mean", (df["t2m_max"] + df["t2m_min"]) / 2).values + temp_change_c
 
         # Recalculate PET if temperature changed
         if temp_change_c != 0:
             tmax = df["t2m_max"].values + temp_change_c
             tmin = df["t2m_min"].values + temp_change_c
             tmean = (tmax + tmin) / 2
-            if "solar" in df.columns:
-                ra = df["solar"].values * 0.0864
-            else:
-                ra = np.ones_like(tmean) * 15  # Default
+            # Default: 15 MJ/m2/day when the series has no solar column
+            ra = df["solar"].values * 0.0864 if "solar" in df.columns else np.ones_like(tmean) * 15
             pet_modified = 0.0023 * (tmean + 17.8) * np.sqrt(np.maximum(tmax - tmin, 0)) * ra
         else:
-            pet_modified = df.get("et0", df.get("solar", np.ones_like(precip) * 5)).values
+            pet_modified = df.get("et0", df.get("solar", np.ones_like(precip_modified) * 5)).values
 
         # Calculate indices with modified data
-        from xclim.indices import spi as spi_fn, spei as spei_fn
         import xarray as xr
+        from xclim.indices import spei as spei_fn, spi as spi_fn
 
         def calc_spi(data, scale):
             da = xr.DataArray(data, dims=["time"], coords={"time": np.arange(len(data))})
@@ -129,7 +128,7 @@ class ScenarioAgent:
                 temp_change_c=s.get("temp_change_c", 0),
                 months=months,
             )
-            result["scenario_name"] = s.get("name", f"Scenario {len(results)+1}")
+            result["scenario_name"] = s.get("name", f"Scenario {len(results) + 1}")
             results.append(result)
 
         # Rank by SPI change (more negative = worse drought)

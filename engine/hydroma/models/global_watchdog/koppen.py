@@ -18,7 +18,7 @@ Known Limitations:
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 
@@ -35,7 +35,7 @@ class KGCv5:
     """
 
     # Main groups
-    GROUPS = {
+    GROUPS: ClassVar[dict[str, str]] = {
         "A": "Tropical",
         "B": "Arid",
         "C": "Temperate",
@@ -44,7 +44,7 @@ class KGCv5:
     }
 
     # Near-match pairs for validation (scientifically acceptable borders)
-    NEAR_MATCHES = {
+    NEAR_MATCHES: ClassVar[set[Any]] = {
         ("Cfb", "Dfb"),
         ("Dfb", "Cfb"),
         ("BWh", "BSh"),

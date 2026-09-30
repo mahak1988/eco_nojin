@@ -5,13 +5,9 @@ from __future__ import annotations
 
 import pytest
 from sqlalchemy import create_engine
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
-import services.dispute_resolution.models
-import services.logistics.models
-import services.marketplace.models
-import services.marketplace.models.marketplace_founder
-import services.quality_assurance.models  # noqa: F401
 from database.base import Base
 from services.dispute_resolution.service import DisputeService
 from services.logistics.service import LogisticsService
@@ -49,16 +45,17 @@ def test_founder_create_and_dict(db_session):
 
 
 def test_founder_equity_bounds(db_session):
-    with pytest.raises(Exception):
-        db_session.add(MarketplaceFounder(marketplace_id="m", user_id="u", equity_share=150.0))
+    db_session.add(MarketplaceFounder(marketplace_id="m", user_id="u", equity_share=150.0))
+    with pytest.raises(IntegrityError, match="CHECK constraint failed: ck_equity_share"):
         db_session.commit()
+    db_session.rollback()
 
 
 def test_founder_unique_pair(db_session):
     db_session.add(MarketplaceFounder(marketplace_id="m", user_id="u"))
     db_session.commit()
     db_session.add(MarketplaceFounder(marketplace_id="m", user_id="u"))
-    with pytest.raises(Exception):
+    with pytest.raises(IntegrityError, match="UNIQUE constraint failed: marketplace_founders"):
         db_session.commit()
     db_session.rollback()
 
@@ -86,7 +83,7 @@ def test_dispute_lifecycle(db_session):
 
 def test_dispute_validation(db_session):
     svc = DisputeService(db_session)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="unknown category"):
         svc.create(order_id="o-2", complainant_id="b", category="nonsense", description="x" * 20)
     with pytest.raises(LookupError):
         svc.resolve("missing-id", "m", "r")
@@ -109,7 +106,7 @@ def test_qa_fail_no_certificate(db_session):
     out = svc.record_result(insp.id, 40.0)
     assert out["inspection"].status == "failed"
     assert out["certificate_id"] is None
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="score must be in"):
         svc.record_result(insp.id, 150.0)
 
 
@@ -130,5 +127,5 @@ def test_logistics_happy_path(db_session):
 def test_logistics_illegal_transition(db_session):
     svc = LogisticsService(db_session)
     sh = svc.create(order_id="o-10")
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="illegal transition"):
         svc.update_status(sh.id, "delivered", "x")  # pending -> delivered is illegal

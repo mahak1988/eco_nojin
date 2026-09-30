@@ -1,7 +1,5 @@
 """Livestock FastAPI router"""
 
-from typing import List
-
 from fastapi import APIRouter, HTTPException
 
 from services.livestock.nutrition.forage_quality import ndvi_to_forage_quality
@@ -26,7 +24,7 @@ async def simulate(request: LivestockSimulationRequest):
         service = LivestockService()
         return service.simulate(request)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.post("/forage-from-ndvi")

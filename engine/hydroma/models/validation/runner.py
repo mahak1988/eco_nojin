@@ -26,8 +26,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-import numpy as np
-
 from .loader import ValidationCase, expand_case, load_all_cases, load_reference
 
 Status = str  # "match" | "mismatch" | "inconsistent_case" | "not_run"
@@ -93,8 +91,11 @@ def _ra_mj(lat: float, doy: int) -> float:
     dr = 1 + 0.033 * math.cos(2 * math.pi * doy / 365.0)
     decl = 0.409 * math.sin(2 * math.pi * doy / 365.0 - 1.39)
     ws = math.acos(max(-1.0, min(1.0, -math.tan(phi) * math.tan(decl))))
-    return (24 * 60 / math.pi) * 0.0820 * dr * (
-        ws * math.sin(phi) * math.sin(decl) + math.cos(phi) * math.cos(decl) * math.sin(ws)
+    return (
+        (24 * 60 / math.pi)
+        * 0.0820
+        * dr
+        * (ws * math.sin(phi) * math.sin(decl) + math.cos(phi) * math.cos(decl) * math.sin(ws))
     )
 
 
@@ -130,16 +131,12 @@ def _run_hargreaves(case: ValidationCase) -> CaseOutcome:
     # The 0.408 converts MJ/m2/day radiation to equivalent evaporation. An
     # earlier revision of this file omitted it and reported every case as a
     # 2.45x mismatch; the stored expectations were right.
-    rad_coeff = (
-        0.0023 * ((tmin + tmax) / 2.0 + 17.8) * math.sqrt(max(tmax - tmin, 0.0)) * 0.408
-    )
+    rad_coeff = 0.0023 * ((tmin + tmax) / 2.0 + 17.8) * math.sqrt(max(tmax - tmin, 0.0)) * 0.408
     et0 = rad_coeff * ra
 
     want = case.expected.get("et0_mm_day")
     if want is None:
-        return CaseOutcome(
-            case.model, case.name, "not_run", detail="no et0_mm_day in expected"
-        )
+        return CaseOutcome(case.model, case.name, "not_run", detail="no et0_mm_day in expected")
     want = float(want)
     rtol = float(case.expected.get("rtol", case.tolerances.get("rtol", 1e-3)))
 
@@ -161,9 +158,7 @@ def _run_hargreaves(case: ValidationCase) -> CaseOutcome:
                 ),
                 measured=et0,
                 expected=want,
-                contradictions=[
-                    f"stored ET0 implies Ra {implied_ra:.4f}; eq. 21 gives {ra:.4f}"
-                ],
+                contradictions=[f"stored ET0 implies Ra {implied_ra:.4f}; eq. 21 gives {ra:.4f}"],
             )
 
     ok = math.isclose(et0, want, rel_tol=rtol)
@@ -280,8 +275,8 @@ def _run_penman_monteith(case: ValidationCase) -> CaseOutcome:
         detail=(
             f"et0 {measured:.4f} vs expected {want:.4f} (rtol {rtol:g})"
             + (
-                f"; note: expected value is the case's own recorded output, so this is "
-                f"a regression anchor, not an external reference"
+                "; note: expected value is the case's own recorded output, so this is "
+                "a regression anchor, not an external reference"
                 if "implementation output" in str(exp)
                 else ""
             )
@@ -293,7 +288,12 @@ def _run_penman_monteith(case: ValidationCase) -> CaseOutcome:
 
 def _run_reference_only(case: ValidationCase) -> CaseOutcome:
     """Cases whose expected value is a stored scalar with no runnable model here."""
-    for key, value in case.expected.items():
+    # A YAML case may carry a single scalar expectation rather than a mapping of
+    # field -> value, so normalise before iterating. The six model cases added for
+    # the EWSI/EPIA/ECSI/ESRI/HLHS/HPheno/HYRUE indices use the scalar form.
+    expected = case.expected
+    items = expected.items() if isinstance(expected, dict) else [("value", expected)]
+    for _key, value in items:
         if isinstance(value, str) and value.endswith(".npy"):
             name = Path(value).stem
             try:

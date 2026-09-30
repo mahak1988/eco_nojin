@@ -26,7 +26,7 @@ Classification:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 
@@ -77,7 +77,7 @@ class WBIv3:
     - governance: 0.05
     """
 
-    WEIGHTS = {
+    WEIGHTS: ClassVar[dict[str, float]] = {
         "falkenmark": 0.15,
         "withdrawal": 0.25,
         "groundwater": 0.20,
@@ -88,7 +88,7 @@ class WBIv3:
         "governance": 0.05,
     }
 
-    CLASSIFICATION = [
+    CLASSIFICATION: ClassVar[list[Any]] = [
         (20, "Water-Secure", "Low"),
         (40, "Water-Stressed", "Moderate"),
         (60, "Water-Scarce", "High"),

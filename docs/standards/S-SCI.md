@@ -42,14 +42,15 @@
 ```python
 # ✅ درست
 from services._contracts.formula import ls_factor, k_factor_epic
-ls = ls_factor(slope_deg)                     # درجه
-k  = k_factor_epic(soc_g_per_kg, clay, silt)  # g/kg
+
+ls = ls_factor(slope_deg)  # درجه
+k = k_factor_epic(soc_g_per_kg, clay, silt)  # g/kg
 
 # ❌ نادرست — فرمول چهارم LS
-ls = 0.065 + 0.045*slope_pct + 0.0065*slope_pct**2
+ls = 0.065 + 0.045 * slope_pct + 0.0065 * slope_pct**2
 
 # ❌ نادرست — نسخه EPIC بدون 0.1317، واحد متفاوت
-k = 0.2 + 0.3*soc_frac**2 + 0.025*(clay + silt)   # تا ۷٫۶ برابر خطا
+k = 0.2 + 0.3 * soc_frac**2 + 0.025 * (clay + silt)  # تا ۷٫۶ برابر خطا
 ```
 
 ## وضعیت پوشش

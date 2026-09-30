@@ -8,6 +8,7 @@ logger = structlog.get_logger()
 
 import hashlib
 from pathlib import Path
+from typing import Any, ClassVar
 
 import numpy as np
 import rioxarray
@@ -37,7 +38,7 @@ class LandCoverFetcher(MapFetcher):
     DATA_ORIGIN = DataOrigin.SYNTHETIC
     ORIGIN_DETAIL = "LandCoverFetcher returns a random land-cover class grid; no ESA WorldCover or MODIS data is read"
 
-    CLASSES = {
+    CLASSES: ClassVar[dict[Any, Any]] = {
         10: "Tree cover",
         20: "Shrubland",
         30: "Grassland",

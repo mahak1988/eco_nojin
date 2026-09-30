@@ -19,9 +19,7 @@
 
 from __future__ import annotations
 
-import io
 import os
-import re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REF = os.path.join(ROOT, "کتابها", "_مرجع")
@@ -41,8 +39,18 @@ REPAIRS = [
 
 # نقل‌های عینی که باید بمانند و در سیاههٔ نگهبان ثبت شوند
 CITATIONS = [
-    ("برنامه-ها-و-نهادهای-منطقه.md", 206, "退耕还林", "نام رسمی چینی برنامهٔ Sloping Land Conversion"),
-    ("برنامه-ها-و-نهادهای-منطقه.md", 237, "退耕还林", "نام رسمی چینی برنامهٔ Sloping Land Conversion"),
+    (
+        "برنامه-ها-و-نهادهای-منطقه.md",
+        206,
+        "退耕还林",
+        "نام رسمی چینی برنامهٔ Sloping Land Conversion",
+    ),
+    (
+        "برنامه-ها-و-نهادهای-منطقه.md",
+        237,
+        "退耕还林",
+        "نام رسمی چینی برنامهٔ Sloping Land Conversion",
+    ),
     ("دروازه-کنترل-کاراکتر.md", 12, "尼尔", "نام چینی کشور نیجریه؛ نقل عینی از متن راهبردی"),
     ("دروازه-کنترل-کاراکتر.md", 13, "методолоژик", "واژهٔ سیلیک-روسی؛ نقل عینی از فساد ثبت‌شده"),
 ]
@@ -54,15 +62,18 @@ def main() -> int:
         if not os.path.exists(path):
             print(f"⛔ یافت نشد: {name}")
             continue
-        text = io.open(path, encoding="utf-8").read()
+        with open(path, encoding="utf-8") as _fh:
+            text = _fh.read()
         if found not in text:
             print(f"  · {name} L{line_no}: یافت نشد — {correct!r} نیست، دست نزده شد")
             continue
         backup = f"{path}.pre-repair.bak"
         if not os.path.exists(backup):
-            io.open(backup, "w", encoding="utf-8", newline="").write(text)
+            with open(backup, "w", encoding="utf-8", newline="") as _fh:
+                _fh.write(text)
         text = text.replace(found, correct)
-        io.open(path, "w", encoding="utf-8", newline="").write(text)
+        with open(path, "w", encoding="utf-8", newline="") as _fh:
+            _fh.write(text)
         print(f"  ✓ {name} L{line_no}: {found!r} ← {correct!r}")
 
     lines = [
@@ -77,7 +88,10 @@ def main() -> int:
     ]
     for name, line_no, token, why in CITATIONS:
         lines.append(f"| `{name}` | {line_no} | `{token}` | {why} |")
-    io.open(os.path.join(REF, "سیاهه-نقل-بین‌المللی.md"), "w", encoding="utf-8", newline="").write("\n".join(lines) + "\n")
+    with open(
+        os.path.join(REF, "سیاهه-نقل-بین‌المللی.md"), "w", encoding="utf-8", newline=""
+    ) as _fh:
+        _fh.write("\n".join(lines) + "\n")
     print(f"\nسیاههٔ نقل نوشته شد: _مرجع\\سیاهه-نقل-بین‌المللی.md ({len(CITATIONS)} مدخل)")
     return 0
 

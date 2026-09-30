@@ -23,9 +23,9 @@ import logging
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import StrEnum
+from typing import Any, ClassVar
 
 import numpy as np
-from engine.hydroma.provenance import Provenance
 
 logger = logging.getLogger(__name__)
 
@@ -82,8 +82,8 @@ class StrainProfile:
     strain_type: StrainType | None = None
     efficacy_score: float | None = None
     persistence_days: int | None = None
-    data_source: str = 'modelled'
-    model: str = 'strain efficacy profile'
+    data_source: str = "modelled"
+    model: str = "strain efficacy profile"
     computed: bool = True
     compatibility_score: float = 100.0  # Compatibility with other strains
 
@@ -175,7 +175,7 @@ class NojinCalculator:
     """
 
     # Crop-specific factors
-    CROP_FACTORS = {
+    CROP_FACTORS: ClassVar[dict[str, Any]] = {
         "wheat": {"n_demand": 120, "p_demand": 60, "k_demand": 40, "factor": 1.0},
         "rice": {"n_demand": 150, "p_demand": 70, "k_demand": 50, "factor": 1.1},
         "corn": {"n_demand": 180, "p_demand": 80, "k_demand": 60, "factor": 1.2},
@@ -191,7 +191,7 @@ class NojinCalculator:
     OPTIMAL_MOISTURE_PCT = (40, 70)
 
     # Seasonal factors
-    SEASONAL_FACTORS = {
+    SEASONAL_FACTORS: ClassVar[dict[str, float]] = {
         "spring": 1.0,
         "summer": 0.9,
         "fall": 1.1,
@@ -199,7 +199,7 @@ class NojinCalculator:
     }
 
     # Strain synergy matrix (simplified)
-    STRAIN_SYNERGY = {
+    STRAIN_SYNERGY: ClassVar[dict[Any, Any]] = {
         (StrainType.NITROGEN_FIXING, StrainType.PHOSPHORUS_SOLUBILIZING): 1.15,
         (StrainType.NITROGEN_FIXING, StrainType.POTASSIUM_SOLUBILIZING): 1.10,
         (StrainType.PHOSPHORUS_SOLUBILIZING, StrainType.POTASSIUM_SOLUBILIZING): 1.12,

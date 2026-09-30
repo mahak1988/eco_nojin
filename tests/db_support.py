@@ -14,6 +14,9 @@ The result is order-independent.
 
 from __future__ import annotations
 
+import contextlib
+import importlib
+
 from sqlalchemy import inspect, text
 
 from database.base import Base
@@ -31,13 +34,9 @@ _MODEL_MODULES = (
 
 def reset_database(bind=None) -> None:
     """Drop the entire schema, then recreate it from the model metadata."""
-    import importlib
-
     for name in _MODEL_MODULES:
-        try:
+        with contextlib.suppress(Exception):  # pragma: no cover - optional model packages
             importlib.import_module(name)
-        except Exception:  # pragma: no cover - optional model packages
-            pass
 
     if bind is None:
         from database.hub import hub

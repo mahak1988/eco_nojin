@@ -18,6 +18,8 @@ so they cannot be reintroduced:
 
 from __future__ import annotations
 
+import itertools
+
 import numpy as np
 import pytest
 
@@ -77,7 +79,7 @@ def test_monotonically_increasing_with_no_optimum():
     temps = np.arange(-5.0, 40.1, 0.5)
     vals = [temp_factor(float(t)) for t in temps]
 
-    for prev, nxt in zip(vals, vals[1:]):
+    for prev, nxt in itertools.pairwise(vals):
         assert nxt > prev, "the response must be increasing; RothC has no optimum"
 
 
@@ -105,7 +107,8 @@ def test_no_singularity_in_the_evaluated_range():
     """The pole at T = -18.27 C must never be reached."""
     for t in np.arange(TEMP_FACTOR_ZERO_BELOW_C, 60.0, 0.25):
         v = temp_factor(float(t))
-        assert np.isfinite(v) and v >= 0.0
+        assert np.isfinite(v)
+        assert v >= 0.0
 
 
 def test_matches_a_direct_evaluation_of_the_published_equation():

@@ -7,6 +7,7 @@ line drift caused by multi-line insertions. An operation may carry "n" to
 restrict the match to one 1-based line. Nothing is written unless every
 operation verifies, so a failed anchor never corrupts the booklet.
 """
+
 import json
 import sys
 
@@ -15,9 +16,11 @@ BANNED = ("فاقد شناسه", "تأییدنشده", "نیازمند خط پا
 
 
 def main() -> int:
-    raw = open(sys.argv[1], encoding="utf-8").read() if len(sys.argv) > 1 else sys.stdin.read()
+    with open(sys.argv[1], encoding="utf-8") as _fh:
+        raw = _fh.read() if len(sys.argv) > 1 else sys.stdin.read()
     ops = json.loads(raw)
-    text = open(PATH, encoding="utf-8").read()
+    with open(PATH, encoding="utf-8") as _fh:
+        text = _fh.read()
     eol = "\r\n" if "\r\n" in text else "\n"
     lines = text.split(eol)
 
@@ -41,7 +44,7 @@ def main() -> int:
             while seen < nth:
                 pos = line.index(find, pos + 1)
                 seen += 1
-            staged[n - 1] = line[:pos] + repl + line[pos + len(find):]
+            staged[n - 1] = line[:pos] + repl + line[pos + len(find) :]
             continue
         if n is not None:
             if not (1 <= n <= len(staged)):
@@ -62,9 +65,7 @@ def main() -> int:
                 errors.append(f"op{idx}: anchor not found\n  FIND: {find}")
                 continue
         elif total != 1:
-            errors.append(
-                f"op{idx}: anchor found {total} times in file\n  FIND: {find}"
-            )
+            errors.append(f"op{idx}: anchor found {total} times in file\n  FIND: {find}")
             continue
         if op.get("all"):
             staged = [line.replace(find, repl) for line in staged]
@@ -81,7 +82,8 @@ def main() -> int:
         return 1
 
     out = eol.join(staged)
-    open(PATH, "w", encoding="utf-8", newline="").write(out)
+    with open(PATH, "w", encoding="utf-8", newline="") as _fh:
+        _fh.write(out)
     after = {k: out.count(k) for k in BANNED}
     before = {k: text.count(k) for k in BANNED}
     print(f"OK  ops={len(ops)}  physical_lines={out.count(chr(10)) + 1}")

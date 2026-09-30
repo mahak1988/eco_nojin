@@ -29,7 +29,19 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REGISTER = os.path.join(ROOT, "کتابها", "_مرجع", "HDR.csv")
 PROPOSALS = os.path.join(ROOT, "scripts", "hdr_proposals")
 MANIFEST = os.path.join(ROOT, "scripts", "hdr_manifest.sha256")
-FIELDS = ["id", "domain", "indicator", "value", "unit", "source_primary", "year", "confidence", "consumers", "action", "status"]
+FIELDS = [
+    "id",
+    "domain",
+    "indicator",
+    "value",
+    "unit",
+    "source_primary",
+    "year",
+    "confidence",
+    "consumers",
+    "action",
+    "status",
+]
 
 # خانوادهٔ شناسه یک تا پنج حرف، پس از خط تیره یک تا پنج بخش
 FAMILY = __import__("re").compile(r"^[A-Z]{1,5}-[0-9A-Z]{1,5}(?:-[0-9A-Z]{1,5})?$")
@@ -56,7 +68,8 @@ def cmd_status() -> int:
     if not os.path.exists(MANIFEST):
         print("اثر انگشت ثبت نشده — ابتدا manifest را بزنید", file=sys.stderr)
         return 2
-    recorded = open(MANIFEST, encoding="utf-8").read().split()[0]
+    with open(MANIFEST, encoding="utf-8") as _fh:
+        recorded = _fh.read().split()[0]
     current = digest()
     if recorded == current:
         print("رجیستر دست‌نخورده است — هیچ نوشتن غیرمجازی رخ نداده")
@@ -70,7 +83,11 @@ def cmd_status() -> int:
 
 def next_ids(rows: list[dict], family: str, count: int) -> list[str]:
     used = {r["id"].strip() for r in rows}
-    numbers = [int(i.split("-")[1]) for i in used if i.startswith(family + "-") and i.split("-")[1].isdigit()]
+    numbers = [
+        int(i.split("-")[1])
+        for i in used
+        if i.startswith(family + "-") and i.split("-")[1].isdigit()
+    ]
     start = max(numbers) + 1 if numbers else 1
     out = []
     while len(out) < count:
@@ -91,13 +108,13 @@ def cmd_merge() -> int:
         try:
             with open(path, encoding="utf-8") as handle:
                 proposals = list(csv.DictReader(handle))
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             skipped.append((source, "خواندن‌نشدنی", str(exc)[:50]))
             continue
         for row in proposals:
             ident = (row.get("id") or "").strip()
             if not FAMILY.match(ident):
-                family, assigned = ident, ""
+                family, _assigned = ident, ""
                 if family and family.isalpha():
                     ident = next_ids(rows + added, family, 1)[0]
                 else:
@@ -106,7 +123,7 @@ def cmd_merge() -> int:
             elif ident in taken:
                 skipped.append((source, "شناسهٔ تکراری", ident))
                 continue
-            elif not rows and False:
+            elif False:
                 pass
             record = {k: (row.get(k) or "").strip() for k in FIELDS}
             record["id"] = ident
@@ -205,7 +222,11 @@ def main() -> int:
                 before = dict(row)
                 row.update({k: v for k, v in ruling.items() if k in FIELDS})
                 changed += 1
-                print(f"  {ident}: {before['value']} ← {row['value']}" if "value" in ruling else f"  {ident}: {before['status']} ← {row['status']}")
+                print(
+                    f"  {ident}: {before['value']} ← {row['value']}"
+                    if "value" in ruling
+                    else f"  {ident}: {before['status']} ← {row['status']}"
+                )
             elif ident in species_fix:
                 print(f"  {ident}: شمار گونهٔ بومی {row['value']} ← {species_fix[ident]}")
                 row["value"] = species_fix[ident]

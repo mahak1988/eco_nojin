@@ -8,6 +8,7 @@ logger = structlog.get_logger()
 
 import hashlib
 from pathlib import Path
+from typing import Any, ClassVar
 
 import numpy as np
 import rioxarray
@@ -34,7 +35,7 @@ class VegetationFetcher(MapFetcher):
     ORIGIN_DETAIL = "VegetationFetcher returns a uniform random NDVI field; no Sentinel-2 or Landsat data is read"
 
     # Typical reflectance ranges (scaled 0-10000)
-    BAND_PROFILES = {
+    BAND_PROFILES: ClassVar[dict[str, Any]] = {
         "B02": {"vegetation": (400, 800), "soil": (1500, 2500), "water": (200, 500)},
         "B03": {"vegetation": (600, 1200), "soil": (1800, 2800), "water": (150, 400)},
         "B04": {"vegetation": (300, 900), "soil": (2000, 3200), "water": (100, 300)},
@@ -43,7 +44,7 @@ class VegetationFetcher(MapFetcher):
     }
 
     # Phenology: NDVI by season for different land covers
-    PHENOLOGY = {
+    PHENOLOGY: ClassVar[dict[str, Any]] = {
         "cropland": {"spring": 0.65, "summer": 0.55, "autumn": 0.30, "winter": 0.15},
         "forest": {"spring": 0.75, "summer": 0.80, "autumn": 0.60, "winter": 0.55},
         "grass": {"spring": 0.60, "summer": 0.45, "autumn": 0.25, "winter": 0.10},

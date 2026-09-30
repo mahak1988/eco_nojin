@@ -23,7 +23,7 @@ import time
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
-import parse  # noqa: E402
+import parse
 
 OUT = os.path.abspath(os.path.join(HERE, "..", "..", "چاپ"))
 PDFDIR = os.path.join(OUT, "pdf")
@@ -51,9 +51,11 @@ VOLUMES = [
 def targets() -> list[str]:
     files = [f for f in os.listdir(parse.BOOKS) if f.startswith("HP-") and f.endswith(".txt")]
     files.sort()
-    return [os.path.join(parse.BOOKS, v) for v in VOLUMES if os.path.exists(os.path.join(parse.BOOKS, v))] + [
-        os.path.join(parse.BOOKS, f) for f in files
-    ]
+    return [
+        os.path.join(parse.BOOKS, v)
+        for v in VOLUMES
+        if os.path.exists(os.path.join(parse.BOOKS, v))
+    ] + [os.path.join(parse.BOOKS, f) for f in files]
 
 
 def find_browser() -> str | None:
@@ -73,11 +75,17 @@ def to_pdf(browser: str, html_path: str, pdf_path: str, timeout: int = 300) -> b
     prof = os.path.join(OUT, ".profile")
     os.makedirs(prof, exist_ok=True)
     cmd = [
-        browser, "--headless=new", "--disable-gpu", "--no-sandbox",
-        "--no-pdf-header-footer", "--run-all-compositor-stages-before-draw",
-        "--virtual-time-budget=20000", "--disable-extensions",
+        browser,
+        "--headless=new",
+        "--disable-gpu",
+        "--no-sandbox",
+        "--no-pdf-header-footer",
+        "--run-all-compositor-stages-before-draw",
+        "--virtual-time-budget=20000",
+        "--disable-extensions",
         f"--user-data-dir={prof}",
-        f"--print-to-pdf={pdf_path}", url,
+        f"--print-to-pdf={pdf_path}",
+        url,
     ]
     try:
         subprocess.run(cmd, timeout=timeout, capture_output=True)
@@ -87,7 +95,8 @@ def to_pdf(browser: str, html_path: str, pdf_path: str, timeout: int = 300) -> b
 
 
 def page_info(pdf_path: str) -> dict:
-    d = open(pdf_path, "rb").read()
+    with open(pdf_path, "rb") as _fh:
+        d = _fh.read()
     pages = len(re.findall(rb"/Type\s*/Page[^s]", d))
     boxes = re.findall(rb"/MediaBox\s*\[\s*([\d\.\s]+?)\]", d)
     land = 0
@@ -138,13 +147,19 @@ def main() -> int:
             f.write(html_text)
 
         rec = {
-            "name": name, "lines": doc.stats["lines"],
-            "chapters": doc.stats["chapters"], "sections": doc.stats["sections"],
-            "tables": doc.stats["tables"], "wide": doc.stats["wide_tables"],
-            "figures": doc.stats["figures"], "figure_pending": ph,
+            "name": name,
+            "lines": doc.stats["lines"],
+            "chapters": doc.stats["chapters"],
+            "sections": doc.stats["sections"],
+            "tables": doc.stats["tables"],
+            "wide": doc.stats["wide_tables"],
+            "figures": doc.stats["figures"],
+            "figure_pending": ph,
             "formulas": doc.stats["formulas"],
             "html_kb": len(html_text.encode("utf-8")) // 1024,
-            "pages": 0, "landscape": 0, "pdf_kb": 0,
+            "pages": 0,
+            "landscape": 0,
+            "pdf_kb": 0,
         }
         if browser and not args.report:
             pp = os.path.join(PDFDIR, slug(name) + ".pdf")
@@ -162,15 +177,23 @@ def main() -> int:
     with open(os.path.join(OUT, "build-report.json"), "w", encoding="utf-8") as f:
         json.dump(rows, f, ensure_ascii=False, indent=2)
 
-    tot = lambda k: sum(r[k] for r in rows)
+    def tot(k):
+        return sum(r[k] for r in rows)
+
     print("\n" + "─" * 74)
-    print(f"سند: {len(rows)} · سطر: {tot('lines'):,} · فصل: {tot('chapters')} · "
-          f"جدول: {tot('tables'):,} · جدول افقی: {tot('wide')} · شکل: {tot('figures'):,}")
-    print(f"شکل رسم‌نشده: {tot('figure_pending'):,} از {tot('figures'):,}  ·  "
-          f"فرمول: {tot('formulas'):,}")
+    print(
+        f"سند: {len(rows)} · سطر: {tot('lines'):,} · فصل: {tot('chapters')} · "
+        f"جدول: {tot('tables'):,} · جدول افقی: {tot('wide')} · شکل: {tot('figures'):,}"
+    )
+    print(
+        f"شکل رسم‌نشده: {tot('figure_pending'):,} از {tot('figures'):,}  ·  "
+        f"فرمول: {tot('formulas'):,}"
+    )
     if tot("pages"):
-        print(f"صفحهٔ چاپی: {tot('pages'):,}  ·  صفحهٔ افقی: {tot('landscape')}  ·  "
-              f"حجم: {tot('pdf_kb'):,} کیلوبایت")
+        print(
+            f"صفحهٔ چاپی: {tot('pages'):,}  ·  صفحهٔ افقی: {tot('landscape')}  ·  "
+            f"حجم: {tot('pdf_kb'):,} کیلوبایت"
+        )
     print(f"زمان: {time.time() - t0:.0f} ثانیه  ·  خروجی: {OUT}")
     return 0
 

@@ -95,9 +95,7 @@ class TestArithmetic:
         # coastal_middle_income multiplier midpoint = (1.10 + 1.25) / 2 = 1.175
         assert v.landed_multiplier == pytest.approx(1.175)
         assert v.landed_value_usd_ha == pytest.approx(335.71 * 1.175, abs=0.05)
-        assert v.redemption_ceiling_usd_ha == pytest.approx(
-            v.landed_value_usd_ha * 0.95, abs=0.05
-        )
+        assert v.redemption_ceiling_usd_ha == pytest.approx(v.landed_value_usd_ha * 0.95, abs=0.05)
 
     def test_line_values_sum_to_subtotal(self):
         v = value_basket(maize_rainfed(), PINK_SHEET_AUG_2026, platform_share=0.05)
@@ -167,9 +165,7 @@ class TestMarketClassAndStructure:
 
 class TestQualityFactor:
     def test_verified_scores_higher_than_modelled(self):
-        assert quality_factor(DataMode.FIELD_VERIFIED) > quality_factor(
-            DataMode.MODELLED_ESTIMATE
-        )
+        assert quality_factor(DataMode.FIELD_VERIFIED) > quality_factor(DataMode.MODELLED_ESTIMATE)
 
     def test_modelled_estimate_is_never_full_value(self):
         """A modelled estimate has no measurement behind it."""

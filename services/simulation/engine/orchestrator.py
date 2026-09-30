@@ -18,7 +18,6 @@ class SimulationOrchestrator:
     def __init__(self):
         self.registry = SimulatorRegistry()
         # بارگذاری adapterها
-        import services.simulation.adapters  # noqa: F401
 
     async def run_comprehensive(self, ctx: SimulationContext) -> dict[str, SimulationResult]:
         """اجرای تمام شبیه‌سازی‌های مرتبط برای یک context"""

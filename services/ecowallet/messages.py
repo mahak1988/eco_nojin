@@ -1,3 +1,5 @@
+from typing import Any, ClassVar
+
 """Educational Messages for ECO Wallet.
 
 CRITICAL: All messages must be POSITIVE and EMPOWERING.
@@ -6,7 +8,7 @@ NO warnings, NO fear-inducing language, NO technical jargon.
 
 
 class EcoMessages:
-    EARNING = {
+    EARNING: ClassVar[dict[str, Any]] = {
         "tree_planting": {
             "en": "Congratulations! You earned {amount} ECO for planting trees!",
             "fa": "تبریک! شما {amount} امتیاز سبز برای کاشت درخت گرفتید!",
@@ -41,7 +43,7 @@ class EcoMessages:
         },
     }
 
-    REDEMPTION = {
+    REDEMPTION: ClassVar[dict[str, Any]] = {
         "seed_purchase": {
             "en": "Seeds purchased! {remaining} ECO remaining.",
             "fa": "بذر خریداری شد! {remaining} امتیاز باقی مانده.",
@@ -72,17 +74,17 @@ class EcoMessages:
         },
     }
 
-    BALANCE = {
+    BALANCE: ClassVar[dict[str, str]] = {
         "en": "Your balance: {balance} ECO (worth {irr_value:,} IRR in services)",
         "fa": "موجودی شما: {balance} امتیاز سبز (معادل {irr_value:,} تومان خدمات)",
     }
 
-    WELCOME = {
+    WELCOME: ClassVar[dict[str, str]] = {
         "en": "Welcome! Your ECO wallet is ready. Start earning by planting trees and completing training!",
         "fa": "خوش آمدید! کیف پول امتیاز سبز شما آماده است. با کاشت درخت و آموزش شروع کنید!",
     }
 
-    LOW_BALANCE = {
+    LOW_BALANCE: ClassVar[dict[str, str]] = {
         "en": "You have {balance} ECO remaining. Plant more trees to earn more!",
         "fa": "{balance} امتیاز باقی مانده. درخت بیشتری بکارید تا امتیاز بیشتری بگیرید!",
     }

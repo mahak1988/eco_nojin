@@ -21,6 +21,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
+from typing import Any, ClassVar
 
 import numpy as np
 
@@ -41,8 +42,9 @@ class StressLevel(Enum):
 @dataclass
 class StressAssessment:
     """Comprehensive plant stress assessment from multiple modalities."""
-    data_source: str = 'modelled'
-    model: str = 'plant_neuro stress engine'
+
+    data_source: str = "modelled"
+    model: str = "plant_neuro stress engine"
     computed: bool = True
 
     electrical_stress_type: str | None = None
@@ -91,7 +93,7 @@ class PlantNeuroEngine:
     """
 
     # Mapping from stress types to intervention recommendations
-    STRESS_RECOMMENDATIONS = {
+    STRESS_RECOMMENDATIONS: ClassVar[dict[str, Any]] = {
         "drought": [
             "Check soil moisture levels",
             "Consider irrigation adjustment",

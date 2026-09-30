@@ -12,7 +12,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, status
 from pydantic import BaseModel, Field
 
 logger = logging.getLogger("econojin.api.hydroma_dashboard")
@@ -333,83 +333,6 @@ def _discover_models() -> list[dict[str, Any]]:
             "status": "unvalidated",
             "repo_path": "engine/hydroma/carbon/calculator.py",
             "test_file": "tests/unit/test_carbon.py",
-        },
-        "fao56_dual_kc": {
-            "name": "FAO-56 Dual Kc",
-            "category": "crop",
-            "description": "Dual crop coefficient with root zone water balance",
-            "version": "1.0.0",
-            "language": "cpp",
-            "reference": "FAO-56 Ch.7; Allen et al. 2005",
-            "status": "validated",
-            "repo_path": "engine/cpp_core/src/crop_water.cpp",
-            "test_file": "tests/unit/test_crop_water.py",
-        },
-        "rusle": {
-            "name": "RUSLE Erosion",
-            "category": "erosion",
-            "description": "Revised Universal Soil Loss Equation",
-            "version": "1.0.0",
-            "language": "cpp",
-            "reference": "USDA AH-703; McCool 1987",
-            "status": "partial",
-            "repo_path": "engine/cpp_core/src/erosion.cpp",
-            "test_file": "tests/unit/test_erosion.py",
-        },
-        "theis": {
-            "name": "Theis Groundwater",
-            "category": "groundwater",
-            "description": "Theis analytical solution",
-            "version": "1.0.0",
-            "language": "python",
-            "reference": "Theis 1935",
-            "status": "validated*",
-            "repo_path": "engine/hydroma/models/groundwater_model.py",
-            "test_file": "engine/hydroma/groundwater/tests/test_service.py",
-        },
-        "bucket_gw": {
-            "name": "Bucket Groundwater",
-            "category": "groundwater",
-            "description": "Linear reservoir bucket model",
-            "version": "1.0.0",
-            "language": "python",
-            "reference": "Linear reservoir theory",
-            "status": "validated",
-            "repo_path": "engine/hydroma/groundwater/models.py",
-            "test_file": "engine/hydroma/groundwater/tests/test_service.py",
-        },
-        "gdd_phenology": {
-            "name": "GDD Phenology",
-            "category": "crop",
-            "description": "Growing Degree Days crop phenology",
-            "version": "1.0.0",
-            "language": "python",
-            "reference": "FAO-56",
-            "status": "validated",
-            "repo_path": "engine/hydroma/phenology.py",
-            "test_file": "tests/unit/test_groundwater_phenology.py",
-        },
-        "van_genuchten": {
-            "name": "van Genuchten",
-            "category": "soil",
-            "description": "van Genuchten water retention",
-            "version": "1.0.0",
-            "language": "python",
-            "reference": "Carsel & Parrish 1988",
-            "status": "validated",
-            "repo_path": "engine/hydroma/soil/water_retention.py",
-            "test_file": "engine/hydroma/soil/tests/test_soil.py",
-        },
-        "salinity": {
-            "name": "Salinity & Leaching",
-            "category": "soil",
-            "description": "FAO-29 leaching requirement",
-            "version": "1.0.0",
-            "language": "python",
-            "reference": "FAO-29",
-            "status": "validated*",
-            "repo_path": "engine/hydroma/soil/salinity.py",
-            "test_file": "engine/hydroma/soil/tests/test_salinity.py",
         },
     }
 
@@ -760,8 +683,10 @@ async def get_validation_report(model_id: str) -> ValidationReport:
 
     test_cases = _load_test_cases(model_id)
 
-    # In a real implementation, this would run the actual tests
-    # For now, return mock report based on test case definitions
+    # The test cases are read but not executed. What follows reports on
+    # definitions, not on runs, so a caller must not read a green report here
+    # as a passing model. Kept explicit so the gap stays visible until the
+    # runner is wired to the engine.
     details = []
     passed = 0
     failed = 0
@@ -813,19 +738,28 @@ async def run_model(model_id: str, request: RunRequest) -> RunResult:
     start_time = time.perf_counter()
     run_id = str(uuid.uuid4())[:8]
 
-    # In a real implementation, this would dispatch to the actual model
-    # For now, return mock result
+    # Model execution is not wired to the engine yet. Returning a RunResult
+    # with status="success" and a mock payload was indistinguishable from a
+    # real run to any caller, which is the failure S-HONEST exists to prevent.
+    # Refuse instead, and let the caller see the real state.
     latency_ms = (time.perf_counter() - start_time) * 1000
-
-    return RunResult(
-        run_id=run_id,
-        model_id=model_id,
-        backend_used=request.backend,
-        inputs=request.inputs,
-        outputs={"status": "mock_execution", "message": "Model execution not yet implemented"},
-        latency_ms=latency_ms,
-        memory_mb=0.0,
-        status="success",
+    logger.warning(
+        "Model run refused for %s (backend=%s): execution is not implemented",
+        model_id,
+        request.backend,
+    )
+    raise HTTPException(
+        status_code=status.HTTP_501_NOT_IMPLEMENTED,
+        detail={
+            "error": "model_execution_not_implemented",
+            "model_id": model_id,
+            "run_id": run_id,
+            "latency_ms": round(latency_ms, 2),
+            "message": (
+                "Model execution is not implemented. No results were produced. "
+                "This endpoint does not return mock data as a success."
+            ),
+        },
     )
 
 

@@ -6,6 +6,7 @@ import logging
 from typing import Any, Protocol  # Imported 'Any'
 
 from pydantic import BaseModel, Field
+
 from engine.hydroma.provenance import Provenance
 
 logger = logging.getLogger(__name__)

@@ -19,7 +19,7 @@ from .costing import (
 from .employment import estimate_direct_employment
 from .revenue import aggregate_revenue_streams, calculate_agricultural_revenue
 from .risk import assess_market_price_risk, assess_yield_risk
-from .roi import calculate_agricultural_roi
+from .roi import calculate_agricultural_roi, calculate_financial_metrics
 
 
 def calculate_agricultural_project_economics(

@@ -172,19 +172,20 @@ routers/      فقط: parse → call service → shape response. هرگز DB، �
 
 ```python
 class Status(str, Enum):
-    OK              = "ok"                # داده کامل و واقعی
-    DEGRADED        = "degraded"          # داده واقعی + جایگزین صریح
-    UNAVAILABLE     = "unavailable"       # وابستگی خارجی در دسترس نیست
-    NOT_IMPLEMENTED = "not_implemented"   # قابلیت وجود ندارد — صریح
-    STALE           = "stale"             # داده کهنه، نه به‌روز
+    OK = "ok"  # داده کامل و واقعی
+    DEGRADED = "degraded"  # داده واقعی + جایگزین صریح
+    UNAVAILABLE = "unavailable"  # وابستگی خارجی در دسترس نیست
+    NOT_IMPLEMENTED = "not_implemented"  # قابلیت وجود ندارد — صریح
+    STALE = "stale"  # داده کهنه، نه به‌روز
+
 
 # هر پاسخ غیر OK باید داشته باشد:
 {
-  "status": "degraded",
-  "reason": "SWAT+ rev60 executable not installed; partial descriptor written",
-  "fallback_used": "manning_normal_depth",
-  "data_provenance": {"source": "derived", "engine": "hecras.py:130", "synthetic": False},
-  "data": {...}
+    "status": "degraded",
+    "reason": "SWAT+ rev60 executable not installed; partial descriptor written",
+    "fallback_used": "manning_normal_depth",
+    "data_provenance": {"source": "derived", "engine": "hecras.py:130", "synthetic": False},
+    "data": {...},
 }
 ```
 

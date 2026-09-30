@@ -9,6 +9,7 @@ from enum import StrEnum
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
+
 from engine.hydroma.provenance import Provenance
 
 
@@ -153,8 +154,8 @@ class TerrainAnalysis(BaseModel):
             }
         }
     )
-    data_source: str = 'modelled'
-    model: str = 'terrain_analysis (Horn 1981)'
+    data_source: str = "modelled"
+    model: str = "terrain_analysis (Horn 1981)"
     profile_id: str | None = None
     terrain_type: TerrainType | None = None
     elevation_min: float | None = None
@@ -192,8 +193,8 @@ class DrainageAnalysis(BaseModel):
             }
         }
     )
-    data_source: str = 'modelled'
-    model: str = 'drainage_analysis (Strahler)'
+    data_source: str = "modelled"
+    model: str = "drainage_analysis (Strahler)"
     profile_id: str | None = None
     drainage_pattern: DrainagePattern | None = None
     drainage_density: float | None = Field(None, ge=0)
@@ -219,8 +220,8 @@ class CapabilityAssessment(BaseModel):
             }
         }
     )
-    data_source: str = 'simulated'
-    model: str = 'USDA land capability (rules, unvalidated)'
+    data_source: str = "simulated"
+    model: str = "USDA land capability (rules, unvalidated)"
     profile_id: str | None = None
     capability_class: LandCapabilityClass | None = None
     subclass: str | None = None
@@ -246,8 +247,8 @@ class LandProfile(BaseModel):
             }
         }
     )
-    data_source: str = 'simulated'
-    model: str = 'default land profile (built-in constants)'
+    data_source: str = "simulated"
+    model: str = "default land profile (built-in constants)"
     id: str | None = None
     name: str | None = None
     description: str | None = None

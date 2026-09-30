@@ -17,6 +17,7 @@ Usage::
     python scripts/run_tests.py --unit     # Python only
     python scripts/run_tests.py --native   # native only
 """
+
 from __future__ import annotations
 
 import argparse
@@ -42,9 +43,18 @@ def _env() -> dict[str, str]:
 
 def run_unit(workers: int) -> int:
     cmd = [
-        str(PYTHON), "-m", "pytest", "tests/unit",
-        "-p", "no:cacheprovider", "-q", "--tb=line", "-n", str(workers),
-        "--dist", "loadfile",
+        str(PYTHON),
+        "-m",
+        "pytest",
+        "tests/unit",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--tb=line",
+        "-n",
+        str(workers),
+        "--dist",
+        "loadfile",
     ]
     print(f"--- python unit suite ({workers} workers) ---", flush=True)
     start = time.perf_counter()
@@ -56,9 +66,7 @@ def run_unit(workers: int) -> int:
 def run_native() -> int:
     print("--- native suite (kernels compiled once) ---", flush=True)
     start = time.perf_counter()
-    proc = subprocess.run(
-        [str(PYTHON), "scripts/run_cpp_tests.py"], cwd=ROOT, env=_env()
-    )
+    proc = subprocess.run([str(PYTHON), "scripts/run_cpp_tests.py"], cwd=ROOT, env=_env())
     print(f"    {time.perf_counter() - start:.1f}s")
     return proc.returncode
 
@@ -68,7 +76,10 @@ def main() -> int:
     ap.add_argument("--unit", action="store_true", help="Python unit suite only")
     ap.add_argument("--native", action="store_true", help="native suite only")
     ap.add_argument(
-        "-j", "--workers", type=int, default=min(8, os.cpu_count() or 4),
+        "-j",
+        "--workers",
+        type=int,
+        default=min(8, os.cpu_count() or 4),
         help="pytest workers for the Python suite",
     )
     args = ap.parse_args()

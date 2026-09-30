@@ -116,7 +116,7 @@
 `services/api_gateway/main.py:203` تابع `lifespan(app)` را تعریف می‌کند (۷۳ خط: راه‌اندازی DB، اتصال NATS، مقداردهی مخزن‌های بازارگاه و کربن)، اما در خط ۱۴۲ اپلیکیشن ساخته می‌شود:
 
 ```python
-app = FastAPI(title="Eco Nojin API Gateway")   # main.py:142 — بدون lifespan=
+app = FastAPI(title="Eco Nojin API Gateway")  # main.py:142 — بدون lifespan=
 ```
 
 `lifespan` **هرگز به FastAPI داده نمی‌شود.** راستی‌آزمایی‌شده با جست‌وجوی `lifespan|FastAPI\(` در فایل: تنها سه تطابق، هیچ‌کدام `lifespan=` نیست.
@@ -253,7 +253,7 @@ class SafeUnpickler(pickle.Unpickler):
 dpm_to_hum = dpm_loss * 0.54
 rpm_to_hum = rpm_loss * 0.54
 bio_to_hum = bio_loss * 0.46
-bio_loss * 0.54        # ← نتیجه دور ریخته می‌شود
+bio_loss * 0.54  # ← نتیجه دور ریخته می‌شود
 hum_to_bio = hum_loss * 0.46
 ```
 
@@ -497,7 +497,7 @@ if handler is None:
 # database/models.py:242
 FinJournalEntry.account_id = Column(String, nullable=False, index=True)
 # database/models.py:254
-FinAccount.id = Column(Integer, ...)   # کلید اصلی
+FinAccount.id = Column(Integer, ...)  # کلید اصلی
 ```
 
 سه گزارش این دو را JOIN می‌کنند:
@@ -572,7 +572,7 @@ FinAccount.id = Column(Integer, ...)   # کلید اصلی
 ```python
 class StepUpRequest(BaseModel):
     purpose: str
-    method: str            # ← سمت کلاینت
+    method: str  # ← سمت کلاینت
     auth_time: int | None  # ← سمت کلاینت
 ```
 
@@ -601,7 +601,7 @@ class StepUpRequest(BaseModel):
 ```python
 def get_marketplace_service(db=None):
     if _marketplace_service is None:
-        _marketplace_service = MarketplaceService(db)   # db اولین فراخوان را برای همیشه قفل می‌کند
+        _marketplace_service = MarketplaceService(db)  # db اولین فراخوان را برای همیشه قفل می‌کند
 ```
 اگر اولین فراخوان `db=None` بگیرد، **همه فراخوان‌های بعدی سرویسی با `self.db = None` می‌گیرند** → `AttributeError` روی هر عملیات.
 

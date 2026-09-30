@@ -9,13 +9,14 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import re
 import sqlite3
 import sys
 from datetime import datetime
-import re
 from pathlib import Path
 
 _IDENT_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
+
 
 def _safe_ident(name: str) -> str:
     """Validate a SQL identifier."""

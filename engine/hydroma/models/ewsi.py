@@ -12,11 +12,11 @@ Reference: Gao (1996), Monteith (1993)
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 
-from .base import ScientificModel, ValidationResult
+from .base import ScientificModel, ValidationResult, validate_finite
 
 
 @dataclass
@@ -42,7 +42,7 @@ class EWSI(ScientificModel):
     version = "1.0.0"
     description = "Multi-source Water Stress Index"
 
-    REFERENCES = {
+    REFERENCES: ClassVar[dict] = {
         "Gao1996": "Gao, B.C. (1996). NDWI - A normalized difference water index. Remote Sensing of Environment, 58(3), 257-266.",
         "Monteith1993": "Monteith, J.L. (1993). The exchange of water and carbon by crops in a semi-arid subtropical climate.",
     }
@@ -59,7 +59,18 @@ class EWSI(ScientificModel):
     def validate_inputs(
         self, nir, swir, vpd, soil_moisture, soil_field_capacity
     ) -> tuple[bool, list[str]]:
-        errors = []
+        errors = validate_finite(
+            "EWSI",
+            {
+                "nir": nir,
+                "swir": swir,
+                "vpd": vpd,
+                "soil_moisture": soil_moisture,
+                "soil_field_capacity": soil_field_capacity,
+            },
+        )
+        if errors:
+            return False, errors
 
         # NDMI validation
         ndmi = (nir - swir) / (nir + swir + 1e-9)
@@ -76,6 +87,12 @@ class EWSI(ScientificModel):
 
         if soil_moisture > soil_field_capacity * 1.1:
             errors.append("Soil moisture exceeds field capacity")
+
+        # A zero field capacity passes the range check above and then divides
+        # by zero in the soil stress term. The bound is what makes the ratio
+        # meaningful, so it has to be positive.
+        if soil_field_capacity <= 0:
+            errors.append("Soil field capacity must be greater than zero")
 
         return len(errors) == 0, errors
 
@@ -120,16 +137,31 @@ class EWSI(ScientificModel):
         vpd_stress = np.clip((vpd - 0.5) / 3.5, 0, 1)
 
         # Component 3: Soil moisture stress
-        soil_stress = np.clip(1 - (soil_moisture / soil_field_capacity), 0, 1)
+        # The guard is a second line of defence. validate_inputs already
+        # rejects a non-positive field capacity, but compute is a public
+        # method and a caller can reach this division without validating, so
+        # the division itself has to be safe.
+        capacity = float(soil_field_capacity)
+        if capacity <= 0:
+            # No capacity means no basis for a ratio. A soil with no storage
+            # cannot be compared against zero storage, so the term is
+            # undefined. Reporting full stress would be a guess, and
+            # returning NaN would poison the weighted sum silently.
+            raise ValueError(
+                "soil_field_capacity must be greater than zero; the soil "
+                "moisture stress term is a ratio against it and has no value "
+                "at zero"
+            )
+        soil_stress = np.clip(1 - (soil_moisture / capacity), 0, 1)
 
         # Weighted fusion
-        ewsı = (
+        ewsi = (
             self.weights.ndmi * ndmi_stress
             + self.weights.vpd * vpd_stress
             + self.weights.soil * soil_stress
         )
 
-        return np.clip(ewsı, 0, 1)
+        return np.clip(ewsi, 0, 1)
 
     def validate_against_reference(
         self,
@@ -156,8 +188,8 @@ class EWSI(ScientificModel):
         )
 
     @staticmethod
-    def classify(ewsı: np.ndarray) -> np.ndarray:
+    def classify(ewsi: np.ndarray) -> np.ndarray:
         """طبقه‌بندی سطح تنش آبی"""
         return np.select(
-            [ewsı < 0.3, ewsı < 0.6, ewsı < 0.8], ["optimal", "mild", "moderate"], default="severe"
+            [ewsi < 0.3, ewsi < 0.6, ewsi < 0.8], ["optimal", "mild", "moderate"], default="severe"
         )

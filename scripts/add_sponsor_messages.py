@@ -39,8 +39,7 @@ EN = {
         "never appears beside a recommendation we give a farmer."
     ),
     "no_advisory": (
-        "There is no slot on any agronomic, checkout, settlement or "
-        "low-bandwidth surface."
+        "There is no slot on any agronomic, checkout, settlement or low-bandwidth surface."
     ),
     "transparency": (
         "Every current sponsor is listed on this page, including any that was "
@@ -60,8 +59,7 @@ FA = {
     "disclosure": "این بخش با حمایت مالی {sponsor} تأمین شده است.",
     "policy_title": "سیاست اسپانسرشیپ",
     "policy_intro": (
-        "اسپانسرشیپ یعنی شناخته‌شدن یک حامی نام‌دار برای کاری که این پلتفرم "
-        "انجام می‌دهد. تبلیغ نیست."
+        "اسپانسرشیپ یعنی شناخته‌شدن یک حامی نام‌دار برای کاری که این پلتفرم انجام می‌دهد. تبلیغ نیست."
     ),
     "no_ads": (
         "ما تبلیغات الگوریتمی اجرا نمی‌کنیم. هیچ شبکهٔ تبلیغاتی، هیچ SDK "
@@ -76,9 +74,7 @@ FA = {
         "جای تبلیغ فقط در صفحهٔ خدمتی ظاهر می‌شود که حامی آن را تأمین کرده. "
         "هرگز کنار توصیه‌ای که به کشاورز می‌دهیم ظاهر نمی‌شود."
     ),
-    "no_advisory": (
-        "هیچ جای تبلیغی روی سطوح زراعی، پرداخت، تسویه یا کم‌پهنا‌باند وجود ندارد."
-    ),
+    "no_advisory": ("هیچ جای تبلیغی روی سطوح زراعی، پرداخت، تسویه یا کم‌پهنا‌باند وجود ندارد."),
     "transparency": (
         "همهٔ حامیان فعلی در این صفحه فهرست می‌شوند، از جمله هر حامی که تعلیق "
         "یا خاتمه یافته، به‌همراه دلیل."
@@ -104,9 +100,7 @@ def main() -> int:
         if data.get("sponsors") == block:
             continue
         data["sponsors"] = block
-        path.write_text(
-            json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-        )
+        path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         changed.append(locale)
 
     print(f"updated: {changed or 'nothing'}")

@@ -15,7 +15,6 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -145,7 +144,7 @@ class PrivacyVault:
             return False
 
         entry = json.loads(entry_file.read_text())
-        hashlib.sha256(json.dumps(entry["data"], sort_keys=True).encode()).hexdigest()
+        commitment = hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()
         return entry["commitment_hash"] == commitment
 
     def log_access(

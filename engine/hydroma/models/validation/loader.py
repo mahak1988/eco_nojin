@@ -116,9 +116,7 @@ def load_reference(name: str) -> np.ndarray:
     """Load one reference value by stem. Returns a 1-D array."""
     path = available_references().get(name)
     if path is None:
-        raise KeyError(
-            f"no reference named {name!r}; have {sorted(available_references())}"
-        )
+        raise KeyError(f"no reference named {name!r}; have {sorted(available_references())}")
     return np.load(path).ravel()
 
 

@@ -7,7 +7,6 @@
 
 from __future__ import annotations
 
-import io
 import re
 import sys
 from collections import Counter
@@ -35,8 +34,10 @@ def census(lines: list[str]) -> dict[str, int]:
 
 def main() -> int:
     new_path, bak_path = sys.argv[1], sys.argv[2]
-    new = io.open(new_path, encoding="utf-8").read().split("\n")
-    bak = io.open(bak_path, encoding="utf-8").read().split("\n")
+    with open(new_path, encoding="utf-8") as _fh:
+        new = _fh.read().split("\n")
+    with open(bak_path, encoding="utf-8") as _fh:
+        bak = _fh.read().split("\n")
 
     print(f"file    : {new_path}")
     print(f"lines   : backup {len(bak)} -> now {len(new)}  (delta {len(new) - len(bak):+d})")

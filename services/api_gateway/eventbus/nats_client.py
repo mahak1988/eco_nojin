@@ -88,9 +88,11 @@ class NATSConfig:
             retry_base_delay=settings.nats_retry_base_delay,
             retry_max_delay=settings.nats_retry_max_delay,
             # Separate knob: how many times JetStream redelivers before giving
-            # up. Previously reused nats_max_retries, which is about publish
-            # resilience, so the consumer ceiling moved with publisher tuning.
-            max_deliver=getattr(settings, "nats_max_deliver", settings.nats_max_retries),
+            # up. It was previously read with a getattr fallback because the
+            # setting did not exist, which meant the consumer ceiling silently
+            # tracked nats_max_retries and could not be configured. The key is
+            # defined now, so read it directly and let a miss fail loudly.
+            max_deliver=settings.nats_max_deliver,
             connect_timeout=settings.nats_connect_timeout,
         )
 

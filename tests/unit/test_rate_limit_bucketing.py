@@ -58,9 +58,7 @@ def test_missing_subject_falls_back_to_ip():
 
 def test_two_users_behind_one_nat_get_separate_buckets():
     """The regression: one shared bucket per egress address locked out co-workers."""
-    limiter = RateLimitMiddleware(
-        None, redis_client=None, limit=1, window=60, key_by_subject=True
-    )
+    limiter = RateLimitMiddleware(None, redis_client=None, limit=1, window=60, key_by_subject=True)
     shared_ip = "198.51.100.20"
 
     alice = _request(shared_ip)
@@ -74,9 +72,7 @@ def test_two_users_behind_one_nat_get_separate_buckets():
 
 
 def test_same_user_behind_two_ips_still_separate():
-    limiter = RateLimitMiddleware(
-        None, redis_client=None, limit=1, window=60, key_by_subject=True
-    )
+    limiter = RateLimitMiddleware(None, redis_client=None, limit=1, window=60, key_by_subject=True)
     first = _request("198.51.100.1")
     first.state.user_id = "alice"
     second = _request("198.51.100.2")

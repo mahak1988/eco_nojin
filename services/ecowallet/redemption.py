@@ -12,7 +12,6 @@ redeemed inside our own network*, never a promise of a third-party benefit.
 deliberately absent from this table.
 """
 
-# ruff: noqa: RUF001
 # RUF001 flags extended Arabic-Indic digits as "ambiguous" against Latin
 # lookalikes. In this file the Persian strings are Persian prose and must use
 # Persian digits; converting them would corrupt the user-facing text.

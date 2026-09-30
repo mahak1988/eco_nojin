@@ -306,7 +306,7 @@ async def get_village_profile(village_id: str, db: AsyncSession = Depends(_get_d
         profile["name"] = await _get_village_name(village_id)
         return profile
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 @router.get("/{village_id}/dashboard", response_model=dict)
@@ -316,7 +316,7 @@ async def get_village_dashboard(village_id: str, db: AsyncSession = Depends(_get
     try:
         return await service.get_village_dashboard(village_id)
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 # ============================================================================
@@ -336,7 +336,7 @@ async def list_capabilities(
         caps = await service.get_village_capabilities(village_id, category)
         return [_serialize_capability(c) for c in caps]
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 @router.post("/{village_id}/capabilities", response_model=dict)
@@ -354,7 +354,7 @@ async def create_capability(
         )
         return _serialize_capability(cap)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get("/{village_id}/capabilities/{capability_id}", response_model=dict)
@@ -383,7 +383,7 @@ async def update_capability(
         )
         return _serialize_capability(cap)
     except ValueError as e:
-        raise HTTPException(status_code=403 if "دسترسی" in str(e) else 404, detail=str(e))
+        raise HTTPException(status_code=403 if "دسترسی" in str(e) else 404, detail=str(e)) from e
 
 
 @router.delete("/{village_id}/capabilities/{capability_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -398,7 +398,7 @@ async def delete_capability(
     try:
         await service.delete_capability(capability_id, user)
     except ValueError as e:
-        raise HTTPException(status_code=403 if "دسترسی" in str(e) else 404, detail=str(e))
+        raise HTTPException(status_code=403 if "دسترسی" in str(e) else 404, detail=str(e)) from e
 
 
 # ============================================================================
@@ -419,7 +419,7 @@ async def list_opportunities(
         opps = await service.get_village_opportunities(village_id, maturity, status)
         return [_serialize_opportunity(o) for o in opps]
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 @router.post("/{village_id}/opportunities", response_model=dict)
@@ -437,7 +437,7 @@ async def create_opportunity(
         )
         return _serialize_opportunity(opp)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get("/{village_id}/opportunities/{opportunity_id}", response_model=dict)
@@ -468,7 +468,7 @@ async def update_opportunity(
         )
         return _serialize_opportunity(opp)
     except ValueError as e:
-        raise HTTPException(status_code=403 if "دسترسی" in str(e) else 404, detail=str(e))
+        raise HTTPException(status_code=403 if "دسترسی" in str(e) else 404, detail=str(e)) from e
 
 
 @router.post("/opportunities/{opportunity_id}/interest", response_model=dict)
@@ -485,7 +485,7 @@ async def express_interest(
         interest = await service.express_interest(opportunity_id, user.id, note)
         return _serialize_interest(interest)
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 @router.get("/opportunities", response_model=list)
@@ -553,7 +553,7 @@ async def create_project(
         )
         return _serialize_project(proj)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.put("/{village_id}/projects/{project_id}/progress", response_model=dict)
@@ -570,7 +570,7 @@ async def update_project_progress(
         proj = await service.update_project_progress(project_id, payload.progress_pct, user)
         return _serialize_project(proj)
     except ValueError as e:
-        raise HTTPException(status_code=403 if "دسترسی" in str(e) else 404, detail=str(e))
+        raise HTTPException(status_code=403 if "دسترسی" in str(e) else 404, detail=str(e)) from e
 
 
 @router.get("/{village_id}/projects/{project_id}/investors", response_model=list)
@@ -584,7 +584,7 @@ async def get_project_investors(
     try:
         return await service.get_project_investors(project_id)
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 # ============================================================================
@@ -660,7 +660,7 @@ async def create_investment(
         )
         return _serialize_investment(inv)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get("/investments", response_model=list)
@@ -687,7 +687,7 @@ async def list_tourism_services(village_id: str, db: _get_db = Depends(_get_db))
         services = await service.get_village_tourism_services(village_id)
         return [_serialize_tourism_service(s) for s in services]
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 @router.post("/{village_id}/tourism", response_model=dict)
@@ -705,7 +705,7 @@ async def create_tourism_service(
         )
         return _serialize_tourism_service(svc)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 # ============================================================================
@@ -721,7 +721,7 @@ async def list_events(village_id: str, db: _get_db = Depends(_get_db)):
         events = await service.get_village_events(village_id)
         return [_serialize_event(e) for e in events]
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 @router.post("/{village_id}/events", response_model=dict)
@@ -739,7 +739,7 @@ async def create_event(
         )
         return _serialize_event(evt)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.post("/events/{event_id}/register", response_model=dict)
@@ -754,7 +754,7 @@ async def register_for_event(
         reg = await service.register_event(event_id, user.id)
         return _serialize_event_registration(reg)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 # ============================================================================
@@ -774,7 +774,7 @@ async def list_needs(
         needs = await service.get_village_needs(village_id, priority)
         return [_serialize_need(n) for n in needs]
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 @router.post("/{village_id}/needs", response_model=dict)
@@ -790,7 +790,7 @@ async def create_need(
         need = await service.create_need(village_id, payload.model_dump(exclude_unset=True))
         return _serialize_need(need)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 # ============================================================================
@@ -806,7 +806,7 @@ async def get_brand(village_id: str, db: _get_db = Depends(_get_db)):
         brand = await service.get_or_create_brand(village_id)
         return _serialize_brand(brand)
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 @router.put("/{village_id}/brand", response_model=dict)
@@ -824,7 +824,7 @@ async def update_brand(
         )
         return _serialize_brand(brand)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 # ============================================================================
@@ -839,7 +839,7 @@ async def get_ai_recommendations(village_id: str, db: _get_db = Depends(_get_db)
     try:
         return await service.ai_recommendations(village_id)
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 # ============================================================================
@@ -878,7 +878,7 @@ async def list_experiences(
         exps = await service.get_village_experiences(village_id, experience_type)
         return [_serialize_experience(e) for e in exps]
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 @router.post("/{village_id}/experiences", response_model=dict)
@@ -896,7 +896,7 @@ async def create_experience(
         )
         return _serialize_experience(exp)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 # ============================================================================
@@ -927,7 +927,7 @@ async def get_destination(village_id: str, db: AsyncSession = Depends(_get_db)):
         dest = await service.get_or_create_destination(village_id)
         return _serialize_destination(dest)
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 @router.put("/{village_id}/destination", response_model=dict)
@@ -945,7 +945,7 @@ async def update_destination(
         )
         return _serialize_destination(dest)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 # ============================================================================
@@ -1004,7 +1004,7 @@ async def get_b2b_matches(village_id: str, db: AsyncSession = Depends(_get_db)):
     try:
         return await service.match_b2b_demands(village_id)
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 # ============================================================================
@@ -1089,7 +1089,7 @@ async def create_development_gap(
         )
         return _serialize_gap(gap)
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 @router.get("/{village_id}/gaps", response_model=list)
@@ -1104,7 +1104,7 @@ async def list_gaps(
         gaps = await service.get_village_gaps(village_id, gap_type)
         return [_serialize_gap(g) for g in gaps]
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 # ============================================================================
@@ -1140,7 +1140,7 @@ async def get_village_festivals(village_id: str, db: AsyncSession = Depends(_get
         festivals = await service.get_village_festivals(village_id)
         return [_serialize_festival(f) for f in festivals]
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 @router.post("/festivals", response_model=dict)
@@ -1213,4 +1213,4 @@ async def get_village_dossier(village_id: str, db: AsyncSession = Depends(_get_d
     try:
         return await service.get_village_dossier(village_id)
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e

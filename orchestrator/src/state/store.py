@@ -1,11 +1,16 @@
 import json
-import redis.asyncio as redis
-from typing import Any, Optional, List, Dict, Set
-from datetime import datetime
 import logging
+from datetime import datetime
+from typing import Any, Optional
+
+import redis.asyncio as redis
+
 from orchestrator.src.state.models import (
-    OrchestratorState, TaskState, TaskSpec, TaskStatus,
-    AgentHealth, AgentStatus, ApprovalGate, ApprovalGateStatus
+    AgentHealth,
+    ApprovalGate,
+    ApprovalGateStatus,
+    TaskState,
+    TaskStatus,
 )
 
 logger = logging.getLogger(__name__)
@@ -14,15 +19,12 @@ logger = logging.getLogger(__name__)
 class StateStore:
     def __init__(self, redis_url: str = "redis://localhost:6379"):
         self.redis_url = redis_url
-        self.client: Optional[redis.Redis] = None
-        self._pubsub: Optional[redis.client.PubSub] = None
+        self.client: redis.Redis | None = None
+        self._pubsub: redis.client.PubSub | None = None
 
     async def connect(self):
         self.client = redis.from_url(
-            self.redis_url,
-            encoding="utf-8",
-            decode_responses=True,
-            max_connections=20
+            self.redis_url, encoding="utf-8", decode_responses=True, max_connections=20
         )
         await self.client.ping()
         logger.info(f"Connected to Redis at {self.redis_url}")
@@ -49,6 +51,7 @@ class StateStore:
 
     async def get_task(self, task_id: str) -> Optional["TaskState"]:
         from orchestrator.src.state.models import TaskState
+
         key = f"task:{task_id}"
         data = await self.client.get(key)
         if data:
@@ -65,7 +68,7 @@ class StateStore:
                 setattr(task_state.task, k, v)
         return await self.save_task(task_state)
 
-    async def get_tasks_by_status(self, status: TaskStatus) -> List[str]:
+    async def get_tasks_by_status(self, status: TaskStatus) -> list[str]:
         key = f"tasks:{status.value}"
         return await self.client.smembers(key)
 
@@ -73,7 +76,7 @@ class StateStore:
         key = f"task:{task_id}:logs"
         await self.client.rpush(key, f"[{datetime.utcnow().isoformat()}] {log}")
 
-    async def get_task_logs(self, task_id: str, limit: int = 100) -> List[str]:
+    async def get_task_logs(self, task_id: str, limit: int = 100) -> list[str]:
         key = f"task:{task_id}:logs"
         return await self.client.lrange(key, -limit, -1)
 
@@ -87,14 +90,14 @@ class StateStore:
 
     async def get_agent_health(self, agent_id: str) -> Optional["AgentHealth"]:
         from orchestrator.src.state.models import AgentHealth
+
         key = f"agent:health:{agent_id}"
         data = await self.client.get(key)
         if data:
             return AgentHealth.model_validate_json(data)
         return None
 
-    async def get_all_agent_health(self) -> List["AgentHealth"]:
-        from orchestrator.src.state.models import AgentHealth
+    async def get_all_agent_health(self) -> list["AgentHealth"]:
         agent_ids = await self.client.smembers("agents:all")
         health_list = []
         for agent_id in agent_ids:
@@ -117,7 +120,6 @@ class StateStore:
 
     # --- Approval Gates ---
     async def save_approval_gate(self, gate: "ApprovalGate") -> bool:
-        from orchestrator.src.state.models import ApprovalGate
         key = f"approval:{gate.id}"
         data = gate.model_dump_json()
         await self.client.set(key, data)
@@ -128,14 +130,14 @@ class StateStore:
 
     async def get_approval_gate(self, gate_id: str) -> Optional["ApprovalGate"]:
         from orchestrator.src.state.models import ApprovalGate
+
         key = f"approval:{gate_id}"
         data = await self.client.get(key)
         if data:
             return ApprovalGate.model_validate_json(data)
         return None
 
-    async def get_pending_approvals(self) -> List["ApprovalGate"]:
-        from orchestrator.src.state.models import ApprovalGate
+    async def get_pending_approvals(self) -> list["ApprovalGate"]:
         gate_ids = await self.client.smembers("approvals:pending")
         gates = []
         for gid in gate_ids:
@@ -153,20 +155,20 @@ class StateStore:
         return val == "true" if val else False
 
     # --- Audit Log ---
-    async def append_audit(self, event: Dict[str, Any]):
+    async def append_audit(self, event: dict[str, Any]):
         event["timestamp"] = datetime.utcnow().isoformat()
         await self.client.lpush("audit:log", json.dumps(event))
         await self.client.ltrim("audit:log", 0, 9999)
 
-    async def get_audit_log(self, limit: int = 100) -> List[Dict]:
+    async def get_audit_log(self, limit: int = 100) -> list[dict]:
         logs = await self.client.lrange("audit:log", 0, limit - 1)
         return [json.loads(l) for l in logs]
 
     # --- Pub/Sub for real-time events ---
-    async def publish(self, channel: str, message: Dict[str, Any]):
+    async def publish(self, channel: str, message: dict[str, Any]):
         await self.client.publish(channel, json.dumps(message))
 
-    async def subscribe(self, channels: List[str]):
+    async def subscribe(self, channels: list[str]):
         self._pubsub = self.client.pubsub()
         await self._pubsub.subscribe(*channels)
         return self._pubsub

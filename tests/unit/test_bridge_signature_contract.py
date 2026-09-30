@@ -58,7 +58,8 @@ def _expected_arity(name: str) -> int:
     # pybind11 renders the signature in the docstring as "name(a: float, b: int)".
     start = doc.find("(")
     end = doc.find(")")
-    assert start != -1 and end > start, f"unreadable native signature: {doc!r}"
+    assert start != -1, f"no parameter list in native signature: {doc!r}"
+    assert end > start, f"malformed parameter list in native signature: {doc!r}"
     inner = doc[start + 1 : end].strip()
     if not inner:
         return 0
@@ -86,10 +87,10 @@ def test_penman_monteith_backends_agree():
         pytest.skip("C++ extension is not built")
 
     cases = [
-        (18.0, 29.0, 55.0, 2.0, 22.0, 1200.0, 35.7, 200),   # typical summer day
-        (2.0, 9.0, 70.0, 2.0, 6.0, 1200.0, 35.7, 15),      # cloudy winter
-        (2.0, 9.0, 70.0, 2.0, 1.2, 1200.0, 35.7, 15),      # very overcast
-        (5.0, 12.0, 80.0, 1.5, 3.0, 1500.0, 35.7, 355),    # winter, high elevation
+        (18.0, 29.0, 55.0, 2.0, 22.0, 1200.0, 35.7, 200),  # typical summer day
+        (2.0, 9.0, 70.0, 2.0, 6.0, 1200.0, 35.7, 15),  # cloudy winter
+        (2.0, 9.0, 70.0, 2.0, 1.2, 1200.0, 35.7, 15),  # very overcast
+        (5.0, 12.0, 80.0, 1.5, 3.0, 1500.0, 35.7, 355),  # winter, high elevation
     ]
     for tmin, tmax, rh, u2, rs, z, lat, doy in cases:
         cpp = core.penman_monteith_et0(tmin, tmax, rh, u2, rs, z, lat, doy)
@@ -100,7 +101,15 @@ def test_penman_monteith_backends_agree():
 
 def test_penman_monteith_is_sensitive_to_wind_speed():
     """Guards the swap: a wrong argument order makes ET0 insensitive to u2."""
-    base = dict(tmin=18.0, tmax=29.0, rh_mean=55.0, rs=22.0, z=1200.0, lat=35.7, doy=200)
+    base = {
+        "tmin": 18.0,
+        "tmax": 29.0,
+        "rh_mean": 55.0,
+        "rs": 22.0,
+        "z": 1200.0,
+        "lat": 35.7,
+        "doy": 200,
+    }
     slow = float(bridge._py_penman_monteith_et0(u2=1.0, **base))
     windy = float(bridge._py_penman_monteith_et0(u2=5.0, **base))
 
@@ -108,7 +117,15 @@ def test_penman_monteith_is_sensitive_to_wind_speed():
 
 
 def test_penman_monteith_is_sensitive_to_solar_radiation():
-    base = dict(tmin=18.0, tmax=29.0, rh_mean=55.0, u2=2.0, z=1200.0, lat=35.7, doy=200)
+    base = {
+        "tmin": 18.0,
+        "tmax": 29.0,
+        "rh_mean": 55.0,
+        "u2": 2.0,
+        "z": 1200.0,
+        "lat": 35.7,
+        "doy": 200,
+    }
     dull = float(bridge._py_penman_monteith_et0(rs=6.0, **base))
     bright = float(bridge._py_penman_monteith_et0(rs=25.0, **base))
 

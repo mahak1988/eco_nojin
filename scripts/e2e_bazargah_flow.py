@@ -17,11 +17,11 @@ warnings.filterwarnings("ignore")
 
 sys.path.insert(0, ".")
 
-from fastapi.testclient import TestClient  # noqa: E402
+from fastapi.testclient import TestClient
 
-from database.hub import hub  # noqa: E402
-from database.models import User  # noqa: E402
-from services.api_gateway.auth import create_access_token, hash_password  # noqa: E402
+from database.hub import hub
+from database.models import User
+from services.api_gateway.auth import create_access_token, hash_password
 
 EMAIL = "e2e-buyer@econojin.local"
 results = []
@@ -33,9 +33,6 @@ def step(ok, label):
 
 
 def _create_schema() -> None:
-    import database.models  # noqa: F401  (register all platform tables)
-    import services.marketplace.models
-    import services.notification.models_db  # noqa: F401
     from database.base import Base
 
     Base.metadata.create_all(bind=hub.get_sqlalchemy_engine())
@@ -171,12 +168,8 @@ def main():
     failed = [lbl for okk, lbl in results if not okk]
     print("")
     print(
-        "E2E RESULT: %d/%d passed%s"
-        % (
-            len(results) - len(failed),
-            len(results),
-            ("" if not failed else "  FAILED: " + "; ".join(failed)),
-        ),
+        f"E2E RESULT: {len(results) - len(failed)}/{len(results)} passed"
+        f"{'' if not failed else '  FAILED: ' + '; '.join(failed)}",
         flush=True,
     )
     return 0 if not failed else 1

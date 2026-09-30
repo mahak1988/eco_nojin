@@ -225,7 +225,6 @@ def test_advice_no_match_returns_honest_answer():
 @pytest.fixture
 def temp_farm_db(tmp_path):
     """Point the farm handler at a temp SQLite DB and create the schema."""
-    import db.models  # noqa: F401  (register all tables on Base)
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
 

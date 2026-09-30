@@ -23,7 +23,9 @@ class SoilErodibilityFetcher(MapFetcher):
     """Computes K-factor using the EPIC erodibility relation in the formula registry."""
 
     DATA_ORIGIN = DataOrigin.SYNTHETIC
-    ORIGIN_DETAIL = "SoilFetcher returns a random K-factor texture; no SoilGrids or laboratory data is read"
+    ORIGIN_DETAIL = (
+        "SoilFetcher returns a random K-factor texture; no SoilGrids or laboratory data is read"
+    )
 
     def __init__(self, cache_dir: Path = Path("data/maps/soil_cache")):
         self.cache_dir = Path(cache_dir)

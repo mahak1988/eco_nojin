@@ -29,7 +29,9 @@ except ImportError:
 try:
     from supabase import Client, create_client
 except ImportError:
-    raise ImportError("supabase is required. Install with: pip install supabase python-dotenv")
+    raise ImportError(
+        "supabase is required. Install with: pip install supabase python-dotenv"
+    ) from None
 
 
 _client: Client | None = None

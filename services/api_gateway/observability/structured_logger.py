@@ -23,8 +23,8 @@ correlation_id_var: contextvars.ContextVar[str] = contextvars.ContextVar(
 )
 
 # Context variable for extra context
-extra_context_var: contextvars.ContextVar[dict[str, Any]] = contextvars.ContextVar(
-    "extra_context", default={}
+extra_context_var: contextvars.ContextVar[dict[str, Any] | None] = contextvars.ContextVar(
+    "extra_context", default=None
 )
 
 service_name_var: contextvars.ContextVar[str] = contextvars.ContextVar(
@@ -52,7 +52,7 @@ def clear_correlation_id() -> None:
 
 def get_extra_context() -> dict[str, Any]:
     """Get extra context from context variable."""
-    return extra_context_var.get().copy()
+    return dict(extra_context_var.get() or {})
 
 
 def set_extra_context(context: dict[str, Any]) -> None:
@@ -62,7 +62,7 @@ def set_extra_context(context: dict[str, Any]) -> None:
 
 def update_extra_context(key: str, value: Any) -> None:
     """Update a single key in extra context."""
-    ctx = extra_context_var.get().copy()
+    ctx = dict(extra_context_var.get() or {})
     ctx[key] = value
     extra_context_var.set(ctx)
 

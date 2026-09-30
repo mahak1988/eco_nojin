@@ -11,6 +11,7 @@ Provides:
 
 from __future__ import annotations
 
+import importlib.util
 import logging
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -37,9 +38,7 @@ logger = logging.getLogger(__name__)
 
 # Optional imports
 try:
-    import gpytorch
-
-    GPYTORCH_AVAILABLE = True
+    GPYTORCH_AVAILABLE = importlib.util.find_spec("gpytorch") is not None
 except ImportError:
     GPYTORCH_AVAILABLE = False
     logger.warning("gpytorch not available - GP surrogates disabled")
@@ -174,7 +173,20 @@ class PINNModel(ScientificModel):
             return ModelOutput(
                 success=True,
                 outputs={"solution": u},
-                uncertainty={"epistemic": 0.0, "aleatoric": 0.0},
+                # A PINN solves a boundary-value problem from the governing equations
+        # alone, so it has no training residuals to report an aleatoric term
+        # from, and no ensemble to report an epistemic term from. Reporting
+        # both as 0.0 is the strongest possible claim, and it is false: zero
+        # aleatoric uncertainty means the equation is exact, and zero
+        # epistemic means the model is certain, which no trained-on-nothing
+        # network is. NaN says "not known", which is the honest value.
+        uncertainty={
+            "epistemic": float("nan"),
+            "aleatoric": float("nan"),
+            "method": "not estimated: a PINN boundary solution carries no "
+            "ensemble and no residual series, so neither uncertainty term can "
+            "be derived from this run",
+        },
                 data_source="modelled",
                 model="scientific model",
             )

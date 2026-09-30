@@ -358,4 +358,4 @@ class RealAquaCropMotor(AbstractScientificMotor):
 
 
 # asyncio is imported lazily here to keep module import order clean
-import asyncio  # noqa: E402
+import asyncio

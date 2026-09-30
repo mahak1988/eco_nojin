@@ -73,8 +73,7 @@ class SponsorshipService:
             # More than one live sponsor at a placement breaks
             # MAX_SPONSORS_PER_PLACEMENT. Serving the first would hide it.
             logger.error(
-                "Sponsorship policy violation: %d live sponsors at %s; serving "
-                "none until resolved",
+                "Sponsorship policy violation: %d live sponsors at %s; serving none until resolved",
                 len(rows),
                 placement,
             )
@@ -87,9 +86,7 @@ class SponsorshipService:
         stmt = (
             select(Sponsorship)
             .where(
-                Sponsorship.status.in_(
-                    [SponsorshipStatus.ACTIVE, SponsorshipStatus.SUSPENDED]
-                ),
+                Sponsorship.status.in_([SponsorshipStatus.ACTIVE, SponsorshipStatus.SUSPENDED]),
                 Sponsorship.starts_on <= day,
                 Sponsorship.ends_on >= day,
             )
@@ -150,9 +147,7 @@ class SponsorshipService:
             starts_on=fields["starts_on"],
             ends_on=fields["ends_on"],
             is_project_funder=bool(fields.get("is_project_funder", False)),
-            is_revenue_source_funder=bool(
-                fields.get("is_revenue_source_funder", False)
-            ),
+            is_revenue_source_funder=bool(fields.get("is_revenue_source_funder", False)),
             disclosure_required=True,
             internal_notes=fields.get("internal_notes"),
         )

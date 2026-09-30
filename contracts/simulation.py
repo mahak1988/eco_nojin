@@ -1,7 +1,8 @@
 from datetime import date
 
-from engine.hydroma.provenance import Provenance
 from pydantic import BaseModel
+
+from engine.hydroma.provenance import Provenance
 
 
 class SWATInput(BaseModel):

@@ -8,7 +8,6 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from database.base import Base
-from database.models import ModelRun  # noqa: F401 — registers the model
 from services.api_gateway.routers import hydroma_hub
 
 USER = "test-client-1234"

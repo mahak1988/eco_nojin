@@ -15,8 +15,6 @@ Two concrete failures hid behind that:
 
 from __future__ import annotations
 
-import math
-
 import pytest
 
 from engine.hydroma.calculation.formula_evaluator import (

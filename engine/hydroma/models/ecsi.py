@@ -23,7 +23,7 @@ Honesty notes
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 
@@ -37,7 +37,7 @@ from engine.hydroma.simulation.runners.rothc_runner import (
     water_factor,
 )
 
-from .base import ScientificModel, ValidationResult
+from .base import ScientificModel, ValidationResult, relative_error_of, validate_finite
 
 
 class ECSI(ScientificModel):
@@ -47,29 +47,49 @@ class ECSI(ScientificModel):
     version = "2.0.0"
     description = "Annual soil-carbon dynamics using the canonical RothC-26.3 kernel"
 
-    REFERENCES = {
+    REFERENCES: ClassVar[dict[str, str]] = {
         "Coleman1996": "Coleman, K. & Jenkinson, D.S. (1996). RothC-26.3 - A model for the turnover of carbon in soil.",
     }
 
     #: Canonical RothC-26.3 pool decomposition rates (yr^-1).
-    POOLS = dict(RATES)
+    POOLS: ClassVar[dict[Any]] = dict(RATES)
 
     def validate_inputs(
         self,
-        initial_soc,
-        carbon_input,
-        t_mean,
-        rainfall,
-        evaporation,
+        initial_soc_t_ha,
+        carbon_input_t_ha,
+        t_mean_c,
+        rainfall_mm,
+        evaporation_mm,
         clay_fraction,
         land_use,
     ) -> tuple[bool, list[str]]:
-        errors = []
+        # The parameter names carry the units on purpose. They previously read
+        # initial_soc / t_mean / rainfall, which did not match compute()'s
+        # names, so a caller following the signature of one method could not
+        # call the other with the same arguments.
+        initial_soc = initial_soc_t_ha
+        carbon_input = carbon_input_t_ha
+        rainfall = rainfall_mm
+        evaporation = evaporation_mm
+        errors = validate_finite(
+            "ECSI",
+            {
+                "initial_soc_t_ha": initial_soc_t_ha,
+                "carbon_input_t_ha": carbon_input_t_ha,
+                "t_mean_c": t_mean_c,
+                "rainfall_mm": rainfall_mm,
+                "evaporation_mm": evaporation_mm,
+                "clay_fraction": clay_fraction,
+            },
+        )
+        if errors:
+            return False, errors
         if initial_soc < 0 or initial_soc > 500:
             errors.append("Initial SOC out of range [0, 500] t/ha")
         if carbon_input < 0:
             errors.append("Carbon input must be non-negative")
-        if not (-20 <= t_mean <= 40):
+        if not (-20 <= t_mean_c <= 40):
             errors.append("Temperature out of range")
         if rainfall < 0:
             errors.append("Rainfall must be non-negative")
@@ -208,7 +228,7 @@ class ECSI(ScientificModel):
         result = self.compute(**inputs)
         computed_value = result["delta_soc_t_ha_yr"]
 
-        relative_error = abs(computed_value - reference_output) / (abs(reference_output) + 1e-9)
+        relative_error = relative_error_of(computed_value, reference_output)
 
         return ValidationResult(
             passed=relative_error <= tolerance,

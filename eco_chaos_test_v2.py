@@ -872,16 +872,19 @@ class ResourceStarvationProtocol:
     @staticmethod
     def attack_fd_exhaustion():
         """حمله: تخلیه file descriptors"""
-        files = []
-        for _i in range(500):
-            try:
-                f = tempfile.NamedTemporaryFile(delete=False)
-                f.write(b"x" * 1024)
-                files.append(f)
-            except Exception:
-                break
-        # عمداً close نمی‌کنیم
-        return len(files)
+        opened = 0
+        # The handles stay open for the whole loop -- holding them open is the
+        # attack. ExitStack releases them when it unwinds, so the descriptors
+        # do not leak past the test.
+        with contextlib.ExitStack() as stack:
+            for _i in range(500):
+                try:
+                    f = stack.enter_context(tempfile.NamedTemporaryFile(delete=False))
+                    f.write(b"x" * 1024)
+                    opened += 1
+                except Exception:
+                    break
+        return opened
 
     @staticmethod
     def attack_temp_file_bomb():
@@ -1296,7 +1299,7 @@ class ProcessIsolationProtocol:
                 success = sum(1 for r in results if r)
                 return success
         except Exception as e:
-            raise RuntimeError(f"Multiprocess storm failed: {e}")
+            raise RuntimeError(f"Multiprocess storm failed: {e}") from e
 
 
 # ============================================================================
@@ -2531,7 +2534,7 @@ class CachePipelineProtocol:
         """حمله: فساد کش و بازیابی."""
         from pathlib import Path
 
-        from services.map_engine.orchestrator import MapOrchestrator
+        from services.map_engine.orchestrator import MapOrchestrator, MapRequest
 
         cache_dir = Path(tempfile.mkdtemp())
         try:
@@ -2643,7 +2646,6 @@ def _create_wallet_tables(engine):
     imports ``from database.models import EcoWallet``.
     """
     from database.base import Base
-    from database.models import EcoWallet  # noqa: F401 — ensures table is registered
 
     Base.metadata.create_all(engine)
 

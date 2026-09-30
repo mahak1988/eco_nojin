@@ -5,6 +5,7 @@ AquaCrop Adapter - شبیه‌ساز رشد گیاه
 
 import math
 from datetime import UTC, datetime, timedelta
+from typing import Any, ClassVar
 
 from services.simulation.base import BaseSimulator, SimulatorRegistry
 from services.simulation.schemas import (
@@ -21,7 +22,7 @@ class AquaCropAdapter(BaseSimulator):
     name = "FAO-CropSim"
     version = "1.0.0"
 
-    CROP_DB = {
+    CROP_DB: ClassVar[dict[str, Any]] = {
         "wheat": {"yield": 4.5, "duration": 150, "kc": 0.85, "hi": 0.45},
         "barley": {"yield": 4.0, "duration": 130, "kc": 0.80, "hi": 0.45},
         "maize": {"yield": 8.0, "duration": 120, "kc": 0.95, "hi": 0.50},

@@ -1,7 +1,7 @@
 import uuid
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
-from enum import Enum as PyEnum
+from enum import StrEnum
 
 from sqlalchemy import (
     JSON,
@@ -104,13 +104,13 @@ class WebAuthnCredential(Base):
     user = relationship("User", back_populates="passkey_credentials")
 
 
-class OrganizationRole(str, PyEnum):
+class OrganizationRole(StrEnum):
     ADMIN = "admin"
     MEMBER = "member"
     VIEWER = "viewer"
 
 
-class OrganizationStatus(str, PyEnum):
+class OrganizationStatus(StrEnum):
     ACTIVE = "active"
     INVITED = "invited"
     REMOVED = "removed"
@@ -180,7 +180,7 @@ class LandProfile(Base):
 
 
 # --- مدل‌های دیگر مورد نیاز ---
-# ترتیب این مدل‌ها مهم است. مدل‌هایی که مورد ارجاع قرار می‌گیرند باید اول تعریف شوند.  # noqa: RUF003
+# ترتیب این مدل‌ها مهم است. مدل‌هایی که مورد ارجاع قرار می‌گیرند باید اول تعریف شوند.
 
 
 class AuditLog(Base):
@@ -636,7 +636,7 @@ class CalibrationRecordDB(Base):
 
 
 # --- مدل‌های Placeholder با رابطه ---
-# توجه کنید که مدل‌هایی که از land_profiles یا users ارجاع می‌دهند، بعد از آن‌ها تعریف می‌شوند.  # noqa: RUF003
+# توجه کنید که مدل‌هایی که از land_profiles یا users ارجاع می‌دهند، بعد از آن‌ها تعریف می‌شوند.
 
 
 class NojinCalibrationRecordDB(Base):
@@ -813,7 +813,7 @@ class ApiKey(Base):
 # ``services.carbon.verification`` plus the motor's data provenance.
 
 
-class CarbonCreditState(str, PyEnum):
+class CarbonCreditState(StrEnum):
     """Lifecycle state of an issued carbon credit (fungible lot)."""
 
     DRAFT = "DRAFT"
@@ -1397,15 +1397,7 @@ class InvStocktakeLine(Base):
     __table_args__ = (Index("ix_inv_stocktake_line_stocktake_sku", "stocktake_id", "sku_id"),)
 
 
-class InvValuationMethod(str, PyEnum):
-    """Inventory valuation method."""
-
-    FIFO = "fifo"
-    WEIGHTED_AVG = "weighted_avg"
-    STANDARD = "standard"
-
-
-class InvValuationMethod(str, PyEnum):
+class InvValuationMethod(StrEnum):
     """Inventory valuation method."""
 
     FIFO = "fifo"
@@ -1564,7 +1556,7 @@ class ContentTranslation(Base):
     )
 
 
-class EscrowState(str, PyEnum):
+class EscrowState(StrEnum):
     """Escrow state machine states."""
 
     CREATED = "created"
@@ -1740,7 +1732,7 @@ class CalibrationResult(Base):
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
 
 
-class WorkflowStatus(str, PyEnum):
+class WorkflowStatus(StrEnum):
     """Lifecycle of a multi-stage workflow run."""
 
     PENDING = "pending"

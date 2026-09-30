@@ -49,8 +49,7 @@ def _module_name(path: str) -> str:
 #: Dotted module names for every logged deletion, computed once at import.
 _LOGGED_DOTTED: tuple[str, ...] = tuple(
     dict.fromkeys(
-        _module_name(e["path"])
-        for e in json.loads(LOG.read_text(encoding="utf-8"))["deletions"]
+        _module_name(e["path"]) for e in json.loads(LOG.read_text(encoding="utf-8"))["deletions"]
     )
 )
 
@@ -185,7 +184,8 @@ class TestDeletedPathsStayDeleted:
     def test_no_logged_path_has_reappeared(self, log):
         back = [e["path"] for e in log["deletions"] if (ROOT / e["path"]).exists()]
         assert not back, (
-            "these paths are logged as deleted but exist again:\n  " + "\n  ".join(back)
+            "these paths are logged as deleted but exist again:\n  "
+            + "\n  ".join(back)
             + "\nEither the deletion was wrong (restore it deliberately and remove the "
             "entry) or the file is a resurrection of code we established was dead."
         )
@@ -220,9 +220,8 @@ class TestDeletedPathsStayDeleted:
             found = reference_index.get(dotted, [])
             if found:
                 offenders[entry["path"]] = found
-        assert not offenders, (
-            "these deleted modules are still imported:\n"
-            + "\n".join(f"  {p}: {files}" for p, files in offenders.items())
+        assert not offenders, "these deleted modules are still imported:\n" + "\n".join(
+            f"  {p}: {files}" for p, files in offenders.items()
         )
 
 
@@ -263,7 +262,6 @@ class TestWhatIsNotOnTheList:
 class TestTheLogWouldNoticeAQuietDeletion:
     def test_it_detects_a_reappearing_path(self, tmp_path):
         """Guard against the gate passing because the check is broken."""
-        from tests.contract.test_deletion_log import LOG as real  # noqa: F401
 
         # Reuse the real fixture shape against a synthetic tree.
         data = {"deletions": [{"path": "gone.txt", "reason": "x" * 50, "verified_by": "y"}]}

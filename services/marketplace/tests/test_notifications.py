@@ -6,7 +6,6 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-import services.notification.models_db  # noqa: F401
 from database.base import Base
 from services.notification.db_service import NotificationDbService
 
@@ -42,5 +41,5 @@ def test_mark_read_owner_scoped(db_session):
 
 
 def test_invalid_type_rejected(db_session):
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="unknown notification type"):
         NotificationDbService(db_session).notify("u-1", "x", ntype="bogus")

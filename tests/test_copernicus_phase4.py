@@ -38,7 +38,7 @@ def test_ndvi_degenerate_denominator():
 
 
 def test_ndvi_rejects_out_of_range():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="nir must be in"):
         ndvi_from_bands(1.5, 0.2)
 
 

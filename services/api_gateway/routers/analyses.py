@@ -39,7 +39,7 @@ def run_topography_analysis(input_data: TopographyInput, db: Session = Depends(g
         return result
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=f"Analysis failed: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Analysis failed: {e!s}") from e
 
 
 @router.post("/runoff/")
@@ -49,7 +49,7 @@ def run_runoff_calculation(input_data: RunoffInput):
         result = calculator.execute(input_data)
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Calculation failed: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Calculation failed: {e!s}") from e
 
 
 @router.post("/groundwater/")
@@ -59,7 +59,7 @@ def run_groundwater_model(input_data: GroundwaterInput):
         result = model.execute(input_data)
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Model run failed: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Model run failed: {e!s}") from e
 
 
 @router.post("/crop-water-req/")
@@ -69,7 +69,7 @@ def run_crop_water_req_calculation(input_data: CropWaterReqInput):
         result = calculator.execute(input_data)
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Calculation failed: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Calculation failed: {e!s}") from e
 
 
 @router.post("/structure-design/")
@@ -79,7 +79,7 @@ def run_structure_design(input_data: StructureDesignInput):
         result = designer.execute(input_data)
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Design failed: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Design failed: {e!s}") from e
 
 
 @router.post("/irrigation-design/")
@@ -89,7 +89,7 @@ def run_irrigation_design(input_data: IrrigationDesignInput):
         result = designer.execute(input_data)
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Design failed: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Design failed: {e!s}") from e
 
 
 # Note: Calibration requires a special runner instance, so its API might be more complex

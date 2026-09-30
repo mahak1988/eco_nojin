@@ -14,6 +14,7 @@ to mock transcription with a logged warning.
 
 import logging
 import os
+from typing import Any, ClassVar
 
 from services.business_modules.voice.stt_provider import STTProvider, STTResult
 
@@ -32,7 +33,7 @@ class WhisperSTTProvider(STTProvider):
     Falls back to mock transcription when Whisper is unavailable.
     """
 
-    WHISPER_MODELS = {
+    WHISPER_MODELS: ClassVar[dict[str, str]] = {
         "tiny": "whisper-1",
         "base": "whisper-1",
         "small": "whisper-1",
@@ -40,7 +41,7 @@ class WhisperSTTProvider(STTProvider):
         "large": "whisper-1",
     }
 
-    WHISPER_LANG_MAP = {
+    WHISPER_LANG_MAP: ClassVar[dict[Any, Any]] = {
         VoiceLanguage.EN: "en",
         VoiceLanguage.FA: "fa",
         VoiceLanguage.AR: "ar",
@@ -215,6 +216,7 @@ class WhisperSTTProvider(STTProvider):
         if self._fallback:
             return VoiceLanguage.EN
         try:
+            text = self.transcribe(audio_data).text
             fa_keywords = ["سلام", "خوب", "فردا", "امروز", "برنامه", "خبر"]
             ar_keywords = ["كيفية", "زراعة", "تربة", "محصول"]
             if any(kw in text for kw in fa_keywords):

@@ -310,7 +310,7 @@ class ContractRegistry:
         self, contract_version_id: str, test_data: dict[str, Any]
     ) -> dict[str, Any]:
         """Record a contract test run."""
-        ContractTestRun(
+        record = ContractTestRun(
             contract_version_id=contract_version_id,
             test_type=test_data.get("test_type", "schemathesis"),
             test_tool=test_data.get("test_tool"),

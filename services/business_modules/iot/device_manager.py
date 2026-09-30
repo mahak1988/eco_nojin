@@ -14,11 +14,16 @@ import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import StrEnum
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import select
 
 from database.hub import hub
+
+if TYPE_CHECKING:
+    # Only the annotation on DeviceManager._cache names this; the runtime
+    # methods import it locally as DbDevice.
+    from database.models import IoTDevice
 
 logger = logging.getLogger(__name__)
 

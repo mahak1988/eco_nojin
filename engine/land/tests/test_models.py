@@ -1,5 +1,7 @@
 """Tests for Land Intelligence models"""
 
+from typing import ClassVar
+
 import pytest
 
 from engine.land.models import (
@@ -22,7 +24,7 @@ class TestSlopeAspectResult:
     # ValueError -- so a call that simply forgot the two arguments satisfied the
     # three `pytest.raises(ValueError)` blocks in test_slope_bounds for the
     # wrong reason, and the slope bounds went untested.
-    P = {
+    P: ClassVar[dict[str, str]] = {
         "data_source": "modelled",
         "model": "terrain_analysis (Horn 1981)",
     }
@@ -57,7 +59,7 @@ class TestSlopeAspectResult:
         )
 
         # Invalid
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="slope_degrees"):
             SlopeAspectResult(
                 **self.P,
                 slope_degrees=-1,
@@ -66,7 +68,7 @@ class TestSlopeAspectResult:
                 aspect_cardinal="N",
             )
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="slope_degrees"):
             SlopeAspectResult(
                 **self.P,
                 slope_degrees=91,
@@ -75,7 +77,7 @@ class TestSlopeAspectResult:
                 aspect_cardinal="N",
             )
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="aspect_degrees"):
             SlopeAspectResult(
                 **self.P,
                 slope_degrees=0,
@@ -210,8 +212,8 @@ class TestLandProfile:
         LandProfile(id="test", name="test", location_lat=-90, location_lon=-180)
 
         # Invalid
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="location_lat"):
             LandProfile(id="test", name="test", location_lat=91, location_lon=0)
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="location_lon"):
             LandProfile(id="test", name="test", location_lat=0, location_lon=181)

@@ -11,11 +11,11 @@ Reference: Monteith (1977), Steduto et al. (2009)
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 
-from .base import ScientificModel, ValidationResult
+from .base import ScientificModel, ValidationResult, relative_error_of, validate_finite
 
 
 @dataclass
@@ -31,7 +31,7 @@ class HYRUEParams:
     t_max: float = 35.0  # Maximum temperature
 
     # Crop-specific presets
-    CROP_PRESETS = {
+    CROP_PRESETS: ClassVar[dict[str, Any]] = {
         "wheat": {"epsilon": 2.2, "hi": 0.45, "t_opt": 20.0},
         "maize": {"epsilon": 3.3, "hi": 0.50, "t_opt": 25.0},
         "rice": {"epsilon": 2.2, "hi": 0.45, "t_opt": 28.0},
@@ -53,7 +53,7 @@ class HYRUE(ScientificModel):
     version = "1.0.0"
     description = "Radiation Use Efficiency with satellite LAI"
 
-    REFERENCES = {
+    REFERENCES: ClassVar[dict[str, str]] = {
         "Monteith1977": "Monteith, J.L. (1977). Climate and the efficiency of crop production in Britain. Phil Trans R Soc B, 281, 277-294.",
         "Steduto2009": "Steduto et al. (2009). AquaCrop-The FAO crop model. Agronomy Journal, 101(3), 426-437.",
     }
@@ -65,13 +65,19 @@ class HYRUE(ScientificModel):
         else:
             self.params = params or HYRUEParams()
 
-    def validate_inputs(self, par, lai, ewsı, t_mean) -> tuple[bool, list[str]]:
-        errors = []
+    def validate_inputs(self, par, lai, ewsi, t_mean) -> tuple[bool, list[str]]:
+        errors = validate_finite(
+            "HYRUE",
+            {"par": par, "lai": lai, "ewsi": ewsi, "t_mean": t_mean},
+        )
+
+        if errors:
+            return False, errors
         if not (0 <= par <= 50):
             errors.append(f"PAR {par} MJ/m² out of range")
         if np.any(lai < 0) or np.any(lai > 10):
             errors.append("LAI out of range [0, 10]")
-        if np.any((ewsı < 0) | (ewsı > 1)):
+        if np.any((ewsi < 0) | (ewsi > 1)):
             errors.append("EWSI out of range [0, 1]")
         if not (-10 <= t_mean <= 50):
             errors.append(f"Temperature {t_mean}°C out of range")
@@ -95,12 +101,12 @@ class HYRUE(ScientificModel):
         self,
         par: float,
         lai: np.ndarray,
-        ewsı: np.ndarray,
+        ewsi: np.ndarray,
         t_mean: float,
     ) -> tuple[np.ndarray, np.ndarray]:
         """محاسبه روزانه"""
         f_ipar = self.f_ipar(lai, self.params.k)
-        f_water = 1 - ewsı
+        f_water = 1 - ewsi
         f_temp = self.stress_temperature(
             t_mean, self.params.t_opt, self.params.t_min, self.params.t_max
         )
@@ -114,12 +120,12 @@ class HYRUE(ScientificModel):
         self,
         par: float,
         lai: np.ndarray,
-        ewsı: np.ndarray,
+        ewsi: np.ndarray,
         t_mean: float,
         days: int = 1,
     ) -> dict[str, Any]:
         """Compute biomass and yield"""
-        f_ipar, daily_biomass = self.compute_daily(par, lai, ewsı, t_mean)
+        f_ipar, daily_biomass = self.compute_daily(par, lai, ewsi, t_mean)
 
         total_biomass = daily_biomass * days
         yield_value = total_biomass * self.params.hi
@@ -142,7 +148,7 @@ class HYRUE(ScientificModel):
         result = self.compute(**inputs)
         computed_value = float(np.mean(result["yield_t_ha"]))
 
-        relative_error = abs(computed_value - reference_output) / (reference_output + 1e-9)
+        relative_error = relative_error_of(computed_value, reference_output)
 
         return ValidationResult(
             passed=relative_error <= tolerance,

@@ -146,7 +146,7 @@ def test_watchdog_analysis():
     assert bad["status"] == "failing"
     mixed = analyze_samples([100, 900, 1100, 1300], [False, True, False, False])
     assert mixed["status"] == "degraded"
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="must have the same non-zero length"):
         analyze_samples([100], [])
 
 

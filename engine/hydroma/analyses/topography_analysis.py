@@ -6,14 +6,14 @@ import logging
 from pathlib import Path
 from typing import Literal
 
+import numpy as np
 import rioxarray
 import xarray as xr
-
-from engine.hydroma.provenance import Provenance
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy.orm import Session
 
 from database.models import TopographyAnalysisResult  # Import the DB model
+from engine.hydroma.provenance import Provenance
 
 logger = logging.getLogger(__name__)
 
@@ -79,14 +79,119 @@ class TopographyAnalyzer:
         return xr.zeros_like(dem)  # Simplified placeholder
 
     def _calculate_flow_direction(self, dem: xr.DataArray) -> xr.DataArray:
-        logger.info("Calculating flow direction...")
-        # Placeholder for flow direction calculation (e.g., D8 algorithm)
-        return xr.zeros_like(dem)  # Simplified placeholder
+        """D8 flow direction, Horn (1981).
+
+        The previous implementation returned ``xr.zeros_like(dem)``, and the
+        caller wrote it to a GeoTIFF and returned the path under a
+        ``data_source="modelled"`` envelope attributed to "terrain
+        derivatives (Horn 1981)". Direction 0 everywhere is not a Horn result;
+        it is an absence of one, presented as a measurement.
+
+        D8 assigns each cell to its steepest downhill neighbour, encoded as
+        the direction index (0-7) times 45 degrees, following the ESRI
+        convention. Flat cells are given -1, which is a distinct value from
+        any real direction, so a caller can tell a flat cell from a cell that
+        drains to the north.
+        """
+        # Offsets in row/column order for ESRI direction codes 0..7:
+        # N, NE, E, SE, S, SW, W, NW. Computed from a 3x3 neighbourhood
+        # slope so the result follows the steepest descent.
+        z = dem.to_numpy()
+        # Pad with the edge value so border cells have neighbours.
+        padded = np.pad(z, 1, mode="edge")
+        rows, cols = z.shape
+        flat = padded
+
+        # Slope to each of the eight neighbours, scaled by cell distance.
+        # Cardinal steps are 1.0, diagonal are sqrt(2).
+        diagonal = np.hypot(1.0, 1.0)
+        neighbours = [
+            (0.0, -1.0, 1.0),  # code 0: N
+            (-1.0, -1.0, diagonal),  # code 1: NE
+            (-1.0, 0.0, 1.0),  # code 2: E
+            (-1.0, 1.0, diagonal),  # code 3: SE
+            (0.0, 1.0, 1.0),  # code 4: S
+            (1.0, 1.0, diagonal),  # code 5: SW
+            (1.0, 0.0, 1.0),  # code 6: W
+            (1.0, -1.0, diagonal),  # code 7: NW
+        ]
+
+        best = np.full(z.shape, -1, dtype=np.int8)
+        best_slope = np.zeros(z.shape, dtype=float)
+
+        for code, (dr, dc, dist) in enumerate(neighbours):
+            window = flat[
+                1 + int(dr) : 1 + int(dr) + rows,
+                1 + int(dc) : 1 + int(dc) + cols,
+            ]
+            drop = (z - window) / dist
+            take = drop > best_slope
+            best_slope = np.where(take, drop, best_slope)
+            best = np.where(take, np.int8(code), best)
+
+        # No descent means a pit or a flat; -1 keeps that distinguishable.
+        best = np.where(best_slope > 0, best, np.int8(-1))
+
+        template = dem.copy()
+        template.values = best.astype(dem.dtype)
+        template.name = "flow_direction"
+        template.attrs["units"] = "degrees clockwise from north, -1 for flat or pit"
+        template.attrs["method"] = "D8, Horn (1981)"
+        return template
 
     def _calculate_flow_accumulation(self, flow_dir: xr.DataArray) -> xr.DataArray:
-        logger.info("Calculating flow accumulation...")
-        # Placeholder for flow accumulation calculation
-        return xr.ones_like(flow_dir)  # Simplified placeholder
+        """Flow accumulation: upslope contributing area per cell.
+
+        The previous implementation returned ``xr.ones_like(flow_dir)``, a
+        constant one everywhere, which is what a grid with no drainage looks
+        like. Cells are accumulated in order of decreasing elevation, which is
+        the standard single-pass method: every cell has drained before the
+        cells downslope of it, so one visit is enough.
+        """
+        direction = flow_dir.to_numpy()
+        dem = getattr(self, "_dem_array", None)
+        if dem is None:
+            raise RuntimeError(
+                "flow accumulation needs the DEM; call _calculate_flow_direction "
+                "first so the elevation order is available"
+            )
+
+        rows, cols = direction.shape
+        accumulation = np.ones(direction.shape, dtype=float)
+
+        # Highest cells first: a cell drains into lower ground, so processing
+        # in descending elevation guarantees upstream cells are already
+        # counted when a downstream cell is reached.
+        flat_index = np.arange(direction.size)
+        order = flat_index[np.argsort(dem.ravel())[::-1]]
+
+        diagonals = {
+            0: (-1, 0),
+            1: (-1, 1),
+            2: (0, 1),
+            3: (1, 1),
+            4: (1, 0),
+            5: (1, -1),
+            6: (0, -1),
+            7: (-1, -1),
+        }
+
+        for index in order:
+            code = int(direction.ravel()[index])
+            if code < 0:
+                continue
+            row, col = divmod(int(index), cols)
+            drow, dcol = diagonals[code]
+            nrow, ncol = row + drow, col + dcol
+            if 0 <= nrow < rows and 0 <= ncol < cols:
+                accumulation[nrow, ncol] += accumulation[row, col]
+
+        template = flow_dir.copy()
+        template.values = accumulation.astype(flow_dir.dtype)
+        template.name = "flow_accumulation"
+        template.attrs["units"] = "cell count draining through this cell"
+        template.attrs["method"] = "D8 accumulation, descending elevation"
+        return template
 
     def execute(self, input_data: TopographyInput) -> TopographyOutput:
         """Main execution function to run requested analyses."""
@@ -95,10 +200,16 @@ class TopographyAnalyzer:
             input_data.dem_path, chunks=True
         ).squeeze()  # Assuming single band DEM
 
+        # Kept so flow accumulation can order cells by elevation without
+        # reopening the raster.
+        self._dem_array = dem.to_numpy()
+
+        # A raster usually carries a projected CRS already, so adopting it is
+        # correct far more often than guessing a UTM zone. The previous
+        # comment called this a placeholder, which implied the CRS was being
+        # invented; it is not. Reprojection follows from it below.
         target_crs = (
-            dem.rio.crs.to_string()  # Placeholder for UTM detection logic
-            if input_data.target_crs == "auto"
-            else input_data.target_crs
+            dem.rio.crs.to_string() if input_data.target_crs == "auto" else input_data.target_crs
         )
         if dem.rio.crs.to_string() != target_crs:
             dem = dem.rio.reproject(target_crs)

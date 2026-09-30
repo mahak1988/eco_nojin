@@ -91,9 +91,7 @@ class Provenance(BaseModel):
         description="Where the inputs came from. Required: no default, so a "
         "call site cannot forget it and be wrong."
     )
-    model: str = Field(
-        description="Engine that produced this value, name and version where known."
-    )
+    model: str = Field(description="Engine that produced this value, name and version where known.")
     computed: bool = Field(
         default=True,
         description="False when nothing ran and the result only explains why.",
@@ -115,7 +113,7 @@ class ProvenanceCarrier:
     attribute.
     """
 
-    __slots__ = ("data_source", "model", "computed")
+    __slots__ = ("computed", "data_source", "model")
 
     def __init__(self, *, data_source: DataSource, model: str, computed: bool = True):
         self.data_source = data_source

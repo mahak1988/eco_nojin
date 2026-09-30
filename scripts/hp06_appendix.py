@@ -11,9 +11,9 @@ identifier in the same column index. So rows here are joined with real tabs.
 
 اجرا:  python scripts/hp06_appendix.py
 """
+
 from __future__ import annotations
 
-import io
 import os
 import sys
 
@@ -246,14 +246,16 @@ SUFFIX = [
 
 
 def main() -> int:
-    text = io.open(TARGET, encoding="utf-8").read()
+    with open(TARGET, encoding="utf-8") as _fh:
+        text = _fh.read()
     if END not in text:
         print("نشانگر پایان یافت نشد — نوشتن انجام نشد", file=sys.stderr)
         return 1
     head, rest = text.rsplit(START, 1)
     _, tail = rest.split(END, 1)
-    body = "\n".join([START] + INTRO + ROWS + SUFFIX) + "\n"
-    io.open(TARGET, "w", encoding="utf-8", newline="").write(head + body + END + tail)
+    body = "\n".join([START, *INTRO, *ROWS, *SUFFIX]) + "\n"
+    with open(TARGET, "w", encoding="utf-8", newline="") as _fh:
+        _fh.write(head + body + END + tail)
     print("پیوستالف بازنویسی شد — ردیف‌های داده:", len(ROWS) + len(SUFFIX))
     return 0
 

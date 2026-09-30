@@ -48,20 +48,29 @@ cases:
 ## Running Validation Locally
 
 ```bash
-# Run all test cases for a model
-python scripts/validate_model.py \
-  --model richards_1d \
-  --backend python \
-  --test-file engine/hydroma/models/validation/test_cases/richards_1d.yaml \
-  --output validation_richards_1d_python.json
+# Run the whole corpus and print a per-case report
+python -c "from engine.hydroma.models.validation import report; print(report())"
 
-# Generate badge
-python scripts/generate_badge.py \
-  --model richards_1d \
-  --backend python \
-  --result validation_richards_1d_python.json \
-  --output badges/richards_1d-python.svg
+# Machine-readable counts
+python -c "from engine.hydroma.models.validation import summary; print(summary())"
 ```
+
+There is no per-model CLI flag. `runner.py` loads every case in `test_cases/`
+and dispatches on `case.model`; filter in Python, e.g.
+`[o for o in run_all() if o.model == "richards_1d"]`.
+
+Each case is reported as one of four statuses, and the distinction matters:
+
+| status | meaning |
+|--------|---------|
+| `match` | the implementation agrees with the stored value |
+| `mismatch` | the implementation disagrees with a reproducible stored value — **the code is wrong** |
+| `inconsistent_case` | the case's own inputs and expected intermediates contradict each other — **the case is wrong** |
+| `not_run` | no implementation is wired for this case |
+
+`inconsistent_case` exists so that a red corpus does not invite "fixing" a
+correct implementation to match an expectation no correct implementation can
+satisfy. Do not collapse these into a single pass/fail.
 
 ## CI Pipeline
 
@@ -77,7 +86,8 @@ The slaughterhouse pipeline runs on every PR:
 
 1. Create test case YAML in `test_cases/`
 2. Add reference data to `reference_profiles/` if needed
-3. Register runner in `scripts/validate_model.py`
+3. Add a handler to `_DISPATCH` in `runner.py`, and return `not_run` with a
+   reason for any model you do not wire. Do not invent a fallback number.
 4. Add to CI matrix in `.github/workflows/hydroma-slaughterhouse.yml`
 5. Run locally to verify
 6. Push - CI will validate automatically

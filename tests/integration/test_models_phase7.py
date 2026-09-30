@@ -87,9 +87,9 @@ class TestNumericConformance:
         assert len(out["result"]) >= 3
 
     def test_run_errors_are_explicit(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="missing required parameter"):
             run_model("et0_hargreaves", {})  # missing required params
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="unknown model slug"):
             run_model("nope", {})
 
 

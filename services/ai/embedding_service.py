@@ -8,10 +8,9 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any
 
 import httpx
-from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 
 class EmbeddingProvider(Enum):
@@ -79,6 +78,7 @@ class EmbeddingQuota:
 
     def can_make_request(self, config: EmbeddingConfig, est_tokens: int = 0) -> bool:
         from datetime import datetime
+
         now = datetime.utcnow()
         today = now.strftime("%Y-%m-%d")
         month = now.strftime("%Y-%m")
@@ -97,10 +97,7 @@ class EmbeddingQuota:
             self.requests_this_minute = 0
             self.last_reset_minute = minute
 
-        ok = (
-            self.requests_today < config.rpd_limit
-            and self.requests_this_minute < config.rpm_limit
-        )
+        ok = self.requests_today < config.rpd_limit and self.requests_this_minute < config.rpm_limit
 
         if config.token_limit_monthly:
             ok = ok and (self.tokens_this_month + est_tokens) < config.token_limit_monthly
@@ -125,6 +122,7 @@ class EmbeddingQuotaTracker:
     def _load(self):
         if self.state_file and os.path.exists(self.state_file):
             import json
+
             with open(self.state_file) as f:
                 data = json.load(f)
             for k, v in data.items():
@@ -141,6 +139,7 @@ class EmbeddingQuotaTracker:
     def _save(self):
         if self.state_file:
             import json
+
             data = {
                 k: {
                     "tokens_today": v.tokens_today,
@@ -187,11 +186,11 @@ class EmbeddingService:
                 )
 
     def _get_headers(self, config: EmbeddingConfig, api_key: str) -> dict[str, str]:
-        if config.name == EmbeddingProvider.JINA:
-            return {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
-        elif config.name == EmbeddingProvider.CLOUDFLARE:
-            return {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
-        elif config.name == EmbeddingProvider.COHERE:
+        if (
+            config.name == EmbeddingProvider.JINA
+            or config.name == EmbeddingProvider.CLOUDFLARE
+            or config.name == EmbeddingProvider.COHERE
+        ):
             return {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
         return {}
 
@@ -222,7 +221,8 @@ class EmbeddingService:
         # Resize to target_dim if needed
         if embeddings and len(embeddings[0]) != self.target_dim:
             import numpy as np
-            embeddings = [np.array(e[:self.target_dim]).tolist() for e in embeddings]
+
+            embeddings = [np.array(e[: self.target_dim]).tolist() for e in embeddings]
         return embeddings
 
     async def _embed_cohere(self, texts: list[str]) -> list[list[float]]:
@@ -240,7 +240,8 @@ class EmbeddingService:
         embeddings = data.get("embeddings", {}).get("float", [])
         if embeddings and len(embeddings[0]) != self.target_dim:
             import numpy as np
-            embeddings = [np.array(e[:self.target_dim]).tolist() for e in embeddings]
+
+            embeddings = [np.array(e[: self.target_dim]).tolist() for e in embeddings]
         return embeddings
 
     @retry(
@@ -248,7 +249,9 @@ class EmbeddingService:
         stop=stop_after_attempt(3),
         retry=retry_if_exception_type((httpx.HTTPStatusError, httpx.RequestError)),
     )
-    async def embed(self, texts: list[str], provider: EmbeddingProvider | None = None) -> list[list[float]]:
+    async def embed(
+        self, texts: list[str], provider: EmbeddingProvider | None = None
+    ) -> list[list[float]]:
         """Embed texts with fallback."""
         providers = [provider] if provider else [c.name for c in EMBEDDING_CHAIN]
 

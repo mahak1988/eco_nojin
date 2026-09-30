@@ -100,7 +100,7 @@ class TestKGCv5:
 
     def test_invalid_input_length(self):
         """Should reject non-12-length inputs."""
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="exactly 12 monthly values"):
             KGCv5.classify(np.zeros(10), np.zeros(10), np.zeros(10))
 
     def test_group_names(self):
@@ -191,7 +191,7 @@ class TestWBIv3:
             infrastructure_leakage_pct=20.0,
             governance_score=0.5,
         )
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="renewable_water_m3_per_capita must be non-negative"):
             WBIv3.compute(inputs)
 
     def test_validate_against_wri(self):

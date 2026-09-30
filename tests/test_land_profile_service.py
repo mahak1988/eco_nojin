@@ -110,6 +110,6 @@ def test_create_land_profile_with_validation_error_on_model_level(test_db_sessio
     from sqlalchemy.exc import IntegrityError
 
     with pytest.raises(IntegrityError):
+        # create_land_profile commits internally, so this call is what raises
         create_land_profile(db=test_db_session, land_profile_data=land_data2)
-        test_db_session.commit()  # commit خطای IntegrityError را می‌دهد
     test_db_session.rollback()  # برای ادامه تست‌ها

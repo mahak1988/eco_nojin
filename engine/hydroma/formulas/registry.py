@@ -97,9 +97,7 @@ def require_servable(quantity: str) -> FormulaRecord:
 def unservable_on_request_path() -> dict[str, FormulaRecord]:
     """Divergent quantities that a client would see -- the outstanding work list."""
     return {
-        q: r
-        for q, r in _REGISTRY.items()
-        if r.status == "divergent" and q in REQUEST_PATH_FORMULAS
+        q: r for q, r in _REGISTRY.items() if r.status == "divergent" and q in REQUEST_PATH_FORMULAS
     }
 
 
@@ -131,9 +129,7 @@ def summary() -> dict[str, int]:
         "stub": sum(1 for r in _REGISTRY.values() if r.status == "stub"),
     }
     for origin in ("standard", "novel", "composite"):
-        counts[f"by_{origin}"] = sum(
-            1 for r in _REGISTRY.values() if r.provenance == origin
-        )
+        counts[f"by_{origin}"] = sum(1 for r in _REGISTRY.values() if r.provenance == origin)
     return counts
 
 

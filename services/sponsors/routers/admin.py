@@ -94,9 +94,7 @@ async def list_all(
             starts_on=s.starts_on,
             ends_on=s.ends_on,
             green_claims_reviewed_at=(
-                s.green_claims_reviewed_at.isoformat()
-                if s.green_claims_reviewed_at
-                else None
+                s.green_claims_reviewed_at.isoformat() if s.green_claims_reviewed_at else None
             ),
         )
         for s in rows
@@ -110,9 +108,7 @@ async def create(
     _admin: str = Depends(require_admin),
 ):
     if payload.ends_on <= payload.starts_on:
-        raise HTTPException(
-            status_code=422, detail="ends_on must be after starts_on"
-        )
+        raise HTTPException(status_code=422, detail="ends_on must be after starts_on")
     service = SponsorshipService(db)
     try:
         sponsor = service.create(**payload.model_dump())

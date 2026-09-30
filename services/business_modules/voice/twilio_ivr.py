@@ -31,13 +31,9 @@ class TwilioConfig:
         if not self.phone_number:
             self.phone_number = os.environ.get("TWILIO_PHONE_NUMBER", "")
 
-    @property
-    def is_configured(self) -> bool:
-        return bool(self.account_sid and self.auth_token and self.phone_number)
-
     def is_configured(self) -> bool:
         """Check if Twilio credentials are present."""
-        return self.is_configured
+        return bool(self.account_sid and self.auth_token and self.phone_number)
 
 
 class TwilioIVRIntegration:

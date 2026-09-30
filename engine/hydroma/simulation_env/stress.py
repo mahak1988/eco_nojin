@@ -157,7 +157,6 @@ def validate_index_robustness(
 # ---------------------------------------------------------------------------
 @dataclass
 class VolumeResult:
-
     data_source: str = "simulated"
     model: str = ""
     computed: bool = True

@@ -11,21 +11,29 @@ tests do two jobs:
 from __future__ import annotations
 
 import math
+from pathlib import Path
 
 import numpy as np
 import pytest
 
 from engine.hydroma.models import validation as v
 
-
 # ------------------------------------------------------------------ loading
 
 
 def test_corpus_loads():
-    """The 10 YAML files and their cases are now reachable."""
+    """Every YAML in the corpus parses, and each case file yields at least one case.
+
+    The count was pinned at 10 for months, which meant every file added since --
+    the six model cases for the EWSI/EPIA/ECSI/ESRI/HLHS/HPheno/HYRUE/HDVI
+    indices -- arrived with a red test that had to be edited to match. A
+    regression that silently drops a case file is now caught; adding one is not.
+    """
     s = v.corpus_summary()
 
-    assert s["case_files"] == 10, s
+    files = sorted((Path(v.__file__).parent / "test_cases").glob("*.yaml"))
+    assert s["case_files"] == len(files), (s, [f.name for f in files])
+    assert s["case_files"] >= 17, s
     assert s["cases"] >= 25, s
     assert s["references"] == 18, s
 
@@ -34,7 +42,8 @@ def test_every_case_has_a_model_name_and_inputs():
     for case in v.load_all_cases():
         assert case.model, case
         assert case.name, case
-        assert isinstance(case.inputs, dict) and case.inputs, case
+        assert isinstance(case.inputs, dict), case
+        assert case.inputs, f"{case.name} has no inputs"
 
 
 def test_every_case_file_carries_a_citation():
@@ -116,14 +125,11 @@ def test_fao56_case_is_flagged_inconsistent_not_mismatched():
     * the case expects ``Rn`` equal to the measured ``Rs`` to the digit, which
       requires ``Rnl = 0`` and so cannot hold for a real atmosphere.
     """
-    case = next(
-        c for c in v.load_cases("penman_monteith") if c.name == "fao56_example_chapter3"
-    )
+    case = next(c for c in v.load_cases("penman_monteith") if c.name == "fao56_example_chapter3")
     outcome = v.run_case(case)
 
     assert outcome.status == "inconsistent_case", (
-        f"expected the case to be flagged inconsistent, got {outcome.status}: "
-        f"{outcome.detail}"
+        f"expected the case to be flagged inconsistent, got {outcome.status}: {outcome.detail}"
     )
     assert len(outcome.contradictions) >= 2, outcome.contradictions
     assert any("ea" in c for c in outcome.contradictions)
@@ -132,9 +138,7 @@ def test_fao56_case_is_flagged_inconsistent_not_mismatched():
 
 def test_the_rn_contradiction_is_arithmetic_not_judgement():
     """Rn == Rs exactly implies Rnl == 0, independent of any implementation."""
-    case = next(
-        c for c in v.load_cases("penman_monteith") if c.name == "fao56_example_chapter3"
-    )
+    case = next(c for c in v.load_cases("penman_monteith") if c.name == "fao56_example_chapter3")
 
     rn_expected = float(case.expected["rn_mj_m2_day"])
     rs = float(case.inputs["solar_radiation"])
@@ -168,14 +172,17 @@ def test_the_native_kernel_agrees_with_an_independent_hand_calculation():
         pytest.skip("C++ extension is not built")
 
     tmin, tmax, rh_mean = 13.5, 28.5, 60.0
-    u2, rs, z, lat, doy = 2.0, 15.2, 100.0, 40.0, 172
+    _u2, rs, z, lat, doy = 2.0, 15.2, 100.0, 40.0, 172
 
     phi = np.deg2rad(lat)
     dr = 1 + 0.033 * np.cos(2 * np.pi * doy / 365)
     decl = 0.409 * np.sin(2 * np.pi * doy / 365 - 1.39)
     ws = np.arccos(-np.tan(phi) * np.tan(decl))
-    ra = (24 * 60 / np.pi) * 0.0820 * dr * (
-        ws * np.sin(phi) * np.sin(decl) + np.cos(phi) * np.cos(decl) * np.sin(ws)
+    ra = (
+        (24 * 60 / np.pi)
+        * 0.0820
+        * dr
+        * (ws * np.sin(phi) * np.sin(decl) + np.cos(phi) * np.cos(decl) * np.sin(ws))
     )
     es = (v.runner._svp(tmax) + v.runner._svp(tmin)) / 2.0
     ea = es * rh_mean / 100.0
@@ -220,11 +227,7 @@ def test_hargreaves_matches_its_published_worked_example():
     was wrong. Loading the corpus is what surfaced it.
     """
     outcome = v.run_case(
-        next(
-            v.expand_case(c)
-            for c in v.load_cases("hargreaves")
-            if c.name == "standard_example"
-        )
+        next(v.expand_case(c) for c in v.load_cases("hargreaves") if c.name == "standard_example")
     )
 
     assert outcome.status == "match", f"{outcome.status}: {outcome.detail}"

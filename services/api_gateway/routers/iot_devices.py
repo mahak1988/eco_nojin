@@ -97,7 +97,7 @@ def register_device(
         )
     except Exception as exc:
         logger.error("Device registration failed: %s", exc)
-        raise HTTPException(status_code=400, detail=str(exc))
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     return {
         "id": device.id,
@@ -185,7 +185,7 @@ def provision_device_qr(
     try:
         device = _device_manager.provision_device_from_qr(payload.qr_data)
     except Exception as exc:
-        raise HTTPException(status_code=400, detail=str(exc))
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
     return {"device": device, "message": "Device provisioned from QR"}
 
 

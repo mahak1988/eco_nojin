@@ -235,7 +235,7 @@ async def create_journal_batch(
             created_by=str(user.id) if hasattr(user, "id") else str(user.get("id")),
         )
     except EcoNojinException as e:
-        raise HTTPException(status_code=400, detail=e.message)
+        raise HTTPException(status_code=400, detail=e.message) from e
 
     return JournalBatchResponse(
         id=batch.id,
@@ -257,7 +257,7 @@ async def post_journal_batch(
     try:
         batch = await service.post_journal_batch(batch_id)
     except EcoNojinException as e:
-        raise HTTPException(status_code=404, detail=e.message)
+        raise HTTPException(status_code=404, detail=e.message) from e
     return {
         "batch_id": batch.id,
         "is_posted": batch.is_posted,
@@ -436,7 +436,7 @@ async def earn_tokens(
             reference_id=body.reference_id,
         )
     except EcoNojinException as e:
-        raise HTTPException(status_code=e.status_code or 400, detail=e.message)
+        raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
     return EarnResponse(amount_earned=amount, new_balance=balance, category=body.category)
 
 
@@ -455,7 +455,7 @@ async def redeem_tokens(
             reference_id=body.reference_id,
         )
     except EcoNojinException as e:
-        raise HTTPException(status_code=e.status_code or 400, detail=e.message)
+        raise HTTPException(status_code=e.status_code or 400, detail=e.message) from e
     return RedeemResponse(amount_redeemed=amount, new_balance=balance, category=body.category)
 
 

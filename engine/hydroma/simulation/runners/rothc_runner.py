@@ -135,9 +135,7 @@ def temp_factor(tmean_c: float) -> float:
     t = float(tmean_c)
     if t < TEMP_FACTOR_ZERO_BELOW_C:
         return 0.0
-    return float(
-        TEMP_FACTOR_NUMERATOR / (1.0 + np.exp(TEMP_FACTOR_A / (t + TEMP_FACTOR_B)))
-    )
+    return float(TEMP_FACTOR_NUMERATOR / (1.0 + np.exp(TEMP_FACTOR_A / (t + TEMP_FACTOR_B))))
 
 
 #: Soil-moisture deficit at which the moisture response changes slope, as a

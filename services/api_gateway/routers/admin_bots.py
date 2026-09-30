@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
@@ -21,7 +20,7 @@ class BotStatusResponse(BaseModel):
     enabled: bool
     platform: str
     status: str
-    last_activity: Optional[str] = None
+    last_activity: str | None = None
     message_count: int = 0
 
 
@@ -31,14 +30,38 @@ class BotToggleRequest(BaseModel):
 
 # Mock bot registry (replace with actual bot manager)
 BOT_REGISTRY = {
-    "telegram": {"key": "telegram", "name": "Telegram Bot", "enabled": True, "platform": "telegram", "status": "running"},
-    "eitaa": {"key": "eitaa", "name": "Eitaa Bot", "enabled": False, "platform": "eitaa", "status": "stopped"},
-    "bale": {"key": "bale", "name": "Bale Bot", "enabled": False, "platform": "bale", "status": "stopped"},
-    "rubika": {"key": "rubika", "name": "Rubika Bot", "enabled": False, "platform": "rubika", "status": "stopped"},
+    "telegram": {
+        "key": "telegram",
+        "name": "Telegram Bot",
+        "enabled": True,
+        "platform": "telegram",
+        "status": "running",
+    },
+    "eitaa": {
+        "key": "eitaa",
+        "name": "Eitaa Bot",
+        "enabled": False,
+        "platform": "eitaa",
+        "status": "stopped",
+    },
+    "bale": {
+        "key": "bale",
+        "name": "Bale Bot",
+        "enabled": False,
+        "platform": "bale",
+        "status": "stopped",
+    },
+    "rubika": {
+        "key": "rubika",
+        "name": "Rubika Bot",
+        "enabled": False,
+        "platform": "rubika",
+        "status": "stopped",
+    },
 }
 
 
-@router.get("", response_model=List[BotStatusResponse])
+@router.get("", response_model=list[BotStatusResponse])
 async def list_bots(
     current_user=Depends(require_admin_with_mfa),
 ):

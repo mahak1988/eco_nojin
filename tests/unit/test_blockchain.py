@@ -86,7 +86,7 @@ class TestCarbonRegistry:
         project = registry.register_project("owner1", "afforestation", 100, 10)
         registry.verify_project(project.project_id, "verifier1")
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="cannot be verified from status"):
             registry.verify_project(project.project_id, "verifier2")
 
     def test_issue_credits(self):
@@ -107,7 +107,7 @@ class TestCarbonRegistry:
         registry = CarbonRegistry()
         project = registry.register_project("owner1", "afforestation", 100, 10)
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="must be verified to issue credits"):
             registry.issue_credits(project.project_id, 50.0, "owner1")
 
     def test_transfer_credits(self):
@@ -128,7 +128,7 @@ class TestCarbonRegistry:
         registry.verify_project(project.project_id, "verifier1")
         credit = registry.issue_credits(project.project_id, 50.0, "owner1")
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="Credit not owned by"):
             registry.transfer_credits(credit.credit_id, "wrong_owner", "owner2")
 
     def test_retire_credits(self):
@@ -152,7 +152,7 @@ class TestCarbonRegistry:
         credit = registry.issue_credits(project.project_id, 50.0, "owner1")
         registry.retire_credits(credit.credit_id, "owner1")
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="already retired"):
             registry.retire_credits(credit.credit_id, "owner1")
 
     def test_get_stats(self):
@@ -272,9 +272,8 @@ class TestBlockchainAPIEndpoints:
         # And the reason must be recorded, so a reader is not left guessing.
         assert len(data["implementation_status"]) == len(data["features"])
         for cap, reason in data["implementation_status"].items():
-            assert isinstance(reason, str) and len(reason) > 40, (
-                f"{cap} has no substantive explanation"
-            )
+            assert isinstance(reason, str), f"{cap} reason is not a string: {reason!r}"
+            assert len(reason) > 40, f"{cap} has no substantive explanation"
 
     def test_blockchain_info_does_not_imply_deployment(self):
         """Addresses must be null while nothing is deployed."""

@@ -25,7 +25,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
-import parse  # noqa: E402
+import parse
 
 DATA = os.path.join(HERE, "figures_data.json")
 
@@ -119,6 +119,7 @@ def pick_table(fig, cands):
     جدول یکی باشد. جفت‌سازی ضعیف (نزدیک‌ترین جدول) رد می‌شود، چون نمودار
     غلط در سند فنی از جای‌نگهدارِ صریح بدتر است.
     """
+
     def chap(x):
         return (x or "").split(".")[0].split("٫")[0].strip()
 
@@ -127,7 +128,7 @@ def pick_table(fig, cands):
     if not same:
         return None, "رد — شمارهٔ فصل جدول با شکل نمی‌خواند"
     # اگر عنوان یا شرح، جدول مشخصی را نام برده، همان برنده است
-    text = (fig.get("x", "") + " " + fig.get("desc", ""))
+    text = fig.get("x", "") + " " + fig.get("desc", "")
     named = re.findall(r"جدول\s+([۰-۹0-9]+(?:[.٫][۰-۹0-9]+)*)", text)
     if named:
         want = parse.norm_num(named[0])
@@ -138,6 +139,8 @@ def pick_table(fig, cands):
     if prior:
         return prior[-1], "نزدیک‌ترین جدول هم‌شمارهٔ فصل"
     return same[0], "نخستین جدول هم‌شمارهٔ فصل"
+
+
 def harvest(path: str) -> list:
     doc = parse.load(path)
     book = os.path.splitext(os.path.basename(path))[0][:5]
@@ -146,15 +149,15 @@ def harvest(path: str) -> list:
 
     # جدول‌های عددی به تفکیک فصل
     numtabs: dict[str, list] = {}
-    for b, ch in zip(blocks, chaps):
+    for b, ch in zip(blocks, chaps, strict=False):
         if b["t"] != "table" or b.get("bare"):
             continue
-        ncol, nrow, ok = numeric_profile(b["rows"])
+        _ncol, nrow, ok = numeric_profile(b["rows"])
         if ok and nrow >= 2:
             numtabs.setdefault(ch, []).append(b)
 
     out = []
-    for b, ch in zip(blocks, chaps):
+    for b, ch in zip(blocks, chaps, strict=False):
         if b["t"] != "figure":
             continue
         title = b.get("x", "")
@@ -171,17 +174,23 @@ def harvest(path: str) -> list:
         ser = to_series(tb)
         if not ser:
             continue
-        out.append({
-            "id": b["id"], "book": book,
-            "kind": "grouped_bar" if len(ser["series"]) > 1 else "line",
-            "title": title.strip()[:90],
-            "x_label": ser["x"][0][:28] if ser["x"] else "",
-            "y_label": tb["rows"][0][1].strip()[:34] if len(tb["rows"][0]) > 1 else "",
-            "x": ser["x"][:12], "series": ser["series"][:6],
-            "conf": conf_of(tb),
-            "source": (f"جدول {tb['id']} سطر {tb['line']}" if tb.get("id") else f"سطر {tb['line']}")
-                      + f" — {why}",
-        })
+        out.append(
+            {
+                "id": b["id"],
+                "book": book,
+                "kind": "grouped_bar" if len(ser["series"]) > 1 else "line",
+                "title": title.strip()[:90],
+                "x_label": ser["x"][0][:28] if ser["x"] else "",
+                "y_label": tb["rows"][0][1].strip()[:34] if len(tb["rows"][0]) > 1 else "",
+                "x": ser["x"][:12],
+                "series": ser["series"][:6],
+                "conf": conf_of(tb),
+                "source": (
+                    f"جدول {tb['id']} سطر {tb['line']}" if tb.get("id") else f"سطر {tb['line']}"
+                )
+                + f" — {why}",
+            }
+        )
     return out
 
 
@@ -211,26 +220,33 @@ def main() -> int:
     found = uniq
 
     for s in found:
-        print(f"  {s['book']:<7} شکل {s['id']:<8} {len(s['series'])} سری × {len(s['x'])} نقطه"
-              f"  ·  {s['source']}  ·  {s['conf'][:38]}")
+        print(
+            f"  {s['book']:<7} شکل {s['id']:<8} {len(s['series'])} سری × {len(s['x'])} نقطه"
+            f"  ·  {s['source']}  ·  {s['conf'][:38]}"
+        )
 
     print(f"\nقابل رسم: {len(found)} شکل  ·  تکراریِ حذف‌شده: {dropped}")
     if args.write and found:
         # نمودارهای دست‌ساز مقدم‌اند و بازنویسی نمی‌شوند
         manual = []
         if os.path.exists(DATA):
-            cur = json.load(open(DATA, encoding="utf-8"))
+            with open(DATA, encoding="utf-8") as _fh:
+                cur = json.load(_fh)
             cur = cur.get("specs", []) if isinstance(cur, dict) else cur
             for s in cur:
                 if (s.get("book"), s.get("id")) in MANUAL_IDS:
                     manual.append(s)
         keep = {(s["book"], s["id"]) for s in manual}
         merged = manual + [s for s in found if (s["book"], s["id"]) not in keep]
-        doc = {"_meta": {"generator": "auto_figures.py",
-                         "rule": "شمارهٔ فصل شکل و شمارهٔ فصل جدول باید یکی باشد؛ "
-                                 "نمودار غلط از جای‌نگهدار بدتر است",
-                         "manual": sorted(MANUAL_IDS)},
-               "specs": merged}
+        doc = {
+            "_meta": {
+                "generator": "auto_figures.py",
+                "rule": "شمارهٔ فصل شکل و شمارهٔ فصل جدول باید یکی باشد؛ "
+                "نمودار غلط از جای‌نگهدار بدتر است",
+                "manual": sorted(MANUAL_IDS),
+            },
+            "specs": merged,
+        }
         with open(DATA, "w", encoding="utf-8") as fh:
             json.dump(doc, fh, ensure_ascii=False, indent=1)
         print(f"نوشته شد: {DATA}  ·  دستی {len(manual)} + خودکار {len(merged) - len(manual)}")

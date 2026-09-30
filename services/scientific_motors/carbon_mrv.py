@@ -49,7 +49,9 @@ class CarbonMrvMotor:
 
     def get_input_requirements(self) -> list[MotorInput]:
         return [
-            MotorInput("soc_initial_t_ha", "scalar", True, "Initial soil organic carbon stock, tC/ha"),
+            MotorInput(
+                "soc_initial_t_ha", "scalar", True, "Initial soil organic carbon stock, tC/ha"
+            ),
             MotorInput("soc_final_t_ha", "scalar", True, "Final soil organic carbon stock, tC/ha"),
             MotorInput("area_ha", "scalar", True, "Project area, hectares"),
             MotorInput("practice", "scalar", False, "Management practice identifier"),
@@ -57,7 +59,9 @@ class CarbonMrvMotor:
 
     def get_outputs(self) -> list[MotorOutput]:
         return [
-            MotorOutput("net_co2e_t", "scalar", "tCO2e", "Net sequestration over the monitoring period"),
+            MotorOutput(
+                "net_co2e_t", "scalar", "tCO2e", "Net sequestration over the monitoring period"
+            ),
             MotorOutput("permanence_factor", "scalar", "ratio", "Permanence deduction factor"),
         ]
 

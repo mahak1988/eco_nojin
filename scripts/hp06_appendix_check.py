@@ -6,10 +6,10 @@ register ID (or one of the approved placeholders) in the same column index.
 
 اجرا:  python scripts/hp06_appendix_check.py
 """
+
 from __future__ import annotations
 
 import csv
-import io
 import os
 import re
 import sys
@@ -23,8 +23,10 @@ SELF_ROW = re.compile(r"^تعداد |^بازهٔ زمانی|^شروع رسمی|^
 
 def main() -> int:
     name = sys.argv[1] if len(sys.argv) > 1 else "HP-06 لایه بندی خاک.txt"
-    text = io.open(os.path.join(ROOT, name), encoding="utf-8").read()
-    known = {r["id"].strip() for r in csv.DictReader(io.open(REG, encoding="utf-8"))}
+    with open(os.path.join(ROOT, name), encoding="utf-8") as _fh:
+        text = _fh.read()
+    with open(REG, encoding="utf-8") as _fh:
+        known = {r["id"].strip() for r in csv.DictReader(_fh)}
     in_appendix = False
     id_index = -1
     rows = 0

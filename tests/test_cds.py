@@ -107,7 +107,7 @@ class TestDataStores:
             assert "how-to-api" in s["key_url"]
 
     def test_unknown_store_rejected(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="unknown store"):
             DataStoreClient(store="nope")
 
     def test_stores_status_has_sepal(self):

@@ -18,7 +18,6 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 from enum import StrEnum
-from engine.hydroma.provenance import Provenance
 
 logger = logging.getLogger(__name__)
 

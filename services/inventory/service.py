@@ -12,6 +12,7 @@ from __future__ import annotations
 import logging
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
+from typing import TYPE_CHECKING
 from uuid import uuid4
 
 from sqlalchemy import select, text
@@ -27,6 +28,9 @@ from database.models import (
 )
 from services.api_gateway.exceptions import EcoNojinException
 from services.finance.ledger_service import LedgerService
+
+if TYPE_CHECKING:  # InvStocktake is an annotation-only name with no model
+    from services.inventory.models import InvStocktake
 
 logger = logging.getLogger(__name__)
 
@@ -613,7 +617,7 @@ class StockService:
 
     async def create_stocktake(
         self, warehouse_id: int, created_by: str, lines: list[dict]
-    ) -> InvStocktake:  # noqa: F821
+    ) -> InvStocktake:
         """Create a stocktake with line items (physical count vs system)."""
 
         from database.models import InvStocktake, InvStocktakeLine
@@ -658,7 +662,7 @@ class StockService:
         await self.db.refresh(stocktake)
         return stocktake
 
-    async def approve_stocktake(self, stocktake_id: int, approved_by: str) -> InvStocktake:  # noqa: F821
+    async def approve_stocktake(self, stocktake_id: int, approved_by: str) -> InvStocktake:
         """Approve a stocktake and create adjustment movements for variances."""
         from database.models import InvStocktake, InvStocktakeLine
 

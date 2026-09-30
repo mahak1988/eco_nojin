@@ -27,6 +27,15 @@ import polars as pl
 logger = logging.getLogger(__name__)
 
 
+_CACHED_ACCESSORS = (
+    ("get_crop_parameters", 512),
+    ("get_soil_profile", 128),
+    ("get_fertilizer_profile", 128),
+    ("get_economic_parameters", 256),
+    ("get_site_profile", 512),
+)
+
+
 class ScientificDataRepository:
     """
     مخزن مرکزی داده‌های علمی پلتفرم اکوژین - نسخه نهایی
@@ -58,14 +67,19 @@ class ScientificDataRepository:
             if not cls._db_path.exists():
                 raise FileNotFoundError(f"دیتابیس یافت نشد: {cls._db_path}")
             cls._conn = duckdb.connect(str(cls._db_path), read_only=True)
-            logger.info("✅ ScientificDataRepository (Final) initialized.")
+            # lru_cache applied to a method lives on the class, keys on `self`
+            # and pins the instance for the process lifetime. This class is a
+            # singleton, so bind the cache to the one instance instead.
+            for name, maxsize in _CACHED_ACCESSORS:
+                bound = getattr(cls._instance, name)
+                setattr(cls._instance, name, lru_cache(maxsize=maxsize)(bound))
+            logger.info("âœ… ScientificDataRepository (Final) initialized.")
         return cls._instance
 
     # ========================================================================
     # ۱. حوزه رشد محصول و AquaCrop
     # ========================================================================
 
-    @lru_cache(maxsize=512)
     def get_crop_parameters(self, species_id: str) -> dict[str, Any] | None:
         """دریافت پارامترهای کامل یک گونه برای موتورهای رشد"""
         query = "SELECT * FROM v_crop_climate_matrix WHERE species_id = ?"
@@ -99,7 +113,6 @@ class ScientificDataRepository:
     # ۲. حوزه خاک و احیای خاک
     # ========================================================================
 
-    @lru_cache(maxsize=128)
     def get_soil_profile(self, wrb_group: str) -> dict[str, Any] | None:
         """دریافت پروفایل خاک بر اساس گروه WRB"""
         query = """
@@ -125,7 +138,6 @@ class ScientificDataRepository:
     # ۳. حوزه کود زیستی و شیمیایی
     # ========================================================================
 
-    @lru_cache(maxsize=128)
     def get_fertilizer_profile(self, fertilizer_query: str) -> dict[str, Any] | None:
         """دریافت مشخصات کامل یک کود بر اساس شناسه یا نام"""
         query = """
@@ -260,7 +272,6 @@ class ScientificDataRepository:
     # ۶. حوزه اقتصاد کشاورزی
     # ========================================================================
 
-    @lru_cache(maxsize=256)
     def get_economic_parameters(self, species_id: str) -> dict[str, Any] | None:
         """دریافت پارامترهای اقتصادی یک محصول"""
         query = """
@@ -309,7 +320,6 @@ class ScientificDataRepository:
     # ۸. حوزه سایت‌ها
     # ========================================================================
 
-    @lru_cache(maxsize=512)
     def get_site_profile(self, site_id: str) -> dict[str, Any] | None:
         """دریافت پروفایل کامل یک سایت"""
         from services.security.query_safe import _safe_ident

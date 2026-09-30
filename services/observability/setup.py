@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import logging
 
+from database.hub import hub
+
 logger = logging.getLogger(__name__)
 
 # Prometheus metrics - will be initialized if opentelemetry is available
@@ -16,9 +18,7 @@ OUTBOX_PENDING = None
 try:
     from opentelemetry import metrics, trace
     from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import OTLPMetricExporter
-    from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
     from opentelemetry.exporter.prometheus import PrometheusMetricReader
-    from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
     from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
     from opentelemetry.instrumentation.redis import RedisInstrumentor
     from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
@@ -26,7 +26,6 @@ try:
     from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
     from opentelemetry.sdk.resources import SERVICE_NAME, Resource
     from opentelemetry.sdk.trace import TracerProvider
-    from opentelemetry.sdk.trace.export import BatchSpanProcessor
     from prometheus_client import Counter, Gauge, Histogram, start_http_server
 
     OTEL_AVAILABLE = True

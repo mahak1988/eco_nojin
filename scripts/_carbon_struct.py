@@ -6,7 +6,6 @@
 
 from __future__ import annotations
 
-import io
 import re
 import sys
 
@@ -14,7 +13,8 @@ CHAPTER = re.compile(r"^(?:#{1,6}\s*)?(بخش|فصل|۱۳-۲-|۹-۹|۱۵-|۱۶-|
 
 
 def profile(path: str) -> dict[str, int]:
-    lines = io.open(path, encoding="utf-8").read().split("\n")
+    with open(path, encoding="utf-8") as _fh:
+        lines = _fh.read().split("\n")
     heads = {}
     for line in lines:
         if CHAPTER.match(line.strip()) or line.startswith("بخش ") or line.startswith("فصل "):

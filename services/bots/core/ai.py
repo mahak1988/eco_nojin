@@ -11,13 +11,11 @@ from __future__ import annotations
 
 import logging
 
-import httpx
+from services.ai.llm_router import get_router
+from services.ai.unified_rag import get_rag
 
 from .. import i18n
 from ..config import BotConfig
-
-from services.ai.unified_rag import get_rag
-from services.ai.llm_router import get_router
 
 logger = logging.getLogger(__name__)
 
@@ -56,9 +54,7 @@ class AdviceService:
             f"[{i + 1}] {s['metadata'].get('title', 'Unknown')} ({s['metadata'].get('source', 'Unknown')})"
             for i, s in enumerate(sources)
         ]
-        context = "\n\n".join(
-            f"[{i + 1}] {s['content']}" for i, s in enumerate(sources)
-        )
+        context = "\n\n".join(f"[{i + 1}] {s['content']}" for i, s in enumerate(sources))
 
         # Try cloud LLM
         try:
@@ -95,8 +91,9 @@ class AdviceService:
         # Offline fallback: honest evidence + note.
         top_source = sources[0] if sources else None
         if top_source:
-            answer = f"📚 {top_source['metadata'].get('source', 'Source')}: {top_source['metadata'].get('title', 'Document')}\n\n{top_source['content']}" + i18n.t(
-                language, "ollama_offline_note"
+            answer = (
+                f"📚 {top_source['metadata'].get('source', 'Source')}: {top_source['metadata'].get('title', 'Document')}\n\n{top_source['content']}"
+                + i18n.t(language, "ollama_offline_note")
             )
         else:
             answer = i18n.t(language, "no_answer")

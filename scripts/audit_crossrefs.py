@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import argparse
 import csv
-import io
 import json
 import os
 import re
@@ -84,7 +83,7 @@ def all_documents() -> list[tuple[str, str]]:
 def numbers_near(text: str, pattern: str, window: int = 70) -> list[str]:
     found = []
     for match in re.finditer(pattern, text):
-        seg = text[match.start(): match.start() + window]
+        seg = text[match.start() : match.start() + window]
         for num in re.findall(r"[۰-۹][۰-۹٬٫\u200c]*(?:[٫.][۰-۹]+)?", seg):
             found.append(num.replace("٬", "").replace("٫", "."))
     return found
@@ -103,13 +102,16 @@ def main() -> int:
     for label, pattern in WATCHED.items():
         seen: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
         for name, path in docs:
-            text = io.open(path, encoding="utf-8").read()
+            with open(path, encoding="utf-8") as _fh:
+                text = _fh.read()
             for value in numbers_near(text, pattern):
                 seen[value][name] += 1
         if len(seen) > 1:
             entry = {
                 "quantity": label,
-                "values": {v: dict(f) for v, f in sorted(seen.items(), key=lambda x: -sum(x[1].values()))},
+                "values": {
+                    v: dict(f) for v, f in sorted(seen.items(), key=lambda x: -sum(x[1].values()))
+                },
             }
             if label in REGISTER_TRUTH:
                 ident, truth = REGISTER_TRUTH[label]
@@ -121,14 +123,16 @@ def main() -> int:
 
     # ج) شناسه‌های رجیستر که هیچ سندی ارجاع نداده
     used: set[str] = set()
-    for name, path in docs:
-        text = io.open(path, encoding="utf-8").read()
+    for _name, path in docs:
+        with open(path, encoding="utf-8") as _fh:
+            text = _fh.read()
         used.update(m for m in ID_REF.findall(text) if m in register)
     report["unused_register_rows"] = sorted(set(register) - used)
 
     # ب) ارجاع به شناسه‌ای که در رجیستر نیست
     for name, path in docs:
-        text = io.open(path, encoding="utf-8").read()
+        with open(path, encoding="utf-8") as _fh:
+            text = _fh.read()
         ghosts: dict[str, int] = defaultdict(int)
         for ident in ID_REF.findall(text):
             if ident not in register and not ident.startswith(("HP-0", "HP-1", "HP-2")):
@@ -153,9 +157,13 @@ def main() -> int:
         total = sum(sum(f.values()) for f in item["values"].values())
         top = sorted(item["values"].items(), key=lambda x: -sum(x[1].values()))[:3]
         if len(item["values"]) > 3:
-            print(f"      ({len(item['values'])} مقدار متفاوت در مجموع؛ سه مقدار پرتکرار از {total} ارجاع)")
+            print(
+                f"      ({len(item['values'])} مقدار متفاوت در مجموع؛ سه مقدار پرتکرار از {total} ارجاع)"
+            )
         for value, files in top:
-            names = " · ".join(f"{k}({v})" for k, v in sorted(files.items(), key=lambda x: -x[1])[:5])
+            names = " · ".join(
+                f"{k}({v})" for k, v in sorted(files.items(), key=lambda x: -x[1])[:5]
+            )
             print(f"      {value:<18} {names}")
         if item.get("register_value"):
             print(f"      ← مصوب رجیستر: {item['register_value']}")

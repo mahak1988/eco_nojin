@@ -105,10 +105,9 @@ class EcoNojinUser(HttpUser):
                 # Read a few events then close
                 try:
                     for line in response.iter_lines():
-                        if line:
-                            if b"heartbeat" in line or b"data:" in line:
-                                response.success()
-                                break
+                        if line and (b"heartbeat" in line or b"data:" in line):
+                            response.success()
+                            break
                     else:
                         response.failure("No SSE data received")
                 except Exception as e:

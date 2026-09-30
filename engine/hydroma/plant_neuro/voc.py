@@ -14,6 +14,7 @@ Reference:
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any, ClassVar
 
 import numpy as np
 from sklearn.cluster import DBSCAN
@@ -24,8 +25,9 @@ from sklearn.preprocessing import StandardScaler
 @dataclass
 class VOCProfile:
     """A normalized VOC profile from a single sample."""
-    data_source: str = 'modelled'
-    model: str = 'VOC concentration profile'
+
+    data_source: str = "modelled"
+    model: str = "VOC concentration profile"
     computed: bool = True
 
     compounds: dict[str, float] | None = None
@@ -38,8 +40,9 @@ class VOCProfile:
 @dataclass
 class StressSignature:
     """Identified stress signature from VOC analysis."""
-    data_source: str = 'modelled'
-    model: str = 'VOC stress signature'
+
+    data_source: str = "modelled"
+    model: str = "VOC stress signature"
     computed: bool = True
 
     stress_type: str | None = None
@@ -57,7 +60,7 @@ class VOCAnalyzer:
     """
 
     # Reference VOC signatures for common stress types (ppb thresholds)
-    STRESS_SIGNATURES = {
+    STRESS_SIGNATURES: ClassVar[dict[str, Any]] = {
         "herbivory": {
             "green_leaf_volatiles": ["Z-3-hexenyl acetate", "E-2-hexenal", "Z-3-hexenol"],
             "terpenes": ["myrcene", "limonene", "alpha-pinene"],

@@ -16,11 +16,13 @@ import sys
 
 _IDENT_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 
+
 def _safe_ident(name: str) -> str:
     """Validate a SQL identifier."""
     if not _IDENT_RE.fullmatch(str(name)):
         raise ValueError(f"invalid SQL identifier: {name!r}")
     return str(name)
+
 
 TARGET_COLUMNS = {
     "farms": [
@@ -57,7 +59,7 @@ def main() -> int:
     cur = con.cursor()
     for table, columns in TARGET_COLUMNS.items():
         safe_table = _safe_ident(table)
-        existing = {row[1] for row in cur.execute("PRAGMA table_info({})".format(safe_table))}
+        existing = {row[1] for row in cur.execute(f"PRAGMA table_info({safe_table})")}
         if not existing:
             print(f"skip {table}: table not found (create_all will build it)")
             continue
@@ -66,7 +68,7 @@ def main() -> int:
             if name in existing:
                 print(f"ok    {table}.{name} already exists")
             else:
-                cur.execute("ALTER TABLE {} ADD COLUMN {} {}".format(safe_table, safe_name, ddl_type))
+                cur.execute(f"ALTER TABLE {safe_table} ADD COLUMN {safe_name} {ddl_type}")
                 print(f"added {table}.{name} {ddl_type}")
     con.commit()
     con.close()

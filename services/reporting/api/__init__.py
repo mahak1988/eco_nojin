@@ -1,7 +1,6 @@
 """Reporting FastAPI router"""
 
 from collections.abc import AsyncGenerator
-from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -31,7 +30,7 @@ async def generate_report(report_id: str, db: AsyncSession = Depends(get_db)):
     try:
         return await ReportingService(db).generate_report(report_id)
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 @router.get("/{report_id}", response_model=ReportRead)
@@ -39,7 +38,7 @@ async def get_report(report_id: str, db: AsyncSession = Depends(get_db)):
     try:
         return await ReportingService(db).get_report(report_id)
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 @router.get("/", response_model=list[ReportRead])

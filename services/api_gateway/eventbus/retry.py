@@ -40,7 +40,7 @@ class RetryPolicy:
     max_retries: int = 5
     base_delay: float = 1.0
     max_delay: float = 60.0
-    jitter: bool = False
+    jitter: bool = True
 
     def __post_init__(self) -> None:
         if self.max_retries < 0:
@@ -56,6 +56,13 @@ class RetryPolicy:
             max_retries=config.max_retries,
             base_delay=config.retry_base_delay,
             max_delay=config.retry_max_delay,
+            # Google SRE ch.22 and the AWS architecture blog both say
+            # un-jittered exponential backoff is the clear loser: every
+            # redelivery in a tight loop retries in lockstep and re-creates
+            # the thundering herd the backoff was meant to break. There is no
+            # reason to ship a retry loop that is measurably worse, so this
+            # is on unless a caller explicitly turns it off.
+            jitter=bool(getattr(config, "retry_jitter", True)),
         )
 
     def delay_for(self, retry_number: int) -> float:

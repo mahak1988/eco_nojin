@@ -97,7 +97,6 @@ try:
         """
         if not os.environ.get("PYTEST_XDIST_WORKER"):
             return
-        import database.models  # noqa: F401  (populates Base.metadata)
         from database.config import init_db
 
         init_db()

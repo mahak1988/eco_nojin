@@ -216,7 +216,9 @@ class MarketplaceService:
                     # Stock is an Integer column, and an aiosqlite binding
                     # rejects Decimal. Convert once, here, rather than letting a
                     # Decimal reach the driver.
-                    "quantity": int(quantity) if quantity == quantity.to_integral_value() else quantity,
+                    "quantity": int(quantity)
+                    if quantity == quantity.to_integral_value()
+                    else quantity,
                     "unit_price": catalogue_price,
                     "currency": getattr(product, "currency", None) or "IRR",
                 }
@@ -528,7 +530,7 @@ def get_marketplace_service(db=None) -> MarketplaceService:
 # Village Development Hub Service
 # ===================================================================
 
-from services.marketplace.hub_service import VillageDevelopmentHubService  # noqa: E402
+from services.marketplace.hub_service import VillageDevelopmentHubService
 
 _hub_service: VillageDevelopmentHubService | None = None
 

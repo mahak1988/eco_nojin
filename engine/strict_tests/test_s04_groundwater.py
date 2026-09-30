@@ -309,7 +309,6 @@ class TestTheisDrawdown:
     def test_growth_is_logarithmic_in_time(self) -> None:
         """s = (Q/4 pi T) (ln(4 T t / (r^2 S)) - gamma) + O(u), so ten decades of
         time add a bounded, constant increment rather than compounding."""
-        from scipy.special import expi  # noqa: F401  (documents the W function used)
 
         early = self._s(time_since_pumping_start_days=1.0)
         late = self._s(time_since_pumping_start_days=1e6)

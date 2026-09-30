@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
-
 
 router = APIRouter(prefix="/api/v1/ai/analysis", tags=["ai-analysis"])
 
@@ -49,7 +48,7 @@ class DroughtReportRequest(BaseModel):
 async def analyze_drought(request: DroughtRequest):
     """Analyze drought conditions using SPI/SPEI indices."""
     from services.analysis.drought_agent import get_drought_agent
-    
+
     agent = get_drought_agent()
     try:
         result = await agent.analyze(
@@ -60,7 +59,7 @@ async def analyze_drought(request: DroughtRequest):
         )
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
     finally:
         await agent.close()
 
@@ -69,7 +68,7 @@ async def analyze_drought(request: DroughtRequest):
 async def run_scenario(request: ScenarioRequest):
     """Run a single what-if scenario."""
     from services.analysis.scenario_agent import get_scenario_agent
-    
+
     agent = get_scenario_agent(request.lat, request.lon)
     try:
         result = await agent.run_scenario(
@@ -79,7 +78,7 @@ async def run_scenario(request: ScenarioRequest):
         )
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
     finally:
         await agent.drought_agent.close()
 
@@ -88,7 +87,7 @@ async def run_scenario(request: ScenarioRequest):
 async def run_multiple_scenarios(request: MultiScenarioRequest):
     """Run multiple scenarios and rank by severity."""
     from services.analysis.scenario_agent import get_scenario_agent
-    
+
     agent = get_scenario_agent(request.lat, request.lon)
     try:
         scenarios = [
@@ -102,7 +101,7 @@ async def run_multiple_scenarios(request: MultiScenarioRequest):
         result = await agent.run_multiple_scenarios(scenarios, request.months)
         return {"scenarios": result}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
     finally:
         await agent.drought_agent.close()
 
@@ -111,7 +110,7 @@ async def run_multiple_scenarios(request: MultiScenarioRequest):
 async def get_advice(request: AdvisoryRequest):
     """Get advisory answer for a farmer question."""
     from services.analysis.advisory_agent import get_advisory_agent
-    
+
     agent = get_advisory_agent()
     try:
         result = await agent.process_question(
@@ -122,7 +121,7 @@ async def get_advice(request: AdvisoryRequest):
         )
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
     finally:
         await agent.close()
 
@@ -131,7 +130,7 @@ async def get_advice(request: AdvisoryRequest):
 async def get_drought_report(request: DroughtReportRequest):
     """Get comprehensive drought report with recommendations."""
     from services.analysis.advisory_agent import get_advisory_agent
-    
+
     agent = get_advisory_agent()
     try:
         result = await agent.get_drought_report(
@@ -142,7 +141,7 @@ async def get_drought_report(request: DroughtReportRequest):
         )
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
     finally:
         await agent.close()
 
@@ -150,12 +149,12 @@ async def get_drought_report(request: DroughtReportRequest):
 @router.get("/providers")
 async def list_providers():
     """List available LLM and embedding providers with quota status."""
-    from services.ai.llm_router import get_router
     from services.ai.embedding_service import get_embedding_service
-    
+    from services.ai.llm_router import get_router
+
     llm_router = get_router()
     embedding_service = get_embedding_service()
-    
+
     return {
         "llm_providers": llm_router.get_available_providers(),
         "embedding_providers": [
@@ -165,6 +164,6 @@ async def list_providers():
                 "model": p.model,
                 "dimensions": p.dimensions,
             }
-            for p in embedding_service._clients.keys()
+            for p in embedding_service._clients
         ],
     }

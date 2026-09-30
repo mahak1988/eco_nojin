@@ -1,6 +1,6 @@
 """Tests for AI Assistant Unified RAG engine."""
 
-from services.ai.unified_rag import UnifiedRAG, RAGConfig
+from services.ai.unified_rag import RAGConfig, UnifiedRAG
 
 
 def test_rag_config_defaults():
@@ -23,6 +23,7 @@ def test_language_detection():
 def test_rag_singleton():
     """Verify singleton pattern works correctly."""
     from services.ai.unified_rag import get_rag
+
     engine1 = get_rag()
     engine2 = get_rag()
     assert engine1 is engine2

@@ -61,13 +61,13 @@ USD            دلار آمریکا
 ```python
 # ✅ درست
 Money.credit(Decimal("100.5000"), "IRR")
-signed("credit", "100.50")   # ->  Decimal("100.50")
-signed("debit",  "100.50")   # ->  Decimal("-100.50")
+signed("credit", "100.50")  # ->  Decimal("100.50")
+signed("debit", "100.50")  # ->  Decimal("-100.50")
 
 # ❌ نادرست
-Money.credit(0.1)                       # MoneyError: float is refused
-signed("debit", "100.50") * -1          # قرارداد علامت را دور می‌زند
-total = func.sum(FinJournalEntry.amount) # بدون علامت
+Money.credit(0.1)  # MoneyError: float is refused
+signed("debit", "100.50") * -1  # قرارداد علامت را دور می‌زند
+total = func.sum(FinJournalEntry.amount)  # بدون علامت
 ```
 
 ## مهاجرت

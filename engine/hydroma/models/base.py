@@ -10,9 +10,10 @@ All scientific models must inherit from ScientificModel and implement:
 
 from __future__ import annotations
 
+import inspect
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 
@@ -69,6 +70,65 @@ class ModelInput:
         return self.values.keys()
 
 
+#: Below this magnitude a reference carries no relative information, so the
+#: tolerance test falls back to an absolute comparison. See
+#: ``ModelOutput.is_within_tolerance``.
+_ABSOLUTE_FLOOR = 1e-9
+
+
+def non_finite_fields(values: dict[str, Any]) -> list[str]:
+    """Names of the inputs that carry a NaN or an infinity.
+
+    Every range check in this repository is written as ``if x < lo or x > hi``.
+    In Python each comparison against NaN is False, so ``nan < 0`` is False and
+    ``nan > hi`` is False: a NaN passes every bound and reaches the arithmetic,
+    where it silently poisons the whole result. The same is true of an
+    infinity, which passes an upper bound it exceeds only if the bound is
+    itself infinite.
+
+    This is the one guard a model cannot forget, because every model calls it.
+    """
+
+    def _bad(value: Any) -> bool:
+        if isinstance(value, (str, bytes, bool)):
+            return False
+        if isinstance(value, np.ndarray):
+            return bool(value.dtype.kind in "fc" and not np.all(np.isfinite(value)))
+        if isinstance(value, (int, float, np.integer, np.floating)):
+            return not bool(np.isfinite(value))
+        return False
+
+    return [name for name, value in values.items() if _bad(value)]
+
+
+def validate_finite(model_name: str, values: dict[str, Any]) -> list[str]:
+    """The errors every model's validate_inputs must start with.
+
+    Returns one message per offending input. Callers append their own
+    range checks after this, so a NaN produces a clear complaint rather than
+    a silent wrong answer.
+    """
+    return [
+        f"{model_name}: {name} must be finite, got {value!r}"
+        for name, value in values.items()
+        if name in non_finite_fields(values)
+    ]
+
+
+def relative_error_of(computed: float, reference: float) -> float:
+    """Relative error, guarded against a zero or near-zero reference.
+
+    The unguarded form divides by the reference, so a model that correctly
+    returns no growth, or no decomposition, reports an enormous error for a
+    right answer. When the reference carries no scale, the absolute
+    difference is the only meaningful number and is returned directly.
+    """
+    scale = abs(reference)
+    if scale <= _ABSOLUTE_FLOOR:
+        return abs(computed - reference)
+    return abs(computed - reference) / scale
+
+
 @dataclass
 class ModelOutput:
     """A model's result, with the provenance needed to tell a real answer from a
@@ -110,11 +170,88 @@ class ModelOutput:
 
     def __contains__(self, key: object) -> bool:
         return key in self.outputs
+
     notes: str = ""
 
     @property
     def is_within_tolerance(self) -> bool:
-        return self.relative_error <= self.tolerance
+        # A relative test divides by the reference. When the reference is
+        # zero or near zero that division explodes, so a model that correctly
+        # returns no growth (HYRUE outside its temperature band) or no
+        # decomposition was reported as a failure. An absolute floor makes the
+        # comparison meaningful for a quantity that is legitimately zero, and
+        # the relative test still applies everywhere it can.
+        absolute_error = abs(self.computed_value - self.reference_value)
+        scale = abs(self.reference_value)
+        if scale <= _ABSOLUTE_FLOOR:
+            return absolute_error <= max(self.tolerance, _ABSOLUTE_FLOOR)
+        return (absolute_error / scale) <= self.tolerance
+
+
+def unavailable_output(
+    model: str,
+    reason: str,
+    *,
+    missing: str = "",
+    remedy: str = "",
+) -> ModelOutput:
+    """A ``ModelOutput`` that says a model did not run, and why.
+
+    Several models in this repository can produce a number without the
+    component that gives the number meaning: MODFLOW 6 without flopy, the GP
+    surrogate without gpytorch, an adapter whose optional import failed. Before
+    this helper each of them invented a plausible result and labelled it
+    ``modelled``, which is the failure ``S-HONEST`` exists to prevent.
+
+    The three properties that matter:
+
+    - ``data_source`` is ``"unavailable"``, never ``"modelled"``. A caller
+      filtering on provenance now sees the difference.
+    - ``success`` stays ``True``. The call did not raise, and turning a
+      capability gap into an exception would break callers that already handle
+      an empty result. ``success`` was never the honest signal; the label is.
+    - ``outputs`` is empty and ``notes`` names what is missing and what to
+      install, so a reader can act on it.
+    """
+
+    notes = reason
+    if missing:
+        notes += f" Missing: {missing}."
+    if remedy:
+        notes += f" To enable: {remedy}."
+    return ModelOutput(
+        success=True,
+        outputs={},
+        uncertainty={},
+        data_source="unavailable",
+        model=model,
+        notes=notes.strip(),
+    )
+
+
+def compute_checked(model: ScientificModel, **inputs: Any) -> Any:
+    """Run a model's ``compute`` after checking its inputs.
+
+    Seven of the eight models in this package have a ``compute`` that never
+    calls its own ``validate_inputs``, so the checks that were written for
+    them are optional. That makes a silent wrong answer reachable from the
+    public API: pass an out-of-range value, or a NaN, and the model returns a
+    number anyway.
+
+    The checks exist; nothing forced anyone to run them. This function is the
+    way to run them without changing any model's signature, and it is what a
+    caller should use unless they have a reason to skip validation.
+
+    ECSI already validates inside ``compute`` and is unaffected.
+    """
+
+    accepted = {
+        name for name in inspect.signature(type(model).validate_inputs).parameters if name != "self"
+    }
+    ok, problems = model.validate_inputs(**{k: v for k, v in inputs.items() if k in accepted})
+    if not ok:
+        raise ValueError(f"{type(model).__name__}: " + "; ".join(problems))
+    return model.compute(**inputs)
 
 
 class ScientificModel(ABC):
@@ -126,6 +263,13 @@ class ScientificModel(ABC):
     - تمام محاسبات باید vectorized باشند (numpy)
     - باید validation against published data داشته باشند
     - باید uncertainty quantification ارائه دهند
+
+    دربارهٔ اعتبارسنجی: ``validate_inputs`` عمداً فراخوانی جداگانه است تا
+    یک فراخوان بتواند یک مجموعه ورودی را بدون پرداخت هزینهٔ محاسبه
+    بررسی کند. همین جداسازی یعنی ``compute`` ناچار به فراخوانی آن نیست، و
+    هفت مدل از هشت مدل این کار را نمی‌کنند: فراخوانی که بررسی را رد کند،
+    نتیجهٔ بررسی‌نشده می‌گیرد. ``probe_robustness.py`` گزارش می‌دهد کدام
+    مدل‌ها در این وضعیت‌اند.
     """
 
     name: str = "BaseModel"
@@ -133,7 +277,7 @@ class ScientificModel(ABC):
     description: str = "Base scientific model"
 
     # Reference literature for validation
-    REFERENCES: dict[str, str] = {}
+    REFERENCES: ClassVar[dict[str, str]] = {}
 
     def __init__(self, **config):
         self.config = config

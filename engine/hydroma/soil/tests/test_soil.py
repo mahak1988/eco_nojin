@@ -66,7 +66,10 @@ class TestTaxonomy:
         """Test that negative percentages raise error."""
         from engine.hydroma.soil.taxonomy import classify_usda_texture
 
-        with pytest.raises(ValueError):
+        # Narrowed: a bare ValueError here also passes if the argument is
+        # rejected for the wrong reason, which is the vacuous green this rule
+        # exists to prevent. The message names the offending value.
+        with pytest.raises(ValueError, match="must be between 0 and 100"):
             classify_usda_texture(clay=-5, silt=50, sand=55)
 
     def test_complete_taxonomy(self):

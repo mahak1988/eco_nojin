@@ -20,7 +20,6 @@ import json
 import os
 import re
 import sys
-import unicodedata
 from collections import defaultdict
 
 ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "کتابها")
@@ -36,8 +35,18 @@ LINE_FLOOR = 4000
 # کف‌های نخستین جمعشان ۷۱۰۰ می‌شد، یعنی ۹۵ درصد بیشتر از الزام ۴۰۰۰؛
 # کف ابزار توزیع است نه ابزار افزایش.
 CHAPTER_FLOORS = {
-    1: 320, 2: 350, 3: 400, 4: 200, 5: 250, 6: 280,
-    7: 170, 8: 200, 9: 350, 10: 450, 11: 280, 12: 250,
+    1: 320,
+    2: 350,
+    3: 400,
+    4: 200,
+    5: 250,
+    6: 280,
+    7: 170,
+    8: 200,
+    9: 350,
+    10: 450,
+    11: 280,
+    12: 250,
 }
 
 # دروازهٔ کنترل کاراکتر — دروازه-کنترل-کاراکتر.md
@@ -274,7 +283,9 @@ def duplicate_lines(text: str, minimum: int = 40) -> list[str]:
          افعال وجهی که بند ۱۳٫۲ استاندارد آن را در هر سند یکسان می‌خواهد.
       ج) سطر عنوان بند — عنوان یک بند در فهرست مطالب و متن تکرار می‌شود.
     """
-    glyph = re.compile(r"^[\u250C\u2510\u2514\u2518\u251C\u2524\u252C\u2534\u253C\u2502\u2500\u2501\u2551\u2554\u2557\u255A\u255D\u2560\u2563\u2566\u2569\u256C\u2570_=+*#~]{3,}$")
+    glyph = re.compile(
+        r"^[\u250C\u2510\u2514\u2518\u251C\u2524\u252C\u2534\u253C\u2502\u2500\u2501\u2551\u2554\u2557\u255A\u255D\u2560\u2563\u2566\u2569\u256C\u2570_=+*#~]{3,}$"
+    )
     citation = re.compile(r"STD-HYD-(?:WRITE|VOICE)-v\d")
     seen: dict[str, int] = {}
     for line in text.split("\n"):
@@ -284,7 +295,11 @@ def duplicate_lines(text: str, minimum: int = 40) -> list[str]:
         if glyph.match(stripped) or citation.search(stripped):
             continue
         seen[stripped] = seen.get(stripped, 0) + 1
-    return [f"\u00d7{count}  \u00ab{line[:60]}\u00bb" for line, count in sorted(seen.items(), key=lambda x: -x[1]) if count > 2]
+    return [
+        f"\u00d7{count}  \u00ab{line[:60]}\u00bb"
+        for line, count in sorted(seen.items(), key=lambda x: -x[1])
+        if count > 2
+    ]
 
 
 def load_register_ids() -> set[str] | None:
@@ -393,6 +408,7 @@ def check_id_column(text: str, known: set[str] | None) -> list[dict]:
         )
     return bad
 
+
 FA_DIGITS = "۰۱۲۳۴۵۶۷۸۹"
 
 
@@ -435,9 +451,7 @@ def chapter_sizes(lines: list[str]) -> dict[int, int]:
             first[number] = i + 1
 
     # شروع فصل بعد، حتی اگر شماره‌اش تکراری باشد
-    order: list[tuple[int, int]] = sorted(
-        (start, number) for number, start in first.items()
-    )
+    order: list[tuple[int, int]] = sorted((start, number) for number, start in first.items())
     sizes: dict[int, int] = {}
     for index, (start, number) in enumerate(order):
         end = order[index + 1][0] if index + 1 < len(order) else len(lines) + 1
@@ -447,7 +461,9 @@ def chapter_sizes(lines: list[str]) -> dict[int, int]:
 
 def markdown_headings(lines: list[str]) -> int:
     """شمار سرفصل‌های فصل که پیشوند Markdown دارند و با قالب مجموعه ناسازگارند."""
-    return sum(1 for line in lines if _CHAPTER_LOOSE.match(line) and not _CHAPTER_STRICT.match(line))
+    return sum(
+        1 for line in lines if _CHAPTER_LOOSE.match(line) and not _CHAPTER_STRICT.match(line)
+    )
 
 
 def gate_hits(text: str) -> dict[str, int]:
@@ -503,7 +519,9 @@ def audit(path: str, known: set[str] | None) -> dict:
         "markdown_headings": markdown_headings(lines),
         "chapter_sizes": sizes,
         "floors_met": sorted(k for k, v in sizes.items() if v >= CHAPTER_FLOORS[k]),
-        "floors_short": {k: CHAPTER_FLOORS[k] - v for k, v in sorted(sizes.items()) if v < CHAPTER_FLOORS[k]},
+        "floors_short": {
+            k: CHAPTER_FLOORS[k] - v for k, v in sorted(sizes.items()) if v < CHAPTER_FLOORS[k]
+        },
         "appendix_a": "پیوست الف — ردیابی داده" in text,
         "farmer_guide": "راهنمای اجرایی کشاورز" in text,
         "closing_line": "پایان بستهٔ مهندسی" in text,
@@ -533,10 +551,9 @@ def main() -> int:
     # تحویل از دروازهٔ نویسه، دروازهٔ بن‌بست و دروازهٔ صداقت بیرون ماندند و هیچ
     # ممیزی دربارهٔ آن‌ها اجرا نشد.
     files = sorted(
-        f for f in os.listdir(ROOT)
-        if f.endswith((".txt", ".md"))
-        and not f.startswith("_")
-        and f != "سیاهه-نقل-بین‌المللی.md"
+        f
+        for f in os.listdir(ROOT)
+        if f.endswith((".txt", ".md")) and not f.startswith("_") and f != "سیاهه-نقل-بین‌المللی.md"
     )
     known = load_register_ids()
     results = [audit(os.path.join(ROOT, f), known) for f in files]
@@ -548,14 +565,14 @@ def main() -> int:
     total = sum(r["lines"] for r in results)
     complete = sum(1 for r in results if r["line_ok"] and r["chapter_ok"])
     gate_fail = [r["file"] for r in results if not r["gate_ok"]]
-    violations_total = [
-        {**hit, "file": r["file"]} for r in results for hit in r["violations"]
-    ]
+    violations_total = [{**hit, "file": r["file"]} for r in results for hit in r["violations"]]
     forbidden_total = {
         name: sum(r["forbidden"].get(name, 0) for r in results) for name in FORBIDDEN_STRINGS
     }
     forbidden_total = {k: v for k, v in forbidden_total.items() if v}
-    reject_count = sum(1 for r in results if not r["forbidden_ok"] or not r["claims_ok"] or not r["gate_ok"])
+    reject_count = sum(
+        1 for r in results if not r["forbidden_ok"] or not r["claims_ok"] or not r["gate_ok"]
+    )
 
     print(f"پوشه: {ROOT}")
     print(f"کتابچه: {len(results)}  ·  جمع سطر: {total:,}  ·  رسیده به {LINE_FLOOR}: {complete}")
@@ -595,7 +612,11 @@ def main() -> int:
         print("نقض بند ۷: صفر مورد — هر عبارت در بافت نفی، گزارش حذف یا کاربرد فنی محدود است")
 
     if forbidden_total:
-        print(f"\n⛔ بن‌بست — {sum(forbidden_total.values()):,} مورد (STD-HYD-WRITE-v1.0 بند ۲٫۵):".replace(",", "٬"))
+        print(
+            f"\n⛔ بن‌بست — {sum(forbidden_total.values()):,} مورد (STD-HYD-WRITE-v1.0 بند ۲٫۵):".replace(
+                ",", "٬"
+            )
+        )
         for name, n in sorted(forbidden_total.items(), key=lambda x: -x[1]):
             print(f"  {name}: {n:,} — {FORBIDDEN_STRINGS[name]}".replace(",", "٬"))
         for r in results:
@@ -610,7 +631,9 @@ def main() -> int:
         by_file: dict[str, int] = defaultdict(int)
         for name, _ in bad_cells:
             by_file[name] += 1
-        print(f"\n⛔ سلول شناسهٔ نامعتبر — {len(bad_cells):,} مورد (قاعدهٔ ساختاری):".replace(",", "٬"))
+        print(
+            f"\n⛔ سلول شناسهٔ نامعتبر — {len(bad_cells):,} مورد (قاعدهٔ ساختاری):".replace(",", "٬")
+        )
         for name, n in sorted(by_file.items(), key=lambda x: -x[1]):
             print(f"  {n:>5}  {name}")
         print("  نمونه:")

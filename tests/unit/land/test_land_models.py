@@ -21,11 +21,11 @@ class TestLandModels:
         assert profile.name == "تست"
 
         # Invalid latitude
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="location_lat"):
             LandProfile(id="test", name="تست", location_lat=91, location_lon=0)
 
         # Invalid longitude
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="location_lon"):
             LandProfile(id="test", name="تست", location_lat=0, location_lon=181)
 
     def test_terrain_analysis_Integerization(self):

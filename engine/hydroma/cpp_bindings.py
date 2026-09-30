@@ -31,12 +31,12 @@ from __future__ import annotations
 import sys
 from typing import Any
 
-from engine.hydroma.cpp_bridge import (  # noqa: F401
+from engine.hydroma.cpp_bridge import (
     backend_status,
-    get_module,
-    get_telemetry,
+    get_module as get_module,
+    get_telemetry as get_telemetry,
     is_cpp_available,
-    reset_telemetry,
+    reset_telemetry as reset_telemetry,
 )
 
 #: Kept for callers that used the alias.
@@ -50,7 +50,9 @@ def get_info() -> dict[str, Any]:
         "available": status["cpp_available"],
         "backend": status["backend"],
         "python_version": f"cp{sys.version_info.major}{sys.version_info.minor}",
-        "functions_count": len([n for n in dir(sys.modules.get("hydroma_core", ())) if not n.startswith("_")]),
+        "functions_count": len(
+            [n for n in dir(sys.modules.get("hydroma_core", ())) if not n.startswith("_")]
+        ),
         "module_path": getattr(sys.modules.get("hydroma_core"), "__file__", "unknown"),
         "error": status["import_error"],
         "telemetry": status["telemetry"],
@@ -76,8 +78,7 @@ def __getattr__(name: str) -> Any:
     if module is not None and hasattr(module, name):
         return getattr(module, name)
     raise ImportError(
-        f"module {__name__!r} has no attribute {name!r}. "
-        f"C++ available: {is_cpp_available()}"
+        f"module {__name__!r} has no attribute {name!r}. C++ available: {is_cpp_available()}"
     )
 
 

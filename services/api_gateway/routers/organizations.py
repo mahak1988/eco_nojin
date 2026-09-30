@@ -5,6 +5,7 @@ Uses existing Organization and OrganizationMembership models from database.model
 """
 
 import logging
+import uuid
 from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status

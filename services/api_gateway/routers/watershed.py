@@ -35,4 +35,4 @@ def design_structure(payload: StructureRequest):
             rainfall_mm=payload.rainfall_mm,
         )
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e

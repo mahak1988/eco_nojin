@@ -30,8 +30,8 @@ from .runner import CaseOutcome, report, run_all, run_case, summary
 
 __all__ = [
     "CASE_DIR",
-    "CaseOutcome",
     "REFERENCE_DIR",
+    "CaseOutcome",
     "ValidationCase",
     "available_references",
     "case_names",

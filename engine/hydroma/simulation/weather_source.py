@@ -22,6 +22,7 @@ from datetime import date, datetime, timedelta
 
 import pandas as pd
 import requests
+
 from engine.hydroma.climate.et_calculator import (
     ClimateData,
     calc_et0_hargreaves,
@@ -74,9 +75,7 @@ def hargreaves_et0(tmin_c: float, tmax_c: float, latitude_deg: float, day_of_yea
     0.408 conversion a second time and return a 2.45x underestimate.
     """
     return calc_et0_hargreaves(
-        data=ClimateData(
-            tmin=tmin_c, tmax=tmax_c, latitude=latitude_deg, doy=day_of_year
-        ),
+        data=ClimateData(tmin=tmin_c, tmax=tmax_c, latitude=latitude_deg, doy=day_of_year),
         dtr_floor=0.1,
     )
 

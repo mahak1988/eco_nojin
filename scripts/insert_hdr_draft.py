@@ -6,14 +6,25 @@
 from __future__ import annotations
 
 import csv
-import io
 import os
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REGISTER = os.path.join(ROOT, "کتابها", "_مرجع", "HDR.csv")
 DRAFT = os.path.join(ROOT, "scripts", "HDR_draft.csv")
-FIELDS = ["id", "domain", "indicator", "value", "unit", "source_primary", "year", "confidence", "consumers", "action", "status"]
+FIELDS = [
+    "id",
+    "domain",
+    "indicator",
+    "value",
+    "unit",
+    "source_primary",
+    "year",
+    "confidence",
+    "consumers",
+    "action",
+    "status",
+]
 
 UNANCHORED = ("بدون لنگرگاه", "بی‌لنگرگاه", "متناظر", "—")
 

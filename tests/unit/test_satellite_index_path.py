@@ -56,10 +56,7 @@ def test_uint16_raw_dn_does_not_overflow():
 
 
 def test_integer_input_across_all_indices():
-    bands = {
-        k: (v * 10_000).astype(np.int32)
-        for k, v in _bands(200, seed=3).items()
-    }
+    bands = {k: (v * 10_000).astype(np.int32) for k, v in _bands(200, seed=3).items()}
     for fn, args in [
         (calculate_ndvi, (bands["red"], bands["nir"])),
         (calculate_evi, (bands["red"], bands["nir"], bands["blue"])),
@@ -115,7 +112,7 @@ def test_nan_median_of_an_entirely_cloudy_scene_is_detectable():
 
 
 @pytest.mark.parametrize(
-    "fn,args",
+    ("fn", "args"),
     [
         (calculate_ndvi, (np.zeros(4), np.zeros(4))),
         (calculate_savi, (np.zeros(4), np.zeros(4))),
@@ -139,7 +136,8 @@ def test_every_index_is_clipped_to_unit_range():
         bands["green"],
     )
     for name, values in out.items():
-        assert np.all(values >= -1.0) and np.all(values <= 1.0), f"{name} out of range"
+        assert np.all(values >= -1.0), f"{name} below -1"
+        assert np.all(values <= 1.0), f"{name} above 1"
 
 
 def test_calculate_all_indices_does_not_fabricate_a_missing_band():

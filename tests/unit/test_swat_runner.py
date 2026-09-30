@@ -52,7 +52,7 @@ class TestSwatRunner:
         runner = SwatRunner(
             SwatConfig(executable=r"C:\nonexistent\swat.exe", project_dir=str(tmp_path))
         )
-        with pytest.raises(SwatUnavailable, match="swat.tamu.edu"):
+        with pytest.raises(SwatUnavailable, match=r"swat\.tamu\.edu"):
             runner.run()
 
     def test_missing_project_raises(self, tmp_path):

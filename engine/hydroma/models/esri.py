@@ -8,11 +8,11 @@ Reference: Ayers & Westcot (1985) FAO-29, Richards (1954)
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 
-from .base import ScientificModel, ValidationResult
+from .base import ScientificModel, ValidationResult, validate_finite
 
 
 class ESRI(ScientificModel):
@@ -22,7 +22,7 @@ class ESRI(ScientificModel):
     version = "1.0.0"
     description = "Salinity Risk Index (spectral + soil + irrigation)"
 
-    REFERENCES = {
+    REFERENCES: ClassVar[dict] = {
         "Ayers1985": "Ayers, R.S. & Westcot, D.W. (1985). Water quality for agriculture. FAO Irrigation and Drainage Paper 29.",
         "Richards1954": "Richards, L.A. (1954). Diagnosis and improvement of saline and alkali soils.",
     }
@@ -36,7 +36,19 @@ class ESRI(ScientificModel):
         ec_soil_dsm,
         ec_irrigation_dsm,
     ) -> tuple[bool, list[str]]:
-        errors = []
+        errors = validate_finite(
+            "ESRI",
+            {
+                "blue": blue,
+                "red": red,
+                "nir": nir,
+                "swir": swir,
+                "ec_soil_dsm": ec_soil_dsm,
+                "ec_irrigation_dsm": ec_irrigation_dsm,
+            },
+        )
+        if errors:
+            return False, errors
         for band_name, band in [("blue", blue), ("red", red), ("nir", nir), ("swir", swir)]:
             if np.any(band < 0) or np.any(band > 1):
                 errors.append(f"{band_name} band reflectance out of range [0, 1]")

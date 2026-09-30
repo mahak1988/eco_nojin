@@ -31,14 +31,14 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import sys
 
 import matplotlib
+
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-from matplotlib import font_manager
-from bidi.algorithm import get_display
 import arabic_reshaper
+import matplotlib.pyplot as plt
+from bidi.algorithm import get_display
+from matplotlib import font_manager
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 FIGDIR = os.path.join(HERE, "figures")
@@ -108,34 +108,69 @@ def draw(spec: dict, outdir: str) -> str | None:
 
     if kind in ("bar",):
         width = 0.8 / max(1, len(ys))
-        for k, (s, y) in enumerate(zip(series, ys)):
+        for k, (s, y) in enumerate(zip(series, ys, strict=False)):
             off = (k - (len(ys) - 1) / 2) * width
-            ax.bar([i + off for i in xi], y, width=width, label=fa(s["name"]),
-                   color=PALETTE[k % len(PALETTE)], edgecolor="white", linewidth=0.5)
+            ax.bar(
+                [i + off for i in xi],
+                y,
+                width=width,
+                label=fa(s["name"]),
+                color=PALETTE[k % len(PALETTE)],
+                edgecolor="white",
+                linewidth=0.5,
+            )
     elif kind in ("grouped_bar", "stacked_bar"):
         if kind == "stacked_bar":
             bottom = [0.0] * n
-            for k, (s, y) in enumerate(zip(series, ys)):
-                ax.bar(xi, y, 0.68, bottom=bottom, label=fa(s["name"]),
-                       color=PALETTE[k % len(PALETTE)], edgecolor="white", linewidth=0.5)
-                bottom = [b + (v or 0) for b, v in zip(bottom, y)]
+            for k, (s, y) in enumerate(zip(series, ys, strict=False)):
+                ax.bar(
+                    xi,
+                    y,
+                    0.68,
+                    bottom=bottom,
+                    label=fa(s["name"]),
+                    color=PALETTE[k % len(PALETTE)],
+                    edgecolor="white",
+                    linewidth=0.5,
+                )
+                bottom = [b + (v or 0) for b, v in zip(bottom, y, strict=False)]
         else:
             width = 0.8 / max(1, len(ys))
-            for k, (s, y) in enumerate(zip(series, ys)):
+            for k, (s, y) in enumerate(zip(series, ys, strict=False)):
                 off = (k - (len(ys) - 1) / 2) * width
-                ax.bar([i + off for i in xi], y, width=width, label=fa(s["name"]),
-                       color=PALETTE[k % len(PALETTE)], edgecolor="white", linewidth=0.5)
+                ax.bar(
+                    [i + off for i in xi],
+                    y,
+                    width=width,
+                    label=fa(s["name"]),
+                    color=PALETTE[k % len(PALETTE)],
+                    edgecolor="white",
+                    linewidth=0.5,
+                )
     elif kind == "area":
-        ax.stackplot(xi, ys, labels=[fa(s["name"]) for s in series],
-                     colors=[PALETTE[k % len(PALETTE)] for k in range(len(ys))], alpha=0.85)
+        ax.stackplot(
+            xi,
+            ys,
+            labels=[fa(s["name"]) for s in series],
+            colors=[PALETTE[k % len(PALETTE)] for k in range(len(ys))],
+            alpha=0.85,
+        )
     elif kind == "scatter":
-        for k, (s, y) in enumerate(zip(series, ys)):
-            ax.plot(xi, y, "o", label=fa(s["name"]),
-                    color=PALETTE[k % len(PALETTE)], markersize=4.5)
+        for k, (s, y) in enumerate(zip(series, ys, strict=False)):
+            ax.plot(
+                xi, y, "o", label=fa(s["name"]), color=PALETTE[k % len(PALETTE)], markersize=4.5
+            )
     else:
-        for k, (s, y) in enumerate(zip(series, ys)):
-            ax.plot(xi, y, marker="o", markersize=3.4, linewidth=1.5,
-                    label=fa(s["name"]), color=PALETTE[k % len(PALETTE)])
+        for k, (s, y) in enumerate(zip(series, ys, strict=False)):
+            ax.plot(
+                xi,
+                y,
+                marker="o",
+                markersize=3.4,
+                linewidth=1.5,
+                label=fa(s["name"]),
+                color=PALETTE[k % len(PALETTE)],
+            )
 
     ax.set_xticks(xi)
     ax.set_xticklabels([fa(v) for v in x_raw[:n]], fontsize=7.6)
@@ -155,8 +190,9 @@ def draw(spec: dict, outdir: str) -> str | None:
         ax.spines[s].set_color("#666")
 
     if len(series) > 1:
-        leg = ax.legend(fontsize=7.4, frameon=False, ncol=min(3, len(series)),
-                        loc="best", handlelength=1.5)
+        leg = ax.legend(
+            fontsize=7.4, frameon=False, ncol=min(3, len(series)), loc="best", handlelength=1.5
+        )
         for t in leg.get_texts():
             t.set_fontsize(7.4)
 
@@ -164,11 +200,11 @@ def draw(spec: dict, outdir: str) -> str | None:
         note = spec["conf"]
         if missing:
             note += f"  ·  {missing} سلول ناخوانا صفر گرفته شده"
-        fig.text(0.99, 0.015, fa(note), ha="right", va="bottom",
-                 fontsize=6.6, color="#7a1f1f")
+        fig.text(0.99, 0.015, fa(note), ha="right", va="bottom", fontsize=6.6, color="#7a1f1f")
     if spec.get("source"):
-        fig.text(0.01, 0.015, fa(spec["source"]), ha="left", va="bottom",
-                 fontsize=6.6, color="#555")
+        fig.text(
+            0.01, 0.015, fa(spec["source"]), ha="left", va="bottom", fontsize=6.6, color="#555"
+        )
 
     fig.tight_layout(rect=(0, 0.045, 1, 1))
     os.makedirs(outdir, exist_ok=True)
@@ -189,7 +225,8 @@ def main() -> int:
         print("جای‌نگهدار شکل‌ها در نسخهٔ چاپی فعال می‌ماند.")
         return 0
 
-    specs = json.load(open(DATA, encoding="utf-8"))
+    with open(DATA, encoding="utf-8") as _fh:
+        specs = json.load(_fh)
     if isinstance(specs, dict):
         specs = specs.get("specs", [])
     made = skipped = 0
@@ -199,10 +236,12 @@ def main() -> int:
         p = draw(spec, FIGDIR)
         if p:
             made += 1
-            print(f"  رسم شد: {spec.get('book','?'):<8} شکل {spec['id']:<8} {spec.get('kind','')}")
+            print(
+                f"  رسم شد: {spec.get('book', '?'):<8} شکل {spec['id']:<8} {spec.get('kind', '')}"
+            )
         else:
             skipped += 1
-            print(f"  رد شد:  {spec.get('book','?'):<8} شکل {spec.get('id','?')} — داده ناکافی")
+            print(f"  رد شد:  {spec.get('book', '?'):<8} شکل {spec.get('id', '?')} — داده ناکافی")
     print(f"\nرسم‌شده: {made}  ·  رد‌شده: {skipped}")
     return 0
 

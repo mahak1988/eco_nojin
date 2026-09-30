@@ -216,7 +216,11 @@ def _with_telemetry(func_name: str, cpp_func: Callable | None, py_func: Callable
     def wrapper(*args, **kwargs):
         array_call = _has_array_arg(args, kwargs)
 
-        if array_call and numba_func is not None and _array_size(args, kwargs) < _ARRAY_CPP_THRESHOLD:
+        if (
+            array_call
+            and numba_func is not None
+            and _array_size(args, kwargs) < _ARRAY_CPP_THRESHOLD
+        ):
             t0 = time.perf_counter()
             result = numba_func(*args, **kwargs)
             elapsed = (time.perf_counter() - t0) * 1000

@@ -101,15 +101,15 @@ class TestWaterBalance:
         assert result.deep_percolation_mm > 0 or result.surface_runoff_mm > 0
 
     def test_negative_precipitation_error(self, integrator):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="precipitation must be non-negative"):
             integrator.calculate_balance(WaterBalanceInput(precipitation_mm=-10.0, et0_mm=50.0))
 
     def test_negative_et_error(self, integrator):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="et0 must be non-negative"):
             integrator.calculate_balance(WaterBalanceInput(precipitation_mm=100.0, et0_mm=-10.0))
 
     def test_zero_area_error(self, integrator):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="area must be positive"):
             integrator.calculate_balance(
                 WaterBalanceInput(precipitation_mm=100.0, et0_mm=50.0, area_ha=0)
             )
@@ -160,15 +160,15 @@ class TestSCSRunoff:
         assert abs(r10.runoff_volume_m3 / r1.runoff_volume_m3 - 10.0) < 0.1
 
     def test_invalid_cn_too_high(self, integrator):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="curve_number must be between 30 and 100"):
             integrator.calculate_runoff(RunoffInput(100.0, 150))
 
     def test_invalid_cn_too_low(self, integrator):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="curve_number must be between 30 and 100"):
             integrator.calculate_runoff(RunoffInput(100.0, 10))
 
     def test_negative_precipitation(self, integrator):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="precipitation must be non-negative"):
             integrator.calculate_runoff(RunoffInput(-10.0, 75))
 
     def test_estimate_cn_sand(self, integrator):
@@ -251,11 +251,11 @@ class TestGroundwater:
         assert result.flow_rate_m3_day == 0.0
 
     def test_invalid_k(self, integrator):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="hydraulic_conductivity must be positive"):
             integrator.calculate_flow(GroundwaterInput(-10.0, 0.01, 50.0))
 
     def test_invalid_porosity(self, integrator):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="porosity must be between 0 and 1"):
             integrator.calculate_flow(GroundwaterInput(10.0, 0.01, 50.0, porosity=1.5))
 
     def test_estimate_k_clay(self, integrator):

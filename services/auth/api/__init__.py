@@ -31,7 +31,7 @@ async def register(data: UserRegister, db: AsyncSession = Depends(get_db)):
             created_at=user.created_at,
         )
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.post("/login", response_model=TokenResponse)
@@ -39,4 +39,4 @@ async def login(data: UserLogin, db: AsyncSession = Depends(get_db)):
     try:
         return await AuthService(db).login(data)
     except ValueError as e:
-        raise HTTPException(status_code=401, detail=str(e))
+        raise HTTPException(status_code=401, detail=str(e)) from e

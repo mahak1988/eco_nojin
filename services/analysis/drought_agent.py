@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 from dataclasses import dataclass
 from datetime import date, timedelta
 from typing import Any
@@ -11,7 +10,10 @@ import httpx
 import numpy as np
 import pandas as pd
 import xarray as xr
-from xclim.indices import standardized_precipitation_index as spi, standardized_precipitation_evapotranspiration_index as spei
+from xclim.indices import (
+    standardized_precipitation_evapotranspiration_index as spei,
+    standardized_precipitation_index as spi,
+)
 
 
 @dataclass
@@ -51,14 +53,31 @@ class DroughtAgent:
         if not records:
             return pd.DataFrame()
 
-        df = pd.DataFrame({
-            "date": pd.date_range(start, end, freq="D"),
-            "precip": [records.get("PRECTOTCORR", {}).get(d.strftime("%Y%m%d"), np.nan) for d in pd.date_range(start, end)],
-            "t2m": [records.get("T2M", {}).get(d.strftime("%Y%m%d"), np.nan) for d in pd.date_range(start, end)],
-            "t2m_max": [records.get("T2M_MAX", {}).get(d.strftime("%Y%m%d"), np.nan) for d in pd.date_range(start, end)],
-            "t2m_min": [records.get("T2M_MIN", {}).get(d.strftime("%Y%m%d"), np.nan) for d in pd.date_range(start, end)],
-            "solar": [records.get("ALLSKY_SFC_SW_DWN", {}).get(d.strftime("%Y%m%d"), np.nan) for d in pd.date_range(start, end)],
-        })
+        df = pd.DataFrame(
+            {
+                "date": pd.date_range(start, end, freq="D"),
+                "precip": [
+                    records.get("PRECTOTCORR", {}).get(d.strftime("%Y%m%d"), np.nan)
+                    for d in pd.date_range(start, end)
+                ],
+                "t2m": [
+                    records.get("T2M", {}).get(d.strftime("%Y%m%d"), np.nan)
+                    for d in pd.date_range(start, end)
+                ],
+                "t2m_max": [
+                    records.get("T2M_MAX", {}).get(d.strftime("%Y%m%d"), np.nan)
+                    for d in pd.date_range(start, end)
+                ],
+                "t2m_min": [
+                    records.get("T2M_MIN", {}).get(d.strftime("%Y%m%d"), np.nan)
+                    for d in pd.date_range(start, end)
+                ],
+                "solar": [
+                    records.get("ALLSKY_SFC_SW_DWN", {}).get(d.strftime("%Y%m%d"), np.nan)
+                    for d in pd.date_range(start, end)
+                ],
+            }
+        )
         df["date"] = pd.to_datetime(df["date"])
         return df.dropna()
 
@@ -82,19 +101,19 @@ class DroughtAgent:
         if not daily:
             return pd.DataFrame()
 
-        df = pd.DataFrame({
-            "date": pd.to_datetime(daily.get("time", [])),
-            "precip": daily.get("precipitation_sum", []),
-            "t2m_max": daily.get("temperature_2m_max", []),
-            "t2m_min": daily.get("temperature_2m_min", []),
-            "t2m_mean": daily.get("temperature_2m_mean", []),
-            "et0": daily.get("et0_fao_evapotranspiration", []),
-        })
+        df = pd.DataFrame(
+            {
+                "date": pd.to_datetime(daily.get("time", [])),
+                "precip": daily.get("precipitation_sum", []),
+                "t2m_max": daily.get("temperature_2m_max", []),
+                "t2m_min": daily.get("temperature_2m_min", []),
+                "t2m_mean": daily.get("temperature_2m_mean", []),
+                "et0": daily.get("et0_fao_evapotranspiration", []),
+            }
+        )
         return df.dropna()
 
-    async def _fetch_weather(
-        self, lat: float, lon: float, months: int
-    ) -> pd.DataFrame:
+    async def _fetch_weather(self, lat: float, lon: float, months: int) -> pd.DataFrame:
         """Try Open-Meteo first (free, no key), fallback to NASA POWER."""
         end = date.today() - timedelta(days=1)  # Open-Meteo archive lags 1 day
         start = end - timedelta(days=months * 30)
@@ -124,9 +143,7 @@ class DroughtAgent:
         result = spi(da, freq=f"{scale}MS")
         return float(result.values[-1]) if result.size > 0 else 0.0
 
-    def _calculate_spei(
-        self, precip: np.ndarray, pet: np.ndarray, scale: int = 3
-    ) -> float:
+    def _calculate_spei(self, precip: np.ndarray, pet: np.ndarray, scale: int = 3) -> float:
         """Calculate SPEI using xclim."""
         da_precip = xr.DataArray(precip, dims=["time"], coords={"time": np.arange(len(precip))})
         da_pet = xr.DataArray(pet, dims=["time"], coords={"time": np.arange(len(precip))})
@@ -158,9 +175,11 @@ class DroughtAgent:
         lat: float,
         lon: float,
         months: int = 6,
-        scales: list[int] = [1, 3, 6, 12],
+        scales: list[int] | None = None,
     ) -> dict[str, Any]:
         """Main analysis entry point."""
+        if scales is None:
+            scales = [1, 3, 6, 12]
         df = await self._fetch_weather(lat, lon, months)
 
         if df.empty:

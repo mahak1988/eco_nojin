@@ -210,8 +210,8 @@ rusle_annual_soil_loss(r=100.0, k=0.3, ls=0.5, c=0.2, p=0.1)
 
 ```python
 # hecras.py:35-46
-water_surface_elevations = [100.0 + i*0.1 for i in range(num_steps)]   # Dummy
-velocities  = [flow_m3s[0] / 10 for _ in range(num_steps)]             # Dummy
+water_surface_elevations = [100.0 + i * 0.1 for i in range(num_steps)]  # Dummy
+velocities = [flow_m3s[0] / 10 for _ in range(num_steps)]  # Dummy
 shear_stresses = [0.5 * 1000 * v**2 for v in velocities]
 flood_extent_data = {"area_sqkm": 5.2, "affected_pop": 1200}
 structure_safety_data = {"status": "safe", "factor_of_safety": 1.8}
@@ -253,7 +253,7 @@ npv = 0,  irr = None,  payback_period_years = None,  break_even_yield = None
 
 `risk.py:41`:
 ```python
-worst_case_price = base_price + (z_score * adjusted_volatility)   # base_price=100, z=-1.645, σ=0.15
+worst_case_price = base_price + (z_score * adjusted_volatility)  # base_price=100, z=-1.645, σ=0.15
 ```
 - کد: `100 − 0.2468 = 99.75` (تقریباً قیمت پایه)
 - درست: `100 × (1 − 0.2468) = 75.3`
@@ -320,10 +320,12 @@ worst_case_price = base_price + (z_score * adjusted_volatility)   # base_price=1
 
 **باگ تأییدشده در اجرا — `models/base.py:100-104`:**
 ```python
-notes: str = ""                    # فیلد دیتاسیس، دفن‌شده وسط بلوک متد
+notes: str = ""  # فیلد دیتاسیس، دفن‌شده وسط بلوک متد
+
+
 @property
 def is_within_tolerance(self) -> bool:
-    return self.relative_error <= self.tolerance   # این دو فیلد روی ModelOutput نیستند!
+    return self.relative_error <= self.tolerance  # این دو فیلد روی ModelOutput نیستند!
 ```
 اجرا: `AttributeError: 'ModelOutput' object has no attribute 'relative_error'`
 و `ValidationResult` — کلاسی که واقعاً به این خاصیت نیاز دارد — اصلاً آن را ندارد. همچنین `ModelInput` فقط یک فیلد `values` دارد، پس `ModelInput(param_0=1.0)` ‌`TypeError` می‌دهد (تأییدشده) — که مسیر `train_from_base_model` را در GP Surrogate می‌شکند.
@@ -498,9 +500,9 @@ calibrate_formulation_model('f1', ['t1'], 'v1')
 
 ```python
 # pinn.py:191, 200-202
-x_pde = self._sample_pde_points()          # torch.rand(1000, 2) → requires_grad=False
+x_pde = self._sample_pde_points()  # torch.rand(1000, 2) → requires_grad=False
 u_pde = self.model(x_pde)
-pde_residual = self.pde_function(x_pde, u_pde)   # → torch.autograd.grad(y, x, …)
+pde_residual = self.pde_function(x_pde, u_pde)  # → torch.autograd.grad(y, x, …)
 ```
 `gradient()` با `x` به‌عنوان تانسور مشتق‌گیری‌شده صدا می‌زند. با `requires_grad == False` این کار `RuntimeError` می‌دهد. **هر دو PINN در اولین epoch شکست می‌خورند.** هیچ `.requires_grad_(True)` در فایل نیست.
 
@@ -560,11 +562,16 @@ def query_observations(self, lat, lon, start_date, end_date, max_cloud_cover=20.
     ...
     while current <= end_date:
         obs = SatelliteObservation(
-            date=current, satellite="sentinel-2",
-            cloud_cover_pct=10.0,          # ساختگی
-            ndvi=0.45, evi=0.38, ndmi=0.32,   # ساختگی
-            lst=28.5, soil_moisture=0.25,     # ساختگی
-            biomass_t_ha=12.5, soc_t_ha=35.0,  # ساختگی
+            date=current,
+            satellite="sentinel-2",
+            cloud_cover_pct=10.0,  # ساختگی
+            ndvi=0.45,
+            evi=0.38,
+            ndmi=0.32,  # ساختگی
+            lst=28.5,
+            soil_moisture=0.25,  # ساختگی
+            biomass_t_ha=12.5,
+            soc_t_ha=35.0,  # ساختگی
         )
 ```
 `base_url` روی نقطهٔ پایانی واقعی CDSE تنظیم شده و `api_key` پذیرفته می‌شود، اما **هیچ درخواست شبکه‌ای هرگز ارسال نمی‌شود** و حتی `requests` ایمپورت نشده است. یک مشاهدهٔ ساختگی هر ۵ روز با ثابت‌های ثابت برمی‌گردد — و اشیای برگشتی **فیلد `data_source` اصلاً ندارند**.
@@ -686,8 +693,8 @@ terrain_analysis   بیشینهٔ انباشت = 13    ← الگوریتم dequ
 
 **(ب) `surface_runoff` ساختاراً همیشه صفر است.**
 ```python
-deep_perc = max(0.0, remaining - 200)      # FIELD_CAPACITY_MM
-runoff    = max(0.0, remaining - deep_perc - 250)   # MAX_STORAGE_MM
+deep_perc = max(0.0, remaining - 200)  # FIELD_CAPACITY_MM
+runoff = max(0.0, remaining - deep_perc - 250)  # MAX_STORAGE_MM
 ```
 جایگذاری: اگر `remaining > 200` باشد، `deep_perc = remaining − 200` پس `runoff = max(0, 200−250) = 0`. اگر `remaining ≤ 200` باشد، `runoff = max(0, remaining−250) = 0`. **برای هر ورودی ممکن، `runoff = 0`.** و شاخهٔ پایین‌دست `elif wb.surface_runoff_mm > 100: return "excess_runoff"` **غیرقابل دسترس** است — ولی تست آن وضعیت را مجاز می‌داند.
 

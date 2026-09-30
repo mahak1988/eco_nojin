@@ -8,6 +8,7 @@ documents an intention rather than a constraint.
 from __future__ import annotations
 
 import ast
+import itertools
 from pathlib import Path
 
 import numpy as np
@@ -39,6 +40,7 @@ def _isolate_registry():
     finally:
         registry._REGISTRY.clear()
         registry._REGISTRY.update(saved)
+
 
 HARNESS = Path("tests/unit/test_bridge_signature_contract.py")
 
@@ -192,7 +194,8 @@ def test_the_five_indices_are_registered_once_each():
 
 def test_et0_is_registered_and_verified():
     record = get("et0_reference")
-    assert record is not None and record.is_verified
+    assert record is not None
+    assert record.is_verified
 
 
 def test_reconciled_formulas_are_no_longer_divergent():
@@ -268,7 +271,8 @@ def test_lhs_stratification():
 
         for backend, samples in candidates.items():
             assert samples.shape == (n, dims), f"{backend}: wrong shape {samples.shape}"
-            assert np.all(samples >= 0.0) and np.all(samples < 1.0), f"{backend}: out of [0,1)"
+            assert np.all(samples >= 0.0), f"{backend}: sample below 0"
+            assert np.all(samples < 1.0), f"{backend}: sample at or above 1"
             for j in range(dims):
                 strata = np.floor(samples[:, j] * n).astype(int)
                 assert len(np.unique(strata)) == n, (
@@ -304,12 +308,12 @@ def test_et0_is_monotone_in_wind_speed_and_radiation():
     """Two independent guards against the argument swap."""
     from engine.hydroma.cpp_bridge import _py_penman_monteith_et0
 
-    base = dict(tmin=18.0, tmax=29.0, rh_mean=55.0, z=1200.0, lat=35.7, doy=200)
+    base = {"tmin": 18.0, "tmax": 29.0, "rh_mean": 55.0, "z": 1200.0, "lat": 35.7, "doy": 200}
     wind = [float(_py_penman_monteith_et0(u2=u, rs=22.0, **base)) for u in (0.5, 1, 2, 4, 8)]
     rad = [float(_py_penman_monteith_et0(u2=2.0, rs=r, **base)) for r in (1, 5, 12, 22, 30)]
 
-    assert all(b >= a for a, b in zip(wind, wind[1:])), "ET0 must not fall as wind rises"
-    assert all(b >= a for a, b in zip(rad, rad[1:])), "ET0 must not fall as radiation rises"
+    assert all(b >= a for a, b in itertools.pairwise(wind)), "ET0 must not fall as wind rises"
+    assert all(b >= a for a, b in itertools.pairwise(rad)), "ET0 must not fall as radiation rises"
 
 
 def test_no_index_fallback_uses_a_denominator_epsilon():
@@ -340,4 +344,5 @@ def test_no_index_fallback_skips_the_clip():
 
     out = np.asarray(_py_evi(red, nir, blue))
 
-    assert np.all(out >= -1.0) and np.all(out <= 1.0)
+    assert np.all(out >= -1.0)
+    assert np.all(out <= 1.0)

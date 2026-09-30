@@ -8,6 +8,7 @@ from datetime import UTC, datetime
 from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict, Field
+
 from engine.hydroma.provenance import Provenance
 
 
@@ -49,6 +50,10 @@ class KoppenClimate(StrEnum):
 class AridityClass(StrEnum):
     """UNEP Aridity Index classification"""
 
+    # The index could not be computed, typically because reference
+    # evapotranspiration was unavailable. This is not a climate class and must
+    # not be mapped onto one: absence of ET0 is not evidence of a wet climate.
+    UNKNOWN = "unknown"
     HYPER_ARID = "hyper_arid"  # AI < 0.05
     ARID = "arid"  # 0.05 <= AI < 0.20
     SEMI_ARID = "semi_arid"  # 0.20 <= AI < 0.50

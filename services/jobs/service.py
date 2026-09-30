@@ -252,8 +252,8 @@ class ComputeJobService:
         )
 
         await self.db.commit()
-        await self.db.refresh(data)
-        return data
+        await self.db.refresh(job)
+        return job
 
     async def cancel_job(self, job_id: str) -> bool:
         """Cancel a pending/queued/running job."""

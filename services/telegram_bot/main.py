@@ -63,6 +63,8 @@ async def post_init(application: Application) -> None:
 
 def main():
     """Main entry point."""
+    logger = logging.getLogger("econojin.bot")
+
     # Validate configuration
     if not config.validate():
         logger.info("\nPlease set TELEGRAM_BOT_TOKEN in your .env file.")
@@ -71,7 +73,6 @@ def main():
 
     # Setup logging
     setup_logging()
-    logger = logging.getLogger("econojin.bot")
 
     # Build application
     logger.info("Building Telegram bot application...")

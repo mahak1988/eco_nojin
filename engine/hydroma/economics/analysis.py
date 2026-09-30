@@ -6,7 +6,6 @@ Economic Analysis for Agricultural Projects
 from __future__ import annotations
 
 from dataclasses import dataclass
-from engine.hydroma.provenance import Provenance
 
 
 @dataclass

@@ -65,7 +65,7 @@ def test_row_count_no_longer_dominates_cost():
     def best(fn, *a):
         fn(*a)
         return min(
-            (lambda: (lambda t0: time.perf_counter() - t0)(time.perf_counter()) )()
+            (lambda: (lambda t0: time.perf_counter() - t0)(time.perf_counter()))()
             if False
             else _timed(fn, a)
             for _ in range(2)
@@ -174,4 +174,5 @@ def test_every_numba_twin_preserves_range(name, args_builder):
 
     assert out.shape == (2000,)
     assert np.all(np.isfinite(out))
-    assert np.all(out >= -1.0000001) and np.all(out <= 1.0000001)
+    assert np.all(out >= -1.0000001)
+    assert np.all(out <= 1.0000001)

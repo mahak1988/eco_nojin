@@ -9,7 +9,6 @@ product produced: a tree-planting earning of 0.07 units credited
 ``Decimal("3.500")``.
 """
 
-# ruff: noqa: RUF001
 # RUF001 flags extended Arabic-Indic digits as "ambiguous" against Latin
 # lookalikes. The description_fa strings below are Persian prose and must use
 # Persian digits; converting them would corrupt the user-facing text. Same

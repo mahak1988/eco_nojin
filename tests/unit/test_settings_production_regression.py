@@ -158,9 +158,8 @@ def test_production_guards_now_enforce(override: dict, expected_fragment: str):
     """
     env = dict(VALID_PRODUCTION_ENV)
     env.update(override)
-    with _env(**env):
-        with pytest.raises(RuntimeError) as exc:
-            Settings()
+    with _env(**env), pytest.raises(RuntimeError) as exc:
+        Settings()
 
     assert expected_fragment.lower() in str(exc.value).lower()
 
@@ -170,9 +169,8 @@ def test_development_literal_secret_is_rejected_in_production():
     env = dict(VALID_PRODUCTION_ENV)
     env["SECRET_KEY"] = "dev-secret-key"
     env["JWT_SECRET"] = "dev-jwt-secret"
-    with _env(**env):
-        with pytest.raises(RuntimeError):
-            Settings()
+    with _env(**env), pytest.raises(RuntimeError):
+        Settings()
 
 
 # --------------------------------------------------------------------------

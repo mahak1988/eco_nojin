@@ -9,8 +9,9 @@ where a number came from.
 from datetime import datetime
 from typing import Any, Literal
 
-from engine.hydroma.provenance import DataSource, Provenance, ProvenanceCarrier
 from pydantic import BaseModel, Field
+
+from engine.hydroma.provenance import DataSource, Provenance, ProvenanceCarrier
 
 
 class MonthClimate(BaseModel):
@@ -209,16 +210,22 @@ class SWATInput:
             setattr(self, k, v)
 
 
-
 class SWATOutput(ProvenanceCarrier):
     """Placeholder for compatibility with old tests."""
-    _FIELDS = ('water_yield_m3', 'runoff_m3', 'sediment_yield_t', 'evapotranspiration_mm', 'start_date', 'end_date')
+
+    _FIELDS = (
+        "water_yield_m3",
+        "runoff_m3",
+        "sediment_yield_t",
+        "evapotranspiration_mm",
+        "start_date",
+        "end_date",
+    )
 
     def __init__(self, *args, data_source: DataSource, model: str, **kwargs):
         super().__init__(data_source=data_source, model=model)
         for k, v in kwargs.items():
             setattr(self, k, v)
-
 
     def model_dump(self) -> dict:
         return {k: v for k, v in self.__dict__.items() if not k.startswith("_")}
@@ -232,16 +239,15 @@ class AquaCropInput:
             setattr(self, k, v)
 
 
-
 class AquaCropOutput(ProvenanceCarrier):
     """Placeholder for compatibility with old tests."""
-    _FIELDS = ('yield_t_ha', 'biomass_t_ha', 'water_use_mm')
+
+    _FIELDS = ("yield_t_ha", "biomass_t_ha", "water_use_mm")
 
     def __init__(self, *args, data_source: DataSource, model: str, **kwargs):
         super().__init__(data_source=data_source, model=model)
         for k, v in kwargs.items():
             setattr(self, k, v)
-
 
 
 class RothCInput:
@@ -252,16 +258,15 @@ class RothCInput:
             setattr(self, k, v)
 
 
-
 class RothCOutput(ProvenanceCarrier):
     """Placeholder for compatibility with old tests."""
-    _FIELDS = ('total_soc', 'co2_emitted')
+
+    _FIELDS = ("total_soc", "co2_emitted")
 
     def __init__(self, *args, data_source: DataSource, model: str, **kwargs):
         super().__init__(data_source=data_source, model=model)
         for k, v in kwargs.items():
             setattr(self, k, v)
-
 
 
 class HECRASInput:
@@ -272,16 +277,21 @@ class HECRASInput:
             setattr(self, k, v)
 
 
-
 class HECRASOutput(ProvenanceCarrier):
     """Placeholder for compatibility."""
-    _FIELDS = ('water_surface_profile', 'shear_stress_pa', 'velocity_m_s', 'flood_extent', 'structure_safety')
+
+    _FIELDS = (
+        "water_surface_profile",
+        "shear_stress_pa",
+        "velocity_m_s",
+        "flood_extent",
+        "structure_safety",
+    )
 
     def __init__(self, *args, data_source: DataSource, model: str, **kwargs):
         super().__init__(data_source=data_source, model=model)
         for k, v in kwargs.items():
             setattr(self, k, v)
-
 
 
 class RUSLEInput:
@@ -292,16 +302,15 @@ class RUSLEInput:
             setattr(self, k, v)
 
 
-
 class RUSLEOutput(ProvenanceCarrier):
     """Placeholder for compatibility."""
-    _FIELDS = ('soil_loss_t_ha', 'gross_erosion_t')
+
+    _FIELDS = ("soil_loss_t_ha", "gross_erosion_t")
 
     def __init__(self, *args, data_source: DataSource, model: str, **kwargs):
         super().__init__(data_source=data_source, model=model)
         for k, v in kwargs.items():
             setattr(self, k, v)
-
 
 
 class WEAPInput:
@@ -312,13 +321,12 @@ class WEAPInput:
             setattr(self, k, v)
 
 
-
 class WEAPOutput(ProvenanceCarrier):
     """Placeholder for compatibility."""
-    _FIELDS = ('water_allocation_m3', 'unmet_demand_m3', 'water_balance', 'allocation_efficiency')
+
+    _FIELDS = ("water_allocation_m3", "unmet_demand_m3", "water_balance", "allocation_efficiency")
 
     def __init__(self, *args, data_source: DataSource, model: str, **kwargs):
         super().__init__(data_source=data_source, model=model)
         for k, v in kwargs.items():
             setattr(self, k, v)
-

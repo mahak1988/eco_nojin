@@ -67,7 +67,7 @@ async def get_db() -> AsyncSession:
 
 
 async def get_ledger_service(db: AsyncSession = Depends(get_db)) -> SingleEntryLedgerService:
-    return LedgerService(db)
+    return SingleEntryLedgerService(db)
 
 
 @router.post("/entries", status_code=201)

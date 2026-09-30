@@ -42,7 +42,6 @@ from services.api_gateway.middleware.tenant import TenantMiddleware
 
 # Compatibility: init_db via hub
 def init_db():
-    import database.models  # noqa: F401
     import engine.hydroma.biofertilizer.models
     import engine.hydroma.core.models
     import engine.land.models
@@ -117,7 +116,6 @@ from .routers import (  # Import the new router
     motors,
     mrv,
     newsletter,
-    nojin,
     ogc_router,
     organizations,
     passkey_router,
@@ -131,8 +129,8 @@ from .routers import (  # Import the new router
     security_router,
     simulation,
     soil,
-    support,
     supabase_proxy,
+    support,
     sync,
     tool_registry,
     tourism_router,

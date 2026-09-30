@@ -858,7 +858,7 @@ async def get_dashboard_data(request: Request):
         raise HTTPException(
             status_code=500,
             detail="Failed to fetch dashboard data",
-        )
+        ) from e
 
 
 @router.post("/refresh-data")
@@ -908,7 +908,7 @@ async def refresh_dashboard_data(request: Request):
         raise HTTPException(
             status_code=500,
             detail="Failed to refresh dashboard data",
-        )
+        ) from e
 
 
 @router.get("/recommendations/{farm_id}")
@@ -993,4 +993,4 @@ async def get_recommendations(farm_id: str, request: Request):
         raise HTTPException(
             status_code=500,
             detail="Failed to generate recommendations",
-        )
+        ) from e

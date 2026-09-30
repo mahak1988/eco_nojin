@@ -128,7 +128,8 @@ def test_output_is_clipped_to_unit_range():
     nir = rng.uniform(0, 0.5, 2000)
     out = f.ndvi_fast(red, nir)
 
-    assert np.all(out >= -1.0) and np.all(out <= 1.0)
+    assert np.all(out >= -1.0)
+    assert np.all(out <= 1.0)
 
 
 def test_prepare_reports_flatten_need():

@@ -84,7 +84,7 @@ def main():
         print("No validation results found")
         sys.exit(1)
 
-    for key, result in results.items():
+    for _key, result in results.items():
         status = determine_status(result)
         color = STATUS_COLORS.get(status, "#6c757d")
         model = result.get("model", "unknown")

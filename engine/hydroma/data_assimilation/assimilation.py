@@ -215,8 +215,12 @@ class EnsembleKalmanFilter:
                 state_dict.update(forcing)
 
             # Run model
+            # state_dict is rebound every iteration, so a bare closure would
+            # capture the last state; bind it as a default argument instead
             input_data = type(
-                "ModelInput", (), {"get": lambda self, k, d=None: state_dict.get(k, d)}
+                "ModelInput",
+                (),
+                {"get": lambda self, k, d=None, _state=state_dict: _state.get(k, d)},
             )()
             output = self.model.compute(input_data)
 
@@ -509,8 +513,12 @@ class ParticleFilter:
             if forcing:
                 state_dict.update(forcing)
 
+            # state_dict is rebound every iteration, so a bare closure would
+            # capture the last state; bind it as a default argument instead
             input_data = type(
-                "ModelInput", (), {"get": lambda self, k, d=None: state_dict.get(k, d)}
+                "ModelInput",
+                (),
+                {"get": lambda self, k, d=None, _state=state_dict: _state.get(k, d)},
             )()
             output = self.model.compute(input_data)
 

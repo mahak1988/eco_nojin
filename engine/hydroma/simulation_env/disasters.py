@@ -18,7 +18,6 @@ All outputs are synthetic (raster data is generated procedurally) and tagged
 from __future__ import annotations
 
 import math
-from engine.hydroma.provenance import Provenance
 from dataclasses import dataclass
 from typing import Any
 
@@ -67,7 +66,6 @@ class FireScenario:
 
 @dataclass
 class FireResult:
-
     data_source: str = "simulated"
     model: str = ""
     computed: bool = True
@@ -442,7 +440,6 @@ class LandslideResult:
     affected_area_fraction: float | None = None
     metadata: SimulationMetadata = None
     raster: dict[str, np.ndarray] = None
-
 
 
 def _infinite_slope_fs(

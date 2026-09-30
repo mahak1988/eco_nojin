@@ -1,6 +1,7 @@
 """Multi-Layer Cropping (Agroforestry) Adapter"""
 
 from datetime import UTC, datetime
+from typing import Any, ClassVar
 
 from services.simulation.base import BaseSimulator, SimulatorRegistry
 from services.simulation.schemas import (
@@ -20,7 +21,7 @@ class MultiLayerAdapter(BaseSimulator):
     version = "1.0.0"
 
     # الگوهای کشت چندلایه
-    SYSTEMS = {
+    SYSTEMS: ClassVar[dict[str, Any]] = {
         "silvopasture": {"trees": True, "crops": False, "livestock": True},
         "alley_cropping": {"trees": True, "crops": True, "livestock": False},
         "forest_garden": {"trees": True, "crops": True, "livestock": False},

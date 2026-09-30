@@ -146,7 +146,7 @@ async def create_product(
         product_id_created = product if isinstance(product, str) else product.id
         return {"product_id": product_id_created, "status": "created"}
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get("/products/search")
@@ -305,7 +305,7 @@ def create_order(payload: OrderRequest, user: User = Depends(require_user)):
             "traceability_code": order.traceability_code,
         }
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get("/orders")
@@ -484,7 +484,7 @@ def tokenize_product(
             owner=payload.owner_address,
         )
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
     credits = service.get_credits_by_project(product_id)
     token_id = credits[-1].credit_id if credits else None
@@ -568,7 +568,7 @@ async def add_to_cart(
         )
         return {"cart_id": cart.id, "items": cart.items, "total_items": cart.total_items}
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get("/cart")
@@ -586,7 +586,7 @@ async def get_cart(user: User = Depends(require_user)):
             "subtotal": cart.subtotal,
         }
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.delete("/cart/{product_id}")
@@ -600,7 +600,7 @@ async def remove_from_cart(
         order_manager.remove_from_cart(buyer_id=user.id, product_id=product_id)
         return {"removed": product_id}
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 class UpdateCartItemRequest(BaseModel):
@@ -624,7 +624,7 @@ async def update_cart_item(
         )
         return {"cart_id": cart.id, "items": cart.items, "total_items": cart.total_items}
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 # --- Wishlist Endpoints ---
@@ -642,7 +642,7 @@ async def get_wishlist(user: User = Depends(require_user)):
         wishlist = order_manager.get_wishlist(buyer_id=user.id)
         return {"items": wishlist["items"], "count": wishlist["count"]}
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.post("/wishlist")
@@ -659,7 +659,7 @@ async def add_to_wishlist(
         )
         return {"items": wishlist["items"], "count": wishlist["count"], "added": True}
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.delete("/wishlist/{product_id}")
@@ -673,7 +673,7 @@ async def remove_from_wishlist(
         order_manager.remove_from_wishlist(buyer_id=user.id, product_id=product_id)
         return {"removed": product_id}
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 # --- Vendor Endpoints ---
@@ -753,7 +753,7 @@ async def apply_vendor(
             logger.error(f"Vendor application persistence failed: {persist_error}")
         return {"vendor_id": vendor_db_id, "status": "pending"}
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get("/vendors")
@@ -972,7 +972,7 @@ async def create_marketplace(
         )
         return {"marketplace_id": marketplace.id, "status": "pending"}
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get("/marketplaces")
@@ -1063,7 +1063,7 @@ async def approve_marketplace(
         )
         return {"marketplace_id": marketplace.id, "approved": approve, "status": marketplace.status}
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.post("/marketplaces/{marketplace_id}/members")
@@ -1080,13 +1080,14 @@ async def add_marketplace_member(
         member = await service.add_marketplace_member(marketplace_id, user_id, role)
         return {"member_id": member.id, "status": "active"}
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get("/marketplaces/{marketplace_id}/shops")
 async def list_marketplace_shops(
     marketplace_id: str,
     limit: int = Query(50, ge=1, le=100),
+    db: Session = Depends(get_db),
 ):
     """List shops in a marketplace."""
     service = get_marketplace_service(db)
@@ -1125,7 +1126,7 @@ async def create_marketplace_shop(
         )
         return {"shop_id": shop.id, "status": shop.status}
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 # --- Payment Endpoints ---

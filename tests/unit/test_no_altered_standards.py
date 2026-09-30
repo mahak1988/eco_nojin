@@ -23,6 +23,7 @@ Four failures, all in category C of the triage, all now fixed:
 
 from __future__ import annotations
 
+import itertools
 import math
 from pathlib import Path
 
@@ -112,7 +113,8 @@ def test_sodification_weighting_no_longer_asserts_a_document_that_does_not_exist
     path = Path("engine/hydroma/climate_adaptation/multi_stress_engine.py")
     tree = ast.parse(path.read_text(encoding="utf-8"))
     code = "\n".join(
-        line for line in path.read_text(encoding="utf-8").splitlines()
+        line
+        for line in path.read_text(encoding="utf-8").splitlines()
         if not line.lstrip().startswith("#")
     )
 
@@ -120,9 +122,9 @@ def test_sodification_weighting_no_longer_asserts_a_document_that_does_not_exist
         "the 0.6/0.4/0.3 weighting is this project's; an executable reference to a "
         "document that exists nowhere in the repository must not stand"
     )
-    assert "Salinity Handbook" not in "".join(
-        ast.dump(node) for node in ast.walk(tree)
-    ) or True  # the string survives only in comments, checked above
+    assert (
+        "Salinity Handbook" not in "".join(ast.dump(node) for node in ast.walk(tree)) or True
+    )  # the string survives only in comments, checked above
     assert "THIS PROJECT" in path.read_text(encoding="utf-8").upper()
     assert "Richards (1954)" in path.read_text(encoding="utf-8"), (
         "name the real US salinity reference so the confusion does not recur"
@@ -163,7 +165,9 @@ def _reference_fs(slope_pct: float, c: float, phi_deg: float, z: float, m: float
     beta = math.radians(slope_pct / 100.0)
     phi = math.radians(phi_deg)
     g_sat, g_w = 18.0, 9.81
-    return (c + (g_sat - m * g_w) * z * math.cos(beta) * math.tan(phi)) / (g_sat * z * math.sin(beta))
+    return (c + (g_sat - m * g_w) * z * math.cos(beta) * math.tan(phi)) / (
+        g_sat * z * math.sin(beta)
+    )
 
 
 def test_infinite_slope_driving_stress_is_the_standard_form():
@@ -179,10 +183,8 @@ def test_stability_decreases_with_slope_angle():
     """The removed cos(beta) had this backwards: steeper meant safer."""
     from engine.hydroma.simulation_env.disasters import _infinite_slope_fs
 
-    factors = [
-        _infinite_slope_fs(pct, 5.0, 30.0, 2.0, 0.3, 0.0)[0] for pct in (10, 20, 30, 40)
-    ]
-    for flatter, steeper in zip(factors, factors[1:]):
+    factors = [_infinite_slope_fs(pct, 5.0, 30.0, 2.0, 0.3, 0.0)[0] for pct in (10, 20, 30, 40)]
+    for flatter, steeper in itertools.pairwise(factors):
         assert steeper < flatter, f"stability rose with slope angle: {factors}"
 
 

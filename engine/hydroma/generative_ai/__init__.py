@@ -15,10 +15,9 @@ Exports (compatibility):
 """
 
 # Re-export from new cloud-native services
-from services.ai.unified_rag import UnifiedRAG as RAGEngine
-from services.ai.unified_rag import RAGConfig as RAGConfig
 from services.ai.embedding_service import EmbeddingService as EmbeddingProvider
-from services.ai.llm_router import LLMRouter, LLMProvider
+from services.ai.llm_router import LLMProvider, LLMRouter
+from services.ai.unified_rag import RAGConfig as RAGConfig, UnifiedRAG as RAGEngine
 
 # Type aliases for compatibility
 RAGQuery = dict  # Use dict with query, language, top_k, etc.
@@ -39,19 +38,19 @@ LLMRouter = LLMRouter
 LLMProvider = LLMProvider
 
 __all__ = [
-    "RAGEngine",
-    "RAGConfig",
+    "CalibrationAssistant",
     "EmbeddingProvider",
-    "LLMRouter",
+    "FAISSVectorStore",
+    "FarmerKnowledgeIngestion",
+    "KnowledgeEntry",
+    "KnowledgeGraph",
     "LLMProvider",
+    "LLMRouter",
+    "LocalEmbeddingProvider",
+    "RAGConfig",
+    "RAGEngine",
     "RAGQuery",
     "RAGResponse",
     "VectorStore",
-    "FAISSVectorStore",
-    "KnowledgeGraph",
-    "LocalEmbeddingProvider",
-    "CalibrationAssistant",
     "VoiceInterface",
-    "FarmerKnowledgeIngestion",
-    "KnowledgeEntry",
 ]

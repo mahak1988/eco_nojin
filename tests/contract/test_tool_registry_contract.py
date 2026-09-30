@@ -41,6 +41,7 @@ def _schema() -> None:
 
     init_db()
 
+
 EXPECTED_FIELDS = {
     "id",
     "tool_id",

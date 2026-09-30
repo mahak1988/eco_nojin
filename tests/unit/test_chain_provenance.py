@@ -72,8 +72,14 @@ def test_rothc_responds_to_clay_content():
 
 def test_rothc_responds_to_climate():
     """Respiration must depend on the temperature modifier."""
-    cold = [MonthClimate(year=2020, month=m, tmean_c=2.0, smd_mm=20.0, max_smd_mm=60.0) for m in range(1, 13)]
-    warm = [MonthClimate(year=2020, month=m, tmean_c=26.0, smd_mm=20.0, max_smd_mm=60.0) for m in range(1, 13)]
+    cold = [
+        MonthClimate(year=2020, month=m, tmean_c=2.0, smd_mm=20.0, max_smd_mm=60.0)
+        for m in range(1, 13)
+    ]
+    warm = [
+        MonthClimate(year=2020, month=m, tmean_c=26.0, smd_mm=20.0, max_smd_mm=60.0)
+        for m in range(1, 13)
+    ]
 
     cold_out = _run_rothc(_rothc_input(), cold, years=3)
     warm_out = _run_rothc(_rothc_input(), warm, years=3)

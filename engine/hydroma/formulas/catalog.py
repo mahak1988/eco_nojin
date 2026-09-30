@@ -272,7 +272,7 @@ RECORDS: tuple[FormulaRecord, ...] = (
         backend_priority=("python",),
         parity_tests=(
             "tests/unit/test_rothc_temperature_factor.py",
-            "tests/unit/test_carbon_modifier_consolidation.py"
+            "tests/unit/test_carbon_modifier_consolidation.py",
         ),
         reference_values=(
             "RM_Tmp = 1.0 at T = 9.291 C, the Rothamsted mean annual temperature; "
@@ -368,8 +368,7 @@ RECORDS: tuple[FormulaRecord, ...] = (
         status="verified",
         provenance="composite",
         research_definition=(
-            "engine/hydroma/formulas/research/__init__.py::"
-            "nojin_biofertilizer_suitability"
+            "engine/hydroma/formulas/research/__init__.py::nojin_biofertilizer_suitability"
         ),
         backends_impl={"cpp": True, "python": False, "numba": False},
         notes=(
@@ -440,8 +439,7 @@ RECORDS: tuple[FormulaRecord, ...] = (
         reference_values="FAO-56 worked examples; the LAI ramp has no external anchor.",
         status="stub",
         stub_reason=(
-            "Recorded gap: The FAO-56 frame (ETc = ET0*Kc*Ks) is standard, but two "
-            "terms are not."
+            "Recorded gap: The FAO-56 frame (ETc = ET0*Kc*Ks) is standard, but two terms are not."
         ),
         provenance="composite",
         backends_impl={"python": True, "cpp": False, "numba": False},
@@ -472,9 +470,7 @@ RECORDS: tuple[FormulaRecord, ...] = (
         reference_values="Savitzky-Golay polynomial exactness invariants",
         status="verified",
         provenance="composite",
-        research_definition=(
-            "engine/hydroma/formulas/research/__init__.py::hpheno_phenology"
-        ),
+        research_definition=("engine/hydroma/formulas/research/__init__.py::hpheno_phenology"),
         backends_impl={"python": True, "cpp": False, "numba": False},
         notes=(
             "The method is now independent of the environment. Previously the module "
@@ -539,9 +535,7 @@ RECORDS: tuple[FormulaRecord, ...] = (
     FormulaRecord(
         quantity="spatial_runoff",
         canonical="engine/hydroma/models/runoff_model.py",
-        research_definition=(
-            "engine/hydroma/formulas/research/__init__.py::spatial_runoff"
-        ),
+        research_definition=("engine/hydroma/formulas/research/__init__.py::spatial_runoff"),
         literature_ref=(
             "The spatial extension uses the same SCS-CN and rational equations per "
             "cell; the raster handling and the land-use-to-CN lookup are this "
@@ -616,9 +610,7 @@ RECORDS: tuple[FormulaRecord, ...] = (
         parity_tests=("tests/unit/test_formula_registry.py",),
         reference_values="SWAT+ output variables; the wrapper asserts none.",
         status="stub",
-        stub_reason=(
-            "Recorded gap: same missing ModelOutput/ModelInput import as MODFLOW6."
-        ),
+        stub_reason=("Recorded gap: same missing ModelOutput/ModelInput import as MODFLOW6."),
         provenance="standard",
         backends_impl={"python": True, "cpp": False, "numba": False},
         notes=(
@@ -636,8 +628,7 @@ RECORDS: tuple[FormulaRecord, ...] = (
         quantity="climate_adaptation_stress_engine",
         canonical="engine/hydroma/climate_adaptation/dynamic_stress_engine.py",
         research_definition=(
-            "engine/hydroma/formulas/research/__init__.py::"
-            "climate_adaptation_stress_engine"
+            "engine/hydroma/formulas/research/__init__.py::climate_adaptation_stress_engine"
         ),
         literature_ref=(
             "Inline citations only, for some rules: IPCC AR6 (2021); Yuan et al. "
@@ -680,9 +671,7 @@ RECORDS: tuple[FormulaRecord, ...] = (
     FormulaRecord(
         quantity="koppen_geiger_class",
         canonical="engine/hydroma/models/global_watchdog/koppen.py",
-        research_definition=(
-            "engine/hydroma/formulas/research/__init__.py::koppen_geiger_class"
-        ),
+        research_definition=("engine/hydroma/formulas/research/__init__.py::koppen_geiger_class"),
         literature_ref=(
             "Peel, D., Broll, B. & Kubik, J. (2007) Updated Köppen-Geiger climate "
             "classification maps at 1-km resolution, HESS 11:1633-1644. The "
@@ -749,9 +738,7 @@ RECORDS: tuple[FormulaRecord, ...] = (
             "stress index."
         ),
         provenance="novel",
-        research_definition=(
-            "engine/hydroma/formulas/research/__init__.py::wbi_water_bankruptcy"
-        ),
+        research_definition=("engine/hydroma/formulas/research/__init__.py::wbi_water_bankruptcy"),
         backends_impl={"python": True, "cpp": False, "numba": False},
         notes=(
             "The strongest candidate original contribution in the codebase: eight "
@@ -792,9 +779,7 @@ RECORDS: tuple[FormulaRecord, ...] = (
             "cannot be reproduced from its own documentation."
         ),
         provenance="composite",
-        research_definition=(
-            "engine/hydroma/formulas/research/__init__.py::hlhs_landscape_health"
-        ),
+        research_definition=("engine/hydroma/formulas/research/__init__.py::hlhs_landscape_health"),
         backends_impl={"python": True, "cpp": False, "numba": False},
         notes=(
             "A stub because no weight and no bound has a source: all seven weights and "
@@ -833,9 +818,7 @@ RECORDS: tuple[FormulaRecord, ...] = (
             "this project's own, so nothing independent verifies the result range."
         ),
         provenance="composite",
-        research_definition=(
-            "engine/hydroma/formulas/research/__init__.py::esri_salinity_risk"
-        ),
+        research_definition=("engine/hydroma/formulas/research/__init__.py::esri_salinity_risk"),
         backends_impl={"python": True, "cpp": False, "numba": False},
         notes=(
             "Stub because the composite has no external reference value: the "
@@ -911,9 +894,7 @@ RECORDS: tuple[FormulaRecord, ...] = (
             "than one under both."
         ),
         provenance="composite",
-        research_definition=(
-            "engine/hydroma/formulas/research/__init__.py::ewsi_water_stress"
-        ),
+        research_definition=("engine/hydroma/formulas/research/__init__.py::ewsi_water_stress"),
         backends_impl={"python": True, "cpp": False, "numba": False},
         notes=(
             "The three factors are deliberately redundant in coverage -- canopy water, "
@@ -987,9 +968,7 @@ RECORDS: tuple[FormulaRecord, ...] = (
             "stress."
         ),
         provenance="composite",
-        research_definition=(
-            "engine/hydroma/formulas/research/__init__.py::hyrue_stress_coupling"
-        ),
+        research_definition=("engine/hydroma/formulas/research/__init__.py::hyrue_stress_coupling"),
         backends_impl={"python": True, "cpp": False, "numba": False},
         notes=(
             "The multiplicative structure is intentional: any single factor driving "

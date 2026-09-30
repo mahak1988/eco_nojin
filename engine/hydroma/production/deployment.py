@@ -20,7 +20,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 import yaml
 
@@ -862,7 +862,7 @@ class DisasterRecovery:
 class MultiRegionDeployment:
     """Multi-region deployment configuration."""
 
-    REGIONS = {
+    REGIONS: ClassVar[dict[str, Any]] = {
         "us-east-1": {"primary": True, "replicas": 5},
         "eu-west-1": {"primary": False, "replicas": 3},
         "ap-southeast-1": {"primary": False, "replicas": 2},

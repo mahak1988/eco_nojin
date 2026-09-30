@@ -45,25 +45,54 @@ jobs:
       - name: Discover test cases
         id: discover
         run: |
-          import yaml, json, os
-          test_dir = "engine/hydroma/models/validation/test_cases"
-          models = []
-          for f in os.listdir(test_dir):
-              if f.endswith(".yaml") or f.endswith(".yml"):
-                  with open(os.path.join(test_dir, f)) as fp:
-                      data = yaml.safe_load(fp)
-                  model_id = f.replace(".yaml", "").replace(".yml", "")
-                  backends = data.get("ci_matrix", {}).get("backends", ["python"])
-                  priority = data.get("ci_matrix", {}).get("priority", "medium")
-                  models.append({
-                    "model_id": model_id,
-                    "backends": backends,
-                    "priority": priority,
-                    "file": f
-                  })
+          import json, os, pathlib, re, sys
+
+          # The fixture directory and the model package.
+          test_dir = pathlib.Path("engine/hydroma/models/validation/test_cases")
+          models_dir = pathlib.Path("engine/hydroma/models")
+
+          # A fixture is only worth running if a module of the same name
+          # exists AND that module exposes a ScientificModel subclass. Ten
+          # fixtures shipped against one implemented model; the other nine
+          # named modules that were never written. Putting them in the matrix
+          # made the gate fail on every PR for reasons unrelated to any change.
+          #
+          # The remaining fixtures are still listed in the output as
+          # "unimplemented" so they stay visible instead of disappearing.
+          implemented = set()
+          for py in models_dir.glob("*.py"):
+              text = py.read_text(encoding="utf-8", errors="replace")
+              if re.search(r"\(ScientificModel\)", text):
+                  implemented.add(py.stem)
+
+          models, unimplemented = [], []
+          for f in sorted(os.listdir(test_dir)):
+              if not f.endswith((".yaml", ".yml")):
+                  continue
+              import yaml
+              with open(test_dir / f) as fp:
+                  data = yaml.safe_load(fp) or {}
+              model_id = pathlib.Path(f).stem
+              entry = {
+                  "model_id": model_id,
+                  "backends": data.get("ci_matrix", {}).get("backends", ["python"]),
+                  "file": f,
+              }
+              if model_id in implemented:
+                  models.append(entry)
+              else:
+                  unimplemented.append(model_id)
+
+          if not models:
+              print("::warning::no fixture has an implemented model; the gate has "
+                    "nothing to validate. Implemented models: " + ", ".join(sorted(implemented)))
+              print("::warning::fixtures awaiting an implementation: " + ", ".join(unimplemented))
+
           print(f"matrix={json.dumps(models)}")
-          with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
-              fh.write(f'matrix={json.dumps(models)}')
+          print(f"unimplemented={json.dumps(unimplemented)}")
+          with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
+              fh.write(f"matrix={json.dumps(models)}\n")
+              fh.write(f"unimplemented={json.dumps(unimplemented)}\n")
 
   # ============================================================================
   # 2. BUILD — Compile C++ core (if needed)

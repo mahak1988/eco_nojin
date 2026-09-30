@@ -46,6 +46,29 @@ MAX_CHECK_DAM_SPACING_M = 50.0
 #: sediment yield before relying on a retention period.
 ASSUMED_TRAP_EFFICIENCY = 0.8
 
+#: Bench width the FAO outlet section is quoted for. The bench channel is
+#: 0.45 m bottom width by 0.3 m depth there, and its depth follows the square
+#: root of the bench width from that point, because the channel collects the
+#: bench's own runoff (linear in the width) and Manning's equation for a fixed
+#: gradient gives depth ~ sqrt(Q). This is the declared default of
+#: ``design_terrace(terrace_width_m=...)``, so the default call reproduces the
+#: FAO section exactly.
+FAO_CHANNEL_REFERENCE_WIDTH_M = 2.0
+
+
+def _group_by(pairs: list) -> dict:
+    """``[(key, value), ...] -> {key: [value, ...]}``, keeping the input order.
+
+    One named pass instead of two interleaved ``setdefault(...).append(...)``
+    statements per edge, so ``calculate_strahler_order`` below reads as the
+    algorithm rather than as its bookkeeping. Hashable keys of any type,
+    including the ``None`` a malformed edge contributes.
+    """
+    groups: dict = {}
+    for key, value in pairs:
+        groups.setdefault(key, []).append(value)
+    return groups
+
 
 def calculate_runoff(
     area_m2: float,
@@ -179,9 +202,7 @@ def design_check_dam(
     design_load_m3 = annual_sediment_m3 * max(target_retention_years, 1)
     achieved_ratio = storage_provided_m3 / design_load_m3 if design_load_m3 > 0 else 0.0
     trap_efficiency = (
-        max(0.05, min(0.95, 1.0 - 0.05 / math.sqrt(achieved_ratio)))
-        if achieved_ratio > 0
-        else 0.95
+        max(0.05, min(0.95, 1.0 - 0.05 / math.sqrt(achieved_ratio))) if achieved_ratio > 0 else 0.95
     )
     achieved_retention_years = (
         storage_provided_m3 / annual_sediment_m3 if annual_sediment_m3 > 0 else 0.0
@@ -200,7 +221,9 @@ def design_check_dam(
         # The weir cannot be cut through a crest this narrow. Rather than
         # reporting an unbuildable section, size the head to what the crest can
         # pass and record the residual as an overtopping volume.
-        design_head = (peak_flow_m3s / (1.7 * top_width)) ** (2.0 / 3.0) if top_width > 0 else dam_height
+        design_head = (
+            (peak_flow_m3s / (1.7 * top_width)) ** (2.0 / 3.0) if top_width > 0 else dam_height
+        )
         spillway_width = top_width
     freeboard = 0.3 if dam_height < 3.0 else 0.5
 
@@ -333,12 +356,22 @@ def design_half_moon(
     linear in the design storm. The 0.4 m FAO depth is the floor, and it is what
     a 100 mm storm gives, so the default layout is reproduced exactly.
 
-    ``slope_pct`` is accepted and deliberately NOT used: the footprint is set by
-    the volume to be caught, not by the gradient of the ground under it, and
-    ``test_no_slope_dependence_is_documented`` in
-    engine/strict_tests/test_s06_watershed_design.py pins that contract. It has
-    to be retired before the parameter can drive the design.
+    ``slope_pct`` is validated and deliberately does NOT size anything: the
+    footprint is set by the volume to be caught, not by the gradient of the
+    ground under it, and ``test_no_slope_dependence_is_documented`` in
+    engine/strict_tests/test_s06_watershed_design.py pins that contract. It is
+    still checked, because a negative gradient is not a hillside and a caller
+    who supplies one has a sign error worth surfacing; the parameter has to be
+    retired before it can drive the design.
+
+    Raises:
+        ValueError: if the area is not positive or the gradient is negative.
     """
+    if area_m2 <= 0:
+        raise ValueError(f"Area must be positive, got {area_m2}")
+    if slope_pct < 0:
+        raise ValueError(f"Slope must be non-negative, got {slope_pct}")
+
     fao_diameter_m = 3.0
     fao_spacing_m = 4.0
     fao_depth_m = 0.4
@@ -381,6 +414,20 @@ def design_terrace(
     makes Q linear in the design storm, so the depth follows sqrt(rainfall) and
     is floored at the FAO section.
 
+    ``terrace_width_m`` sizes the same channel for a second reason. The channel
+    runs along the downhill edge of the bench and collects the runoff of the
+    bench itself, so its design discharge rises with the bench width; at a
+    fixed gradient depth ~ sqrt(Q) again, and that Q is linear in the width
+    draining into it. The depth therefore follows the square root of the bench
+    width away from the FAO section quoted for ``FAO_CHANNEL_REFERENCE_WIDTH_M``,
+    which is this function's own declared default, so the default call
+    reproduces the FAO section exactly.
+
+    The bottom width is the FAO 0.45 m, unchanged: FAO quotes a channel section
+    and the bench that drains to it is a separate quantity, so the width is
+    quoted and the depth is derived. The previous code hard-coded
+    ``channel_volume_per_m = 0.135 m3/m``, which no argument could reach.
+
     ``erosion_reduction_pct`` is the fraction of the slope the terraces intercept
     scaled by a 70 % sediment-trap credit, and is bounded to [0, 90] %. The upper
     bound is the FAO cap. The lower bound is not cosmetic: the bracketed term is
@@ -388,11 +435,17 @@ def design_terrace(
     ``n_rows`` still resolves to a single row - it exceeds 1, so an unbounded
     reduction reported an erosion increase as a design benefit (a 50 m2 plot
     answered -425 %).
+
+    Raises:
+        ValueError: if the area is not positive, the gradient is negative, or the
+            bench width is not positive.
     """
     if area_m2 <= 0:
         raise ValueError(f"Area must be positive, got {area_m2}")
     if slope_pct < 0:
         raise ValueError(f"Slope must be non-negative, got {slope_pct}")
+    if terrace_width_m <= 0:
+        raise ValueError(f"Terrace width must be positive, got {terrace_width_m}")
 
     if slope_pct > 30:
         spacing_m = 15
@@ -408,7 +461,11 @@ def design_terrace(
     total_length = n_rows * field_side
 
     channel_bottom_width_m = 0.45
-    channel_depth = max(0.3, 0.3 * math.sqrt(max(rainfall_mm, 0.0) / 100.0))
+    storm_depth = max(0.3, 0.3 * math.sqrt(max(rainfall_mm, 0.0) / 100.0))
+    # Depth ~ sqrt(Q) at a fixed gradient, and the channel's Q is the sum of the
+    # design-storm runoff and the runoff of the bench that drains along it, so
+    # the width enters the same square-root law the storm already uses.
+    channel_depth = storm_depth * math.sqrt(terrace_width_m / FAO_CHANNEL_REFERENCE_WIDTH_M)
     channel_volume_per_m = channel_bottom_width_m * channel_depth
     total_volume = total_length * channel_volume_per_m
 
@@ -533,7 +590,9 @@ def design_watershed_structure(
     try:
         st = StructureType(structure_type)
     except ValueError:
-        raise ValueError(f"Unknown structure type: {structure_type}")
+        # A bad enum value is not a new problem, it is the same one restated with
+        # the input attached, so the original chain adds nothing but noise.
+        raise ValueError(f"Unknown structure type: {structure_type}") from None
 
     if st == StructureType.CHECK_DAM:
         return design_check_dam(
@@ -601,7 +660,11 @@ def calculate_strahler_order(stream_network: dict) -> dict:
 
     Returns:
         Dictionary with 'orders' (edge_id -> order), 'max_order' and
-        'stream_count'.
+        'stream_count'. ``max_order`` is the highest order the network
+        establishes anywhere, which is not always the highest order any single
+        reach carries: the outlet of a confluence can be of order n + 1 while no
+        edge in the network leaves it, because the reach that would carry it is
+        not in the list. Reporting only the edges under-reports the basin.
 
     Raises:
         ValueError: if the network contains a cycle, which a drainage network
@@ -617,30 +680,38 @@ def calculate_strahler_order(stream_network: dict) -> dict:
     # reached still reports a defensible order rather than a KeyError later.
     orders = {edge["id"]: 1 for edge in edges}
 
-    # Adjacency, built once. Nodes are collected in first-seen order so that a
-    # given network always produces the same traversal.
-    outgoing_from_node: dict = {}
-    incoming_to_node: dict = {}
-    to_node_of_edge: dict = {}
-    node_sequence: list = []
-    for edge in edges:
-        source = edge.get("from_node")
-        target = edge.get("to_node")
-        for node in (source, target):
-            if node not in incoming_to_node and node not in outgoing_from_node:
-                node_sequence.append(node)
-        outgoing_from_node.setdefault(source, []).append(edge["id"])
-        incoming_to_node.setdefault(target, []).append(edge["id"])
-        to_node_of_edge[edge["id"]] = target
+    # Adjacency, built in one pass over the edges. Nodes are collected in
+    # first-seen order so that a given network always produces the same
+    # traversal, and each node's reaches keep the order the caller listed them.
+    node_sequence = list(
+        dict.fromkeys(
+            node for edge in edges for node in (edge.get("from_node"), edge.get("to_node"))
+        )
+    )
+    to_node_of_edge = {edge["id"]: edge.get("to_node") for edge in edges}
+    outgoing_from_node = _group_by([(e.get("from_node"), e["id"]) for e in edges])
+    incoming_to_node = _group_by([(e.get("to_node"), e["id"]) for e in edges])
 
     # Kahn's algorithm: a node becomes ready when every tributary into it has
-    # been ordered, which is exactly when its own order is determined.
+    # been ordered, which is exactly when its own order is determined. The
+    # worklist is a fixed-capacity array indexed by head and tail rather than a
+    # growing list: every node is enqueued at most once, so the node count
+    # bounds it and neither end of it is a method call in the inner loop.
     in_degree = {node: len(incoming_to_node.get(node, [])) for node in node_sequence}
-    ready = [node for node in node_sequence if in_degree[node] == 0]
-    processed = 0
+    queue = [None] * len(node_sequence)
+    head = 0
+    tail = 0
+    for node in node_sequence:
+        if in_degree[node] == 0:
+            queue[tail] = node
+            tail += 1
 
-    while ready:
-        node = ready.pop()
+    processed = 0
+    node_orders: dict = {}
+
+    while head < tail:
+        node = queue[head]
+        head += 1
         processed += 1
 
         tributaries = incoming_to_node.get(node, [])
@@ -652,27 +723,36 @@ def calculate_strahler_order(stream_network: dict) -> dict:
             highest = max(tributary_orders)
             at_highest = tributary_orders.count(highest)
             node_order = highest + 1 if at_highest >= 2 else highest
+        node_orders[node] = node_order
 
+        # Every reach leaving the node carries the node's order. A node with two
+        # of them is a distributary, not a confluence: Strahler's rules govern
+        # confluences and there is no rule that gives two branches of a
+        # bifurcation different orders, so both branches carry the order of the
+        # water they share.
         for edge_id in outgoing_from_node.get(node, []):
             orders[edge_id] = node_order
             target = to_node_of_edge[edge_id]
             in_degree[target] -= 1
             if in_degree[target] == 0:
-                ready.append(target)
+                queue[tail] = target
+                tail += 1
 
     if processed < len(node_sequence):
-        stuck = sorted(
-            (str(node) for node in node_sequence if in_degree[node] > 0)
-        )
+        stuck = sorted(str(node) for node in node_sequence if in_degree[node] > 0)
         raise ValueError(
             f"the stream network contains a cycle: {len(stuck)} node(s) were never "
             f"reached, starting with {stuck[:5]}. A drainage network is a directed "
             f"acyclic graph; a cycle means the edges are not oriented downstream."
         )
 
+    max_order = max(orders.values(), default=0)
+    if node_orders:
+        max_order = max(max_order, max(node_orders.values()))
+
     return {
         "orders": orders,
-        "max_order": max(orders.values()) if orders else 0,
+        "max_order": max_order,
         "stream_count": len(edges),
     }
 
@@ -696,17 +776,22 @@ def calculate_horton_ratios(strahler_result: dict, stream_lengths: dict) -> dict
         stream_lengths: Dict mapping edge_id to length
 
     Returns:
-        Dictionary with Horton ratios
+        Dictionary with Horton ratios. Every ratio is a Python float on every
+        path, including the degenerate one: the field used to be an int 0 from
+        the single-order branch and a numpy.float64 from the general path, so
+        the same key had two types depending on the network. numpy.float64
+        subclasses float, so json.dumps survived it, but schema generation and
+        any dispatch on type did not.
     """
     orders = strahler_result.get("orders", {})
     max_order = strahler_result.get("max_order", 0)
 
     if max_order < 2:
-        return {"Rb": 0, "Rl": 0, "Ra": 0}
+        return {"Rb": 0.0, "Rl": 0.0, "Ra": 0.0}
 
     # Count streams per order
     order_counts = {}
-    for edge_id, order in orders.items():
+    for order in orders.values():
         order_counts[order] = order_counts.get(order, 0) + 1
 
     # Calculate total length per order
@@ -729,9 +814,9 @@ def calculate_horton_ratios(strahler_result: dict, stream_lengths: dict) -> dict
             Rl_values.append(Rl)
 
     return {
-        "Rb": np.mean(Rb_values) if Rb_values else 0,
-        "Rl": np.mean(Rl_values) if Rl_values else 0,
-        "Ra": 0,  # Area ratio requires catchment data
+        "Rb": float(np.mean(Rb_values)) if Rb_values else 0.0,
+        "Rl": float(np.mean(Rl_values)) if Rl_values else 0.0,
+        "Ra": 0.0,  # Area ratio requires catchment data
         "order_counts": order_counts,
         "order_lengths": order_lengths,
     }
@@ -843,8 +928,10 @@ def muskingum_route(
             f"discharge. Sub-step the hydrograph to fall inside the window."
         )
 
-    # Route
-    outflow = np.zeros_like(inflow)
+    # Route. The work array is float whatever the inflow holds: the three
+    # coefficients are fractional, so an integer discharge table read from a
+    # file had every routing step truncated toward zero.
+    outflow = np.zeros_like(inflow, dtype=float)
     outflow[0] = inflow[0]  # Initial condition
 
     for t in range(1, len(inflow)):

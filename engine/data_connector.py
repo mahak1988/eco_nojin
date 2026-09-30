@@ -36,7 +36,7 @@ Author: Eco Nojin Architecture Team
 
 import sys
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 # Ensure project root is in path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -44,13 +44,9 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 import logging
-import pandas as pd
 
 from database.hub import hub
 from services.security.query_safe import (
-    safe_execute,
-    safe_dynamic_select,
-    build_where_clause,
     _safe_ident,
 )
 
@@ -351,7 +347,7 @@ class DataConnector:
         """
         conn = self.hub.get_duckdb(db_key)
         try:
-            safe_table = _safe_ident(table_name)
+            _safe_ident(table_name)
             columns = conn.execute(
                 """
                 SELECT column_name, data_type

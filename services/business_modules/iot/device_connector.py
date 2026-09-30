@@ -9,6 +9,7 @@ Usage:
     connector.start()
 """
 
+import json
 import logging
 from dataclasses import dataclass
 
@@ -87,8 +88,6 @@ class DeviceConnector:
 
     def _on_message(self, _client, _userdata, message):
         """Handle incoming MQTT messages - persist readings."""
-        import json
-
         try:
             data = json.loads(message.payload.decode("utf-8"))
             if self._device_manager:

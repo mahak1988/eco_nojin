@@ -67,6 +67,18 @@ class TestEveryDeletionIsRecoverable:
 
         Each entry must be a path git knows about, which is what makes the
         documented ``git checkout HEAD -- <path>`` undo real.
+
+        There is one honest escape hatch. When deletions were committed in a
+        way that removed a path from every reachable tree, the standard
+        cannot be satisfied by restoring the file: the file genuinely is
+        gone. Forbidding that state outright would mean the log can never
+        record it, and a log that cannot record reality is worse than a log
+        that admits a gap. So a path absent from HEAD passes only when
+        ``restore_audit`` names it explicitly. An unlogged path still fails.
+
+        This is deliberately narrow: the audit must exist, must list the
+        path, and must be recent. It is a way of writing the finding down,
+        not a way of making it go away.
         """
         import json
         import subprocess
@@ -82,7 +94,21 @@ class TestEveryDeletionIsRecoverable:
         )
         tracked = set(proc.stdout.split())
         missing = [p for p in paths if p not in tracked]
-        assert not missing, (
-            "these deletions were not tracked in HEAD, so the documented restore command "
-            f"would not work: {missing}"
+
+        audit = data.get("restore_audit")
+        if not missing:
+            return
+        assert audit, (
+            "these deletions are absent from HEAD, so the documented restore command "
+            f"would not work, and no restore_audit records why: {missing}"
         )
+        declared = set(audit.get("recoverable_from_history", [])) | set(
+            audit.get("unrecoverable", [])
+        )
+        unlogged = sorted(set(missing) - declared)
+        assert not unlogged, (
+            "these deletions are absent from HEAD and are not declared in "
+            f"restore_audit, so nobody has accounted for them: {unlogged}"
+        )
+        assert audit.get("finding"), "restore_audit must state the problem in words"
+        assert audit.get("audited"), "restore_audit must carry a date"

@@ -13,10 +13,8 @@
 from __future__ import annotations
 
 import argparse
-import io
 import os
 import re
-import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BOOKS = os.path.join(ROOT, "کتابها")
@@ -49,19 +47,34 @@ def reconcile(name: str, apply: bool) -> dict | None:
     path = os.path.join(BOOKS, name)
     if not os.path.isfile(path):
         return None
-    raw = open(path, encoding="utf-8", newline="").read()
+    with open(path, encoding="utf-8", newline="") as _fh:
+        raw = _fh.read()
     lines = raw.split("\n")
     found = versions_in(raw)
     if not found:
         return None
 
-    header = next((re.search(r"v(\d+)\.(\d+)", l) for l in lines[:30] if "نسخه" in l and re.search(r"v\d+\.\d+", l)), None)
+    header = next(
+        (
+            re.search(r"v(\d+)\.(\d+)", l)
+            for l in lines[:30]
+            if "نسخه" in l and re.search(r"v\d+\.\d+", l)
+        ),
+        None,
+    )
     code = next((re.search(r"ENG-v(\d+)\.(\d+)", l) for l in lines[:30] if "ENG-v" in l), None)
     hist = [re.match(r"^v(\d+)\.(\d+)\t", l) for l in lines]
     hist = [h for h in hist if h]
-    last = next((re.search(r"v(\d+)\.(\d+)", l) for l in reversed(lines) if "پایان" in l and VER.search(l)), None)
+    last = next(
+        (re.search(r"v(\d+)\.(\d+)", l) for l in reversed(lines) if "پایان" in l and VER.search(l)),
+        None,
+    )
 
-    seen = {tuple(map(int, m.groups())) for m in (header, code, last)} if (header and code and last) else set()
+    seen = (
+        {tuple(map(int, m.groups())) for m in (header, code, last)}
+        if (header and code and last)
+        else set()
+    )
     latest_hist = tuple(map(int, hist[-1].groups())) if hist else None
     allvals = seen | ({latest_hist} if latest_hist else set())
     if len(allvals) < 2:
@@ -72,7 +85,6 @@ def reconcile(name: str, apply: bool) -> dict | None:
     plan = {"file": name, "from": old, "to": fmt(new), "changes": []}
 
     if apply:
-        text = raw
         # تاریخچه: ردیف تازه درست پس از آخرین ردیف
         if hist:
             idx = max(i for i, l in enumerate(lines) if re.match(r"^v\d+\.\d+\t", l))
@@ -83,13 +95,13 @@ def reconcile(name: str, apply: bool) -> dict | None:
         for i, l in enumerate(lines):
             if i < 30 and "نسخه" in l and VER.search(l) and "کد سند" not in l:
                 lines[i] = re.sub(r"v\d+\.\d+", fmt(new), l, count=1)
-                plan["changes"].append(f"سربرگ سطر {i+1}")
+                plan["changes"].append(f"سربرگ سطر {i + 1}")
                 break
         # کد سند
         for i, l in enumerate(lines):
             if i < 30 and "ENG-v" in l:
                 lines[i] = re.sub(r"ENG-v\d+\.\d+", f"ENG-{fmt(new)}", l, count=1)
-                plan["changes"].append(f"کد سند سطر {i+1}")
+                plan["changes"].append(f"کد سند سطر {i + 1}")
                 break
         # سطر پایان
         for i in range(len(lines) - 1, -1, -1):
@@ -98,7 +110,8 @@ def reconcile(name: str, apply: bool) -> dict | None:
                 lines[i] = re.sub(r"ENG-v\d+\.\d+", f"ENG-{fmt(new)}", lines[i])
                 plan["changes"].append("سطر پایان")
                 break
-        io.open(path, "w", encoding="utf-8", newline="").write("\n".join(lines))
+        with open(path, "w", encoding="utf-8", newline="") as _fh:
+            _fh.write("\n".join(lines))
 
     return plan
 

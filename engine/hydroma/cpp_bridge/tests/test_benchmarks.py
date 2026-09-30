@@ -5,6 +5,8 @@ Benchmark tests comparing C++ implementation performance vs Numba/Python.
 Run with: pytest test_benchmarks.py -v --benchmark-only --benchmark-sort=mean
 """
 
+import importlib.util
+
 import numpy as np
 import pytest
 
@@ -304,9 +306,7 @@ class TestComparisonWithNumba:
     def check_numba(self):
         """Check if Numba is available for comparison."""
         try:
-            import numba
-
-            self.has_numba = True
+            self.has_numba = importlib.util.find_spec("numba") is not None
         except ImportError:
             self.has_numba = False
             pytest.skip("Numba not available for comparison")

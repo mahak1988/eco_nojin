@@ -100,9 +100,7 @@ class Sponsorship(Base):
 
     # --- Terms ------------------------------------------------------------ #
     tier = Column(SQLEnum(SponsorTier), nullable=False, default=SponsorTier.PAGE)
-    status = Column(
-        SQLEnum(SponsorshipStatus), default=SponsorshipStatus.PROSPECT, index=True
-    )
+    status = Column(SQLEnum(SponsorshipStatus), default=SponsorshipStatus.PROSPECT, index=True)
     placement = Column(SQLEnum(SlotPlacement), nullable=False)
 
     amount = Column(Numeric(15, 2), nullable=False)
@@ -131,9 +129,7 @@ class Sponsorship(Base):
 
     internal_notes = Column(Text, nullable=True)
 
-    created_at = Column(
-        DateTime(timezone=True), default=lambda: datetime.now(UTC), index=True
-    )
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), index=True)
     updated_at = Column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC),

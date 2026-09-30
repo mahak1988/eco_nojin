@@ -2,6 +2,23 @@
 SWAT+ Integration for Eco Nojin
 ================================
 
+REQUIREMENT, CONFIRMED ABSENT (2026-09-30)
+------------------------------------------
+This module shells out to a compiled ``swatplus`` executable. That executable
+is **not present in this deployment** and is not installable from the
+repository: only the Python package ``pyswatplus`` exists in the virtualenv,
+and it does not ship the binary.
+
+Consequence: ``compute()`` does not simulate a watershed here. It sets up a
+project directory, the subprocess launch fails, ``_run_swat`` catches the
+error and returns ``False``, and ``compute`` returns a failure result with no
+outputs. That is honest behaviour and it is the right default, but the
+docstring previously said only "Configuration for SWAT+ model", which left a
+reader assuming the model ran.
+
+Do not present this module as an available scientific model. If SWAT+ is
+needed, install the executable and point ``swat_executable`` at it.
+
 SWAT+ (Soil and Water Assessment Tool Plus) is a watershed-scale model
 for simulating water quality and quantity. This integration provides
 a Python interface to SWAT+ for watershed modeling.
@@ -24,9 +41,11 @@ from uuid import uuid4
 import numpy as np
 import pandas as pd
 
-from engine.hydroma.models.base import (ModelInput,
+from engine.hydroma.models.base import (
+    ModelInput,
     ModelOutput,
     ScientificModel,
+    ValidationResult,
 )
 from engine.hydroma.models.expansion.registry import (
     ModelDomain,
@@ -342,11 +361,55 @@ class SWATPlusModel(ScientificModel):
             return pd.DataFrame()
 
     def _calculate_nse(self, simulated: pd.DataFrame) -> float | None:
-        """Calculate Nash-Sutcliffe Efficiency."""
-        if self.config.calibration_mode and hasattr(self, "_observed_flow"):
-            # Simplified NSE calculation
-            return 0.75  # Placeholder
-        return None
+        """Nash-Sutcliffe Efficiency against the observed series.
+
+        Returns None when it cannot be computed. The previous version returned
+        the literal 0.75, which is a *good* published-model score, for any run
+        with ``calibration_mode`` on. A caller reading ``performance.nse`` saw
+        a number that looked like a calibration result and had no relationship
+        to the simulation at all.
+
+        Nash-Sutcliffe is defined on the observed and simulated flow series
+        over the same period::
+
+            NSE = 1 - sum((o - s)^2) / sum((o - mean(o))^2)
+
+        With SWAT+ unavailable there is no simulated series to compare, and
+        ``_observed_flow`` is only set by a caller that has real gauge data.
+        Returning None says "not computed"; a number would say "computed".
+        """
+        if not self.config.calibration_mode:
+            return None
+        observed = getattr(self, "_observed_flow", None)
+        if observed is None:
+            return None
+
+        try:
+            observed_values = np.asarray(observed, dtype=float).ravel()
+        except (TypeError, ValueError):
+            return None
+        if observed_values.size < 2:
+            return None
+
+        # A constant observed series makes the denominator zero. Nash-Sutcliffe
+        # is undefined there; returning a number would be a division artefact.
+        denominator = float(np.sum((observed_values - observed_values.mean()) ** 2))
+        if denominator <= 0:
+            return None
+
+        if simulated is None or getattr(simulated, "empty", True):
+            return None
+        streamflow = simulated.get("streamflow_m3") if hasattr(simulated, "get") else None
+        if streamflow is None:
+            return None
+
+        simulated_values = np.asarray(streamflow, dtype=float).ravel()
+        length = min(observed_values.size, simulated_values.size)
+        if length < 2:
+            return None
+
+        residual = observed_values[:length] - simulated_values[:length]
+        return float(1.0 - np.sum(residual**2) / denominator)
 
     def _outputs_to_dict(self, outputs: SWATPlusOutputs) -> dict[str, Any]:
         """Convert outputs to dictionary."""
@@ -369,26 +432,62 @@ class SWATPlusModel(ScientificModel):
         }
 
     def _estimate_uncertainty(self, outputs: SWATPlusOutputs) -> dict[str, float]:
-        """Estimate output uncertainty."""
-        # Simplified uncertainty estimation
+        """Uncertainty of the run, as coefficients of variation.
+
+        The previous version returned fixed values (0.15, 0.25, 0.20) for
+        every run. Those are not estimates: they are the same three numbers
+        whatever the catchment, the season, or the calibration, and they were
+        published as ``uncertainty`` beside the result, which is where a
+        caller looks to decide whether a number is safe to use.
+
+        An uncertainty that cannot be estimated is reported as NaN, which
+        propagates and cannot be mistaken for a small one. A constant 0.15
+        says "15% sure"; NaN says "not known".
+        """
+        del outputs
         return {
-            "streamflow_cv": 0.15,
-            "sediment_cv": 0.25,
-            "nutrient_cv": 0.20,
+            "streamflow_cv": float("nan"),
+            "sediment_cv": float("nan"),
+            "nutrient_cv": float("nan"),
+            "method": "not estimated: no ensemble, no residual series and no "
+            "calibration are available, so no coefficient of variation can be "
+            "derived for this run",
         }
 
     def validate_against_reference(
         self,
-        reference_data: ModelInput,
+        inputs: dict[str, Any],
+        reference_output: float,
+        reference_source: str,
         tolerance: float = 0.1,
-    ) -> bool:
-        """Validate against reference data."""
-        if self._last_run_outputs is None:
-            return False
+    ) -> ValidationResult:
+        """Compare a run against a published reference series.
 
-        # Compare with reference (e.g., USGS gauge data)
-        # Simplified validation
-        return True
+        The previous version took ``reference_data`` and returned ``bool``,
+        which is not the base signature: a caller following
+        ``ScientificModel.validate_against_reference`` raised ``TypeError``,
+        and the function returned True for any run that produced output,
+        having compared nothing. A caller reading "validation passed" from
+        that would be reading a statement about nothing.
+
+        The signature is now the base one. Validation still cannot run,
+        because no reference series is wired up, and that is reported rather
+        than passed. Callers get a ``ValidationResult`` whose ``passed`` is
+        False and whose ``reference_source`` says why.
+        """
+        del inputs, reference_output, reference_source
+        return ValidationResult(
+            passed=False,
+            metric_name="streamflow (m3/ha)",
+            computed_value=float("nan"),
+            reference_value=float("nan"),
+            tolerance=tolerance,
+            relative_error=float("nan"),
+            reference_source=(
+                "not validated: no published reference series is registered for "
+                "this model, so nothing was compared"
+            ),
+        )
 
     def uncertainty_quantification(
         self, inputs: ModelInput, n_samples: int = 100

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import List, Optional, Any
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
@@ -18,24 +18,24 @@ router = APIRouter(prefix="/settings", tags=["admin-settings"])
 class SettingResponse(BaseModel):
     key: str
     value: str
-    description: Optional[str] = None
+    description: str | None = None
     is_secret: bool = False
-    updated_at: Optional[str] = None
-    updated_by: Optional[str] = None
+    updated_at: str | None = None
+    updated_by: str | None = None
 
 
 class SettingUpdate(BaseModel):
     value: Any
-    description: Optional[str] = None
+    description: str | None = None
 
 
 # In-memory settings store (replace with actual database)
 SETTINGS_STORE = {}
 
 
-@router.get("", response_model=List[SettingResponse])
+@router.get("", response_model=list[SettingResponse])
 async def list_settings(
-    prefix: Optional[str] = None,
+    prefix: str | None = None,
     current_user=Depends(require_admin_with_mfa),
 ):
     """List all settings."""
@@ -43,14 +43,20 @@ async def list_settings(
     for key, value in SETTINGS_STORE.items():
         if prefix and not key.startswith(prefix):
             continue
-        settings.append(SettingResponse(
-            key=key,
-            value="***" if "secret" in key.lower() or "key" in key.lower() or "password" in key.lower() else str(value.get("value", "")),
-            description=value.get("description"),
-            is_secret="secret" in key.lower() or "key" in key.lower() or "password" in key.lower(),
-            updated_at=value.get("updated_at"),
-            updated_by=value.get("updated_by"),
-        ))
+        settings.append(
+            SettingResponse(
+                key=key,
+                value="***"
+                if "secret" in key.lower() or "key" in key.lower() or "password" in key.lower()
+                else str(value.get("value", "")),
+                description=value.get("description"),
+                is_secret="secret" in key.lower()
+                or "key" in key.lower()
+                or "password" in key.lower(),
+                updated_at=value.get("updated_at"),
+                updated_by=value.get("updated_by"),
+            )
+        )
     return settings
 
 
@@ -81,6 +87,7 @@ async def update_setting(
 ):
     """Update a setting."""
     from datetime import UTC, datetime
+
     SETTINGS_STORE[key] = {
         "value": payload.value,
         "description": payload.description,
@@ -116,6 +123,7 @@ async def bulk_update_settings(
 ):
     """Bulk update settings."""
     from datetime import UTC, datetime
+
     for key, value in settings.items():
         SETTINGS_STORE[key] = {
             "value": value,

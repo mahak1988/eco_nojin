@@ -132,15 +132,38 @@ class TestRedeliveryIsNotBareNak:
     async def test_a_retryable_failure_naks_with_backoff(self):
         msg = self._Msg(attempt=1)
         await retry_or_term(
-            msg, ValueError("boom"), policy=RetryPolicy(max_retries=5, base_delay=2.0)
+            msg,
+            ValueError("boom"),
+            policy=RetryPolicy(max_retries=5, base_delay=2.0, jitter=False),
         )
         assert msg.nak_delay == 2.0
         assert not msg.terminated
 
-    @pytest.mark.asyncio
-    async def test_backoff_grows_then_saturates(self):
-        policy = RetryPolicy(max_retries=10, base_delay=1.0, max_delay=8.0)
+    def test_backoff_grows_then_saturates(self):
+        """The curve itself, with jitter off so the shape is deterministic.
+
+        Growth and randomness are separate properties. Turning jitter on here
+        would make this test assert luck rather than arithmetic, so jitter
+        gets its own test below.
+        """
+        policy = RetryPolicy(max_retries=10, base_delay=1.0, max_delay=8.0, jitter=False)
         assert [policy.delay_for(n) for n in range(1, 6)] == [1.0, 2.0, 4.0, 8.0, 8.0]
+
+    def test_jitter_is_on_by_default_and_randomises_delays(self):
+        """Un-jittered backoff is the documented loser.
+
+        Google SRE ch.22 and the AWS architecture blog both warn that a
+        fixed exponential curve makes every redelivery in a tight loop retry
+        in lockstep, recreating the thundering herd the backoff was meant to
+        break. A default of ``False`` meant shipping that.
+        """
+        assert RetryPolicy().jitter is True
+
+        policy = RetryPolicy(max_retries=10, base_delay=1.0, max_delay=8.0)
+        samples = [policy.delay_for(3) for _ in range(20)]
+        # The curve at attempt 3 is 4.0; jitter keeps it inside [2.0, 4.0).
+        assert all(2.0 <= value < 4.0 for value in samples), samples
+        assert len(set(samples)) > 1, "jitter produced identical delays, so it is not random"
 
     @pytest.mark.asyncio
     async def test_an_exhausted_message_is_dead_lettered_then_terminated(self):
@@ -273,3 +296,100 @@ class TestWorkerDoesNotDrainUnrecognisedEvents:
         message = Broken()
         await EventWorker().process_message(message)
         assert not getattr(message, "acked", False)
+
+
+class TestTheRealSubscribePathDoesNotAckFailures:
+    """Covers the wiring the tests above could not reach.
+
+    Every other test in this file calls ``process_message`` directly with a
+    stand-in message. That left the real bug invisible: ``NATSManager
+    .subscribe`` acknowledges the genuine NATS message after the callback
+    returns, so a handler that failed was acknowledged anyway and the
+    dead-letter path never ran in production.
+    """
+
+    @pytest.mark.asyncio
+    async def test_a_failing_callback_is_not_acked_by_subscribe(self):
+        import json
+
+        from services.api_gateway.eventbus.nats_client import (
+            NATSConfig,
+            NATSManager,
+            RetryPolicy,
+        )
+
+        class _Msg:
+            def __init__(self) -> None:
+                self.data = json.dumps({"id": 1}).encode()
+                self.headers = {"event-type": "order.created"}
+                self.subject = "econojin.order.created"
+                self.metadata = type("M", (), {"num_delivered": 9})()
+                self.acked = False
+                self.terminated = False
+                self.nak_delay: float | None = None
+
+            async def ack(self) -> None:
+                self.acked = True
+
+            async def term(self) -> None:
+                self.terminated = True
+
+            async def nak(self, delay: float | None = None) -> None:
+                self.nak_delay = delay
+
+        msg = _Msg()
+        published: list[tuple[str, dict]] = []
+
+        async def _publish(subject, payload):
+            published.append((subject, payload))
+
+        async def _boom(_payload, _headers):
+            raise RuntimeError("handler failed")
+
+        captured: dict[str, object] = {}
+
+        # Drive the real closure without a broker: exercise exactly the
+        # message_handler that subscribe registers.
+        async def _fake_js_subscribe(*_a, **kwargs):
+            captured["cb"] = kwargs["cb"]
+            return object()
+
+        class _JS:
+            subscribe = staticmethod(_fake_js_subscribe)
+            publish = staticmethod(_publish)
+
+        manager = NATSManager.__new__(NATSManager)
+        # The real config type, so subject_for() and the retry knobs behave
+        # exactly as they do in production rather than as a stub pretends.
+        manager.config = NATSConfig.from_settings()
+        # ``is_connected`` is a read-only property over these two, so they are
+        # set directly rather than the property.
+        manager._connected = True
+        manager._nc = type("NC", (), {"is_closed": False})()
+        manager._js = _JS()
+        manager._dead_letter = _publish
+        manager._subscriptions = []
+
+        await manager.subscribe(
+            "order.created",
+            _boom,
+            retry_policy=RetryPolicy(max_retries=2, base_delay=1.0, jitter=False),
+        )
+        await captured["cb"](msg)  # type: ignore[misc]
+
+        assert not msg.acked, "a failing handler must not be acknowledged"
+        assert msg.terminated or msg.nak_delay is not None, (
+            "the message must be either retried or terminated, never silently dropped"
+        )
+
+    def test_max_deliver_is_a_real_setting_not_a_fallback(self):
+        """The getattr used to read a key that did not exist.
+
+        ``nats_client`` asked for ``settings.nats_max_deliver`` and silently
+        fell back to ``nats_max_retries`` because the key was never defined,
+        so the consumer cap could not be configured.
+        """
+        from engine.hydroma.config.settings import get_settings
+
+        assert hasattr(get_settings(), "nats_max_deliver")
+        assert get_settings().nats_max_deliver >= 1

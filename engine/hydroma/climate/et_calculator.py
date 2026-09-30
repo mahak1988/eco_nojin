@@ -120,7 +120,7 @@ def calc_et0_hargreaves(
     t_mean: float | None = None,
     ra_mj: float | None = None,
     *,
-    data: "ClimateData | None" = None,
+    data: ClimateData | None = None,
     dtr_floor: float | None = None,
 ) -> float:
     """
@@ -155,9 +155,7 @@ def calc_et0_hargreaves(
         _ra = calc_extraterrestrial_radiation(data.latitude, data.doy)
         return _hargreaves_core(
             data.tmin,
-            data.tmax if dtr_floor is None else data.tmin + max(
-                data.tmax - data.tmin, dtr_floor
-            ),
+            data.tmax if dtr_floor is None else data.tmin + max(data.tmax - data.tmin, dtr_floor),
             _t_mean,
             _ra,
         )

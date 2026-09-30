@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import StrEnum
-from typing import Any
+from typing import Any, ClassVar
 
 
 class LandUseCategory(StrEnum):
@@ -35,8 +35,9 @@ class CropType(StrEnum):
 @dataclass
 class SoilSummary:
     """Simplified soil profile summary"""
-    data_source: str = 'modelled'
-    model: str = 'soil integrator summary'
+
+    data_source: str = "modelled"
+    model: str = "soil integrator summary"
     computed: bool = True
 
     ph: float = 6.5
@@ -53,8 +54,9 @@ class SoilSummary:
 @dataclass
 class ClimateSummary:
     """Simplified climate summary"""
-    data_source: str = 'modelled'
-    model: str = 'climate integrator summary'
+
+    data_source: str = "modelled"
+    model: str = "climate integrator summary"
     computed: bool = True
 
     mean_temp_c: float = 20.0
@@ -71,8 +73,8 @@ class TerrainSummary:
     slope_pct: float = 3.0
     elevation_m: float = 1500.0
     capability_class: str = "II"
-    data_source: str = 'modelled'
-    model: str = 'terrain analysis summary'
+    data_source: str = "modelled"
+    model: str = "terrain analysis summary"
     computed: bool = True
     erosion_risk: str = "low"
 
@@ -98,8 +100,8 @@ class ComprehensiveLandAnalysis:
     limiting_factors: list[str] = field(default_factory=list)
     improvement_recommendations: list[str] = field(default_factory=list)
     confidence: float = 0.8
-    data_source: str = 'modelled'
-    model: str = 'comprehensive land analyzer'
+    data_source: str = "modelled"
+    model: str = "comprehensive land analyzer"
     computed: bool = True
     metadata: dict[str, Any] = field(default_factory=dict)
 
@@ -114,7 +116,7 @@ class ComprehensiveLandAnalyzer:
     - Terrain: 25%
     """
 
-    CROP_REQUIREMENTS = {
+    CROP_REQUIREMENTS: ClassVar[dict[Any, Any]] = {
         CropType.WHEAT: {
             "optimal_ph": (6.0, 7.5),
             "optimal_temp": (15, 25),
@@ -159,7 +161,7 @@ class ComprehensiveLandAnalyzer:
         },
     }
 
-    CAPABILITY_SCORES = {
+    CAPABILITY_SCORES: ClassVar[dict[str, int]] = {
         "I": 100,
         "II": 85,
         "III": 70,

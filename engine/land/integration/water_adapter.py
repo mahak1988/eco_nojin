@@ -21,8 +21,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
-from typing import Any
-from engine.hydroma.provenance import Provenance
+from typing import Any, ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -76,10 +75,10 @@ class RunoffInput:
 @dataclass
 class RunoffResult:
     """SCS-CN runoff result"""
+
     data_source: str = "simulated"
     model: str = ""
     computed: bool = True
-
 
     runoff_mm: float | None = None
     runoff_volume_m3: float | None = None
@@ -118,6 +117,8 @@ class GroundwaterResult:
     darcy_velocity_m_day: float | None = None
     seepage_velocity_m_day: float | None = None
     storage_volume_m3: float | None = None
+
+
 # ============================================================
 # Water Balance Integrator
 # ============================================================
@@ -213,7 +214,7 @@ class WatershedIntegrator:
     Ia = 0.2 * S
     """
 
-    AMC_FACTORS = {"I": 0.6, "II": 1.0, "III": 1.4}
+    AMC_FACTORS: ClassVar[dict[str, float]] = {"I": 0.6, "II": 1.0, "III": 1.4}
 
     def __init__(self):
         self._runoff_pipeline = None
@@ -336,7 +337,7 @@ class GroundwaterIntegrator:
     """
 
     # Typical K values (m/day)
-    K_VALUES = {
+    K_VALUES: ClassVar[dict[str, float]] = {
         "clay": 0.001,
         "silt": 0.01,
         "fine_sand": 1.0,
@@ -410,8 +411,9 @@ class GroundwaterIntegrator:
 @dataclass
 class UnifiedWaterAnalysis:
     """Complete water analysis result"""
-    data_source: str = 'modelled'
-    model: str = 'water balance integration'
+
+    data_source: str = "modelled"
+    model: str = "water balance integration"
     computed: bool = True
 
     water_balance: WaterBalanceResult | None = None

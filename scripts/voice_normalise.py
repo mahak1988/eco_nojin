@@ -15,8 +15,6 @@
 from __future__ import annotations
 
 import argparse
-import glob
-import io
 import os
 import re
 import sys
@@ -87,7 +85,8 @@ def documents() -> list[str]:
 
 def opener_coverage(text: str) -> float:
     lines = [
-        l for l in text.split("\n")
+        l
+        for l in text.split("\n")
         if l.strip() and not l.strip().startswith(("|", "#", "---", "http"))
     ]
     sents = [s for l in lines for s in re.split(r"(?<=\.)\s+", l) if 30 < len(s) < 300]
@@ -99,7 +98,8 @@ def opener_coverage(text: str) -> float:
 
 
 def measure(path: str) -> dict:
-    text = io.open(path, encoding="utf-8").read()
+    with open(path, encoding="utf-8") as _fh:
+        text = _fh.read()
     sents = [
         s
         for l in text.split("\n")
@@ -119,7 +119,8 @@ def measure(path: str) -> dict:
 
 
 def apply(path: str) -> dict:
-    text = io.open(path, encoding="utf-8").read()
+    with open(path, encoding="utf-8") as _fh:
+        text = _fh.read()
     before = measure(path)
     new = text
     for pattern, repl in REPLACEMENTS:
@@ -133,8 +134,10 @@ def apply(path: str) -> dict:
     if new == text:
         return {"file": os.path.basename(path), "changed": False, "removed": 0}
     backup = f"{path}.{__import__('time').strftime('%Y%m%d-%H%M')}.pre-voice.bak"
-    io.open(backup, "w", encoding="utf-8", newline="").write(text)
-    io.open(path, "w", encoding="utf-8", newline="").write(new)
+    with open(backup, "w", encoding="utf-8", newline="") as _fh:
+        _fh.write(text)
+    with open(path, "w", encoding="utf-8", newline="") as _fh:
+        _fh.write(new)
     return {
         "file": os.path.basename(path),
         "changed": True,

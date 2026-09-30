@@ -46,7 +46,9 @@ def upgrade() -> None:
         sa.Column("starts_on", sa.Date(), nullable=False),
         sa.Column("ends_on", sa.Date(), nullable=False),
         sa.Column("is_project_funder", sa.Boolean(), nullable=False, server_default=sa.false()),
-        sa.Column("is_revenue_source_funder", sa.Boolean(), nullable=False, server_default=sa.false()),
+        sa.Column(
+            "is_revenue_source_funder", sa.Boolean(), nullable=False, server_default=sa.false()
+        ),
         # Not nullable: an unlabelled slot must be impossible at the row level,
         # not merely discouraged in the service layer.
         sa.Column(
@@ -85,15 +87,9 @@ def upgrade() -> None:
         "sponsorships",
         ["status", "placement", "ends_on"],
     )
-    op.create_index(
-        "ix_sponsorships_sponsor_name", "sponsorships", ["sponsor_name"]
-    )
-    op.create_index(
-        "ix_sponsorships_is_project_funder", "sponsorships", ["is_project_funder"]
-    )
-    op.create_index(
-        "ix_sponsorships_disclosure_required", "sponsorships", ["disclosure_required"]
-    )
+    op.create_index("ix_sponsorships_sponsor_name", "sponsorships", ["sponsor_name"])
+    op.create_index("ix_sponsorships_is_project_funder", "sponsorships", ["is_project_funder"])
+    op.create_index("ix_sponsorships_disclosure_required", "sponsorships", ["disclosure_required"])
     op.create_index("ix_sponsorships_created_at", "sponsorships", ["created_at"])
 
 

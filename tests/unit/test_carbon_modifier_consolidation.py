@@ -18,12 +18,13 @@ quantity meant a caller got a different answer depending on which it reached.
 
 from __future__ import annotations
 
+import itertools
+
 import numpy as np
 import pytest
 
 from engine.hydroma.core import HydromaCore
 from engine.hydroma.simulation.runners.rothc_runner import temp_factor, water_factor
-
 
 # ------------------------------------------------------ the dead module is gone
 
@@ -40,9 +41,7 @@ def test_shadowed_core_module_no_longer_exists():
 def test_the_package_still_serves_the_public_api():
     import engine.hydroma.core as core
 
-    assert core.__file__.endswith("core\\__init__.py") or core.__file__.endswith(
-        "core/__init__.py"
-    )
+    assert core.__file__.endswith("core\\__init__.py") or core.__file__.endswith("core/__init__.py")
     assert hasattr(HydromaCore, "compute_rainfall_erosivity")
     assert hasattr(HydromaCore, "compute_crop_water_requirement")
 
@@ -89,8 +88,9 @@ def test_temperature_response_follows_the_implemented_curve():
         for t in (0.0, 5.0, 10.0, 20.0, 25.0, 30.0)
     }
     for t, v in vals.items():
-        assert np.isfinite(v) and v > 0.0, f"modifier {v} at {t} C is not positive"
-    for warmer, cooler in zip(list(vals.values())[1:], list(vals.values())[:-1]):
+        assert np.isfinite(v), f"modifier {v} at {t} C is not finite"
+        assert v > 0.0, f"modifier {v} at {t} C is not positive"
+    for warmer, cooler in zip(list(vals.values())[1:], list(vals.values())[:-1], strict=False):
         assert warmer > cooler, "the implemented response stops being increasing"
 
 
@@ -138,7 +138,6 @@ def test_the_expression_is_the_canonical_rothc_form():
 def test_open_scaling_question_is_settled():
     """The numerator was the open question; it is now a cited constant."""
     from engine.hydroma.formulas import get
-    from engine.hydroma.simulation.runners.rothc_runner import temp_factor
 
     assert "NUMERATOR UNVERIFIED" not in (get("rothc_temperature_modifier").literature_ref)
 
@@ -153,7 +152,7 @@ def test_response_increases_with_temperature_which_is_the_measured_behaviour():
         HydromaCore.rothc_decomposition_rate_modifier(600.0, t, 1.0)
         for t in (0.0, 10.0, 20.0, 30.0)
     ]
-    for prev, nxt in zip(vals, vals[1:]):
+    for prev, nxt in itertools.pairwise(vals):
         assert nxt > prev, "the implemented response stops increasing with temperature"
 
 
@@ -175,7 +174,8 @@ def test_result_is_positive_and_finite():
     for annual_rain in (0.0, 300.0, 3000.0):
         for mean_temp in (0.0, 15.0, 30.0):
             v = HydromaCore.rothc_decomposition_rate_modifier(annual_rain, mean_temp)
-            assert np.isfinite(v) and v > 0.0
+            assert np.isfinite(v)
+            assert v > 0.0
 
 
 def test_source_does_not_reimplement_the_rothc_equations():
@@ -183,9 +183,5 @@ def test_source_does_not_reimplement_the_rothc_equations():
     import inspect
 
     src = inspect.getsource(HydromaCore.rothc_decomposition_rate_modifier)
-    assert "2.0 ** ((mean_temp_c - 20) / 10)" not in src, (
-        "the Q10 exponential is back"
-    )
-    assert "annual_rainfall_mm < 400" not in src, (
-        "the rainfall-keyed moisture ladder is back"
-    )
+    assert "2.0 ** ((mean_temp_c - 20) / 10)" not in src, "the Q10 exponential is back"
+    assert "annual_rainfall_mm < 400" not in src, "the rainfall-keyed moisture ladder is back"

@@ -4,7 +4,7 @@ import time
 import uuid
 from abc import ABC, abstractmethod
 from datetime import UTC, datetime
-from typing import Any, Optional
+from typing import Any, ClassVar, Optional
 
 from services.simulation.schemas import (
     SimulationContext,
@@ -73,7 +73,7 @@ class SimulatorRegistry:
     """رجیستری تمام شبیه‌سازها - Singleton Pattern"""
 
     _instance: Optional["SimulatorRegistry"] = None
-    _simulators: dict[SimulationType, type[BaseSimulator]] = {}
+    _simulators: ClassVar[dict[SimulationType, type[BaseSimulator]]] = {}
 
     def __new__(cls):
         if cls._instance is None:

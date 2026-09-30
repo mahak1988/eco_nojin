@@ -7,6 +7,7 @@ import pytest
 
 from services.carbon.schemas import (
     IssueCreditsRequest,
+    ProjectNotVerifiedError,
     RegisterProjectRequest,
     VerifyProjectRequest,
 )
@@ -121,7 +122,7 @@ class TestCarbonService:
 
         service.db.scalar = AsyncMock(return_value=MagicMock(project_id="PROJ-001"))
 
-        with pytest.raises(Exception):
+        with pytest.raises(ProjectNotVerifiedError, match="is not verified"):
             await service.issue_credits(req)
 
     @pytest.mark.asyncio

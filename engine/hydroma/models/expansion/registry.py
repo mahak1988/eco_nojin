@@ -13,7 +13,7 @@ from __future__ import annotations
 import json
 import logging
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import StrEnum
 from pathlib import Path
 from typing import Any, TypeVar
@@ -72,8 +72,8 @@ class ModelMetadata:
     references: list[str] = field(default_factory=list)
     doi: str | None = None
     authors: list[str] = field(default_factory=list)
-    created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
-    updated_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    created_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+    updated_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     input_schema: dict[str, Any] = field(default_factory=dict)
     output_schema: dict[str, Any] = field(default_factory=dict)
     calibration_sets: list[str] = field(default_factory=list)
@@ -150,7 +150,7 @@ class ModelRegistry:
         self.registry_path.parent.mkdir(parents=True, exist_ok=True)
         data = {
             "models": [m.to_dict() for m in self._models.values()],
-            "updated_at": datetime.utcnow().isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
         with open(self.registry_path, "w") as f:
             json.dump(data, f, indent=2)
@@ -174,9 +174,27 @@ class ModelRegistry:
         Returns:
             Model ID
         """
-        model_id = metadata.model_id or str(uuid4())
+        # Idempotent on (name, version).
+        #
+        # A fresh uuid4() per call made the registry grow without bound: every
+        # module that calls register_model() at import scope added an entry, so
+        # simply importing the package rewrote data/model_registry.json. The
+        # tracked file reached 1535 entries across 9 distinct names, and
+        # Distributed PINN Trainer alone accounted for 161 copies of one class.
+        #
+        # Re-registering the same name and version is an update, not a new model,
+        # so it replaces the existing entry and keeps the id stable across
+        # processes. A genuinely new version still gets a new id.
+        model_id = metadata.model_id
+        if not model_id:
+            for existing_id, existing in self._models.items():
+                if existing.name == metadata.name and existing.version == metadata.version:
+                    model_id = existing_id
+                    break
+        if not model_id:
+            model_id = str(uuid4())
         metadata.model_id = model_id
-        metadata.updated_at = datetime.utcnow().isoformat()
+        metadata.updated_at = datetime.now(UTC).isoformat()
 
         self._models[model_id] = metadata
         self._model_classes[model_id] = model_class
@@ -186,7 +204,7 @@ class ModelRegistry:
             self._calibration_sets[cal_id] = {
                 **calibration_set,
                 "model_id": model_id,
-                "registered_at": datetime.utcnow().isoformat(),
+                "registered_at": datetime.now(UTC).isoformat(),
             }
             metadata.calibration_sets.append(cal_id)
 
@@ -197,7 +215,7 @@ class ModelRegistry:
             self._validation_datasets[val_id] = {
                 **validation_dataset,
                 "model_id": model_id,
-                "registered_at": datetime.utcnow().isoformat(),
+                "registered_at": datetime.now(UTC).isoformat(),
             }
             metadata.validation_datasets.append(val_id)
 
@@ -251,6 +269,7 @@ class ModelRegistry:
         task: str,
         domain: ModelDomain,
         criteria: dict[str, float] | None = None,
+        require_runnable: bool = True,
     ) -> ModelMetadata | None:
         """
         Get the best model for a task based on criteria.
@@ -259,10 +278,30 @@ class ModelRegistry:
             task: Task description (e.g., "runoff_prediction", "yield_estimation")
             domain: Required domain
             criteria: Weighted criteria (accuracy, speed, uncertainty, etc.)
+            require_runnable: When true (the default), a model that cannot
+                execute in this environment is filtered out.
+
+        `require_runnable` exists because the stored `status` cannot answer
+        that question. It says how finished the model is, not whether its
+        dependencies are present -- and with every registered model at
+        `EXPERIMENTAL`, the status filter below returned nothing at all. A
+        selector that can only ever return None is not a selector, and one that
+        returns a model whose code path raises is worse. So availability is
+        probed at call time rather than read from the file.
         """
+        # Maturity first, then availability. A model that is not validated
+        # should not be preferred merely for being runnable, but a runnable
+        # experimental model is a better answer than an unrunnable one.
         candidates = self.list_models(domain=domain, status=ModelStatus.PRODUCTION)
         if not candidates:
             candidates = self.list_models(domain=domain, status=ModelStatus.VALIDATED)
+        if not candidates:
+            candidates = self.list_models(domain=domain, status=ModelStatus.EXPERIMENTAL)
+
+        if require_runnable:
+            from .availability import check_model
+
+            candidates = [m for m in candidates if check_model(m.name).available]
 
         if not candidates:
             return None
@@ -306,7 +345,7 @@ class ModelRegistry:
         self._calibration_sets[cal_id] = {
             **calibration_set,
             "model_id": model_id,
-            "registered_at": datetime.utcnow().isoformat(),
+            "registered_at": datetime.now(UTC).isoformat(),
         }
         if model_id in self._models:
             self._models[model_id].calibration_sets.append(cal_id)
@@ -323,7 +362,7 @@ class ModelRegistry:
         self._validation_datasets[val_id] = {
             **dataset,
             "model_id": model_id,
-            "registered_at": datetime.utcnow().isoformat(),
+            "registered_at": datetime.now(UTC).isoformat(),
         }
         if model_id in self._models:
             self._models[model_id].validation_datasets.append(val_id)
@@ -340,7 +379,7 @@ class ModelRegistry:
             "models": [m.to_dict() for m in self._models.values()],
             "calibration_sets": self._calibration_sets,
             "validation_datasets": self._validation_datasets,
-            "exported_at": datetime.utcnow().isoformat(),
+            "exported_at": datetime.now(UTC).isoformat(),
         }
 
 

@@ -349,9 +349,28 @@ class ClimateIntegrator:
         Calculate UNEP Aridity Index = P / PET.
 
         Reference: UNEP (1992) "World Atlas of Desertification"
+
+        Missing ET0 is not a humid climate. The previous version returned
+        ``(1.0, AridityClass.HUMID)`` when ``annual_et0_mm <= 0``, so an absent
+        reference evapotranspiration was reported as the wettest possible
+        classification. For an arid-country platform that inverts the
+        conclusion from "unknown" into "not arid", and any irrigation advice
+        derived from it would err in the dangerous direction.
+
+        A site with no ET0 has no aridity index. The index is returned as NaN
+        so the "not computed" state is explicit, and the class says UNKNOWN.
         """
-        if annual_et0_mm <= 0:
-            return 1.0, AridityClass.HUMID
+        if annual_et0_mm is None or annual_et0_mm <= 0:
+            logger.warning(
+                "Aridity index not computed: annual_et0_mm is %r. Absence of ET0 "
+                "is not evidence of a humid climate.",
+                annual_et0_mm,
+            )
+            return float("nan"), AridityClass.UNKNOWN
+
+        if annual_precip_mm is None or annual_precip_mm < 0:
+            logger.warning("Aridity index not computed: annual_precip_mm is %r", annual_precip_mm)
+            return float("nan"), AridityClass.UNKNOWN
 
         ai = annual_precip_mm / annual_et0_mm
         ai = min(ai, 2.0)  # Cap for safety
@@ -646,7 +665,13 @@ class ClimateIntegrator:
                 recommendations=recommendations,
                 integration_time_ms=integration_time_ms,
                 data_quality_level=climate_profile.data_quality_level,
-                data_source="modelled",
+                # Taken from the profile this was derived from. The previous
+                # hard-coded "modelled" erased the distinction
+                # build_climate_profile makes: it sets "open_meteo" when a real
+                # forecast was retrieved and "synthetic" when the series was
+                # generated. Both arrived here labelled as one thing, so a
+                # caller could not tell a forecast from a placeholder.
+                data_source=climate_profile.data_source,
                 model="climate integrator",
             )
 
@@ -658,6 +683,8 @@ class ClimateIntegrator:
                 success=False,
                 error_message=str(e),
                 integration_time_ms=integration_time_ms,
-                data_source="modelled",
+                # The integration failed, so no climate profile was built and
+                # nothing was derived. "modelled" claimed a model had run.
+                data_source="unavailable",
                 model="climate integrator",
             )

@@ -40,7 +40,7 @@ def test_engineered_percentiles_follow_numpy_linear_interpolation():
     """C++ p5/p50/p95 must land on the NumPy values of the same sample."""
     stats = core.yield_ensemble_lhs(300.0, 40.0, 18.0, 5.0, "Wheat", 400, 42)
 
-    for attr, q in (("p5_kg_ha", 5.0), ("p50_kg_ha", 50.0), ("p95_kg_ha", 95.0)):
+    for attr, _q in (("p5_kg_ha", 5.0), ("p50_kg_ha", 50.0), ("p95_kg_ha", 95.0)):
         value = getattr(stats, attr)
         assert np.isfinite(value), f"{attr} is not finite"
         # A truncation rule and a linear rule differ by up to one step of the

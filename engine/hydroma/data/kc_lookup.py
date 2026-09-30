@@ -14,5 +14,5 @@ def get_average_kc(crop_type: str) -> float:
     """Get average Kc for a crop during its growing season."""
     try:
         return KC_DF[KC_DF["crop_type"] == crop_type]["kc_gs_avg"].iloc[0]
-    except IndexError:
-        raise ValueError(f"Crop type '{crop_type}' not found in Kc lookup table.")
+    except IndexError as e:
+        raise ValueError(f"Crop type '{crop_type}' not found in Kc lookup table.") from e

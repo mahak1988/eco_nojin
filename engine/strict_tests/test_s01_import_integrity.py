@@ -328,15 +328,6 @@ class TestNoDeadBranches:
             f"{sorted(set(actual) - set(KNOWN_DISCARDED_SITES))}"
         )
 
-    @pytest.mark.xfail(
-        strict=True,
-        reason=(
-            "watershed/calculator.py:119 drops the trapezoidal-storage "
-            "rearrangement and line 400 drops the node-list lookup. Line 119 sits "
-            "inside the check-dam height solve and is the visible remains of an "
-            "abandoned formulation of the same equation computed on the next line."
-        ),
-    )
     def test_no_discarded_value_access(self) -> None:
         """Targeted: values computed and thrown away in the watershed designer.
 
@@ -372,17 +363,6 @@ class TestSelfDocumentedClaims:
     docstring would assume the design responds to slope, so the claim is pinned.
     """
 
-    @pytest.mark.xfail(
-        strict=True,
-        reason=(
-            "engine/hydroma/watershed/calculator.py:82 docstring claims 'all "
-            "inputs are used; none is decorative', but slope_pct is accepted and "
-            "never referenced in the body, so a check dam sized on a 2 % slope is "
-            "identical to one on a 60 % slope. design_half_moon ignores both "
-            "slope_pct and rainfall_mm; design_terrace ignores terrace_width_m and "
-            "instead hard-codes channel_volume_per_m = 0.135 m3/m."
-        ),
-    )
     def test_design_functions_use_every_parameter(self) -> None:
         import inspect
         import re

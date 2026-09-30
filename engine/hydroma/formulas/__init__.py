@@ -39,12 +39,12 @@ from .registry import (
 )
 
 __all__ = [
+    "RECORDS",
     "DivergentOnRequestPathError",
     "Domain",
     "DuplicateFormulaError",
     "FormulaRecord",
     "Provenance",
-    "RECORDS",
     "Status",
     "all_records",
     "composite",

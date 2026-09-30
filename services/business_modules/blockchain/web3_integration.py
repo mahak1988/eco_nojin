@@ -17,7 +17,7 @@ import os
 try:
     from web3 import Web3
 except ImportError:
-    raise ImportError("web3 is required. Install with: pip install web3")
+    raise ImportError("web3 is required. Install with: pip install web3") from None
 
 
 _web3: Web3 | None = None

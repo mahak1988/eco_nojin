@@ -102,11 +102,13 @@ class SatelliteService:
 
         headers = {"Authorization": f"Bearer {self.token}"} if self.token else {}
 
-        async with aiohttp.ClientSession() as session:
-            async with session.get(self.base_url, params=params, headers=headers) as resp:
-                if resp.status == 200:
-                    data = await resp.json()
-                    return data.get("value", [])
+        async with (
+            aiohttp.ClientSession() as session,
+            session.get(self.base_url, params=params, headers=headers) as resp,
+        ):
+            if resp.status == 200:
+                data = await resp.json()
+                return data.get("value", [])
         return []
 
     async def download_band(self, product_id: str, band: str) -> bytes:
@@ -115,10 +117,12 @@ class SatelliteService:
         url = f"https://download.dataspace.copernicus.eu/odata/v1/Products({product_id})/Nodes(GRANULE)/Nodes(IMG_DATA)/Nodes({band}).jp2/$value"
         headers = {"Authorization": f"Bearer {self.token}"} if self.token else {}
 
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url, headers=headers) as resp:
-                if resp.status == 200:
-                    return await resp.read()
+        async with (
+            aiohttp.ClientSession() as session,
+            session.get(url, headers=headers) as resp,
+        ):
+            if resp.status == 200:
+                return await resp.read()
         return b""
 
     async def compute_ndvi(

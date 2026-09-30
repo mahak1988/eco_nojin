@@ -40,9 +40,9 @@ class TestInputValidation:
         test_db_session.add(user)
         test_db_session.commit()
 
+        lp = LandProfile(name="", user_id=user.id)
+        test_db_session.add(lp)
         with pytest.raises((IntegrityError, DataError)):  # بسته به نحوه اعمال محدودیت
-            lp = LandProfile(name="", user_id=user.id)
-            test_db_session.add(lp)
             test_db_session.commit()
         test_db_session.rollback()
 

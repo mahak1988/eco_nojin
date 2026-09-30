@@ -289,6 +289,8 @@ class TestSlotPayload:
             disclosure_required=True,
         )
         assert SponsorshipService.slot_payload(s)["disclosure"]["required"] is True
+
+
 class TestDisclosureKey:
     def test_key_is_stable_and_namespaced(self):
         key = disclosure_key("Example Foundation")

@@ -14,8 +14,10 @@ from __future__ import annotations
 
 import sys
 
-import engine.hydroma.cpp_bridge as bridge
+import pytest
+
 import engine.hydroma.cpp_bindings as bindings
+import engine.hydroma.cpp_bridge as bridge
 
 
 def test_both_modules_report_the_same_availability():
@@ -58,12 +60,10 @@ def test_attribute_forwarding_reaches_the_extension():
 
 def test_unknown_attribute_raises_import_error():
     """``from ... import X`` semantics: ImportError, not AttributeError."""
-    try:
-        bindings.definitely_not_a_real_symbol
-    except ImportError as exc:
-        assert "C++ available" in str(exc)
-    else:
-        raise AssertionError("expected ImportError for an unknown symbol")
+    # The binding surface is behind a __getattr__, so an unknown symbol
+    # has to surface as ImportError rather than AttributeError.
+    with pytest.raises(ImportError, match=r"C\+\+ available"):
+        _ = bindings.definitely_not_a_real_symbol
 
 
 def test_has_function_matches_the_extension():
@@ -92,7 +92,8 @@ def test_abi_blind_fallback_is_gone():
     """
     import ast
 
-    tree = ast.parse(open(bindings.__file__, encoding="utf-8").read())
+    with open(bindings.__file__, encoding="utf-8") as _fh:
+        tree = ast.parse(_fh.read())
 
     called: set[str] = set()
     assigned: list[str] = []
@@ -117,7 +118,8 @@ def test_module_delegates_to_cpp_bridge():
     """Ownership is explicit: this module imports the owner at top level."""
     import ast
 
-    tree = ast.parse(open(bindings.__file__, encoding="utf-8").read())
+    with open(bindings.__file__, encoding="utf-8") as _fh:
+        tree = ast.parse(_fh.read())
     imported: set[str] = set()
 
     for node in ast.walk(tree):

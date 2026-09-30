@@ -148,7 +148,7 @@ def _db_context(db: Session) -> dict[str, Any]:
     try:
         total = db.query(models.User).count()
 
-        active = db.query(models.User).filter(models.User.is_active == True).count()  # noqa: E712
+        active = db.query(models.User).filter(models.User.is_active).count()
 
         ctx["کاربران"] = {"کل": total, "فعال": active, "مسدود": total - active}
 

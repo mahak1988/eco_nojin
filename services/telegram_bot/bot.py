@@ -17,9 +17,9 @@ import asyncio
 import logging
 
 try:
-    from aiogram import Bot, Dispatcher, F
+    from aiogram import Bot, Dispatcher
     from aiogram.filters import Command, CommandStart
-    from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+    from aiogram.types import Message
 
     AIogram_AVAILABLE = True
 except ImportError:

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, ConfigDict
@@ -11,11 +10,12 @@ from sqlalchemy.orm import Session
 
 from database import models
 from database.hub import hub
-from services.api_gateway.auth import get_current_user, require_user_admin
+from services.api_gateway.auth import require_user_admin
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/users", tags=["admin-users"])
+
 
 # Dependency
 def get_db():
@@ -41,11 +41,11 @@ class UserResponse(BaseModel):
 
 
 class UserBulkAction(BaseModel):
-    user_ids: List[str]
+    user_ids: list[str]
     action: str  # "block" | "unblock"
 
 
-@router.get("", response_model=List[UserResponse])
+@router.get("", response_model=list[UserResponse])
 async def list_users(
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
@@ -71,7 +71,7 @@ async def bulk_action_users(
     for uid in payload.user_ids:
         user = db.query(models.User).filter(models.User.id == uid).first()
         if user:
-            user.is_active = (payload.action == "unblock")
+            user.is_active = payload.action == "unblock"
             updated += 1
 
     db.commit()

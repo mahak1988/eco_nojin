@@ -15,10 +15,8 @@
 from __future__ import annotations
 
 import html
-import json
 import os
 import re
-import unicodedata
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
@@ -49,9 +47,9 @@ RE_SOURCE = re.compile(r"^\s*منبع[:：]")
 RE_APPENDIX = re.compile(r"^\s*(پیوست\s+[الفبپجچ]|جدول\s+الف|جدول\s+خ\s|جدول\s+پ\s)")
 RE_RULE = re.compile(r"^\s*[-=_—–]{4,}\s*$")
 
-WIDE_COLS = 8          # بیش از این تعداد ستون → صفحهٔ افقی
-MAX_COLS = 14          # سقف نمایش؛ فراتر از آن ستون‌های خالی حذف می‌شوند
-MAX_ROWS = 400         # سقف بلعیدن سطر در یک جدول — جلوگیری از بلعیدن کل سند
+WIDE_COLS = 8  # بیش از این تعداد ستون → صفحهٔ افقی
+MAX_COLS = 14  # سقف نمایش؛ فراتر از آن ستون‌های خالی حذف می‌شوند
+MAX_ROWS = 400  # سقف بلعیدن سطر در یک جدول — جلوگیری از بلعیدن کل سند
 
 RE_BOXART = re.compile(r"[─-╿]")
 RE_LATIN_NUM = re.compile(r"[0-9]")
@@ -122,14 +120,20 @@ class Doc:
         self.path = path
         self.name = os.path.basename(path)
         self.book = os.path.splitext(self.name)[0][:5]
-        self.lines = open(path, encoding="utf-8").read().split("\n")
+        with open(path, encoding="utf-8") as _fh:
+            self.lines = _fh.read().split("\n")
         self.cover: dict = {}
         self.front: list = []
         self.toc: list = []
         self.body: list = []
         self.stats: dict = {
-            "chapters": 0, "sections": 0, "tables": 0, "wide_tables": 0,
-            "figures": 0, "figure_placeholders": 0, "formulas": 0,
+            "chapters": 0,
+            "sections": 0,
+            "tables": 0,
+            "wide_tables": 0,
+            "figures": 0,
+            "figure_placeholders": 0,
+            "formulas": 0,
             "lines": len(self.lines),
         }
 
@@ -175,7 +179,12 @@ class Doc:
             # جدول پیش از نخستین فصل: تاریخچهٔ نسخه یا شناسنامه
             rows = []
             j = i
-            while j < len(self.lines) and self.lines[j].strip() and "\t" in self.lines[j] and len(rows) < MAX_ROWS:
+            while (
+                j < len(self.lines)
+                and self.lines[j].strip()
+                and "\t" in self.lines[j]
+                and len(rows) < MAX_ROWS
+            ):
                 rows.append(self.lines[j].rstrip("\n").split("\t"))
                 j += 1
             if len(rows) >= 2:
@@ -183,9 +192,18 @@ class Doc:
                 rows = [r + [""] * (ncol - len(r)) for r in rows]
                 self.stats["tables"] += 1
                 self.front.append(
-                    {"t": "table", "kind": "جدول", "id": "", "x": "سربرگ و تاریخچهٔ سند",
-                     "rows": rows, "ncol": ncol, "src": None,
-                     "wide": ncol > WIDE_COLS, "bare": True, "line": i + 1}
+                    {
+                        "t": "table",
+                        "kind": "جدول",
+                        "id": "",
+                        "x": "سربرگ و تاریخچهٔ سند",
+                        "rows": rows,
+                        "ncol": ncol,
+                        "src": None,
+                        "wide": ncol > WIDE_COLS,
+                        "bare": True,
+                        "line": i + 1,
+                    }
                 )
             return j
         # فیلدهای سرصفحه
@@ -260,9 +278,7 @@ class Doc:
             label, title = norm_num(m.group(1)), m.group(2).strip()
             depth = label.count(".") + 1
             self.stats["sections"] += 1
-            self.body.append(
-                {"t": "sec", "label": label, "x": title, "d": depth, "line": i + 1}
-            )
+            self.body.append({"t": "sec", "label": label, "x": title, "d": depth, "line": i + 1})
             return i + 1
 
         if RE_RULE.match(lines[i]):
@@ -278,7 +294,11 @@ class Doc:
     # ── جدول ────────────────────────────────────────────
     def _table(self, i: int, m) -> int:
         lines = self.lines
-        kind, ident, title = m.group(1), m.group(2), m.group(3) if m.lastindex and m.lastindex >= 3 else m.group(2)
+        kind, ident, title = (
+            m.group(1),
+            m.group(2),
+            m.group(3) if m.lastindex and m.lastindex >= 3 else m.group(2),
+        )
         rows = []
         j = i + 1
         while j < len(lines) and lines[j].strip() and "\t" in lines[j] and len(rows) < MAX_ROWS:
@@ -306,9 +326,15 @@ class Doc:
             self.stats["wide_tables"] += 1
         self.body.append(
             {
-                "t": "table", "kind": kind, "id": ident.strip(),
-                "x": title.strip(), "rows": rows, "ncol": ncol,
-                "src": src, "wide": wide, "line": i + 1,
+                "t": "table",
+                "kind": kind,
+                "id": ident.strip(),
+                "x": title.strip(),
+                "rows": rows,
+                "ncol": ncol,
+                "src": src,
+                "wide": wide,
+                "line": i + 1,
             }
         )
         return j
@@ -332,16 +358,27 @@ class Doc:
             break
         self.stats["figures"] += 1
         self.body.append(
-            {"t": "figure", "id": ident.strip(), "x": title.strip(),
-             "desc": " ".join(desc), "line": i + 1}
+            {
+                "t": "figure",
+                "id": ident.strip(),
+                "x": title.strip(),
+                "desc": " ".join(desc),
+                "line": i + 1,
+            }
         )
         return j
 
     def _is_structural(self, s: str) -> bool:
         return bool(
-            RE_CHAPTER_BODY.match(s) or RE_TABLE_CAP.match(s) or RE_TABLE_CAP_PLAIN.match(s)
-            or RE_FIG_CAP.match(s) or RE_FIG_CAP_PLAIN.match(s) or RE_SOURCE.match(s)
-            or RE_SECTION.match(s) or RE_RULE.match(s) or RE_APPENDIX.match(s)
+            RE_CHAPTER_BODY.match(s)
+            or RE_TABLE_CAP.match(s)
+            or RE_TABLE_CAP_PLAIN.match(s)
+            or RE_FIG_CAP.match(s)
+            or RE_FIG_CAP_PLAIN.match(s)
+            or RE_SOURCE.match(s)
+            or RE_SECTION.match(s)
+            or RE_RULE.match(s)
+            or RE_APPENDIX.match(s)
         )
 
     def _is_body_chapter(self, i: int) -> bool:
@@ -379,8 +416,18 @@ class Doc:
             self.stats["wide_tables"] += 1
         # آخرین سطرِ پیش از منبع، معمولاً «مجموع» است
         self.body.append(
-            {"t": "table", "kind": "جدول", "id": "", "x": "",
-             "rows": rows, "ncol": ncol, "src": None, "wide": wide, "bare": True, "line": i + 1}
+            {
+                "t": "table",
+                "kind": "جدول",
+                "id": "",
+                "x": "",
+                "rows": rows,
+                "ncol": ncol,
+                "src": None,
+                "wide": wide,
+                "bare": True,
+                "line": i + 1,
+            }
         )
         return j
 
@@ -395,13 +442,12 @@ class Doc:
         while j < len(lines) and not lines[j].strip():
             j += 1
         self.stats["formulas"] += 1
-        self.body.append(
-            {"t": "formula", "id": fid, "x": expr, "note": note, "line": i + 1}
-        )
+        self.body.append({"t": "formula", "id": fid, "x": expr, "note": note, "line": i + 1})
         return j
 
 
 # ── نمودارسازی HTML ────────────────────────────────────
+
 
 def render_table(tb: dict, fignum: dict) -> str:
     kind = tb["kind"]
@@ -429,7 +475,7 @@ def render_table(tb: dict, fignum: dict) -> str:
     return "\n".join(out)
 
 
-def render_block(b: dict, fignum: dict, doc: "Doc" = None) -> str:
+def render_block(b: dict, fignum: dict, doc: Doc = None) -> str:
     t = b["t"]
     if t == "chapter":
         return f'<h1 class="chapter"><span class="num">فصل {esc(b["n"])}</span>{esc(b["x"])}</h1>'
@@ -453,20 +499,19 @@ def render_block(b: dict, fignum: dict, doc: "Doc" = None) -> str:
             stats_ref["ph"] += 1
             img = (
                 '<div class="box"><b>شکل در این نسخه رسم نشده است</b>'
-                'دادهٔ عددیِ متناظر در متن موجود است اما هنوز به نمودار تبدیل نشده.<br>'
-                'شمارهٔ شکل و عنوان آن برای پیگیری حفظ شده است.</div>'
+                "دادهٔ عددیِ متناظر در متن موجود است اما هنوز به نمودار تبدیل نشده.<br>"
+                "شمارهٔ شکل و عنوان آن برای پیگیری حفظ شده است.</div>"
             )
         cls = "" if have else "placeholder"
         return (
             f'<figure class="{cls}">'
             f'{img}<figcaption><span class="tno">شکل {esc(b["id"])}</span> — {esc(b["x"])}'
-            f'{(" " + esc(b["desc"])) if b.get("desc") else ""}{conf}</figcaption></figure>'
+            f"{(' ' + esc(b['desc'])) if b.get('desc') else ''}{conf}</figcaption></figure>"
         )
     if t == "formula":
         if "id" in b:
             return (
-                f'<div class="formula"><span class="fid">{esc(b["id"])}</span>'
-                f'{esc(b["x"])}</div>'
+                f'<div class="formula"><span class="fid">{esc(b["id"])}</span>{esc(b["x"])}</div>'
             )
         return f'<div class="formula">{esc(b["x"])}</div>'
     if t == "src":
@@ -532,8 +577,11 @@ def build_html(doc: Doc) -> str:
 
 
 BOOKLET_FILES = [
-    "راهبردی هیدروما.txt", "مهندسی هیدروما.txt", "سند مرجع.txt",
-    "توجیهی فنی اقتصادی.txt", "راهنمای نقشه برداری.txt",
+    "راهبردی هیدروما.txt",
+    "مهندسی هیدروما.txt",
+    "سند مرجع.txt",
+    "توجیهی فنی اقتصادی.txt",
+    "راهنمای نقشه برداری.txt",
 ] + [f for f in sorted(os.listdir(BOOKS)) if f.startswith("HP-") and f.endswith(".txt")]
 
 

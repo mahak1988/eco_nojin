@@ -5,8 +5,8 @@ Provides voice-based Q&A using the cloud-native unified RAG.
 
 from dataclasses import dataclass
 
-from services.ai.unified_rag import get_rag
 from services.ai.llm_router import get_router
+from services.ai.unified_rag import get_rag
 
 from .stt_provider import get_stt_provider
 from .tts_provider import VoiceLanguage, get_tts_provider

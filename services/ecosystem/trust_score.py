@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import Enum
+from typing import ClassVar
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -41,7 +42,7 @@ class TrustScoreService:
     MIN_SCORE = 0.0
 
     # Event weights (impact on trust score)
-    EVENT_WEIGHTS = {
+    EVENT_WEIGHTS: ClassVar[dict[str, float]] = {
         "activity_verified": 0.05,
         "activity_disputed": -0.03,
         "activity_rejected": -0.10,

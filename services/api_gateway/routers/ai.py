@@ -89,13 +89,13 @@ async def chat_endpoint(payload: QueryRequest):
             language=result["language"],
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.get("/health")
 async def ai_health():
     """Check AI assistant availability."""
-    rag = get_rag()
+    get_rag()
     try:
         # Quick health check
         return {

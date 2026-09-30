@@ -9,11 +9,11 @@ Reference: Zhang et al. (2003), White et al. (2009)
 from __future__ import annotations
 
 from datetime import date
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 
-from .base import ScientificModel, ValidationResult
+from .base import ScientificModel, ValidationResult, validate_finite
 
 
 class HPheno(ScientificModel):
@@ -23,7 +23,7 @@ class HPheno(ScientificModel):
     version = "1.0.0"
     description = "Phenology detection from NDVI time-series"
 
-    REFERENCES = {
+    REFERENCES: ClassVar[dict] = {
         "Zhang2003": "Zhang et al. (2003). Monitoring vegetation phenology using MODIS.",
         "White2009": "White et al. (2009). Derivation of phenological metrics from MODIS NDVI.",
     }
@@ -33,7 +33,12 @@ class HPheno(ScientificModel):
         ndvi_ts: np.ndarray,
         dates: list[date],
     ) -> tuple[bool, list[str]]:
-        errors = []
+        errors = validate_finite(
+            "HPHENO",
+            {"ndvi_ts": ndvi_ts},
+        )
+        if errors:
+            return False, errors
         if len(ndvi_ts) != len(dates):
             errors.append("NDVI and dates arrays must have same length")
         if len(ndvi_ts) < 12:
@@ -62,9 +67,7 @@ class HPheno(ScientificModel):
         if window % 2 == 0:
             raise ValueError(f"Savitzky-Golay window must be odd, got {window}")
         if polyorder >= window:
-            raise ValueError(
-                f"polyorder {polyorder} must be less than the window {window}"
-            )
+            raise ValueError(f"polyorder {polyorder} must be less than the window {window}")
         half = window // 2
         x = np.arange(-half, half + 1, dtype=float)
         # A = design matrix, rows are the offsets, columns the powers.

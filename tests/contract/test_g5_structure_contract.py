@@ -23,7 +23,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "tests" / "contract"))
 
-from gates import scan_structure  # noqa: E402
+from gates import scan_structure
 
 BASELINE = ROOT / "docs" / "metrics" / "baseline.json"
 
@@ -43,8 +43,6 @@ def report():
 class TestScannerWorks:
     def test_the_scanner_detects_a_planted_violation(self, tmp_path):
         """A scanner that finds nothing is indistinguishable from a broken one."""
-
-        from gates import Report, _rel  # noqa: F401
 
         planted = tmp_path / "pkg" / "routers" / "x.py"
         planted.parent.mkdir(parents=True)

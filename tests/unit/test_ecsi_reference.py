@@ -123,9 +123,9 @@ class TestBehaviour:
         assert long_run["final_soc_t_ha"] < 50.0
 
     def test_invalid_clay_rejected(self, ecsi):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="Clay fraction must be in"):
             ecsi.compute(40.0, 2.0, 10.0, 700.0, 500.0, clay_fraction=1.5)
 
     def test_invalid_soc_rejected(self, ecsi):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="Initial SOC out of range"):
             ecsi.compute(600.0, 2.0, 10.0, 700.0, 500.0)

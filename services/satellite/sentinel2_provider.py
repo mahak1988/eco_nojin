@@ -34,12 +34,14 @@ warnings.filterwarnings("ignore", message=".*non-nanosecond precision.*")
 warnings.filterwarnings("ignore", message=".*no geotransform.*")
 
 import hashlib
+import importlib.util
 import pickle
 import time
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
 from pathlib import Path
+from typing import ClassVar
 
 import numpy as np
 
@@ -51,7 +53,7 @@ import numpy as np
 class SafeUnpickler(pickle.Unpickler):
     """Unpickler محدودشده که فقط کلاس‌های امن را بارگذاری می‌کند."""
 
-    ALLOWED_MODULES = {
+    ALLOWED_MODULES: ClassVar[set[str]] = {
         "builtins",
         "collections",
         "datetime",
@@ -84,10 +86,8 @@ def safe_pickle_load(file_obj):
 
 
 try:
-    import rasterio
+    HAS_RASTERIO = importlib.util.find_spec("rasterio") is not None
     import xarray as xr
-
-    HAS_RASTERIO = True
 except ImportError:
     HAS_RASTERIO = False
     xr = None

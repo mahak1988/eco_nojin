@@ -86,9 +86,7 @@ class TestCodeownersIsUsable:
             for pattern, owners in codeowners
             if any(announced.search(o) for o in owners)
         ]
-        assert not bad, (
-            "CODEOWNERS contains self-declared placeholders:\n  " + "\n  ".join(bad)
-        )
+        assert not bad, "CODEOWNERS contains self-declared placeholders:\n  " + "\n  ".join(bad)
 
     def test_the_unresolved_handles_are_disclosed(self, codeowners):
         """The shipped handles are placeholders; that must be visible, not

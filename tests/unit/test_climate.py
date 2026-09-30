@@ -16,5 +16,5 @@ def test_hargreaves_et0_normal_conditions():
 
 def test_hargreaves_et0_invalid_temps():
     """Verify that invalid temperature inputs raise ValueError."""
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="must be greater than t_min"):
         calc_et0_hargreaves(t_min=20.0, t_max=15.0, t_mean=17.5, ra_mj=15.0)

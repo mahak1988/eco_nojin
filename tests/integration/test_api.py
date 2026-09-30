@@ -2,10 +2,8 @@
 
 from fastapi.testclient import TestClient
 
-from tests.db_support import reset_database
-from database.base import Base
-from database.config import engine
 from services.api_gateway.main import app
+from tests.db_support import reset_database
 
 client = TestClient(app)
 

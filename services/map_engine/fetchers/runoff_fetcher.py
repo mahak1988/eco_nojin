@@ -8,6 +8,7 @@ logger = structlog.get_logger()
 
 import hashlib
 from pathlib import Path
+from typing import Any, ClassVar
 
 import numpy as np
 import rioxarray
@@ -29,11 +30,13 @@ class RunoffFetcher(MapFetcher):
     """
 
     DATA_ORIGIN = DataOrigin.SYNTHETIC
-    ORIGIN_DETAIL = "RunoffFetcher derives from the synthetic land-cover layer, so it is synthetic transitively"
+    ORIGIN_DETAIL = (
+        "RunoffFetcher derives from the synthetic land-cover layer, so it is synthetic transitively"
+    )
 
     # CN values for AMC-II (normal conditions)
     # Source: USDA TR-55
-    CN_TABLE = {
+    CN_TABLE: ClassVar[dict[Any, Any]] = {
         10: {"A": 36, "B": 60, "C": 73, "D": 79},  # Tree cover
         20: {"A": 45, "B": 66, "C": 77, "D": 83},  # Shrubland
         30: {"A": 39, "B": 61, "C": 74, "D": 80},  # Grassland

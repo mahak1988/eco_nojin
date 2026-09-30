@@ -6,6 +6,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from decimal import Decimal
+from typing import TYPE_CHECKING
 from uuid import uuid4
 
 from sqlalchemy import select
@@ -13,6 +14,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models import AuditEvent, ComPaymentIntent
 from services.api_gateway.exceptions import EcoNojinException
+
+if TYPE_CHECKING:
+    # services.finance.__init__ imports both this module and wallet_service, so a
+    # module-level import here would close that cycle for an annotation only.
+    from services.finance.wallet_service import WalletService
 
 
 @dataclass

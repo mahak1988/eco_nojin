@@ -21,14 +21,14 @@ from fastapi import APIRouter
 
 # Import sub-routers
 from . import (
-    admin_users,
-    admin_content,
     admin_bots,
+    admin_content,
     admin_errors,
-    admin_settings,
     admin_models,
     admin_overview,
     admin_security,
+    admin_settings,
+    admin_users,
 )
 
 router = APIRouter(tags=["admin"])
@@ -43,6 +43,7 @@ router.include_router(admin_models.router)
 router.include_router(admin_overview.router)
 router.include_router(admin_security.router)
 
+
 # Legacy health endpoint (backward compatibility)
 @router.get("/health")
 async def admin_health():
@@ -51,7 +52,13 @@ async def admin_health():
         "status": "ok",
         "message": "Admin router active. Use /admin/overview/health for detailed health.",
         "sub_routers": [
-            "users", "content", "bots", "errors",
-            "settings", "models", "overview", "security"
+            "users",
+            "content",
+            "bots",
+            "errors",
+            "settings",
+            "models",
+            "overview",
+            "security",
         ],
     }

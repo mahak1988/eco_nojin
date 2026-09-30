@@ -33,12 +33,29 @@ HOLD = os.path.join(BOOKS, "_منتقل-شده")
 
 STAMPED = re.compile(r"\.\d{8}-\d{4}\.")
 INTERMEDIATE = (
-    "pre-voice", "pre-struct", "pre-census", "pre-nutrient-section",
-    "pre-floor", "pre-block13", "pre-repair", "pre-integr", "pre-integration",
-    "cleanup-baseline", "pre-complete", "pre-deadend", "pre-deadend-zero",
-    "pre-expand", "pre-booklet", "pre-structure", "pre-struct13b",
-    "pre-carbon-reprice", "pre-booklet", "pre-source", "pre-template",
-    "pre-struct-blocks", "v3.1-complete",
+    "pre-voice",
+    "pre-struct",
+    "pre-census",
+    "pre-nutrient-section",
+    "pre-floor",
+    "pre-block13",
+    "pre-repair",
+    "pre-integr",
+    "pre-integration",
+    "cleanup-baseline",
+    "pre-complete",
+    "pre-deadend",
+    "pre-deadend-zero",
+    "pre-expand",
+    "pre-booklet",
+    "pre-structure",
+    "pre-struct13b",
+    "pre-carbon-reprice",
+    "pre-booklet",
+    "pre-source",
+    "pre-template",
+    "pre-struct-blocks",
+    "v3.1-complete",
 )
 DELIVERY_SUFFIX = (".txt", ".md")
 MERGE_FOLDERS = ("_archive", "_پشتیبان", "_bak", "_backup")
@@ -51,9 +68,7 @@ def is_delivery(name: str) -> bool:
         return False
     if STAMPED.search(name):
         return False
-    if any(marker in name for marker in INTERMEDIATE):
-        return False
-    return True
+    return not any(marker in name for marker in INTERMEDIATE)
 
 
 def main() -> int:
@@ -73,7 +88,9 @@ def main() -> int:
             continue
         (delivery if is_delivery(name) else strays).append(name)
 
-    print(f"ریشه: {len(delivery)} سند تحویل · {len(folders)} پوشه · {len(strays)} فایل ناگزیر به انتقال")
+    print(
+        f"ریشه: {len(delivery)} سند تحویل · {len(folders)} پوشه · {len(strays)} فایل ناگزیر به انتقال"
+    )
     if not strays and not [f for f in folders if f in MERGE_FOLDERS]:
         print("نیازی به جابه‌جایی نیست")
         return 0
@@ -123,7 +140,9 @@ def main() -> int:
             shutil.rmtree(folder)
 
     print(f"\nمنتقل‌شده: {moved} فایل به _منتقل-شده")
-    print(f"باقی‌مانده در ریشه: {len([f for f in os.listdir(BOOKS) if os.path.isfile(os.path.join(BOOKS, f))])} سند")
+    print(
+        f"باقی‌مانده در ریشه: {len([f for f in os.listdir(BOOKS) if os.path.isfile(os.path.join(BOOKS, f))])} سند"
+    )
     return 0
 
 

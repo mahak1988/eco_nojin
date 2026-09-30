@@ -47,12 +47,8 @@ _ECOCOIN_NOT_IMPLEMENTED: dict[str, str] = {
         "not_implemented — never funded. 30% of every mint goes to a contract "
         "with no withdrawal function."
     ),
-    "ecosystem_fund": (
-        "not_implemented — never funded; totalAllocated is fabricated."
-    ),
-    "mint_controller": (
-        "not_implemented — never invoked by any contract in the repository."
-    ),
+    "ecosystem_fund": ("not_implemented — never funded; totalAllocated is fabricated."),
+    "mint_controller": ("not_implemented — never invoked by any contract in the repository."),
 }
 
 
@@ -275,8 +271,6 @@ async def get_impact_certificate(certificate_id: str):
 # ============================================================================
 
 
-
-
 @router.get("/phasegate/status")
 async def phase_gate_status():
     """Phase-gate status, in the shape the frontend actually reads.
@@ -479,5 +473,3 @@ async def blockchain_info():
             "before this correction implied otherwise."
         ),
     }
-
-

@@ -161,7 +161,6 @@ class ToolListResponse(BaseModel):
     tools: list[ToolResponse] = Field(default_factory=list)
 
 
-
 # --- Public read endpoints ---
 
 

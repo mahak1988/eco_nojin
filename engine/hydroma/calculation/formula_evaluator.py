@@ -84,6 +84,8 @@ _ALLOWED_FUNCS = {
         "hypot",
     )
 }
+
+
 #: ``sum`` is what ``Σ(`` is rewritten to. The builtin takes an iterable, while
 #: the knowledge base writes ``Σ(a, b, c)`` with separate terms, so a varargs
 #: wrapper accepts both spellings.
@@ -96,9 +98,7 @@ def _sum(*args):
 #: ``sum`` was missing from the module-level allow-list that ``Call`` nodes
 #: consult, so every ``Σ(...)`` aggregation in the knowledge base raised and was
 #: silently reported as 0.0.
-_ALLOWED_FUNCS.update(
-    {"abs": abs, "min": min, "max": max, "round": round, "sum": _sum}
-)
+_ALLOWED_FUNCS.update({"abs": abs, "min": min, "max": max, "round": round, "sum": _sum})
 _ALLOWED_OPS = {
     _ast.Add: _operator.add,
     _ast.Sub: _operator.sub,
@@ -161,9 +161,7 @@ def safe_eval(node, variables: dict, depth: int = 0):
         left = safe_eval(node.left, variables, depth + 1)
         right = safe_eval(node.right, variables, depth + 1)
         if isinstance(node.op, _ast.Pow) and abs(right) > MAX_EXPONENT:
-            raise FormulaEvaluationError(
-                f"exponent {right} exceeds the limit {MAX_EXPONENT}"
-            )
+            raise FormulaEvaluationError(f"exponent {right} exceeds the limit {MAX_EXPONENT}")
         return _guard(_apply_op(type(node.op), left, right))
     if isinstance(node, _ast.UnaryOp):
         try:
@@ -182,9 +180,7 @@ def safe_eval(node, variables: dict, depth: int = 0):
             raise FormulaEvaluationError(f"call to a function that is not allowed: {name!r}")
         try:
             return _guard(
-                _ALLOWED_FUNCS[name](
-                    *(safe_eval(a, variables, depth + 1) for a in node.args)
-                )
+                _ALLOWED_FUNCS[name](*(safe_eval(a, variables, depth + 1) for a in node.args))
             )
         except FormulaEvaluationError:
             raise
@@ -237,9 +233,7 @@ class FormulaEvaluator:
                 raise
             import logging
 
-            logging.getLogger(__name__).warning(
-                "formula evaluation failed, returning 0.0: %s", exc
-            )
+            logging.getLogger(__name__).warning("formula evaluation failed, returning 0.0: %s", exc)
             return 0.0
 
     def _evaluate(self, formula: str, variables: dict[str, float]) -> float:

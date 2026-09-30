@@ -20,8 +20,9 @@ from scipy import signal as scipy_signal
 @dataclass
 class SignalFeatures:
     """Extracted features from an electrical signal recording."""
-    data_source: str = 'modelled'
-    model: str = 'electrical signal features (DSP)'
+
+    data_source: str = "modelled"
+    model: str = "electrical signal features (DSP)"
     computed: bool = True
 
     sampling_rate: float | None = None

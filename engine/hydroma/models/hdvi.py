@@ -12,11 +12,11 @@ Reference: McKee et al. (1993), Vicente-Serrano (2010), Kogan (1995)
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 
-from .base import ScientificModel, ValidationResult
+from .base import ScientificModel, ValidationResult, validate_finite
 
 
 class HDVI(ScientificModel):
@@ -26,7 +26,7 @@ class HDVI(ScientificModel):
     version = "1.0.0"
     description = "Multi-scale Drought Vulnerability Index"
 
-    REFERENCES = {
+    REFERENCES: ClassVar[dict] = {
         "McKee1993": "McKee et al. (1993). The relationship of drought frequency and duration to SPI.",
         "VicenteSerrano2010": "Vicente-Serrano et al. (2010). A Multiscalar Drought Index (SPEI).",
         "Kogan1995": "Kogan, F.N. (1995). Application of vegetation index for drought monitoring.",
@@ -39,7 +39,17 @@ class HDVI(ScientificModel):
         vhi_value,
         smi_value,
     ) -> tuple[bool, list[str]]:
-        errors = []
+        errors = validate_finite(
+            "HDVI",
+            {
+                "spi_value": spi_value,
+                "spei_value": spei_value,
+                "vhi_value": vhi_value,
+                "smi_value": smi_value,
+            },
+        )
+        if errors:
+            return False, errors
         if not (-5 <= spi_value <= 5):
             errors.append("SPI out of typical range [-5, 5]")
         if not (-5 <= spei_value <= 5):

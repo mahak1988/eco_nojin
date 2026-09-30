@@ -18,7 +18,6 @@
 from __future__ import annotations
 
 import csv
-import io
 import os
 import re
 import sys
@@ -33,7 +32,19 @@ SRC_B = os.path.join(HERE, "hdr_body_candidates.csv")
 OUT_CSV = os.path.join(HERE, "HDR_draft.csv")
 OUT_MD = os.path.join(HERE, "hdr_assignments.md")
 
-FIELDS = ["id", "domain", "indicator", "value", "unit", "source_primary", "year", "confidence", "consumers", "action", "status"]
+FIELDS = [
+    "id",
+    "domain",
+    "indicator",
+    "value",
+    "unit",
+    "source_primary",
+    "year",
+    "confidence",
+    "consumers",
+    "action",
+    "status",
+]
 
 # سطرهایی که تاریخ یا شناسهٔ موجود رجیستر هستند و رکورد تازه نیستند
 ALREADY = re.compile(r"شروع رسمی طرح|بازهٔ زمانی|نرخ ارز مرجع|تعداد (شکل|جدول|فرمول|ردیف)")
@@ -63,9 +74,8 @@ def main() -> int:
 
     with open(REGISTER, encoding="utf-8") as handle:
         existing = {r["id"].strip() for r in csv.DictReader(handle)}
-    existing_indicators = {
-        r["indicator"].strip() for r in csv.DictReader(io.open(REGISTER, encoding="utf-8"))
-    }
+    with open(REGISTER, encoding="utf-8") as _fh:
+        existing_indicators = {r["indicator"].strip() for r in csv.DictReader(_fh)}
 
     merged: list[dict] = []
     for src in (SRC_A, SRC_B):

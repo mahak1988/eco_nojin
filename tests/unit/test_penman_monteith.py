@@ -47,11 +47,11 @@ class TestHargreaves:
         assert 1.5 < et0 < 2.5
 
     def test_invalid_temps_raise(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="must be greater than t_min"):
             calc_et0_hargreaves(t_min=20.0, t_max=15.0, t_mean=17.5, ra_mj=15.0)
 
     def test_negative_ra_raises(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="must be non-negative"):
             calc_et0_hargreaves(t_min=10.0, t_max=25.0, t_mean=17.5, ra_mj=-1.0)
 
     def test_dataclass_api(self):

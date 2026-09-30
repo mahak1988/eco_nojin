@@ -195,4 +195,4 @@ async def certificate(project_id: str, token: str) -> Response:
     except HTTPException:
         raise
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
+        raise HTTPException(status_code=500, detail=str(exc)) from exc

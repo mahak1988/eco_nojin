@@ -39,4 +39,4 @@ def calculate_compost_mix(payload: CompostRequest):
 
         return CompostResponse(cn_ratio=round(ratio, 2), status=status)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e

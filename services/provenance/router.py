@@ -90,7 +90,7 @@ async def validate_provenance(
     try:
         return await service.validate_provenance(request, validator_id="api_user")
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 # =============================================================================
@@ -121,7 +121,7 @@ async def register_model_version(
     try:
         return await service.register_model_version(data, created_by="api_user")
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get("/models/{name}/{version}", response_model=ModelVersionResponse)
@@ -165,7 +165,7 @@ async def deprecate_model_version(
     try:
         return await service.deprecate_model_version(name, version, reason, superseded_by_id)
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 # =============================================================================
@@ -201,4 +201,4 @@ async def create_lineage_edge(
         )
         return {"status": "success", "edge_id": str(edge.id)}
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e

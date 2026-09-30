@@ -38,7 +38,7 @@ async def register_contract(
     try:
         return await registry.register_contract(data)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get("/{service_name}/{version}", response_model=ContractResponse)
@@ -113,7 +113,7 @@ async def check_compatibility(
     try:
         return await registry.check_compatibility(service_name, from_version, to_version)
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 @router.get("/{service_name}/diff", response_model=ContractDiff)
@@ -147,7 +147,7 @@ async def get_contract_diff(
             safe_changes=diff["safe_changes"],
         )
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
 # =============================================================================

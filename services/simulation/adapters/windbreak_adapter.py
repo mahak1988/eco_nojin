@@ -1,6 +1,7 @@
 """Windbreak Adapter - طراحی و ارزیابی بادشکن"""
 
 from datetime import UTC, datetime
+from typing import Any, ClassVar
 
 from services.simulation.base import BaseSimulator, SimulatorRegistry
 from services.simulation.schemas import (
@@ -20,7 +21,7 @@ class WindbreakAdapter(BaseSimulator):
     version = "1.0.0"
 
     # دیتابیس گونه‌های درختی
-    TREE_SPECIES = {
+    TREE_SPECIES: ClassVar[dict[str, Any]] = {
         "cypress": {"height_m": 10, "density": 0.7, "root_depth_m": 2.5, "lifespan_years": 50},
         "eucalyptus": {"height_m": 15, "density": 0.6, "root_depth_m": 3.0, "lifespan_years": 40},
         "poplar": {"height_m": 20, "density": 0.5, "root_depth_m": 2.0, "lifespan_years": 30},

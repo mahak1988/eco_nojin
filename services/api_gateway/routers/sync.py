@@ -96,7 +96,7 @@ async def trigger_sync(request: Request, db: Session = Depends(get_db)):
     if not settings.enable_supabase_sync:
         raise HTTPException(status_code=503, detail="Supabase sync disabled via feature flag")
 
-    if not (supabase_ok := _check_supabase()):
+    if not _check_supabase():
         raise HTTPException(status_code=503, detail="Supabase not available")
 
     supabase = get_supabase_client()

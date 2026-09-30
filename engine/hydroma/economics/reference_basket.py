@@ -161,8 +161,8 @@ class BasketValuation:
     redemption_ceiling_usd_ha: float | None = None
     provenance: str | None = None
     data_mode_note: str | None = None
-    data_source: str = 'modelled'
-    model: str = 'reference basket valuation'
+    data_source: str = "modelled"
+    model: str = "reference basket valuation"
     computed: bool = True
     notes: tuple[str, ...] = field(default_factory=tuple)
 
@@ -184,8 +184,7 @@ def _resolve_unit_price(item: InputItem, quotes: dict[str, float]) -> float:
         return item.local_price_usd_per_tonne
     if item.unit not in FERTILIZER_SERIES:
         raise BasketError(
-            f"{item.name}: unresolved unit {item.unit!r}; known units: "
-            f"{sorted(FERTILIZER_SERIES)}"
+            f"{item.name}: unresolved unit {item.unit!r}; known units: {sorted(FERTILIZER_SERIES)}"
         )
     if item.unit not in quotes:
         raise BasketError(
@@ -194,9 +193,7 @@ def _resolve_unit_price(item: InputItem, quotes: dict[str, float]) -> float:
         )
     price = quotes[item.unit]
     if not math.isfinite(price) or price <= 0:
-        raise BasketError(
-            f"{item.name}: non-positive quote {price!r} for unit {item.unit!r}"
-        )
+        raise BasketError(f"{item.name}: non-positive quote {price!r} for unit {item.unit!r}")
     return price
 
 
@@ -259,9 +256,7 @@ def value_basket(
         crop=basket.crop,
         market_class=basket.market_class,
         data_mode=DataMode.FIELD_VERIFIED,
-        valued_at=datetime.combine(
-            as_of or date.today(), datetime.min.time(), tzinfo=UTC
-        ),
+        valued_at=datetime.combine(as_of or date.today(), datetime.min.time(), tzinfo=UTC),
         unit_prices=unit_prices,
         line_values=line_values,
         international_subtotal_usd_ha=round(subtotal, 2),

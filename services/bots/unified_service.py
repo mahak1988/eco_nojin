@@ -1,5 +1,7 @@
 """Unified BotService - orchestrates all bot platforms"""
 
+import contextlib
+
 import structlog
 
 logger = structlog.get_logger()
@@ -110,12 +112,10 @@ class UnifiedBotService:
 
     async def _log_message(self, message: BotMessage):
         """ثبت لاگ پیام در دیتابیس"""
-        try:
+        with contextlib.suppress(Exception):
             # ساده‌سازی: فقط log در console
             # در production باید جدول bot_message_logs داشته باشیم
             logger.info(f"[BotLog] {message.platform.value}: {message.content[:50]}...")
-        except Exception:
-            pass
 
     async def get_advice(self, question: str, village_id: str | None = None) -> str:
         """دریافت مشاوره از AI"""

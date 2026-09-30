@@ -64,6 +64,26 @@ class RotationPlan:
     biofertilizer_suggestion: str = ""
 
 
+@dataclass
+class VarietyRecommendation:
+    """A named cultivar proposed for a crop under a given climate.
+
+    The fields are the ones ``CropAdvisorMotor._suggest_varieties`` already
+    constructs; the class was missing, so that method raised NameError on any
+    wheat/BSk match.
+    """
+
+    variety_name: str
+
+    parent_crop: str
+
+    traits: list[str]
+
+    recommended_region: str
+
+    performance_metrics: dict[str, float]
+
+
 class CropAdvisorMotor(AbstractScientificMotor):
     """Global crop advisor - Köppen-climate centric."""
 

@@ -81,4 +81,4 @@ def downgrade() -> None:
         "province",
         "postal_code",
     ):
-        op.execute("ALTER TABLE marketplaces DROP COLUMN IF EXISTS {}".format(col))
+        op.execute(f"ALTER TABLE marketplaces DROP COLUMN IF EXISTS {col}")

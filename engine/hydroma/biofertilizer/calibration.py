@@ -5,17 +5,24 @@ Adjusts model parameters based on field trial outcomes
 to improve prediction accuracy.
 """
 
-import structlog
-
-logger = structlog.get_logger()
 from datetime import date
 from typing import Any
 
 import numpy as np
+import structlog
 from scipy.optimize import minimize
 
-# [PHASE 2 BLOCKED] Circular dependency fix: from database.config import SessionLocal
+# The "circular dependency" that once blocked this import does not exist. Verified
+# 2026-09-29: nothing under `database/` imports anything from `engine.*`.
+# `database.config` pulls in only `database.base` (sqlalchemy) and
+# `database.hub.hub` (stdlib + sqlalchemy; duckdb/redis are imported lazily
+# inside its methods). This module already imported `database.models`, which
+# itself imports `database.base`, so the base of the alleged cycle was already
+# loaded at import time.
+from database.config import SessionLocal
 from database.models import NojinCalibrationRecordDB, NojinFieldTrialDB
+
+logger = structlog.get_logger()
 
 
 def calibrate_formulation_model(formulation_id: str, trial_data_ids: list[str], model_version: str):

@@ -146,5 +146,5 @@ class TestPriceArithmeticStaysDecimal:
     def test_the_catalogue_price_is_coerced_from_numeric(self):
         """product.price is Numeric(12,2); reading it yields a Decimal."""
         source = (ROOT / "services" / "marketplace" / "service.py").read_text(encoding="utf-8")
-        assert 'Decimal(str(product.price))' in source
+        assert "Decimal(str(product.price))" in source
         assert isinstance(Decimal("1.00"), Decimal)

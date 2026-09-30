@@ -23,7 +23,6 @@ Measured over-estimate of event runoff depth for a 100 mm storm:
 
 from __future__ import annotations
 
-import ast
 import re
 from pathlib import Path
 
@@ -94,7 +93,6 @@ def test_the_inch_form_would_be_25_point_4_times_smaller():
 
 def test_event_runoff_over_estimate_from_using_the_inch_form():
     """The consequence, so the cost of reintroducing it is concrete."""
-    import numpy as np
 
     def runoff_mm(p, s):
         ia = 0.2 * s
@@ -122,4 +120,5 @@ def test_the_registry_records_that_scs_is_a_standard_not_a_contribution():
     from engine.hydroma.formulas import get
 
     record = get("muskingum_cunge_routing")
-    assert record is not None and record.provenance == "standard"
+    assert record is not None
+    assert record.provenance == "standard"

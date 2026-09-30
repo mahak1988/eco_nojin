@@ -3,6 +3,18 @@ Soil Salinity Analysis.
 
 Implements salinity classification and management recommendations.
 
+Two ruff rules are deliberately not satisfied in this file:
+
+* SIM116 (a chain of if/elif returning a dict should be a lookup table). The
+  five branches are five distinct multi-line records, not one value, and the
+  function also takes `ec` and varies its content by threshold. Folding it into
+  a dict literal would move the ec-dependent parts into lambdas and make the
+  table harder to read, not easier.
+* SIM108 (a two-branch if/else should be a ternary). The else branch carries a
+  comment explaining that a polar night reads as a clear sky, which is the
+  reason for the value rather than an accident. A ternary would keep the value
+  and drop the reason.
+
 References:
     [1] USDA, "Diagnosis and Improvement of Saline and Alkali Soils",
         Agriculture Handbook 60, 1954

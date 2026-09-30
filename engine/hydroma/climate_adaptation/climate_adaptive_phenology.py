@@ -78,7 +78,7 @@ class ClimateAdaptivePhenology:
             if candidate < frost_safe:
                 candidate = frost_safe
                 reasons.append(
-                    "تنظیم بر اساس آخرین یخبندان + %d روز ایمن" % self.cfg.frost_buffer_days
+                    f"تنظیم بر اساس آخرین یخبندان + {self.cfg.frost_buffer_days} روز ایمن"
                 )
 
         # 2. دمای خاک
@@ -89,8 +89,7 @@ class ClimateAdaptivePhenology:
                 delay_days = math.ceil(deficit * 3)  # تقریب 3 روز به ازای هر درجه
                 candidate += delay_days
                 reasons.append(
-                    "تأخیر %d روزه برای رسیدن دمای خاک به %.1f درجه"
-                    % (delay_days, self.cfg.soil_temp_threshold_c)
+                    f"تأخیر {delay_days} روزه برای رسیدن دمای خاک به {self.cfg.soil_temp_threshold_c:.1f} درجه"
                 )
             else:
                 reasons.append(f"دمای خاک مناسب است ({mean_soil:.1f} درجه)")
@@ -99,9 +98,9 @@ class ClimateAdaptivePhenology:
         if rain_onset_day_of_year:
             gap = abs(candidate - rain_onset_day_of_year)
             if gap > self.cfg.rain_window_days:
-                reasons.append("هشدار: فاصله %d روزه از شروع بارش؛ ریسک دیم بالا" % gap)
+                reasons.append(f"هشدار: فاصله {gap} روزه از شروع بارش؛ ریسک دیم بالا")
             else:
-                reasons.append("همزمانی مناسب با شروع بارش (%d روز)" % gap)
+                reasons.append(f"همزمانی مناسب با شروع بارش ({gap} روز)")
 
         return {
             "planting_day_of_year": candidate,

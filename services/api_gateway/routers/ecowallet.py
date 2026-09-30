@@ -147,9 +147,9 @@ async def earn_tokens(
             category=payload.category,
         )
     except EcoNojinException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message)
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.post("/redeem", response_model=RedeemResponse)
@@ -172,9 +172,9 @@ async def redeem_tokens(
             category=payload.category,
         )
     except EcoNojinException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message)
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.post("/transfer", response_model=TransferResponse)
@@ -200,9 +200,9 @@ async def transfer_tokens(
             timestamp=datetime.now(),
         )
     except EcoNojinException as e:
-        raise HTTPException(status_code=e.status_code, detail=e.message)
+        raise HTTPException(status_code=e.status_code, detail=e.message) from e
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get("/wallet/{user_id}", response_model=WalletState)

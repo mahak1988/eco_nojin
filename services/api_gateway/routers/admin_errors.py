@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import logging
 from datetime import UTC, datetime
-from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
@@ -23,11 +22,11 @@ class ErrorResponse(BaseModel):
     status_code: int
     error_type: str
     message: str
-    user_id: Optional[str] = None
+    user_id: str | None = None
     created_at: str
     acknowledged: bool = False
-    acknowledged_at: Optional[str] = None
-    acknowledged_by: Optional[str] = None
+    acknowledged_at: str | None = None
+    acknowledged_by: str | None = None
 
 
 class ErrorAckRequest(BaseModel):
@@ -38,31 +37,40 @@ class ErrorAckRequest(BaseModel):
 ERROR_STORE = []
 
 
-def add_error(path: str, method: str, status_code: int, error_type: str, message: str, user_id: Optional[str] = None):
+def add_error(
+    path: str,
+    method: str,
+    status_code: int,
+    error_type: str,
+    message: str,
+    user_id: str | None = None,
+):
     """Add error to store."""
-    ERROR_STORE.append({
-        "id": f"err-{len(ERROR_STORE)+1}",
-        "path": path,
-        "method": method,
-        "status_code": status_code,
-        "error_type": error_type,
-        "message": message,
-        "user_id": user_id,
-        "created_at": datetime.now(UTC).isoformat(),
-        "acknowledged": False,
-        "acknowledged_at": None,
-        "acknowledged_by": None,
-    })
+    ERROR_STORE.append(
+        {
+            "id": f"err-{len(ERROR_STORE) + 1}",
+            "path": path,
+            "method": method,
+            "status_code": status_code,
+            "error_type": error_type,
+            "message": message,
+            "user_id": user_id,
+            "created_at": datetime.now(UTC).isoformat(),
+            "acknowledged": False,
+            "acknowledged_at": None,
+            "acknowledged_by": None,
+        }
+    )
     # Keep only last 1000 errors
     if len(ERROR_STORE) > 1000:
         ERROR_STORE.pop(0)
 
 
-@router.get("", response_model=List[ErrorResponse])
+@router.get("", response_model=list[ErrorResponse])
 async def list_errors(
-    status_code: Optional[int] = Query(None),
-    error_type: Optional[str] = Query(None),
-    acknowledged: Optional[bool] = Query(None),
+    status_code: int | None = Query(None),
+    error_type: str | None = Query(None),
+    acknowledged: bool | None = Query(None),
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
     current_user=Depends(require_admin_with_mfa),
@@ -77,7 +85,7 @@ async def list_errors(
     if acknowledged is not None:
         errors = [e for e in errors if e["acknowledged"] == acknowledged]
 
-    return errors[offset:offset+limit]
+    return errors[offset : offset + limit]
 
 
 @router.get("/{error_id}", response_model=ErrorResponse)
@@ -145,6 +153,7 @@ async def error_summary(
 ):
     """Get error summary statistics."""
     from collections import Counter
+
     total = len(ERROR_STORE)
     by_type = Counter(e["error_type"] for e in ERROR_STORE)
     by_status = Counter(e["status_code"] for e in ERROR_STORE)

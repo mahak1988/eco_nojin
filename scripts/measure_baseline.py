@@ -188,7 +188,10 @@ def metric_coverage() -> dict[str, Any]:
     services_floor: float | None = None
     workflow = ROOT / ".github" / "workflows" / "ci-cd.yml"
     if workflow.exists():
-        floors = [int(n) for n in re.findall(r"--cov-fail-under=(\d+)", workflow.read_text(encoding="utf-8"))]
+        floors = [
+            int(n)
+            for n in re.findall(r"--cov-fail-under=(\d+)", workflow.read_text(encoding="utf-8"))
+        ]
         if floors:
             services_floor = float(min(floors))
 

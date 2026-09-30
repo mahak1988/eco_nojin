@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import itertools
 import sys
 from pathlib import Path
 
@@ -68,7 +69,7 @@ def merged_column(published: dict[str, dict]) -> dict[str, float]:
         try:
             merged[texture] = float(row["ks_cm_per_day"])
         except (TypeError, ValueError):
-            raise SystemExit(f"{texture}: ks_cm_per_day is not a number")
+            raise SystemExit(f"{texture}: ks_cm_per_day is not a number") from None
     return merged
 
 
@@ -91,9 +92,9 @@ def check_against_physics(
         try:
             ks[texture] = float(row["ks_cm_per_day"])
         except (TypeError, ValueError):
-            raise SystemExit(f"{texture}: ks_cm_per_day is not a number")
+            raise SystemExit(f"{texture}: ks_cm_per_day is not a number") from None
     problems: list[str] = []
-    for coarse, fine in zip(FINENESS, FINENESS[1:]):
+    for coarse, fine in itertools.pairwise(FINENESS):
         if coarse in ks and fine in ks and ks[fine] > ks[coarse]:
             problems.append(
                 f"{fine} ({ks[fine]:g}) conducts more than {coarse} "
@@ -150,12 +151,15 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  {texture}: not in the table, ignored")
             continue
         row = index[texture]
-        for column in ("ks_cm_per_day",) + OPTIONAL[:4]:
-            if column in source and str(source[column]).strip():
-                if str(row[column]) != str(source[column]).strip():
-                    row[column] = str(source[column]).strip()
-                    if column == "ks_cm_per_day":
-                        changed.append(texture)
+        for column in ("ks_cm_per_day", *OPTIONAL[:4]):
+            if (
+                column in source
+                and str(source[column]).strip()
+                and str(row[column]) != str(source[column]).strip()
+            ):
+                row[column] = str(source[column]).strip()
+                if column == "ks_cm_per_day":
+                    changed.append(texture)
         row["provenance"] = f"transcribed from {reference}"
         row["status"] = "verified"
 

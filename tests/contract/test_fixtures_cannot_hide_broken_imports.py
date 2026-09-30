@@ -38,7 +38,10 @@ ROOT = Path(__file__).resolve().parents[2]
 CONFTESTS = [
     path
     for path in sorted(ROOT.glob("**/conftest.py"))
-    if not any(part in {"node_modules", ".venv", "__pycache__", ".kilo", "build", "dist"} for part in path.parts)
+    if not any(
+        part in {"node_modules", ".venv", "__pycache__", ".kilo", "build", "dist"}
+        for part in path.parts
+    )
 ]
 
 
@@ -152,6 +155,5 @@ class TestNoFixtureHidesABrokenSymbol:
                             )
         assert not broken, (
             "these fixture imports name a symbol the module does not define, so the "
-            "ImportError is swallowed and the fixture always skips:\n  "
-            + "\n  ".join(broken)
+            "ImportError is swallowed and the fixture always skips:\n  " + "\n  ".join(broken)
         )

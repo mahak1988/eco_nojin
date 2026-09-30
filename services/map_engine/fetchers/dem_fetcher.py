@@ -134,11 +134,8 @@ class DEMFetcher(MapFetcher):
 
         # Remove band dimension if present (rasterio adds it)
         if "band" in da.dims:
-            if da.sizes["band"] == 1:
-                da = da.isel(band=0, drop=True)
-            else:
-                # Multi-band: take first band
-                da = da.isel(band=0, drop=True)
+            # single band or multi-band: take the first either way
+            da = da.isel(band=0, drop=True)
 
         # Ensure 2D shape
         if da.ndim > 2:

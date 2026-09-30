@@ -7,6 +7,7 @@ SHIPPED → DELIVERED → SETTLED with atomic stock reservation and payment.
 
 from __future__ import annotations
 
+import contextlib
 import logging
 from datetime import UTC, datetime
 from decimal import Decimal
@@ -581,10 +582,8 @@ class OrderService:
         items = result.scalars().all()
         for item in items:
             if item.reservation_id:
-                try:
+                with contextlib.suppress(EcoNojinException):  # already released/consumed
                     await self.stock.release_reservation(item.reservation_id)
-                except EcoNojinException:
-                    pass  # already released/consumed
 
         self.db.add(
             AuditEvent(

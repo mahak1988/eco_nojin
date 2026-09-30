@@ -295,7 +295,7 @@ def get_db() -> Session:
         raise
     except Exception as e:
         logger.error(f"Database connection failed: {e}")
-        raise HTTPException(status_code=503, detail="Database service unavailable")
+        raise HTTPException(status_code=503, detail="Database service unavailable") from e
 
 
 # ═══════════════════════════════════════════════════════════════════

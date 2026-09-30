@@ -12,7 +12,6 @@ from enum import StrEnum
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field, field_validator
-from engine.hydroma.provenance import Provenance
 
 # Provenance marker reused by every simulator output.  Keeping it as a single
 # constant makes it trivial to grep the codebase for honest data-labelling.
@@ -80,8 +79,9 @@ class AnnualImpact(BaseModel):
 
 class ClimateProfile(BaseModel):
     """A full synthetic climate time-series snapshot."""
-    data_source: str = 'simulated'
-    model: str = 'simulation_env synthetic climate'
+
+    data_source: str = "simulated"
+    model: str = "simulation_env synthetic climate"
 
     lat: float | None = None
     lon: float | None = None

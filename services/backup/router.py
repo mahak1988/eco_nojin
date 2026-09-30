@@ -1,5 +1,7 @@
 """Backup/Restore API Router."""
 
+import asyncio
+
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,6 +18,17 @@ from services.backup.schemas import (
 from services.backup.service import BackupService
 
 router = APIRouter(prefix="/api/v1/backup", tags=["backup"])
+
+# The event loop only holds a weak reference to a running task, so a task
+# that is never referenced can be garbage-collected mid-flight. Keep the
+# strong references here and drop them once each task finishes.
+_BACKGROUND_TASKS: set[asyncio.Task] = set()
+
+
+def _spawn(coro) -> None:
+    task = asyncio.create_task(coro)
+    _BACKGROUND_TASKS.add(task)
+    task.add_done_callback(_BACKGROUND_TASKS.discard)
 
 
 async def get_db():
@@ -131,9 +144,7 @@ async def create_backup_job(
     """Create and start a backup job."""
     job = await service.create_job(config_id, backup_type, triggered_by)
     # Start the backup in background
-    import asyncio
-
-    asyncio.create_task(service.run_backup(str(job.id)))
+    _spawn(service.run_backup(str(job.id)))
     return BackupJobResponse.model_validate(job)
 
 
@@ -184,7 +195,7 @@ async def run_backup_job(
         job = await service.run_backup(job_id)
         return BackupJobResponse.model_validate(job)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.post("/jobs/{job_id}/cancel", response_model=BackupJobResponse)
@@ -214,12 +225,10 @@ async def create_restore(
     try:
         restore = await service.create_restore(data)
         # Start restore in background
-        import asyncio
-
-        asyncio.create_task(service.run_restore(str(restore.id)))
+        _spawn(service.run_restore(str(restore.id)))
         return RestoreResponse.model_validate(restore)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get("/restore/{restore_id}", response_model=RestoreResponse)

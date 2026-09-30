@@ -14,7 +14,8 @@
 
 ```python
 from engine.hydroma.formulas import get, summary, unservable_on_request_path
-summary()   # شمارش وضعیت‌ها
+
+summary()  # شمارش وضعیت‌ها
 ```
 
 ## ۲. چهار قاعدهٔ اعمال‌شده

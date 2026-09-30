@@ -395,7 +395,11 @@ BIOLOGICAL_REMEDIATION = {
 
 
 @router.post("/analyze")
-def analyze_soil(req: SoilAnalysisRequest, user: User = Depends(require_user)):
+def analyze_soil(
+    req: SoilAnalysisRequest,
+    user: User = Depends(require_user),
+    db: Session = Depends(get_db),
+):
     lang = req.language
     total = req.clay + req.silt + req.sand or 1
     clay_pct = (req.clay / total) * 100

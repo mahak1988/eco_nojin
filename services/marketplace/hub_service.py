@@ -906,11 +906,14 @@ class VillageDevelopmentHubService:
 
         investment_need = Decimal("0.00")
         for proj in projects_list:
-            if proj.status == "planned" or proj.status == "in_progress":
-                if proj.investment_needed and proj.investment_secured:
-                    remaining = proj.investment_needed - proj.investment_secured
-                    if remaining > 0:
-                        investment_need += remaining
+            if (
+                proj.status in ("planned", "in_progress")
+                and proj.investment_needed
+                and proj.investment_secured
+            ):
+                remaining = proj.investment_needed - proj.investment_secured
+                if remaining > 0:
+                    investment_need += remaining
 
         return {
             "village_id": village_id,

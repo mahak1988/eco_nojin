@@ -667,4 +667,5 @@ def compare_irrigation(species_id: str, site_id: str) -> dict[str, Any]:
 # this module. The 2026-08 rewrite introduced AquaCropSimulator without
 # keeping the old class; the original implementation lives in
 # aquacrop_real_motor.py and is re-exported here.
-from services.scientific_motors.aquacrop_real_motor import RealAquaCropMotor  # noqa: E402,F401
+
+from services.scientific_motors.aquacrop_real_motor import RealAquaCropMotor  # noqa: F401

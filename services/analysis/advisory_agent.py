@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from typing import Any
 
+from services.ai.llm_router import get_router
 from services.ai.unified_rag import get_rag
 from services.analysis.drought_agent import get_drought_agent
 from services.analysis.scenario_agent import get_scenario_agent
-from services.ai.llm_router import get_router
 
 
 class AdvisoryAgent:
@@ -26,7 +26,7 @@ class AdvisoryAgent:
         language: str | None = None,
     ) -> dict[str, Any]:
         """Process a farmer question with optional location context."""
-        
+
         # Detect intent
         intent = self._detect_intent(question)
 
@@ -78,9 +78,29 @@ class AdvisoryAgent:
     def _detect_intent(self, question: str) -> str:
         """Simple intent detection."""
         q = question.lower()
-        drought_keywords = ["خشکسالی", "دریاچه", "آب", "بارش", "کم‌آبی", "spi", "spei", "درو", "index", "شاخص"]
-        scenario_keywords = ["اگر", "چه می‌شود", "سناریو", "تغییر", "آینده", "پیش‌بینی", "what if", "scenario"]
-        
+        drought_keywords = [
+            "خشکسالی",
+            "دریاچه",
+            "آب",
+            "بارش",
+            "کم‌آبی",
+            "spi",
+            "spei",
+            "درو",
+            "index",
+            "شاخص",
+        ]
+        scenario_keywords = [
+            "اگر",
+            "چه می‌شود",
+            "سناریو",
+            "تغییر",
+            "آینده",
+            "پیش‌بینی",
+            "what if",
+            "scenario",
+        ]
+
         # Check scenario first (more specific)
         if any(k in q for k in scenario_keywords):
             return "scenario"
@@ -91,17 +111,18 @@ class AdvisoryAgent:
     def _parse_scenario_params(self, question: str) -> dict[str, float]:
         """Extract scenario parameters from question."""
         import re
+
         params = {"precip_change_pct": 0.0, "temp_change_c": 0.0}
-        
+
         # Look for percentage changes
         precip_match = re.search(r"بارش\s*(\+?-?\d+)\s*%", question)
         if precip_match:
             params["precip_change_pct"] = float(precip_match.group(1))
-        
+
         temp_match = re.search(r"دما\s*(\+?-?\d+)\s*[°C]", question)
         if temp_match:
             params["temp_change_c"] = float(temp_match.group(1))
-            
+
         return params
 
     async def get_drought_report(
@@ -113,7 +134,7 @@ class AdvisoryAgent:
     ) -> dict[str, Any]:
         """Generate comprehensive drought report."""
         analysis = await self.drought_agent.analyze(lat, lon, months)
-        
+
         # Get contextual advice from RAG
         rag_result = await self.rag.answer(
             f"راهکارهای مقابله با خشکسالی در منطقه با SPI {analysis.get('spi', {}).get('3month', {}).get('value', 'N/A')}",

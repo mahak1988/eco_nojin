@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from services.auth.compat import (
     create_access_token_compat,
     create_refresh_token_compat,
+    generate_token,
     hash_password,
     password_hasher,
     verify_password,

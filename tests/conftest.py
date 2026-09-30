@@ -64,7 +64,7 @@ def datahub():
     return hub
 
 
-from tests.db_support import reset_database  # noqa: E402,F401
+from tests.db_support import reset_database
 
 
 @pytest.fixture
@@ -116,7 +116,6 @@ def fresh_session():
     from sqlalchemy.orm import sessionmaker
 
     # Import all models to register them with Base
-    import database.models  # noqa: F401
 
     engine = create_engine("sqlite:///:memory:", echo=False)
     Base.metadata.create_all(engine)

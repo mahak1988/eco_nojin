@@ -118,6 +118,7 @@ markers =
 _CPP = None
 try:
     from engine.hydroma.cpp_bridge import is_cpp_available
+
     _CPP = is_cpp_available()
 except Exception:
     _CPP = False
@@ -261,6 +262,8 @@ class IrrigationInput(BaseModel):
 ```python
 # base.py:100-104 — این بلوک به ModelOutput دفن شده، ولی فیلدها روی ValidationResult است
 notes: str = ""
+
+
 @property
 def is_within_tolerance(self) -> bool:
     return self.relative_error <= self.tolerance

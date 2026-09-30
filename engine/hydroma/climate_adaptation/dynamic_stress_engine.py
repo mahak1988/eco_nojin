@@ -109,8 +109,7 @@ class DynamicStressEngine:
         with contextlib.suppress(Exception):
             result.warnings = [
                 *list(result.warnings),
-                "Hydroma DSE x%.2f (heat_days=%d, night_over=%.1fC)"
-                % (factor, heat_days, mean_over),
+                f"Hydroma DSE x{factor:.2f} (heat_days={heat_days}, night_over={mean_over:.1f}C)",
             ]
         return result
 

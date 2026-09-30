@@ -1,13 +1,18 @@
-from typing import Dict, List, Set, Optional, Any
-from datetime import datetime
-import uuid
 import logging
-from dataclasses import dataclass
+from datetime import datetime
+from typing import TYPE_CHECKING
 
 from orchestrator.src.state.models import (
-    TaskSpec, TaskStatus, AgentGroup, AgentSpec, AgentRegistry,
-    DependencyGraph, OrchestratorState, ApprovalGate, ApprovalGateStatus
+    AgentGroup,
+    ApprovalGate,
+    ApprovalGateStatus,
+    OrchestratorState,
+    TaskSpec,
+    TaskStatus,
 )
+
+if TYPE_CHECKING:
+    from orchestrator.src.messaging.bus import MessageBus
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +20,7 @@ logger = logging.getLogger(__name__)
 class TaskPlanner:
     """Decomposes high-level goals into executable tasks with dependencies"""
 
-    def __init__(self, state: 'OrchestratorState'):
+    def __init__(self, state: "OrchestratorState"):
         self.state = state
 
     def create_task(
@@ -24,11 +29,11 @@ class TaskPlanner:
         description: str,
         agent_id: str,
         group: AgentGroup,
-        dependencies: List[str] = None,
+        dependencies: list[str] | None = None,
         priority: int = 0,
-        estimated_duration: Optional[int] = None,
-        tags: List[str] = None,
-        approval_gate: Optional[str] = None
+        estimated_duration: int | None = None,
+        tags: list[str] | None = None,
+        approval_gate: str | None = None,
     ) -> str:
         """Create a new task and add to state"""
         task = TaskSpec(
@@ -40,13 +45,13 @@ class TaskPlanner:
             priority=priority,
             estimated_duration=estimated_duration,
             tags=tags or [],
-            approval_gate=approval_gate
+            approval_gate=approval_gate,
         )
         self.state.add_task(task)
         logger.info(f"Created task: {task.id} - {name} (agent: {agent_id})")
         return task.id
 
-    def create_task_batch(self, tasks: List[Dict]) -> List[str]:
+    def create_task_batch(self, tasks: list[dict]) -> list[str]:
         """Create multiple tasks at once"""
         task_ids = []
         for task_data in tasks:
@@ -54,7 +59,7 @@ class TaskPlanner:
             task_ids.append(task_id)
         return task_ids
 
-    def get_ready_tasks(self) -> List[str]:
+    def get_ready_tasks(self) -> list[str]:
         """Get tasks that are ready to execute (dependencies met)"""
         return self.state.dag.get_ready_tasks(self.state.completed_tasks)
 
@@ -65,7 +70,7 @@ class TaskPlanner:
             return False
         return True
 
-    def get_execution_order(self) -> List[str]:
+    def get_execution_order(self) -> list[str]:
         """Get topological sort of all tasks"""
         return self.state.dag.topological_sort()
 
@@ -73,12 +78,12 @@ class TaskPlanner:
 class Scheduler:
     """Schedules ready tasks to available agents"""
 
-    def __init__(self, state: 'OrchestratorState', message_bus: 'MessageBus'):
+    def __init__(self, state: "OrchestratorState", message_bus: "MessageBus"):
         self.state = state
         self.message_bus = message_bus
         self.running = False
 
-    async def schedule_next(self) -> List[str]:
+    async def schedule_next(self) -> list[str]:
         """Schedule ready tasks to available agents"""
         scheduled = []
 
@@ -105,7 +110,7 @@ class Scheduler:
                 if spec and spec.id == task.agent_id:
                     # Check agent capacity
                     health = self.state.agents.health.get(agent_id)
-                    if health and health.status == 'healthy':
+                    if health and health.status == "healthy":
                         await self._assign_task(task.id, agent_id)
                         scheduled.append(task_id)
                         assigned = True
@@ -129,6 +134,7 @@ class Scheduler:
         # Publish task started event
         if self.message_bus:
             from orchestrator.src.messaging.bus import EventPublisher
+
             publisher = EventPublisher(self.message_bus)
             await publisher.task_started(task_id, agent_id)
 
@@ -159,7 +165,7 @@ class Scheduler:
 
     async def check_stuck_tasks(self, threshold_seconds: int = 3600):
         """Check for tasks stuck in RUNNING state"""
-        for task_id, task_state in self.state.tasks.items():
+        for _task_id, task_state in self.state.tasks.items():
             task = task_state.task
             if task.status == TaskStatus.RUNNING and task.started_at:
                 elapsed = (datetime.utcnow() - task.started_at).total_seconds()
@@ -167,6 +173,7 @@ class Scheduler:
                     logger.warning(f"Task {task.id} stuck for {elapsed}s")
                     if self.message_bus:
                         from orchestrator.src.messaging.bus import EventPublisher
+
                         publisher = EventPublisher(self.message_bus)
                         await publisher.task_stuck(task.id, task.agent_id, int(elapsed))
 
@@ -174,7 +181,7 @@ class Scheduler:
 class ApprovalManager:
     """Manages approval gates for critical tasks"""
 
-    def __init__(self, state: 'OrchestratorState', message_bus: 'MessageBus'):
+    def __init__(self, state: "OrchestratorState", message_bus: "MessageBus"):
         self.state = state
         self.message_bus = message_bus
 
@@ -183,9 +190,9 @@ class ApprovalManager:
         gate_id: str,
         name: str,
         description: str,
-        required_roles: List[str],
+        required_roles: list[str],
         timeout: str,
-        escalation: str
+        escalation: str,
     ) -> str:
         """Create and request approval gate"""
         gate = ApprovalGate(
@@ -196,17 +203,18 @@ class ApprovalManager:
             timeout=timeout,
             escalation=escalation,
             status=ApprovalGateStatus.PENDING,
-            requested_at=datetime.utcnow()
+            requested_at=datetime.utcnow(),
         )
         self.state.approval_gates[gate_id] = gate
 
         # Save to state store
-        if hasattr(self.state, 'store') and self.state.store:
+        if hasattr(self.state, "store") and self.state.store:
             await self.state.store.save_approval_gate(gate)
 
         # Notify via message bus
         if self.message_bus:
             from orchestrator.src.messaging.bus import EventPublisher
+
             publisher = EventPublisher(self.message_bus)
             await publisher.human_approval_required(gate_id, description, required_roles)
 
@@ -262,11 +270,11 @@ class ApprovalManager:
     def _parse_timeout(self, timeout: str) -> float:
         """Parse timeout string like '72h', '24h', '4h' to hours"""
         timeout = timeout.lower().strip()
-        if timeout.endswith('h'):
+        if timeout.endswith("h"):
             return float(timeout[:-1])
-        elif timeout.endswith('m'):
+        elif timeout.endswith("m"):
             return float(timeout[:-1]) / 60
-        elif timeout.endswith('d'):
+        elif timeout.endswith("d"):
             return float(timeout[:-1]) * 24
         return 24.0  # default 24 hours
 
@@ -291,7 +299,10 @@ class ApprovalManager:
         """Fail tasks waiting on this approval gate"""
         for task_state in self.state.tasks.values():
             task = task_state.task
-            if task.approval_gate == gate_id and task.status in [TaskStatus.PENDING, TaskStatus.BLOCKED]:
+            if task.approval_gate == gate_id and task.status in [
+                TaskStatus.PENDING,
+                TaskStatus.BLOCKED,
+            ]:
                 task.status = TaskStatus.FAILED
                 task.error = f"Approval rejected: {reason}"
                 logger.error(f"Task {task.id} failed due to rejected approval: {reason}")

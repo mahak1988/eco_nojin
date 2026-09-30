@@ -15,6 +15,7 @@ The banned-claim list is checked with a negation guard: those phrases are
 allowed only inside an explicit negation or removal report, which is the one
 context the standard permits.
 """
+
 import glob
 import re
 import sys
@@ -69,40 +70,89 @@ ANCHORS = [
 
 # Safety numbers: count in the backup must not decrease in the final file.
 NUMBERS = [
-    "۱٫۳", "۵ درصد", "۸۰۰", "۱۶۰۰", "۴٫۸", "۵٫۵", "۲۰ تا ۴۰", "۱۰ تا ۲۰",
-    "۱٫۹", "۱۰۰٬۰۰۰", "۶۲۹٫۹۵", "۵٫۱۰", "۱٬۳۵۰٬۰۰۰", "۲۲٫۹", "۰٫۱۸۶",
-    "۱۹۶۶", "۱۹۷۶", "۱۹۹۹", "۹۴۱", "۱۵۰ تا ۲۰۰", "۴۰۰", "۲۲۸",
-    "۳۰ سانتی‌متر", "۵ سانتی‌متر", "۶۰ سانتی‌متر", "۲۰ متر", "۵۰ متر",
-    "۹۰ روز", "۲٫۵", "۹۰ درصد", "۵۰ متری", "۱٬۳۶۰",
+    "۱٫۳",
+    "۵ درصد",
+    "۸۰۰",
+    "۱۶۰۰",
+    "۴٫۸",
+    "۵٫۵",
+    "۲۰ تا ۴۰",
+    "۱۰ تا ۲۰",
+    "۱٫۹",
+    "۱۰۰٬۰۰۰",
+    "۶۲۹٫۹۵",
+    "۵٫۱۰",
+    "۱٬۳۵۰٬۰۰۰",
+    "۲۲٫۹",
+    "۰٫۱۸۶",
+    "۱۹۶۶",
+    "۱۹۷۶",
+    "۱۹۹۹",
+    "۹۴۱",
+    "۱۵۰ تا ۲۰۰",
+    "۴۰۰",
+    "۲۲۸",
+    "۳۰ سانتی‌متر",
+    "۵ سانتی‌متر",
+    "۶۰ سانتی‌متر",
+    "۲۰ متر",
+    "۵۰ متر",
+    "۹۰ روز",
+    "۲٫۵",
+    "۹۰ درصد",
+    "۵۰ متری",
+    "۱٬۳۶۰",
 ]
 
 BANNED_CLAIMS = [
-    "مطابقت کامل با استاندارد", "تطبیق ۹۵٪", "۱۰۰٪ با استاندارد",
-    "تنها راهکار", "بالاتر از استاندارد", "موقعیت رقابتی منحصر",
-    "بازدهی ۱۰۰٪", "نتیجه میدانی", "اندازه‌گیری‌شده در پایلوت", "همه پایلوت",
+    "مطابقت کامل با استاندارد",
+    "تطبیق ۹۵٪",
+    "۱۰۰٪ با استاندارد",
+    "تنها راهکار",
+    "بالاتر از استاندارد",
+    "موقعیت رقابتی منحصر",
+    "بازدهی ۱۰۰٪",
+    "نتیجه میدانی",
+    "اندازه‌گیری‌شده در پایلوت",
+    "همه پایلوت",
 ]
 # Each of these may appear only inside one of these negation frames.
 NEGATION_FRAMES = ["هیچ", "نمی", "نه ", "بدون", "بازنشسته", "ممنوع", "حذف نشده"]
 
 APPROVED = {
-    "Quercus hyrcana", "Fraxinus angustifolia", "Zelkova carpinifolia",
-    "Platanus orientalis", "Celtis caucasica", "Pterocarya fraxinifolia",
-    "Prunus avium", "Populus nigra", "Salix alba", "Alnus glutinosa",
-    "Acer campestre", "Acer hyrcanum", "Carpinus betulus", "Cornus mas",
-    "Fagus orientalis", "Fraxinus excelsior", "Tilia cordata", "Ulmus minor",
+    "Quercus hyrcana",
+    "Fraxinus angustifolia",
+    "Zelkova carpinifolia",
+    "Platanus orientalis",
+    "Celtis caucasica",
+    "Pterocarya fraxinifolia",
+    "Prunus avium",
+    "Populus nigra",
+    "Salix alba",
+    "Alnus glutinosa",
+    "Acer campestre",
+    "Acer hyrcanum",
+    "Carpinus betulus",
+    "Cornus mas",
+    "Fagus orientalis",
+    "Fraxinus excelsior",
+    "Tilia cordata",
+    "Ulmus minor",
 }
 LATIN_DIGITS = "0123456789"
 ARABIC_INDIC = "٠١٢٣٤٥٦٧٨٩"
 
 
 def in_negation(text: str, at: int) -> bool:
-    window = text[max(0, at - 120): at + 120]
+    window = text[max(0, at - 120) : at + 120]
     return any(f in window for f in NEGATION_FRAMES)
 
 
 def main() -> int:
-    before = open(BACKUP, encoding="utf-8").read()
-    after = open(FINAL, encoding="utf-8").read()
+    with open(BACKUP, encoding="utf-8") as _fh:
+        before = _fh.read()
+    with open(FINAL, encoding="utf-8") as _fh:
+        after = _fh.read()
     problems: list[str] = []
     added: list[str] = []
 
@@ -122,7 +172,7 @@ def main() -> int:
         start = 0
         while (at := after.find(claim, start)) != -1:
             if not in_negation(after, at):
-                problems.append(f"BANNED CLAIM live: …{after[at-70:at+40]}…")
+                problems.append(f"BANNED CLAIM live: …{after[at - 70 : at + 40]}…")
             start = at + 1
 
     if "به دلیل ریسک حذف نشده" not in after:
@@ -148,7 +198,7 @@ def main() -> int:
     # Latin digits are legal only inside a register ID, a standard code, or a
     # scale label — never as a quantity.
     for mt in re.finditer(r"[0-9]+", after):
-        ctx = after[max(0, mt.start() - 6): mt.end() + 6]
+        ctx = after[max(0, mt.start() - 6) : mt.end() + 6]
         if not re.search(r"[A-Za-z]{1,5}[-–][0-9A-Za-z]{0,5}", ctx) and not re.search(
             r"v1\.0|v3\.0|\b[A-Z][0-9]\b|C3|ISO \d+|[Ss]tandard", ctx
         ):

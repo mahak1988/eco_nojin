@@ -22,7 +22,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -944,7 +944,7 @@ class CGLSConnector(DataConnector):
     Source: DE Africa S3 bucket 'deafrica-input-datasets' (free, no key).
     """
 
-    LWQ_PRODUCTS = {
+    LWQ_PRODUCTS: ClassVar[dict[str, Any]] = {
         "lwq300_2016_2024": {
             "name": "LWQ300 2016-2024",
             "resolution": "300m",
@@ -1026,8 +1026,10 @@ class CGLSConnector(DataConnector):
         import os
 
         import boto3
+        import requests
         from botocore import UNSIGNED
         from botocore.config import Config
+        from botocore.exceptions import BotoCoreError
 
         product = query.get("product", "lwq300_2016_2024")
         variables = query.get("variables", ["Rw620_rep", "Rw767_rep", "last_obs"])
@@ -1118,7 +1120,14 @@ class CGLSConnector(DataConnector):
                             )
                         )
 
-            except Exception as e:
+            # Only the environmental failures that mean "this tile is not
+            # available right now" may degrade to a warning and a skipped tile.
+            # A bare `except Exception` also swallowed NameError/TypeError from
+            # this method, so a programming error was reported to the caller as
+            # "no data" -- and, before `import requests` was restored here, the
+            # NameError on the download line made *every* tile take this path
+            # and `fetch()` return an empty list on every single call.
+            except (requests.RequestException, OSError, BotoCoreError) as e:
                 logger.warning(f"CGLS fetch failed for tile {tile}: {e}")
                 continue
 
@@ -1634,7 +1643,7 @@ class HydroSHEDSConnector(DataConnector):
     - GloRiC: Global River Classification
     """
 
-    DATASETS = {
+    DATASETS: ClassVar[dict[str, Any]] = {
         "hydrobasins": {
             "name": "HydroBASINS",
             "description": "Global watershed boundaries at multiple Pfafstetter levels",

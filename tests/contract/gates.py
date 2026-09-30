@@ -347,12 +347,9 @@ def scan_fabrications(root: Path) -> Report:
                 #   — already a strong signal, so it is not name-gated.
                 broad: list[str] = []
                 narrow: list[str] = []
-                for key_node, value_node in zip(
-                    returned.keys, returned.values, strict=False
-                ):
+                for key_node, value_node in zip(returned.keys, returned.values, strict=False):
                     if not (
-                        isinstance(key_node, ast.Constant)
-                        and isinstance(value_node, ast.Constant)
+                        isinstance(key_node, ast.Constant) and isinstance(value_node, ast.Constant)
                     ):
                         continue
                     key, value = key_node.value, value_node.value
@@ -376,11 +373,14 @@ def scan_fabrications(root: Path) -> Report:
                     continue
                 # A falsy success value ("verified": False) is a denial, not a
                 # claim.
-                if all(
-                    isinstance(v, ast.Constant) and not v.value
-                    for k, v in zip(returned.keys, returned.values, strict=False)
-                    if isinstance(k, ast.Constant) and k.value in SUCCESS_LITERALS
-                ) and not asserted:
+                if (
+                    all(
+                        isinstance(v, ast.Constant) and not v.value
+                        for k, v in zip(returned.keys, returned.values, strict=False)
+                        if isinstance(k, ast.Constant) and k.value in SUCCESS_LITERALS
+                    )
+                    and not asserted
+                ):
                     continue
 
                 report.add(

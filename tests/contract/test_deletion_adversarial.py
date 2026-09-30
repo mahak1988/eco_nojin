@@ -50,8 +50,8 @@ import re
 import subprocess
 import sys
 import textwrap
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 import pytest
 
@@ -63,10 +63,30 @@ SELF = Path(__file__).resolve()
 #: other agents' checkouts of *older* commits: they import the deleted modules
 #: legitimately and say nothing about the live tree.
 EXCLUDED_DIRS = {
-    ".git", ".kilo", ".hypothesis", ".mypy_cache", ".pytest_cache", ".ruff_cache",
-    ".venv", "venv", "__pycache__", "node_modules", "dist", "build", ".next",
-    "lib", "data", "htmlcov", "coverage", "site-packages", ".idea", ".vscode",
-    "econojin.egg-info", "test-results", "playwright-report", "blob-report",
+    ".git",
+    ".kilo",
+    ".hypothesis",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".venv",
+    "venv",
+    "__pycache__",
+    "node_modules",
+    "dist",
+    "build",
+    ".next",
+    "lib",
+    "data",
+    "htmlcov",
+    "coverage",
+    "site-packages",
+    ".idea",
+    ".vscode",
+    "econojin.egg-info",
+    "test-results",
+    "playwright-report",
+    "blob-report",
 }
 
 #: Files that legitimately *name* a deleted path: the log itself, quarantined
@@ -142,8 +162,10 @@ def _iter_files(suffixes: Iterable[str]) -> list[Path]:
     for dirpath, dirnames, filenames in os.walk(ROOT):
         rel = Path(dirpath).relative_to(ROOT)
         dirnames[:] = [
-            d for d in dirnames
-            if d not in EXCLUDED_DIRS and not d.endswith(".egg-info")
+            d
+            for d in dirnames
+            if d not in EXCLUDED_DIRS
+            and not d.endswith(".egg-info")
             and not d.startswith("_quarantine_bak")
         ]
         if set(rel.parts) & EXCLUDED_DIRS:
@@ -173,7 +195,7 @@ def _dotted(path: str) -> str:
     parts = path.split("/")
     if parts[-1] == "__init__.py":
         return ".".join(parts[:-1])
-    return ".".join(parts[:-1] + [parts[-1][: -len(".py")]])
+    return ".".join([*parts[:-1], parts[-1][: -len(".py")]])
 
 
 def _needles(path: str) -> list[str]:
@@ -215,14 +237,16 @@ def _is_absence_guard(hit: str) -> bool:
     # innermost function whose body contains the reported line
     best: ast.AST | None = None
     for node in ast.walk(tree):
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and \
-                node.lineno <= lineno <= (node.end_lineno or node.lineno):
-            if best is None or node.lineno > best.lineno:
-                best = node
+        if (
+            isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and node.lineno <= lineno <= (node.end_lineno or node.lineno)
+            and (best is None or node.lineno > best.lineno)
+        ):
+            best = node
     scope = best if best is not None else tree
     return any(
-        isinstance(n, ast.Name) and n.id in _GUARD_MARKERS
-        or isinstance(n, ast.Attribute) and n.attr in _GUARD_MARKERS
+        (isinstance(n, ast.Name) and n.id in _GUARD_MARKERS)
+        or (isinstance(n, ast.Attribute) and n.attr in _GUARD_MARKERS)
         for n in ast.walk(scope)
     )
 
@@ -269,7 +293,7 @@ def import_scan(python_files: list[Path], deletions: dict[str, dict]) -> dict:
                 if node.level:
                     base = ".".join(pkg[: len(pkg) - (node.level - 1)] + ([base] if base else []))
                 targets = [base] + [f"{base}.{a.name}" for a in node.names]
-            for path, mods in static.items():
+            for path, _mods in static.items():
                 if path in SHADOWED:
                     continue
                 mod = dotted_of[path]
@@ -320,13 +344,14 @@ class TestTheBaselineIsReal:
     def test_every_logged_path_is_recoverable_from_head(self, deletions) -> None:
         proc = subprocess.run(
             ["git", "ls-tree", "-r", "--name-only", "HEAD", "--", *deletions],
-            cwd=ROOT, capture_output=True, text=True, timeout=300,
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            timeout=300,
         )
         tracked = set(proc.stdout.split())
         missing = [p for p in deletions if p not in tracked]
-        assert not missing, (
-            f"not in HEAD, so `git checkout HEAD --` cannot restore them: {missing}"
-        )
+        assert not missing, f"not in HEAD, so `git checkout HEAD --` cannot restore them: {missing}"
 
     def test_the_scan_actually_parsed_the_tree(self, import_scan, python_files) -> None:
         """A scanner that silently fails to parse is a scanner that proves nothing."""
@@ -346,9 +371,7 @@ class TestTheBaselineIsReal:
 # --------------------------------------------------------------------------- #
 class TestNoLiveModuleImportsADeletedPath:
     def test_no_static_import_reaches_a_deleted_module(self, import_scan) -> None:
-        offenders = {
-            p: hits for p, hits in import_scan["static"].items() if hits
-        }
+        offenders = {p: hits for p, hits in import_scan["static"].items() if hits}
         assert not offenders, (
             "a deleted module is imported again. Each entry names the exact file and "
             "line, because a resurrection here is the campaign's headline risk:\n  "
@@ -404,8 +427,7 @@ class TestNoDynamicLoadingReachesADeletedModule:
         assert not offenders, (
             "a deleted module is still loaded dynamically, so it was never dead. An "
             "AST importer scan cannot see this form at all, which is exactly why it "
-            "is checked separately:\n  "
-            + "\n  ".join(f"{p}: {h}" for p, h in offenders.items())
+            "is checked separately:\n  " + "\n  ".join(f"{p}: {h}" for p, h in offenders.items())
         )
         # Not decorative: the guard exemption is only sound if the set of
         # exempted sites is itself accounted for.
@@ -426,8 +448,11 @@ class TestNoDynamicLoadingReachesADeletedModule:
         )
 
     def test_no_conftest_declares_a_deleted_module_as_a_plugin(self) -> None:
-        conftests = [ROOT / "conftest.py", ROOT / "tests" / "conftest.py",
-                     ROOT / "services" / "conftest.py"]
+        conftests = [
+            ROOT / "conftest.py",
+            ROOT / "tests" / "conftest.py",
+            ROOT / "services" / "conftest.py",
+        ]
         conftests += sorted(ROOT.rglob("conftest.py"))
         seen: set[Path] = set()
         offenders: list[str] = []
@@ -524,11 +549,13 @@ class TestNoBuildOrDeploymentFileInvokesADeletedPath:
                 # A path-as-command is the failure that survives a green local run
                 # and breaks CI. Match the path, the dotted name, and the bare
                 # filename when it is specific enough to be unambiguous.
-                hits = [
-                    needle for needle in (path, dotted) if needle and needle in text
-                ]
-                if not hits and stem in ("cpp_bridge.py", "database_models.py",
-                                         "c_api.cpp", "test_lcc.py"):
+                hits = [needle for needle in (path, dotted) if needle and needle in text]
+                if not hits and stem in (
+                    "cpp_bridge.py",
+                    "database_models.py",
+                    "c_api.cpp",
+                    "test_lcc.py",
+                ):
                     hits = [stem] if stem in text else []
                 if hits:
                     offenders.append(f"{rel} -> {path} (via {hits[0]!r})")
@@ -548,10 +575,14 @@ class TestNoBuildOrDeploymentFileInvokesADeletedPath:
     def test_no_entry_point_registers_a_deleted_module(self) -> None:
         pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
         offenders = [
-            line.strip() for line in pyproject.splitlines()
-            if re.search(r"(event_bus|api_gateway\.(resilience|cache)|map_engine\.api"
-                         r"|smart_service|models\.cpp_bridge|security\.(ssrf|headers"
-                         r"|redis_rate_limit|slowloris)|session_manager)", line)
+            line.strip()
+            for line in pyproject.splitlines()
+            if re.search(
+                r"(event_bus|api_gateway\.(resilience|cache)|map_engine\.api"
+                r"|smart_service|models\.cpp_bridge|security\.(ssrf|headers"
+                r"|redis_rate_limit|slowloris)|session_manager)",
+                line,
+            )
         ]
         assert not offenders, (
             f"pyproject registers a deleted module: {offenders}. `[project.scripts]` "
@@ -567,11 +598,20 @@ class TestNoBuildOrDeploymentFileInvokesADeletedPath:
                 continue
             for line in text.splitlines():
                 stripped = line.strip()
-                if not any(stripped.startswith(k) for k in ("run:", "- run:", "python ",
-                                                             "pytest ", "coverage run",
-                                                             "uvicorn ", "alembic ")):
+                if not any(
+                    stripped.startswith(k)
+                    for k in (
+                        "run:",
+                        "- run:",
+                        "python ",
+                        "pytest ",
+                        "coverage run",
+                        "uvicorn ",
+                        "alembic ",
+                    )
+                ):
                     continue
-                for path, entry in (
+                for _path, entry in (
                     ("services/security/ssrf.py", "ssrf"),
                     ("services/session_manager.py", "session_manager"),
                     ("services/map_engine/test_hydroma_motors.py", "test_hydroma_motors"),
@@ -581,15 +621,15 @@ class TestNoBuildOrDeploymentFileInvokesADeletedPath:
                 ):
                     if entry in stripped:
                         offenders.append(f"{wf.name}: {stripped[:120]}")
-        assert not offenders, (
-            "a workflow step still invokes a deleted module:\n  " + "\n  ".join(offenders)
+        assert not offenders, "a workflow step still invokes a deleted module:\n  " + "\n  ".join(
+            offenders
         )
 
     @pytest.mark.xfail(
         strict=True,
         reason=(
             "PRE-EXISTING, unrelated to any deletion. pyproject.toml:130 declares "
-            "`econojin = \"services.api_gateway.cli:main\"` under [project.scripts], but "
+            '`econojin = "services.api_gateway.cli:main"` under [project.scripts], but '
             "services/api_gateway/cli.py does not exist, so installing the package "
             "produces a console command that raises ModuleNotFoundError on first use. "
             "It is listed here because it is the canonical example of the class this "
@@ -723,9 +763,10 @@ class TestTheShadowedDeletionsWereStructurallyUnimportable:
         """The log must carry the stronger claim, not just 'zero importers'."""
         for path in SHADOWED:
             entry = deletions[path]
-            assert entry.get("name_collision_with_live_package") or "shadow" in (
-                entry["reason"] + entry["verified_by"]
-            ).lower(), (
+            assert (
+                entry.get("name_collision_with_live_package")
+                or "shadow" in (entry["reason"] + entry["verified_by"]).lower()
+            ), (
                 f"{path} is a shadowing deletion but the log justifies it only by "
                 "importer count. For a name collision that is the weaker argument: no "
                 "import statement can distinguish the two, so the importer count is "
@@ -770,7 +811,8 @@ def _orm_tables(source: str) -> dict[str, dict[str, str]]:
                 if fn in ("Column", "mapped_column"):
                     cols[target.id] = (
                         str(value.args[0].value)
-                        if value.args and isinstance(value.args[0], ast.Constant) else "?"
+                        if value.args and isinstance(value.args[0], ast.Constant)
+                        else "?"
                     )
         if name:
             out[name] = cols
@@ -782,8 +824,7 @@ class TestTheDeletedModelsFileOwnedNoLiveSchema:
         import database.models as live
 
         live_tables = set(live.Base.metadata.tables)
-        missing = [t for t in TABLES_OWNED_BY_THE_DELETED_SHADOW_FILE
-                   if t not in live_tables]
+        missing = [t for t in TABLES_OWNED_BY_THE_DELETED_SHADOW_FILE if t not in live_tables]
         assert not missing, (
             f"tables the deleted shadow file declared are absent from the live ORM: "
             f"{missing}. If those were real tables, the deletion dropped schema"
@@ -798,7 +839,11 @@ class TestTheDeletedModelsFileOwnedNoLiveSchema:
         """
         dead_src = subprocess.run(
             ["git", "show", "HEAD:database/models/database_models.py"],
-            cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=300,
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            timeout=300,
         ).stdout
         dead = _orm_tables(dead_src)
         live = _orm_tables((ROOT / "database" / "models.py").read_text(encoding="utf-8"))
@@ -858,15 +903,16 @@ class TestTheDeletedModelsFileOwnedNoLiveSchema:
         """
         import database.models as live
 
-        columns = {t: {c.name for c in live.Base.metadata.tables[t].columns}
-                   for t in TABLES_OWNED_BY_THE_DELETED_SHADOW_FILE
-                   if t in live.Base.metadata.tables}
+        columns = {
+            t: {c.name for c in live.Base.metadata.tables[t].columns}
+            for t in TABLES_OWNED_BY_THE_DELETED_SHADOW_FILE
+            if t in live.Base.metadata.tables
+        }
         mig_text = "\n".join(
-            t for t in (_read(p) for p in sorted((ROOT / "alembic" / "versions").glob("*.py")))
-            if t
+            t for t in (_read(p) for p in sorted((ROOT / "alembic" / "versions").glob("*.py"))) if t
         )
         unbuilt: list[str] = []
-        for table, cols in columns.items():
+        for table, _cols in columns.items():
             if f'"{table}"' not in mig_text:
                 unbuilt.append(f"{table}: no live migration names it")
         assert not unbuilt, (
@@ -897,9 +943,15 @@ class TestTheDeletedModelsFileOwnedNoLiveSchema:
 
         columns = {c.name for c in TopographyAnalysisResult.__table__.columns}
         required = {
-            "site_id", "dem_path", "analysis_types", "slope_map_path",
-            "aspect_map_path", "curvature_map_path", "flow_direction_map_path",
-            "flow_accumulation_map_path", "created_at",
+            "site_id",
+            "dem_path",
+            "analysis_types",
+            "slope_map_path",
+            "aspect_map_path",
+            "curvature_map_path",
+            "flow_direction_map_path",
+            "flow_accumulation_map_path",
+            "created_at",
         }
         assert required <= columns, (
             "engine/hydroma/analyses/topography_analysis.py writes these columns but "
@@ -907,9 +959,14 @@ class TestTheDeletedModelsFileOwnedNoLiveSchema:
         )
         # And the write itself, which is the failure the user would actually see.
         TopographyAnalysisResult(
-            site_id="s", dem_path="/d.tif", analysis_types="[]",
-            slope_map_path="a", aspect_map_path="b", curvature_map_path="c",
-            flow_direction_map_path="d", flow_accumulation_map_path="e",
+            site_id="s",
+            dem_path="/d.tif",
+            analysis_types="[]",
+            slope_map_path="a",
+            aspect_map_path="b",
+            curvature_map_path="c",
+            flow_direction_map_path="d",
+            flow_accumulation_map_path="e",
         )
 
 
@@ -938,7 +995,9 @@ class TestNoSurvivingPackageReExportsSomethingDeleted:
                     base = node.module or ""
                     if node.level:
                         pkg = rel.split("/")[:-1]
-                        base = ".".join(pkg[: len(pkg) - (node.level - 1)] + ([base] if base else []))
+                        base = ".".join(
+                            pkg[: len(pkg) - (node.level - 1)] + ([base] if base else [])
+                        )
                     names = [base]
                 for path in deletions:
                     if path in SHADOWED:
@@ -1032,11 +1091,15 @@ class TestTheSurvivorIsTheOneThatIsWired:
     def test_the_live_cpp_status_endpoint_reports_rather_than_guesses(self) -> None:
         mod = importlib.import_module("engine.hydroma.cpp_bridge")
         state = mod.backend_status()
-        assert isinstance(state, dict) and "import_error" in state, (
+        assert isinstance(state, dict), (
             "engine.hydroma.cpp_bridge.backend_status() is the single source of truth "
             "for the endpoint the deleted services/models/cpp_bridge.py used to feed; "
             "it no longer reports an import_error field, so the endpoint's honesty "
             "contract is gone"
+        )
+        assert "import_error" in state, (
+            "engine.hydroma.cpp_bridge.backend_status() no longer reports an "
+            "import_error field, so the endpoint lost its honesty contract"
         )
 
     def test_engine_resilience_is_reexported_by_the_engine_package(self) -> None:
@@ -1086,8 +1149,10 @@ class TestTheSurvivorIsTheOneThatIsWired:
         assert limiter._redis is not None, "the survivor lost its Redis backend"
 
         # A caller rotating paths must not buy a fresh budget.
-        rotated = [limiter._check_memory("1.2.3.4", f"/farms/{i}", None)[0]
-                   for i in range(GENERAL_LIMIT + 20)]
+        rotated = [
+            limiter._check_memory("1.2.3.4", f"/farms/{i}", None)[0]
+            for i in range(GENERAL_LIMIT + 20)
+        ]
         assert all(rotated[:GENERAL_LIMIT]), "the per-IP budget no longer holds"
         assert not any(rotated[GENERAL_LIMIT:]), (
             "path rotation defeats the live limiter. That is exactly the defect the "
@@ -1118,10 +1183,16 @@ class TestTheDeletedInPackageTestsWereReplacedNotLost:
     @pytest.mark.parametrize(
         ("deleted", "replacement", "subject"),
         [
-            ("services/scientific_motors/test_lcc.py",
-             "tests/unit/test_lcc_motor.py", "LandCapabilityMotor"),
-            ("services/map_engine/test_hydroma_motors.py",
-             "tests/unit/test_map_engine_fetchers.py", "BiofertilizerMotor"),
+            (
+                "services/scientific_motors/test_lcc.py",
+                "tests/unit/test_lcc_motor.py",
+                "LandCapabilityMotor",
+            ),
+            (
+                "services/map_engine/test_hydroma_motors.py",
+                "tests/unit/test_map_engine_fetchers.py",
+                "BiofertilizerMotor",
+            ),
         ],
     )
     def test_the_replacement_asserts(self, deleted: str, replacement: str, subject: str) -> None:
@@ -1133,9 +1204,11 @@ class TestTheDeletedInPackageTestsWereReplacedNotLost:
         )
         text = path.read_text(encoding="utf-8")
         tree = ast.parse(text, filename=replacement)
-        tests = [n for n in ast.walk(tree)
-                 if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))
-                 and n.name.startswith("test_")]
+        tests = [
+            n
+            for n in ast.walk(tree)
+            if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name.startswith("test_")
+        ]
         asserts = [n for n in ast.walk(tree) if isinstance(n, ast.Assert)]
         assert tests, f"{replacement} defines no test functions"
         assert len(asserts) >= len(tests), (
@@ -1159,8 +1232,7 @@ class TestTheDeletedInPackageTestsWereReplacedNotLost:
         offenders = [
             f.relative_to(ROOT).as_posix()
             for f in (ROOT / "services").rglob("test_*.py")
-            if "tests" not in f.relative_to(ROOT).parts
-            and "__pycache__" not in f.parts
+            if "tests" not in f.relative_to(ROOT).parts and "__pycache__" not in f.parts
         ]
         assert not offenders, (
             f"assertion-free test modules are back inside production packages: "
@@ -1197,7 +1269,8 @@ class TestTheDeletionsLeftNoTelemetryBehind:
         declared = set(re.findall(r'Counter\(\s*"([a-z0-9_]+)"', source))
         tree = ast.parse(source, filename="metrics.py")
         referenced = {
-            n.attr for n in ast.walk(tree)
+            n.attr
+            for n in ast.walk(tree)
             if isinstance(n, ast.Attribute) and isinstance(n.value, ast.Name)
         }
         orphan = {c for c in declared if c.replace("econojin_", "") not in referenced}
@@ -1216,8 +1289,12 @@ class TestTheDeletionsLeftNoTelemetryBehind:
         an unlogged module appearing is exactly the inverse failure the log's
         own policy line 8 forbids.
         """
-        for gone in ("services/api_gateway/cache", "services/api_gateway/resilience",
-                     "services/event_bus", "services/map_engine/api"):
+        for gone in (
+            "services/api_gateway/cache",
+            "services/api_gateway/resilience",
+            "services/event_bus",
+            "services/map_engine/api",
+        ):
             assert not (ROOT / gone).exists(), (
                 f"{gone}/ still exists after every file in it was logged as deleted. "
                 "Without an __init__.py it is unimportable; with one it is a live "
@@ -1231,9 +1308,14 @@ class TestTheDeletionsLeftNoTelemetryBehind:
             )
 
     def test_no_module_reappeared_under_a_deleted_package(self, deletions) -> None:
-        for gone in ("services/api_gateway/cache", "services/api_gateway/resilience",
-                     "services/event_bus", "services/map_engine/api",
-                     "services/security", "services/api_gateway/eventbus"):
+        for gone in (
+            "services/api_gateway/cache",
+            "services/api_gateway/resilience",
+            "services/event_bus",
+            "services/map_engine/api",
+            "services/security",
+            "services/api_gateway/eventbus",
+        ):
             target = ROOT / gone
             if not target.exists():
                 continue
@@ -1310,8 +1392,12 @@ class TestTheRecordedPremisesAreStillTrue:
             "reason for removing services/security/headers.py no longer describes the "
             "tree"
         )
-        for header in ("X-Content-Type-Options", "X-Frame-Options",
-                       "Referrer-Policy", "Permissions-Policy"):
+        for header in (
+            "X-Content-Type-Options",
+            "X-Frame-Options",
+            "Referrer-Policy",
+            "Permissions-Policy",
+        ):
             assert header in block, f"the mounted middleware lost {header}"
 
     @pytest.mark.xfail(
@@ -1332,20 +1418,27 @@ class TestTheRecordedPremisesAreStillTrue:
         ledger = (ROOT / "docs" / "standards" / "tolerated-degradations.yaml").read_text(
             encoding="utf-8"
         )
-        m = re.search(
-            r"id: no-content-security-policy(.*?)(?=\n  - id:|\Z)", ledger, re.S
-        )
+        m = re.search(r"id: no-content-security-policy(.*?)(?=\n  - id:|\Z)", ledger, re.S)
         assert m, "the no-content-security-policy toleration is gone; re-derive it"
         reason = m.group(1)
-        if "only CSP in the repository" not in reason and "only Content-Security-Policy" not in reason:
+        if (
+            "only CSP in the repository" not in reason
+            and "only Content-Security-Policy" not in reason
+        ):
             pytest.skip("the ledger no longer makes the exclusivity claim")
         enforcing_elsewhere = []
-        for candidate in list(ROOT.glob("k8s/**/*.yaml")) + [ROOT / "apps" / "web" / "next.config.ts"]:
+        for candidate in [
+            *list(ROOT.glob("k8s/**/*.yaml")),
+            ROOT / "apps" / "web" / "next.config.ts",
+        ]:
             if not candidate.is_file():
                 continue
             text = _read(candidate)
-            if text and re.search(r"['\"]?Content-Security-Policy['\"]?\s*[:=]", text) \
-                    and "Report-Only" not in text.split("Content-Security-Policy", 1)[1][:80]:
+            if (
+                text
+                and re.search(r"['\"]?Content-Security-Policy['\"]?\s*[:=]", text)
+                and "Report-Only" not in text.split("Content-Security-Policy", 1)[1][:80]
+            ):
                 enforcing_elsewhere.append(candidate.relative_to(ROOT).as_posix())
         assert not enforcing_elsewhere, (
             "the ledger says the deleted file held the only CSP, but an enforcing CSP "
@@ -1370,8 +1463,14 @@ class TestTheRecordedPremisesAreStillTrue:
         doc = ROOT / "docs" / "security" / "SECURITY_STACK_2026.md"
         text = doc.read_text(encoding="utf-8")
         stale = [
-            stem for stem in ("ssrf.py", "headers.py", "redis_rate_limit.py",
-                              "slowloris.py", "session_manager.py")
+            stem
+            for stem in (
+                "ssrf.py",
+                "headers.py",
+                "redis_rate_limit.py",
+                "slowloris.py",
+                "session_manager.py",
+            )
             if stem in text
         ]
         assert not stale, (

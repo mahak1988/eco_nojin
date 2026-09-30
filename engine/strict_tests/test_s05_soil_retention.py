@@ -519,16 +519,6 @@ class TestWaterRetentionApi:
         with pytest.raises(ValueError):
             wr.calculate_available_water(theta_fc=0.15, theta_wp=0.30, root_depth=50.0)
 
-    @pytest.mark.xfail(
-        strict=True,
-        reason=(
-            "engine/hydroma/soil/water_retention.py:197 accepts theta_fc and "
-            "theta_wp with no check against the physical range 0-1 and root_depth "
-            "with no check against zero. root_depth = -50 returns -1500 mm of "
-            "available water, i.e. a negative store of water in a root zone, and "
-            "theta_fc = 2.0 returns an AWC of 2.0 cm3/cm3."
-        ),
-    )
     def test_available_water_rejects_impossible_inputs(self) -> None:
         with pytest.raises(ValueError):
             wr.calculate_available_water(theta_fc=0.30, theta_wp=0.15, root_depth=-50.0)
