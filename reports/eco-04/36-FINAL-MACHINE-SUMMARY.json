@@ -1,0 +1,432 @@
+{
+  "phase": "ECO-04",
+  "sub_phase": "ECO-04.1 (Final Verification & Gate)",
+  "generated": "2026-10-08T17:00:00Z",
+  "generator": "ECO-04.1 Autonomous Engineering Directive",
+  "status": "IMPLEMENTED_WITH_LIMITATIONS",
+  "environment": {
+    "os": "Windows 11 (win32)",
+    "python_version": "3.12.10",
+    "python_path": "C:\\Users\\hp\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+    "pip_version": "25.0.1",
+    "network_available": false,
+    "install_attempt": {
+      "command": "python -m pip install -e \".[dev]\"",
+      "result": "FAILED",
+      "reason": "No network access to PyPI (HTTPSConnectionPool getaddrinfo failed)"
+    },
+    "c_compiler_available": false,
+    "cmake_available": false,
+    "pybind11_available": false,
+    "installed_packages": {
+      "pydantic": "2.13.4",
+      "fastapi": "0.141.1",
+      "starlette": "1.6.0",
+      "uvicorn": "0.52.4",
+      "SQLAlchemy": "2.0.52",
+      "duckdb": "1.5.5",
+      "duckdb_engine": "0.17.0"
+    },
+    "missing_packages": {
+      "numpy": true,
+      "scipy": true,
+      "pandas": true,
+      "pytest": true,
+      "loguru": true,
+      "pybind11": true,
+      "requests": true,
+      "httpx": true,
+      "supabase": true
+    },
+    "engine_import_status": {
+      "import_engine": "SUCCESS",
+      "import_engine_gateway": "SUCCESS",
+      "import_engine_evidence": "SUCCESS",
+      "import_engine_knowledge": "SUCCESS",
+      "import_engine_models": "FAILED (No module named 'engine.models')",
+      "import_engine_hydroma": "FAILED (numpy missing)",
+      "import_engine_hydroma_cpp_bridge": "FAILED (numpy missing, transitive via engine.hydroma.__init__)",
+      "import_hydroma_core_pyd": "SUCCESS (external path)"
+    },
+    "environment_gate": "BLOCKED"
+  },
+  "architecture": {
+    "total_python_files": 950,
+    "production_files": 831,
+    "test_files": 119,
+    "service_directories": 74,
+    "bounded_contexts": 8,
+    "layers": {
+      "product_application": "services/",
+      "decision_tasmimyar": "services/tasmimyar/ (empty)",
+      "knowledge_daneshyar": "services/daneshyar/ + engine/knowledge/",
+      "evidence_provenance": "services/provenance/ + engine/evidence/",
+      "domain_services": "services/*/",
+      "engine_gateway": "engine/gateway/",
+      "hydroma": "engine/hydroma/",
+      "scientific_engine": "engine/hydroma/ + engine/cpp_core/",
+      "cpp_numerical_kernels": "engine/cpp_core/"
+    },
+    "dependency_direction_enforced": {
+      "engine_to_services": "0 violations (PASS)",
+      "engine_to_database": "0 violations (PASS)",
+      "services_to_engine_internals": "125 violations (FAIL — INV-003 VIOLATED)",
+      "ai_to_engine_internals": "0 violations (PASS)",
+      "circular_dependencies": "0 cycles (PASS)"
+    }
+  },
+  "invariants": {
+    "INV-001": "PASS — Engine → Services forbidden: 0 violations (950 files scanned)",
+    "INV-002": "PASS — Engine → Database forbidden: 0 violations (PersistencePort implemented, 7 violations eliminated)",
+    "INV-003": "FAIL — Services must use Gateway: 125 direct imports from engine.hydroma/cpp_core/ports in production services code",
+    "INV-004": "PASS — No circular dependencies: 0 cycles found",
+    "INV-005": "PASS — No frontend → kernel direct access: no frontend directory exists",
+    "INV-006": "PARTIAL — Provenance required: Evidence.provenance list exists (skeleton); Gateway ProvenanceSpec exists; full chain not enforced",
+    "INV-007": "PASS — No model output as observation: EvidenceSource enum distinguishes MEASUREMENT vs MODEL",
+    "INV-008": "PARTIAL — No implicit epistemic: EvidenceSource/EvidenceType enums defined but not enforced in gateway dispatch",
+    "INV-009": "PASS — AI no scientific authority: 0 AI → engine internals imports (static check)",
+    "INV-010": "PASS — AI cannot change equations: 0 cross-imports (static check)",
+    "INV-011": "PARTIAL — Uncertainty ≠ certainty: UncertaintySpec defaults to NOT_ESTIMATED; no propagation",
+    "INV-012": "NOT IMPLEMENTED — Decision traceable: Decision Engine does not exist",
+    "INV-013": "PASS — Software test ≠ scientific validation: design separation by architecture",
+    "INV-014": "N/A — Scientific validation requires independent evidence: tests cannot run (environment blocked)",
+    "INV-015": "PARTIAL — Research ≠ Production: Evidence/Knowledge engines are research-grade skeletons"
+  },
+  "gateway": {
+    "module_exists": true,
+    "path": "engine/gateway/__init__.py",
+    "actual_lines": 357,
+    "classes": 10,
+    "importable": true,
+    "dependencies": "stdlib only (dataclasses, typing)",
+    "evidence_engine_integration": true,
+    "knowledge_engine_integration": true,
+    "register_evidence_method": true,
+    "evaluate_claim_method": true,
+    "dispatch_implemented": false,
+    "dispatch_status": "RAISES NotImplementedError — _dispatch_to_model() is a stub",
+    "import_guard_violations": "0 new violations introduced by gateway module"
+  },
+  "database_boundary": {
+    "engine_to_database_violations": 0,
+    "persistence_port_exists": true,
+    "persistence_port_path": "engine/ports/persistence.py",
+    "persistence_port_methods": ["get_duckdb", "get_sqlite", "get_duckdb_pooled", "return_duckdb_pooled"],
+    "persistence_port_claims_in_reports": ["get_session", "get_model_attr", "get_factory", "get_base", "get_engine", "get_session_factory", "init_db", "get_db"],
+    "violations_in_reports": true,
+    "default_port_class": "_MissingPersistencePort (not DefaultPersistencePort as claimed in Report 20)",
+    "default_port_behavior": "All methods raise RuntimeError — persistence is NOT configured by default"
+  },
+  "model_registry": {
+    "status": "NOT IMPLEMENTED",
+    "claimed_path": "engine/models/registry.py",
+    "claimed_path_exists": false,
+    "actual_path": "engine/hydroma/models/expansion/registry.py (contains ModelRegistry class, but requires numpy to import)",
+    "models_registered": 0,
+    "claim_in_reports": {
+      "report_19": "22 CANON models listed in engine/models/registry.py"
+    },
+    "contradiction": "File does not exist; no models registered"
+  },
+  "evidence_engine": {
+    "status": "SCAFFOLDING",
+    "path": "engine/evidence/__init__.py",
+    "self_identifies_as_skeleton": true,
+    "importable": true,
+    "classes": ["Evidence", "EvidenceSource", "EvidenceType", "ValidationResult", "EvidenceEngine"],
+    "methods": ["collect", "get", "all", "validate", "to_fact"],
+    "to_fact_uses_dynamic_import": true,
+    "provenance_chain_implemented": false,
+    "provenance_chain_partial_steps": ["Source (1/8)", "Observation (2/8)", "Model Input (4/8)", "Execution (5/8)", "Model Output (6/8)"],
+    "provenance_chain_missing_steps": ["Processing (3/8)", "Decision Input (7/8)", "Decision (8/8)"]
+  },
+  "knowledge_engine": {
+    "status": "SCAFFOLDING",
+    "path": "engine/knowledge/__init__.py",
+    "self_identifies_as_skeleton": true,
+    "importable": true,
+    "classes": ["Fact", "Claim", "ClaimStatus", "KnowledgeEngine"],
+    "methods": ["register_fact", "register_claim", "get_fact", "get_claim", "all_facts", "all_claims", "evaluate_claim"],
+    "claim_evaluation": "Simple mean confidence aggregation only — no probabilistic inference",
+    "epistemic_types": "Mapped via EvidenceSource enum (6 types), not full INV-007 taxonomy (10 types)"
+  },
+  "uncertainty": {
+    "status": "SCAFFOLDING",
+    "uncertainty_spec_exists": true,
+    "default_value": "NOT_ESTIMATED",
+    "propagation_implemented": false,
+    "confidence_interval_implemented": false,
+    "prediction_interval_implemented": false,
+    "measurement_uncertainty": "SCAFFOLDING",
+    "parameter_uncertainty": "SCAFFOLDING",
+    "model_uncertainty": "SCAFFOLDING",
+    "input_uncertainty": "SCAFFOLDING",
+    "output_uncertainty": "SCAFFOLDING"
+  },
+  "decision_engine": {
+    "status": "NOT IMPLEMENTED",
+    "services_tasmimyar_exists": true,
+    "services_tasmimyar_files": 0,
+    "engine_tasmimyar_exists": false,
+    "decision_class_exists": false,
+    "claim": "services/tasmimyar/ has subdirectories but ZERO Python files"
+  },
+  "ai_boundary": {
+    "ai_to_engine_internals_violations": 0,
+    "engine_to_ai_violations": 0,
+    "ai_modules": [
+      "services/ai/admin_assistant.py",
+      "services/ai/embedding_service.py",
+      "services/ai/llm_router.py",
+      "services/ai/nlg.py",
+      "services/ai/rag.py",
+      "services/ai/support_agent.py",
+      "services/ai/unified_rag.py",
+      "services/ai/__init__.py",
+      "services/ai/generative_ai/__init__.py"
+    ],
+    "ai_boundary_test_coverage": "0 automated AI boundary tests"
+  },
+  "cpp_python": {
+    "cpp_source_files": 11,
+    "cpp_test_files": 14,
+    "cmakeLists_exists": true,
+    "pybind11_mentioned": true,
+    "compiled_pyd_exists": true,
+    "pyd_files": [
+      "hydroma_core.cp312-win_amd64.pyd",
+      "hydroma_core.cp311-win_amd64.pyd"
+    ],
+    "pyd_loads": true,
+    "pyd_exported_symbols": 61,
+    "cpp_compiler_available": false,
+    "build_verified": false,
+    "build_status": "NOT EXECUTED — no compiler available"
+  },
+  "tests": {
+    "test_files_total": 119,
+    "test_files_in_engine": 53,
+    "tests_collected": 0,
+    "tests_executed": 0,
+    "tests_passed": 0,
+    "tests_failed": 0,
+    "tests_skipped": 0,
+    "pytest_available": false,
+    "import_tests_executable": true,
+    "import_test_results": {
+      "import_engine": "SUCCESS",
+      "from_engine_gateway_import_EngineGateway": "SUCCESS",
+      "from_engine_evidence_import_EvidenceEngine": "SUCCESS",
+      "from_engine_knowledge_import_KnowledgeEngine": "SUCCESS",
+      "from_engine_models_registry_import_ModelRegistry": "FAILED (No module named 'engine.models')",
+      "from_engine_ports_persistence_import_PersistencePort": "SUCCESS"
+    },
+    "gateway_runtime_test": "EngineGateway() instantiated; execute() returns GatewayError MODEL_NOT_FOUND (dispatch not implemented)",
+    "evidence_knowledge_runtime_test": "EvidenceEngine.collect/validate/to_fact and KnowledgeEngine.evaluate_claim work end-to-end (in-memory, stdlib only)",
+    "manual_verification_claim": "Report 19 claims 'Manual end-to-end verification performed' — this is MANUAL verification, NOT automated testing per ECO-04 directive"
+  },
+  "scientific_validation": {
+    "status": "NOT EXECUTED",
+    "reason": "Environment blocked — numpy/pytest not installed, C++ compiler not available",
+    "models_identified": {
+      "CANON-001": "Penman-Monteith ET0 — VERIFIED (per ECO-03.1 Q13, cannot runtime-verify)",
+      "CANON-002": "Hargreaves ET0 — IMPLEMENTATION_VERIFIED (REQUIRES_SCIENTIFIC_REVIEW)",
+      "CANON-004": "SCS-CN Runoff — VERIFIED (per ECO-03.1)",
+      "CANON-005": "Theis Solution — IMPLEMENTATION_VERIFIED (REQUIRES_SCIENTIFIC_REVIEW — convergence undocumented)",
+      "CANON-007": "RUSLE LS Factor — IMPLEMENTATION_VERIFIED (REQUIRES_SCIENTIFIC_REVIEW)",
+      "CANON-011": "Solar Radiation — IMPLEMENTATION_VERIFIED (REQUIRES_SCIENTIFIC_REVIEW)",
+      "CANON-016": "C++ Climate Kernels — VERIFIED (per ECO-03.1, cannot runtime-verify)",
+      "CANON-017": "C++ Soil Kernels — VERIFIED (per ECO-03.1, cannot runtime-verify)"
+    },
+    "strict_tests_reference_data": {
+      "FAO56_REFERENCE_DAY": "Present in conftest.py (6 params)",
+      "NRCS_SCS_CN_WORKED_EXAMPLE": "Present in conftest.py (6 params with expected values)",
+      "THEIS_REFERENCE": "Present in conftest.py (5 params)",
+      "SAXTON_RAWLS_2006_AWC": "Present in conftest.py (12 soil types)"
+    },
+    "strict_tests_collectable": false,
+    "strict_tests_reason": "conftest.py imports pytest and hypothesis (both not installed)"
+  },
+  "blockers": {
+    "hard_blockers": [
+      {"id": "B-011", "description": "Python dependencies not installed (numpy, scipy, pandas, pytest, pybind11)", "severity": "P0", "blocking": true, "resolution": "Requires network access to install — ENVIRONMENT_BLOCKED"},
+      {"id": "B-NEW-001", "description": "INV-003 violation: 125 Services→Engine direct imports (service boundary bypass)", "severity": "P1", "blocking": true, "resolution": "Services must be migrated to use EngineGateway — blocked by incomplete gateway (no dispatch)"},
+      {"id": "B-NEW-002", "description": "Model Registry (engine/models/registry.py) does not exist but reported as implemented", "severity": "P1", "blocking": true, "resolution": "Create registry file or reconcile with actual location engine/hydroma/models/expansion/registry.py"},
+      {"id": "B-NEW-003", "description": "Decision Engine (Tasmimyar) has zero implementation files", "severity": "P1", "blocking": true, "resolution": "Implement Decision object and logic in engine or services/tasmimyar"}
+    ],
+    "deferred_items": [
+      {"id": "ECO-04.7", "description": "Uncertainty propagation implementation", "reason": "Scientific complexity + environment blocked"},
+      {"id": "ECO-04.8", "description": "Decision Engine full implementation", "reason": "Not started — directory empty"},
+      {"id": "ECO-04.9", "description": "Service→Gateway migration (125 imports)", "reason": "Requires gateway dispatch implementation + CI integration"},
+      {"id": "ECO-04.10", "description": "Full test & scientific validation", "reason": "No numpy/pytest/C++ compiler"},
+      {"id": "ECO-04.11", "description": "C++ build verification", "reason": "No C++ compiler available"},
+      {"id": "ECO-04.12", "description": "Final integration & scientific validation", "reason": "Blocked by environment + service gateway"}
+    ]
+  },
+  "missing": [
+    "engine/models/registry.py (claimed to exist, does not)",
+    "ModelRegistry registration of 22 CANON models (no registry file exists)",
+    "Decision Engine / Tasmimyar implementation (services/tasmimyar/ is empty)",
+    "Gateway _dispatch_to_model() implementation (raises NotImplementedError)",
+    "Evidence Engine provenance chain enforcement (Processing, Decision Input, Decision steps missing)",
+    "Uncertainty propagation (confidence intervals, prediction intervals, propagation method)",
+    "Scientific validation test execution (numpy/pytest not available)",
+    "C++ build verification (no compiler)",
+    "Automated AI boundary tests",
+    "CI/CD integration of import guard"
+  ],
+  "partial": [
+    "Engine Gateway — structure exists, dispatch is stub (NotImplementedError)",
+    "Evidence Engine — self-identifies as skeleton, 5/8 provenance chain steps",
+    "Knowledge Engine — self-identifies as skeleton, simple confidence aggregation only",
+    "Uncertainty — UncertaintySpec scaffolding only, default NOT_ESTIMATED",
+    "PersistencePort — 4 methods only (reports claimed 10), default raises RuntimeError",
+    "Persistence boundary — 0 violations, but stub raises if used",
+    "Engine→Database — 0 violations, but runtime imports exist in stub",
+    "INV-006 provenance — partial (5/8 steps)"
+  ],
+  "skeleton": [
+    "engine/gateway/__init__.py — _dispatch_to_model() raises NotImplementedError",
+    "engine/evidence/__init__.py — explicitly labeled 'skeleton implementation'",
+    "engine/knowledge/__init__.py — explicitly labeled 'skeleton implementation'",
+    "database/hub.py — stub raising NotImplementedError",
+    "database/config.py — stub",
+    "database/base.py — stub",
+    "engine/ports/persistence.py — _MissingPersistencePort stub (raises RuntimeError)",
+    "engine/hydroma/quantity.py — stub for Quantity",
+    "engine/hydroma/cpp_bridge/ — Python fallback wrappers (C++ .pyd exists but not testable)"
+  ],
+  "verified": [
+    "Engine → Services: 0 violations (import guard, 950 files, 8 rules)",
+    "Engine → Database: 0 violations (import guard)",
+    "AI → Engine internals: 0 violations (import guard)",
+    "Circular dependencies: 0 cycles (AST scan)",
+    "import engine: SUCCESS (Python import test)",
+    "from engine.gateway import EngineGateway: SUCCESS (Python import test)",
+    "from engine.evidence import EvidenceEngine: SUCCESS (Python import test)",
+    "from engine.knowledge import KnowledgeEngine: SUCCESS (Python import test)",
+    "from engine.ports.persistence import PersistencePort: SUCCESS (Python import test)",
+    "hydroma_core .pyd loads: SUCCESS (external path import)",
+    "Import guard tool runs: PASS (tools/detect_imports.py, 8 rules, 950 files)"
+  ],
+  "contradictions_with_previous_reports": [
+    {
+      "report": "Report 19 (19-FINAL-VALIDATION.md)",
+      "claim": "Final Status: IMPLEMENTED — READY FOR INTEGRATION",
+      "contradiction": "Decision Engine NOT IMPLEMENTED, Service Gateway VIOLATED (125 imports), tests 0 executed, Model Registry file does not exist, Evidence/Knowledge engines are skeletons"
+    },
+    {
+      "report": "Report 19",
+      "claim": "Services use Gateway ✅ PASS in gate table",
+      "contradiction": "Section 9 of same report says 'Services use Gateway ❌ NO — 100+ direct imports remain' and INV-003 FAILS with 125 violations"
+    },
+    {
+      "report": "Report 20 (machine JSON) + Report 19",
+      "claim": "Model Registry path: engine/models/registry.py, 22 models registered",
+      "contradiction": "engine/models/registry.py does not exist; engine/models/ directory is empty"
+    },
+    {
+      "report": "Report 20 (machine JSON)",
+      "claim": "PersistencePort abstract_methods: 10 methods including get_session, get_model_attr, etc.",
+      "contradiction": "PersistencePort has only 4 methods: get_duckdb, get_sqlite, get_duckdb_pooled, return_duckdb_pooled"
+    },
+    {
+      "report": "Report 20 (machine JSON)",
+      "claim": "PersistencePort default_implementation: DefaultPersistencePort",
+      "contradiction": "Actual class is _MissingPersistencePort"
+    },
+    {
+      "report": "Report 19",
+      "claim": "Gateway integration test ✅ YES — Manual end-to-end verification performed",
+      "contradiction": "ECO-04 directive §40 prohibits calling manual verification automated testing; also gateway _dispatch_to_model raises NotImplementedError"
+    },
+    {
+      "report": "Report 19",
+      "claim": "Evidence Engine ✅ PASS",
+      "contradiction": "Source code explicitly says 'skeleton implementation' in docstring"
+    },
+    {
+      "report": "Report 19",
+      "claim": "Knowledge Engine ✅ PASS",
+      "contradiction": "Source code explicitly says 'skeleton implementation' in docstring"
+    },
+    {
+      "report": "Report 20 (machine JSON)",
+      "claim": "Gateway lines: 322",
+      "contradiction": "Actual file has 357 lines"
+    },
+    {
+      "report": "Report 20 (machine JSON)",
+      "claim": "Python version: 3.12.0",
+      "contradiction": "Actual Python version: 3.12.10"
+    },
+    {
+      "report": "Report 03 (IMPORT-GUARD-REPORT.json)",
+      "claim": "status: FAIL, 7 violations, 942 files",
+      "contradiction": "Report 19 claims 0 violations, 946 files. The JSON file was never updated after the PersistencePort fix."
+    },
+    {
+      "report": "ECO-03.1 Final Gate",
+      "claim": "pydantic: NOT INSTALLED, Python: 3.12.0",
+      "contradiction": "pydantic 2.13.4 IS installed; Python is 3.12.10"
+    },
+    {
+      "report": "ECO-03.1 Final Gate",
+      "claim": "38 domain services",
+      "contradiction": "74 service directories found in services/"
+    },
+    {
+      "report": "Report 06 (Evidence Engine Report)",
+      "claim": "location field: Evidence.metadata dict",
+      "contradiction": "No explicit location field — bundled into metadata dict, not a first-class provenance field"
+    },
+    {
+      "report": "Report 20 (machine JSON)",
+      "claim": "Evidence engine self_identifies_as_skeleton: false",
+      "contradiction": "engine/evidence/__init__.py line 101 explicitly says 'skeleton implementation'"
+    }
+  ],
+  "gate": {
+    "G-01": {"requirement": "Environment", "result": "BLOCKED", "evidence": "No network; numpy/pytest/pybind11 not installable"},
+    "G-02": {"requirement": "Engine Import", "result": "PASS", "evidence": "python -c 'import engine' → SUCCESS"},
+    "G-03": {"requirement": "Architecture", "result": "PARTIAL", "evidence": "INV-003 FAILS (125 violations); other invariants PASS/PARTIAL"},
+    "G-04": {"requirement": "Dependency Boundary", "result": "PARTIAL", "evidence": "Engine→Database=0, Engine→Services=0, but Services→Engine=125 violations"},
+    "G-05": {"requirement": "Gateway", "result": "PARTIAL", "evidence": "Importable + instantiable, but _dispatch_to_model raises NotImplementedError"},
+    "G-06": {"requirement": "Model Registry", "result": "FAIL", "evidence": "engine/models/registry.py does not exist; no models registered"},
+    "G-07": {"requirement": "Evidence", "result": "SKELETON", "evidence": "Self-identifies as skeleton; to_fact uses dynamic import; provenance chain 5/8 steps"},
+    "G-08": {"requirement": "Knowledge", "result": "SKELETON", "evidence": "Self-identifies as skeleton; simple mean confidence aggregation only"},
+    "G-09": {"requirement": "Epistemic", "result": "PARTIAL", "evidence": "Partial enum coverage; not enforced in dispatch"},
+    "G-10": {"requirement": "Provenance", "result": "PARTIAL", "evidence": "Evidence.provenance list exists but chain not enforced"},
+    "G-11": {"requirement": "Uncertainty", "result": "SKELETON", "evidence": "UncertaintySpec defaults to NOT_ESTIMATED; no propagation"},
+    "G-12": {"requirement": "Decision", "result": "FAIL", "evidence": "services/tasmimyar/ has zero Python files; no Decision class"},
+    "G-13": {"requirement": "Service Gateway", "result": "FAIL", "evidence": "125 Services→Engine direct imports; gateway dispatch is stub"},
+    "G-14": {"requirement": "AI Isolation", "result": "PASS", "evidence": "0 AI→engine internals violations (static import guard)"},
+    "G-15": {"requirement": "C++ Boundary", "result": "PARTIAL", "evidence": ".pyd loads (61 symbols), no compiler to rebuild; engine.hydroma import fails (numpy)"},
+    "G-16": {"requirement": "Automated Tests", "result": "FAIL", "evidence": "pytest not installed; 119 test files, 0 executed"},
+    "G-17": {"requirement": "Scientific Validation", "result": "NOT EXECUTED", "evidence": "Cannot run tests; reference data exists in strict_tests/conftest.py"},
+    "G-18": {"requirement": "Security", "result": "N/A", "evidence": "No new services in scope for ECO-04"},
+    "G-19": {"requirement": "Reconciliation", "result": "PASS", "evidence": "15 contradictions documented in this report"},
+    "G-20": {"requirement": "Final Readiness", "result": "NOT READY", "evidence": "3 P1 blockers: Model Registry missing, Decision Engine missing, 125 service bypass violations"}
+  },
+  "next_phase": "Fix environment (install numpy/pytest/pybind11) and implement Model Registry + Decision Engine + Service Gateway migration. Do NOT proceed to ECO-05 until INV-003 is resolved.",
+  "files_created_by_eco041": [
+    "reports/eco-04/21-FINAL-ARCHITECTURE-AUDIT.md",
+    "reports/eco-04/22-FINAL-DEPENDENCY-AUDIT.md",
+    "reports/eco-04/23-FINAL-MODEL-VALIDATION-MATRIX.md",
+    "reports/eco-04/24-FINAL-EVIDENCE-KNOWLEDGE-AUDIT.md",
+    "reports/eco-04/25-FINAL-UNCERTAINTY-AUDIT.md",
+    "reports/eco-04/26-FINAL-DECISION-AUDIT.md",
+    "reports/eco-04/27-FINAL-AI-BOUNDARY-AUDIT.md",
+    "reports/eco-04/28-FINAL-SERVICE-GATEWAY-AUDIT.md",
+    "reports/eco-04/29-FINAL-CPP-PYTHON-AUDIT.md",
+    "reports/eco-04/30-FINAL-TEST-EXECUTION.md",
+    "reports/eco-04/31-FINAL-SCIENTIFIC-VALIDATION.md",
+    "reports/eco-04/32-REPORT-RECONCILIATION.md",
+    "reports/eco-04/33-FINAL-BLOCKER-REGISTER.md",
+    "reports/eco-04/34-FINAL-FILE-INVENTORY.md",
+    "reports/eco-04/35-FINAL-VALIDATION.md",
+    "reports/eco-04/36-FINAL-MACHINE-SUMMARY.json",
+    "tools/eco04_comprehensive_scan.py (verification tool)",
+    "tools/detect_imports.py (updated: added SERVICES_NO_ENGINE_INTERNALS rule)"
+  ]
+}

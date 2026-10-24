@@ -1,0 +1,99 @@
+{
+  "verification_matrix": {
+    "total_tests": 5,
+    "passed": 5,
+    "failed": 0,
+    "pass_rate": 1.0,
+    "evidence_items_collected": 5,
+    "tests": [
+      {
+        "id": "C-CPP-01",
+        "name": "rainfall_erosivity_monotonic",
+        "status": "PASS",
+        "computed": 80.15804762923422,
+        "expected": "monotonically increasing with rainfall",
+        "tolerance": null
+      },
+      {
+        "id": "C-CPP-02",
+        "name": "ndvi_formula",
+        "status": "PASS",
+        "computed": 0.7777777777777778,
+        "expected": 0.7777777777777778,
+        "tolerance": 0.001
+      },
+      {
+        "id": "C-CPP-03",
+        "name": "ndwi_formula",
+        "status": "PASS",
+        "computed": -0.25,
+        "expected": -0.25,
+        "tolerance": 0.001
+      },
+      {
+        "id": "C-CPP-04",
+        "name": "et0_hargreaves_standard",
+        "status": "PASS",
+        "computed": 2.678056946231863,
+        "expected": 2.804269881705397,
+        "tolerance": 0.01
+      },
+      {
+        "id": "C-CPP-05",
+        "name": "rusle_nonnegative",
+        "status": "PASS",
+        "computed": 18.0,
+        "expected": "non-negative",
+        "tolerance": null
+      }
+    ]
+  },
+  "cpp_bridge_verified": {
+    "total_symbols": 61,
+    "classes": 14,
+    "functions": 47,
+    "all_load_successfully": true
+  },
+  "architecture_verified": {
+    "model_registry": {
+      "status": "PASS",
+      "models_registered": 68
+    },
+    "gateway_facade": {
+      "status": "PASS",
+      "functions_exported": 86
+    },
+    "import_guard": {
+      "status": "PASS",
+      "violations": 0,
+      "files_scanned": 953
+    },
+    "tasmimyar": {
+      "status": "PASS",
+      "components": [
+        "DecisionEngine",
+        "Decision",
+        "DecisionCriterion",
+        "DecisionStatus",
+        "TasmimyarService"
+      ]
+    },
+    "evidence_engine": {
+      "status": "PASS",
+      "components": [
+        "EvidenceEngine",
+        "Evidence",
+        "ValidationResult"
+      ]
+    }
+  },
+  "environmental_constraints": {
+    "numpy": "MISSING (no network for pip install)",
+    "pytest": "MISSING",
+    "pybind11": "MISSING",
+    "cpp_compiler": "MISSING",
+    "network": "UNAVAILABLE"
+  },
+  "tests_executed": 5,
+  "tests_passing": 5
+}

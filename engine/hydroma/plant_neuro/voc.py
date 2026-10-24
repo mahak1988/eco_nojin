@@ -1,0 +1,255 @@
+"""VOC (Volatile Organic Compound) profile analysis for plant stress detection.
+
+Plants emit specific VOC blends when stressed by biotic (pathogens, herbivores)
+or abiotic (drought, heat, ozone) factors. This module analyzes GC-MS or
+electronic nose VOC profiles to identify stress signatures.
+
+Reference:
+- Bruhn et al. (2019) "Volatile organic compounds (VOCs) in plant-insect
+  interactions." Plants.
+- Loreto & Schnitter (2006) "Why plants produce volatile organic compounds."
+  Current Opinion in Plant Biology.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Any, ClassVar
+
+import numpy as np
+from sklearn.cluster import DBSCAN
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+
+
+@dataclass
+class VOCProfile:
+    """A normalized VOC profile from a single sample."""
+
+    data_source: str = "modelled"
+    model: str = "VOC concentration profile"
+    computed: bool = True
+
+    compounds: dict[str, float] | None = None
+    timestamp: str | None = None
+    plant_id: str | None = None
+    stress_level: float = 0.0  # 0-1 normalized stress index
+    profile_hash: str | None = None
+
+
+@dataclass
+class StressSignature:
+    """Identified stress signature from VOC analysis."""
+
+    data_source: str = "modelled"
+    model: str = "VOC stress signature"
+    computed: bool = True
+
+    stress_type: str | None = None
+    confidence: float | None = None
+    key_compounds: list[str] | None = None
+    severity_score: float | None = None
+    pca_components: np.ndarray | None = None
+
+
+def _compounds_of(profile: VOCProfile) -> dict[str, float]:
+    """The profile's compound map; a profile without one is a caller error.
+
+    Every VOCProfile the engine or the API builds carries ``compounds``; the
+    None default exists for the dataclass shape, not for analysis input.
+    """
+    assert profile.compounds is not None
+    return profile.compounds
+
+
+class VOCAnalyzer:
+    """Analyzes VOC profiles to detect and classify plant stress.
+
+    Uses PCA for dimensionality reduction and DBSCAN for anomaly detection
+    on compound concentration vectors.
+    """
+
+    # Reference VOC signatures for common stress types (ppb thresholds)
+    STRESS_SIGNATURES: ClassVar[dict[str, Any]] = {
+        "herbivory": {
+            "green_leaf_volatiles": ["Z-3-hexenyl acetate", "E-2-hexenal", "Z-3-hexenol"],
+            "terpenes": ["myrcene", "limonene", "alpha-pinene"],
+            "threshold": 50.0,  # ppb minimum for detection
+        },
+        "pathogen": {
+            "green_leaf_volatiles": ["E-2-hexenal", "Z-3-hexenyl butyrate"],
+            "terpenes": ["linalool", "geraniol", "camphor"],
+            "benzene_derivatives": ["methyl salicylate", "methyl jasmonate"],
+            "threshold": 30.0,
+        },
+        "drought": {
+            "isoprene": ["isoprene"],
+            "monoterpenes": ["alpha-pinene", "beta-pinene", "limonene"],
+            "threshold": 100.0,
+        },
+        "heat": {
+            "isoprene": ["isoprene"],
+            "green_leaf_volatiles": ["Z-3-hexenyl acetate"],
+            "threshold": 80.0,
+        },
+        "ozone": {
+            "oxygenated_compounds": ["tert-butyl hydroperoxide", "methanol"],
+            "green_leaf_volatiles": ["E-2-hexenal"],
+            "threshold": 40.0,
+        },
+    }
+
+    def __init__(self, n_components: int = 3):
+        self.scaler = StandardScaler()
+        self.pca = PCA(n_components=n_components)
+        self.n_components = n_components
+        self.reference_profiles: list[VOCProfile] = []
+        self.compound_names: list[str] = []
+        self._fitted = False
+
+    def build_compound_vector(self, profile: VOCProfile) -> np.ndarray:
+        """Convert a VOCProfile into a fixed-length compound vector.
+
+        Unknown compounds are ignored; missing compounds default to 0.0.
+        """
+        compounds = _compounds_of(profile)
+        if not self.compound_names:
+            self.compound_names = list(compounds.keys())
+        vec = np.array(
+            [compounds.get(c, 0.0) for c in self.compound_names],
+            dtype=np.float64,
+        )
+        return vec
+
+    def fit_reference(self, profiles: list[VOCProfile]):
+        """Fit PCA and scaler on a set of healthy reference profiles."""
+        if not profiles:
+            return
+        self.compound_names = list(_compounds_of(profiles[0]).keys())
+        matrix = np.array([self.build_compound_vector(p) for p in profiles])
+        self.scaler.fit(matrix)
+        matrix_scaled = self.scaler.transform(matrix)
+        self.pca.fit(matrix_scaled)
+        self.reference_profiles = profiles
+        self._fitted = True
+
+    def transform(self, profile: VOCProfile) -> np.ndarray:
+        """Transform a VOCProfile into PCA-reduced feature space."""
+        if not self.compound_names:
+            self.compound_names = list(_compounds_of(profile).keys())
+        vec = self.build_compound_vector(profile).reshape(1, -1)
+        if self._fitted:
+            vec_scaled = self.scaler.transform(vec)
+            reduced: np.ndarray = self.pca.transform(vec_scaled)
+            first: np.ndarray = reduced[0]
+            return first
+        return vec.flatten()
+
+    def detect_anomaly(self, profile: VOCProfile) -> tuple[bool, float]:
+        """Detect if a VOC profile deviates from healthy baseline.
+
+        Returns:
+            Tuple of (is_anomaly, anomaly_score).
+        """
+        vec = self.build_compound_vector(profile).reshape(1, -1)
+        if not self._fitted:
+            return True, 1.0
+        vec_scaled = self.scaler.transform(vec)
+        reconstructed = self.scaler.inverse_transform(
+            self.pca.inverse_transform(self.pca.transform(vec_scaled))
+        )
+        residual = np.abs(vec.flatten() - reconstructed.flatten())
+        anomaly_score = float(np.mean(residual) / (np.mean(np.abs(vec.flatten())) + 1e-9))
+        return anomaly_score > 0.3, anomaly_score
+
+    def classify_stress(self, profile: VOCProfile) -> StressSignature:
+        """Classify stress type based on VOC compound presence.
+
+        Args:
+            profile: VOCProfile with compound concentrations in ppb.
+
+        Returns:
+            StressSignature with classification and confidence.
+        """
+        scores: dict[str, float] = {}
+        matched_compounds: dict[str, list[str]] = {}
+        compounds = _compounds_of(profile)
+
+        for stress_type, signature in self.STRESS_SIGNATURES.items():
+            total_found = 0.0
+            found_names: list[str] = []
+            threshold = signature.get("threshold", 30.0)
+
+            for category, compounds_list in signature.items():
+                if category == "threshold":
+                    continue
+                for compound_name in compounds_list:
+                    conc = compounds.get(compound_name, 0.0)
+                    if conc >= threshold:
+                        total_found += conc
+                        found_names.append(compound_name)
+
+            if total_found > 0:
+                scores[stress_type] = min(total_found / 500.0, 1.0)
+                matched_compounds[stress_type] = found_names
+
+        if not scores:
+            return StressSignature(
+                stress_type="healthy",
+                confidence=0.9,
+                key_compounds=[],
+                severity_score=0.0,
+            )
+
+        best_type = max(scores, key=lambda name: scores[name])
+        confidence = scores[best_type]
+
+        severity = self._compute_severity(profile, matched_compounds.get(best_type, []))
+
+        return StressSignature(
+            stress_type=best_type,
+            confidence=confidence,
+            key_compounds=matched_compounds.get(best_type, []),
+            severity_score=severity,
+        )
+
+    def _compute_severity(self, profile: VOCProfile, diagnostic_compounds: list[str]) -> float:
+        """Compute severity score from diagnostic compound concentrations."""
+        if not diagnostic_compounds:
+            return 0.0
+        compounds = _compounds_of(profile)
+        max_conc = max(
+            [compounds.get(c, 0.0) for c in diagnostic_compounds],
+            default=0.0,
+        )
+        # Normalize: 50 ppb = severity 0.25, 200 ppb = severity 1.0
+        return float(min(max_conc / 200.0, 1.0))
+
+    def cluster_profiles(self, profiles: list[VOCProfile]) -> np.ndarray:
+        """Cluster VOC profiles using DBSCAN on PCA components.
+
+        Returns cluster labels (-1 for noise/outliers).
+        """
+        if not profiles:
+            return np.array([])
+        if not self.compound_names:
+            self.compound_names = list(_compounds_of(profiles[0]).keys())
+
+        matrix = np.array([self.build_compound_vector(p) for p in profiles])
+
+        # Standardize before PCA (DBSCAN eps is scale-sensitive)
+        scaler = StandardScaler()
+        matrix_scaled = scaler.fit_transform(matrix)
+
+        # PCA for dimensionality reduction
+        n_components = min(self.n_components, matrix.shape[1], len(profiles))
+        if n_components < 1:
+            return np.zeros(len(profiles), dtype=int)
+
+        pca = PCA(n_components=n_components)
+        reduced = pca.fit_transform(matrix_scaled)
+
+        # DBSCAN clustering (eps in PCA space after standardization)
+        clustering = DBSCAN(eps=0.5, min_samples=2)
+        labels: np.ndarray = clustering.fit_predict(reduced)
+        return labels

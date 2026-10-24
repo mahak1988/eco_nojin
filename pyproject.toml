@@ -1,0 +1,145 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hydroma"
+version = "0.1.0"
+description = "Eco Nojin / اکو نوژین — Scientific water-energy-agriculture modeling engine"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "Eco Nojin Team" }
+]
+keywords = ["hydrology", "agriculture", "water", "climate", "scientific"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+]
+
+# duckdb and supabase were removed from core per ZED (spec §2.2الف server/cloud DB); they remain available via the legacy-bridge extra.
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "pandas>=2.0",
+    "requests>=2.31",
+    "httpx>=0.25",
+    "pydantic>=2.0",
+    "loguru>=0.7",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "pytest-asyncio>=0.21",
+    "mypy>=1.5",
+    "ruff>=0.1.0",
+]
+cpp = [
+    "pybind11>=2.11",
+    "ninja>=1.11",
+    # G-H14: this pin was "cmake>=7.0", a release that does not exist
+    # (latest on PyPI is 4.4.4), which made the whole extra uninstallable and
+    # blocked the C++ parity gate. 3.22 is the floor engine/cpp_core needs.
+    "cmake>=3.22",
+]
+# fast: optional Numba acceleration for the engine.land hot loops (D8 flow
+# accumulation, Strahler order, Horn slope/aspect/curvature, the RUSLE slope
+# scan and the TPI window mean). Every kernel degrades to a bit-identical
+# pure-Python path when Numba is absent, so this is a speed extra, never a core
+# dependency — the engine imports and runs without it.
+fast = [
+    "numba>=0.59",
+]
+# ref: dev/test-only reference implementations used by the parity suites in
+# engine/tests/test_pyet_parity.py, test_climate_indices_spi_parity.py and
+# test_rosetta_ptf_reference.py (EXTERNAL-ALIGNMENT-PLAN items X-6/X-7/X-8).
+# They are NEVER imported by engine/ at runtime; each test skips with a reason
+# when the package is absent. climate_indices is pinned below 3.0.0 because the
+# unreleased 3.x changes computed values and exception types.
+ref = [
+    "pyet>=1.5",
+    "climate_indices>=2.4,<3.0",
+    "rosetta-soil>=0.3",
+]
+# units: pint is the spec's mandated unit checker (ECO-05 DoD). It is a
+# ZED-approved package but core adoption is still a documented decision: the
+# gateway audit lands behaviour-preserving first (engine/gateway/pint_audit.py),
+# so it ships in this extra for now. Note pint>=0.26 requires Python>=3.12
+# while this project declares >=3.11, hence the split pin.
+units = [
+    "pint>=0.24,<0.26; python_version < '3.12'",
+    "pint>=0.26; python_version >= '3.12'",
+]
+ml = [
+    "torch>=2.0",
+    "transformers>=4.33",
+    "sentence-transformers>=2.2",
+    "qdrant-client>=1.6",
+]
+telegram = [
+    "python-telegram-bot>=21.0",
+]
+# legacy-bridge exists only to keep legacy services/data-connector code working until the Wave-3 migration completes (gaps G-Z1/G-Z3).
+legacy-bridge = [
+    "duckdb>=0.10",
+    "supabase>=2.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/EcoNojin/HyDroMA"
+Documentation = "https://docs.eco-nojin.ir"
+Repository = "https://github.com/EcoNojin/HyDroMA"
+
+[tool.setuptools.packages.find]
+include = ["engine*", "services*", "database*", "infra*"]
+exclude = ["tests*", "reports*", "tools*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.csv", "*.json"]
+"alembic" = ["*.ini"]
+"alembic.versions" = ["*.py"]
+
+[tool.pytest.ini_options]
+testpaths = ["engine/tests", "engine/strict_tests", "services/*/tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "C4"]
+
+[tool.mypy]
+# The runtime interpreter is CPython 3.12.10 (D:\eco_nojin\.venv), and the
+# installed ``pint`` 0.26.1 uses PEP-695 syntax, which mypy cannot analyse
+# under a 3.11 target: it aborts with an INTERNAL ERROR inside pint's own
+# namespace package loader, which made ``mypy engine`` un-runnable (2026-10-10).
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+
+# ``types-PyYAML`` is not installed in the offline environment; the import is
+# still real, so silence the stub error rather than pretend the import is
+# absent.
+[[tool.mypy.overrides]]
+module = "yaml"
+ignore_missing_imports = true
+
+# Third-party packages are type-checked by their own projects. mypy follows
+# into them only when the engine imports them, and pint 0.26.1 crashes it
+# outright; skip it (and leave its errors to pint's CI).
+[[tool.mypy.overrides]]
+module = "pint.*"
+ignore_errors = true
+follow_imports = "skip"

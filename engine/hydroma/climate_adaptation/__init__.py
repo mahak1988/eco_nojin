@@ -1,0 +1,5 @@
+from .climate_adaptive_phenology import ClimateAdaptivePhenology, PhenologyConfig
+from .dynamic_stress_engine import CropStressParams, DynamicStressEngine, vpd_kpa
+from .seed_optimization_engine import SeedOptimizationConfig, SeedOptimizationEngine
+from .soil_degradation_model import SoilDegradationConfig, SoilDegradationModel
+from .uncertainty_knowledge_engine import UncertaintyAndKnowledgeEngine, UncertaintyConfig

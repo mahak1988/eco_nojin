@@ -1,0 +1,157 @@
+{
+  "eco03_1_metadata": {
+    "version": "1.0.0",
+    "generated": "2026-10-08T10:00:00Z",
+    "status": "READY_WITH_LIMITATIONS",
+    "phase": "ECO-03.1 Blocker Reconciliation & Minimal Hardening",
+    "parent_phase": "ECO-03"
+  },
+
+  "blocker_accounting": {
+    "initial_blockers": 15,
+    "fixed_and_verified": 3,
+    "fixed_but_unverified": 0,
+    "false_positives": 1,
+    "duplicates": 2,
+    "confirmed_hard_blockers": 3,
+    "deferred_to_eco_04": 6,
+    "requires_scientific_review": 1,
+    "non_blocking": 0,
+    "reconciliation": "15 = 3 + 0 + 1 + 2 + 3 + 6 + 1 + 0"
+  },
+
+  "fixed_blockers": [
+    {
+      "id": "B-001",
+      "description": "Engine to Services import violation",
+      "evidence": "engine/hydroma/generative_ai/ module removed; moved to services/ai/generative_ai/",
+      "verification": "import engine succeeds; import guard: 0 engine-to-services violations",
+      "status": "FIXED_AND_VERIFIED"
+    },
+    {
+      "id": "B-002-imp",
+      "description": "Missing database package (import failure)",
+      "evidence": "database/ stub package created with hub.py, config.py, base.py",
+      "verification": "import engine no longer raises ModuleNotFoundError",
+      "status": "FIXED_AND_VERIFIED"
+    },
+    {
+      "id": "B-003",
+      "description": "Missing dependency manifest",
+      "evidence": "pyproject.toml created with metadata, dependencies, build backend",
+      "verification": "TOML parses successfully",
+      "status": "FIXED_AND_VERIFIED"
+    }
+  ],
+
+  "remaining_hard_blockers": [
+    {
+      "id": "B-005",
+      "description": "No import guard enforcement (in CI/CD)",
+      "status": "IMPLEMENTED_BUT_NOT_IN_CI",
+      "evidence": "tools/detect_imports.py created and runs successfully",
+      "eco_04_action": "Integrate into CI/CD pipeline",
+      "blocking_eco_04": false
+    },
+    {
+      "id": "B-006",
+      "description": "No Engine Gateway implementation",
+      "status": "CONFIRMED_BLOCKER",
+      "evidence": "engine/gateway/ does not exist; contract only in ECO-02",
+      "eco_04_action": "Implement in ECO-04.1",
+      "blocking_eco_04": false
+    },
+    {
+      "id": "B-011",
+      "description": "All tests UNRUNNABLE (environment)",
+      "status": "CONFIRMED_BLOCKER",
+      "evidence": "numpy, scipy, pandas, pydantic, pytest not installed; no C++ compiler",
+      "eco_04_action": "Install dependencies: pip install -e .[dev]",
+      "blocking_eco_04": true
+    }
+  ],
+
+  "deferred_to_eco_04": [
+    {"id": "B-002-arch", "description": "Engine to Database architectural violation"},
+    {"id": "B-007", "description": "No Evidence Engine implementation"},
+    {"id": "B-008", "description": "No uncertainty propagation"},
+    {"id": "B-009", "description": "No epistemic type tagging"},
+    {"id": "B-013", "description": "No provenance on outputs"},
+    {"id": "B-014", "description": "No trust levels on outputs"}
+  ],
+
+  "import_guard_results": {
+    "tool_created": true,
+    "tool_path": "tools/detect_imports.py",
+    "files_scanned": 942,
+    "rules_defined": 7,
+    "violations_found": 7,
+    "engine_to_services_violations": 0,
+    "engine_to_database_violations": 7,
+    "status": "FAIL (7 violations, all database-related)"
+  },
+
+  "service_inventory": {
+    "total_directories": 74,
+    "actual_services": 38,
+    "infrastructure_modules": 19,
+    "shared_libraries": 16,
+    "placeholders": 2,
+    "deprecated": 4,
+    "definition": "Domain service = module with bounded context ownership and business logic"
+  },
+
+  "bounded_contexts": {
+    "count": 8,
+    "validated": true,
+    "violations_found": 1,
+    "violations": [
+      {"from": "CTX-008 (AI)", "to": "CTX-002 (Engine)", "file": "services/ai/admin_assistant.py:343", "type": "POTENTIAL"}
+    ]
+  },
+
+  "scientific_models": {
+    "total": 22,
+    "verified": 13,
+    "scientifically_supported": 1,
+    "implementation_verified": 6,
+    "requires_review": 5,
+    "p0_blocking_eco_04": 0
+  },
+
+  "environment": {
+    "python_version": "3.12.0",
+    "os": "Windows 11 (win32)",
+    "architecture": "x64",
+    "network_available": false,
+    "numpy_installed": false,
+    "scipy_installed": false,
+    "pytest_installed": false,
+    "c_compiler_available": false,
+    "tests_executable": false
+  },
+
+  "eco_04_readiness": {
+    "status": "READY_WITH_LIMITATIONS",
+    "blocking_items": ["B-011 (environment setup required)"],
+    "first_task": "pip install -e .[dev]",
+    "can_begin": true,
+    "with_caveats": "Requires dependency installation first"
+  },
+
+  "files_created": [
+    "database/__init__.py",
+    "database/hub.py",
+    "database/config.py",
+    "database/base.py",
+    "services/ai/generative_ai/__init__.py",
+    "pyproject.toml",
+    "tools/detect_imports.py"
+  ],
+
+  "files_deleted": [
+    "engine/hydroma/generative_ai/__init__.py"
+  ],
+
+  "files_modified": []
+}

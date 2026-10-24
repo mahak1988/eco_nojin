@@ -1,0 +1,243 @@
+# ---------------------------------------------------------------------------
+# ENO_SCENARIO_BASELELINE_2025 -- scenario version 1.0.0
+#
+# ECO-12 phase 1 artifact: definition, versioning and comparison only.
+# This file runs nothing. Executing a scenario against the models is phase 2
+# and is not implemented (no engine call, no simulation -- see
+# scenario/engine/baseline_manager.py).
+#
+# Honesty conventions used throughout (ZED: no live data):
+#   UNPROMOTED_TO_REGISTRY  the artifact exists in no registry yet
+#   NOT_ESTIMATED           the quantity has never been computed here
+#   null                    deliberately unset rather than guessed
+# Every one of these is a real state of the project, not a placeholder that
+# a later phase is expected to silently fill in.
+# ---------------------------------------------------------------------------
+
+scenario_id: "ENO_SCENARIO_BASELELINE_2025"
+scenario_version: "1.0.0"
+
+# The baseline is the reference point itself, so it points at no other
+# baseline. A derived scenario names this id in its own baseline_id.
+baseline_id: null
+
+spatial_scope:
+  name: "Eco Nojin pilot area (unnamed in the registry)"
+  boundary_status: "UNPROMOTED_TO_REGISTRY"
+  boundary_geometry: null
+  area_ha: null
+  datum_crs: null
+  dem_resolution_m: null
+  note: >-
+    No boundary geometry, DEM or CRS has been promoted to the dataset
+    registry, so every geometry-bearing field is null. The scope names where
+    the scenario is meant to apply; it is a label, not a mapped extent.
+
+time_horizon:
+  baseline_period: "NOT_ESTIMATED"
+  start_year: null
+  end_year: null
+  horizon_years: null
+  note: >-
+    No reference period has been established because no observed climate
+    record is promoted to the dataset registry. The "2025" in the
+    scenario_id is a label from this gap-closing work, not a climate normal,
+    and must not be read as one.
+
+# One documented assumption per key, all in the same shape:
+#   value           the number the scenario carries (null when not estimated)
+#   unit            physical unit, or null when the value is null
+#   rationale       why this assumption is made
+#   source          where it comes from, or the honest status token
+#   evidence_basis  NOT_ESTIMATED / HYPOTHESIS / ... (see the file header)
+# The baseline perturbs nothing, so both adjustments are a documented zero:
+# a derived scenario then expresses its change against a stated reference.
+climate_assumptions:
+  precipitation_change_pct:
+    value: 0.0
+    unit: "percent relative to the current climate"
+    rationale: >-
+      The baseline applies no adjustment to precipitation: it reports the
+      current climate whatever forcing a (phase 2) execution supplies,
+      rather than re-plumbing a different one.
+    source: "NOT_APPLICABLE - definitional"
+    evidence_basis: "NOT_ESTIMATED"
+  temperature_change_c:
+    value: 0.0
+    unit: "degC relative to the current climate"
+    rationale: >-
+      Same as precipitation: the baseline perturbs nothing, so that a
+      derived scenario's delta is a difference from a documented zero
+      rather than from an unstated normal.
+    source: "NOT_APPLICABLE - definitional"
+    evidence_basis: "NOT_ESTIMATED"
+
+land_management:
+  status: "NOT_ESTIMATED"
+  practice_inventory: []
+  tillage: null
+  note: >-
+    No management practice inventory has been established for the pilot
+    area. The list is empty by design: populating it is a data task, not a
+    modelling task, and an invented practice list would be indistinguishable
+    from a real one once it is written into YAML.
+
+crop_plan:
+  status: "NOT_ESTIMATED"
+  cropping_pattern: null
+  crops: []
+  note: >-
+    No cropping pattern has been promoted, so the baseline makes no
+    crop-level claim. Crop response belongs to phase 2 execution, where the
+    crop_plan is an input to a run rather than a documented assumption.
+
+water_allocation:
+  status: "NOT_ESTIMATED"
+  total_quota_mcm: null
+  allocation_basis: null
+  sector_shares:
+    agriculture: null
+    domestic: null
+    industry: null
+    environment: null
+  note: >-
+    No water right, quota or allocation plan has been promoted to any
+    registry, so the baseline allocates nothing. Each sector share is null
+    rather than a plausible-looking number.
+
+soil_interventions:
+  status: "NOT_ESTIMATED"
+  interventions: []
+  note: >-
+    No soil intervention programme (amendment, conservation works,
+    mulching, ...) has been defined for the pilot area. The empty list is
+    the honest state of the project.
+
+economic_assumptions:
+  status: "NOT_ESTIMATED"
+  currency: null
+  price_basis_year: null
+  discount_rate: null
+  note: >-
+    No price set, currency basis or discount rate has been promoted. The
+    carbon prices recorded in engine/baseline/R18.json belong to the
+    execution baseline, not to this scenario definition, and are not
+    borrowed here.
+
+social_constraints:
+  status: "NOT_ESTIMATED"
+  constraints: []
+  note: >-
+    No social constraint (labour availability, land tenure, water-user
+    acceptance, ...) has been documented for the pilot area.
+
+# model_versions: read (read-only) from engine/models/registry.py, where
+# every registered model declares model_version "1.0.0". The values below
+# are that declaration copied verbatim. Pinning a version is not a claim
+# that the model has been validated for the pilot area.
+model_versions:
+  CANON-001: "1.0.0"
+  CANON-002: "1.0.0"
+  CANON-003: "1.0.0"
+  CANON-004: "1.0.0"
+  CANON-005: "1.0.0"
+  CANON-006: "1.0.0"
+  CANON-007: "1.0.0"
+  CANON-008: "1.0.0"
+  CANON-009: "1.0.0"
+  CANON-010: "1.0.0"
+  CANON-011: "1.0.0"
+  CANON-012: "1.0.0"
+  CANON-013: "1.0.0"
+  CANON-014: "1.0.0"
+  CANON-015: "1.0.0"
+  CANON-016: "1.0.0"
+  CANON-017: "1.0.0"
+  CANON-018: "1.0.0"
+  CANON-019: "1.0.0"
+  CANON-020: "1.0.0"
+  CANON-021: "1.0.0"
+  CANON-022: "1.0.0"
+
+# No dataset has been promoted to the dataset registry. Rather than naming
+# datasets with invented versions, the list carries one honest token.
+dataset_versions:
+  - "UNPROMOTED_TO_REGISTRY"
+
+parameter_set_versions:
+  soil_hydraulic_parameters: "UNPROMOTED_TO_REGISTRY"
+  curve_number_table: "UNPROMOTED_TO_REGISTRY"
+  crop_coefficients: "UNPROMOTED_TO_REGISTRY"
+  economic_price_set: "UNPROMOTED_TO_REGISTRY"
+
+# Nothing to record yet: no distribution has been fitted, sampled or
+# assumed for this scenario, so there is no uncertainty setting to state.
+uncertainty_settings: "NOT_ESTIMATED"
+
+# ECO-12 DoD: فرض‌ها مستند می‌شوند -- the assumptions are documented, one
+# entry each, so that a reader can audit every claim the scenario makes.
+assumptions:
+  - id: "A-001"
+    statement: >-
+      No climate forcing dataset is pinned by this definition.
+    rationale: >-
+      No gauge, reanalysis or satellite precipitation/temperature record
+      has been promoted to the dataset registry, so the scenario cannot
+      name one without inventing provenance.
+    source: "UNPROMOTED_TO_REGISTRY"
+    evidence_basis: "NOT_ESTIMATED"
+  - id: "A-002"
+    statement: >-
+      The spatial scope is a label, not geometry.
+    rationale: >-
+      The pilot boundary, its CRS and a DEM resolution are all unset, so no
+      spatially distributed statement is made anywhere in this definition.
+    source: "UNPROMOTED_TO_REGISTRY"
+    evidence_basis: "NOT_ESTIMATED"
+  - id: "A-003"
+    statement: >-
+      The pinned model versions are the registry's own declarations.
+    rationale: >-
+      model_versions copies model_version from engine/models/registry.py.
+      Every registered model there reads "1.0.0"; pinning it records which
+      code the definition was written against, not that the model is fit
+      for the pilot area.
+    source: "engine/models/registry.py (read-only)"
+    evidence_basis: "NOT_ESTIMATED"
+  - id: "A-004"
+    statement: >-
+      Management, crop, water, soil, economic and social sections are
+      deliberately unset.
+    rationale: >-
+      None of those inventories exists yet. An empty section is auditable
+      at a glance; a filled one could not be told apart from a measured one.
+    source: "UNPROMOTED_TO_REGISTRY"
+    evidence_basis: "NOT_ESTIMATED"
+  - id: "A-005"
+    statement: >-
+      Uncertainty is not estimated.
+    rationale: >-
+      With no parameter sets promoted and no run performed, there is no
+      distribution to describe; a fabricated interval would be worse than
+      an honest absence.
+    source: "NOT_ESTIMATED"
+    evidence_basis: "NOT_ESTIMATED"
+  - id: "A-006"
+    statement: >-
+      The baseline means "current climate, current management, no
+      perturbation".
+    rationale: >-
+      It is a reference point for comparison, not a claim that the pilot
+      area is in any particular state. Its value is entirely as the zero
+      against which derived scenarios are diffed.
+    source: "ECO-12 definition (this file)"
+    evidence_basis: "NOT_ESTIMATED"
+  - id: "A-007"
+    statement: >-
+      This definition executes nothing.
+    rationale: >-
+      Phase 1 of ECO-12 covers definition, versioning and comparison.
+      Running a scenario against the engine is phase 2 and is not
+      implemented in this repository path.
+    source: "ECO-12 scope statement (scenario/engine/baseline_manager.py)"
+    evidence_basis: "NOT_ESTIMATED"

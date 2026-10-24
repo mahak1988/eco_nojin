@@ -1,0 +1,39 @@
+#!/bin/sh
+# ---------------------------------------------------------------------------
+# .githooks/pre-edit — the hook git itself runs: the v3.1 Rule-5 Quick Scan
+# (remediation item C-1, step 3). Exit status 0 means READY, 1 means NOT-READY.
+#
+# Why this file is a seven-line launcher rather than the scan:
+#
+#   * git launches hooks through `sh` on every platform, including Windows
+#     (Git for Windows ships an MSYS2 sh), so this file must be a POSIX shell
+#     script;
+#   * `powershell -File` refuses any file whose name does not end in `.ps1`,
+#     so one file cannot double as the PowerShell entry point;
+#   * the two implementations therefore live in `.githooks/pre-edit.sh`
+#     (sh/bash, also the POSIX/macOS/Linux path) and `.githooks/pre-edit.ps1`
+#     (Windows PowerShell). Both run the same five checks.
+#
+# It is *sourced*, not exec'd: `exec sh ...` needs `sh` on PATH, which a shell
+# launched from a Windows console does not have, and a hook that cannot start is
+# worse than a hook that reports NOT-READY.
+#
+# Install once per repository:
+#     git config core.hooksPath .githooks
+#
+# Run by hand:
+#     .githooks/pre-edit                    # full scan (git's entry point)
+#     sh .githooks/pre-edit.sh --quick      # skip the slow services suite
+#     powershell -NoProfile -File .githooks/pre-edit.ps1 -quick
+# ---------------------------------------------------------------------------
+set -u
+
+# ${0%/*} rather than dirname(1): no external command is required to locate a
+# sibling file, and Git for Windows' msys usr/bin is not always on PATH.
+case "$0" in
+    */*) _HOOK_SOURCE=${0%/*} ;;
+    *)   _HOOK_SOURCE=. ;;
+esac
+_HOOK_DIR=$(CDPATH= cd -- "$_HOOK_SOURCE" && pwd)
+
+. "$_HOOK_DIR/pre-edit.sh" "$@"

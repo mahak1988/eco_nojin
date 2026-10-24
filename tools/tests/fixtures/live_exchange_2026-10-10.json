@@ -1,0 +1,7525 @@
+{
+ "fixture_version": 1,
+ "kind": "food_security_fetch_fixture",
+ "recorded_at": "2026-10-10T02:26:15+00:00",
+ "note": "Recorded exchange-by-exchange from the live World Bank API v2 and the FAO FAOSTAT bulk download by tools/build_food_security_table.py --record-fixtures. Values are real, unmodified API responses; retrieved_at is the timestamp of the live exchange. Replay with --fixtures; a URL the fixture does not cover is a build error, not a fallback. Filters applied to keep the fixture small, values otherwise unmodified: World Bank rows before 2015 dropped (the API's 2026-10-08 series otherwise starts in 1960), and the FAOSTAT bulk CSV filtered to the 6 configured countries, the 16 curated item codes and the 'Value' element, with pre-2010 year columns blanked.",
+ "responses": [
+  {
+   "url": "https://api.worldbank.org/v2/country/IRN;TUR;EGY;PAK;CHN;USA/indicator/AG.YLD.CREL.KG?format=json&per_page=5000",
+   "status": 200,
+   "retrieved_at": "2026-10-10T02:25:58+00:00",
+   "payload": [
+    {
+     "page": 1,
+     "pages": 1,
+     "per_page": 5000,
+     "total": 66,
+     "sourceid": "2",
+     "lastupdated": "2026-10-08"
+    },
+    [
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2024",
+      "value": 6494.7,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2023",
+      "value": 6424.4,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2022",
+      "value": 6386,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2021",
+      "value": 6323.7,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2020",
+      "value": 6298.4,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2019",
+      "value": 6278.7,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2018",
+      "value": 6126.3,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2017",
+      "value": 6110.8,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2016",
+      "value": 6016.8,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2015",
+      "value": 5985,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2024",
+      "value": 7360.4,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2023",
+      "value": 7356.3,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2022",
+      "value": 7077.6,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2021",
+      "value": 7335.7,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2020",
+      "value": 7164.2,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2019",
+      "value": 6043.8,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2018",
+      "value": 6776,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2017",
+      "value": 7400.6,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2016",
+      "value": 7251.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2015",
+      "value": 7117.3,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2024",
+      "value": 2724.8,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2023",
+      "value": 2669.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2022",
+      "value": 2637.7,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2021",
+      "value": 2531.9,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2020",
+      "value": 2617.3,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2019",
+      "value": 2653.7,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2018",
+      "value": 2657.3,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2017",
+      "value": 2531,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2016",
+      "value": 2653.3,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2015",
+      "value": 2231,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2024",
+      "value": 3620.6,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2023",
+      "value": 3625.6,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2022",
+      "value": 3463,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2021",
+      "value": 3489.4,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2020",
+      "value": 3353.4,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2019",
+      "value": 3160.6,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2018",
+      "value": 3149,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2017",
+      "value": 3180.4,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2016",
+      "value": 3020.7,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2015",
+      "value": 2942.4,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2024",
+      "value": 3428.7,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2023",
+      "value": 3659.1,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2022",
+      "value": 3464.7,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2021",
+      "value": 2918.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2020",
+      "value": 3341.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2019",
+      "value": 3200.8,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2018",
+      "value": 3163.9,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2017",
+      "value": 3257.4,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2016",
+      "value": 3105.4,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2015",
+      "value": 3307.8,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2024",
+      "value": 8413.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2023",
+      "value": 8330,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2022",
+      "value": 8065.8,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2021",
+      "value": 8246.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2020",
+      "value": 8144.8,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2019",
+      "value": 8005.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2018",
+      "value": 8196,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2017",
+      "value": 8281.3,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2016",
+      "value": 8614.2,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.YLD.CREL.KG",
+       "value": "Cereal yield (kg per hectare)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2015",
+      "value": 7430.1,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     }
+    ]
+   ]
+  },
+  {
+   "url": "https://api.worldbank.org/v2/country/IRN;TUR;EGY;PAK;CHN;USA/indicator/AG.PRD.CREL.MT?format=json&per_page=5000",
+   "status": 200,
+   "retrieved_at": "2026-10-10T02:26:05+00:00",
+   "payload": [
+    {
+     "page": 1,
+     "pages": 1,
+     "per_page": 5000,
+     "total": 66,
+     "sourceid": "2",
+     "lastupdated": "2026-10-08"
+    },
+    [
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2024",
+      "value": 651355743.38,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2023",
+      "value": 640582735.05,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2022",
+      "value": 632097501.8,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2021",
+      "value": 631548529.7,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2020",
+      "value": 615323961.68,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2019",
+      "value": 612711473.47,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2018",
+      "value": 608882194.21,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2017",
+      "value": 614070169.03,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2016",
+      "value": 614565270.76,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2015",
+      "value": 617708713.27,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2024",
+      "value": 24001618.05,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2023",
+      "value": 23796062.12,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2022",
+      "value": 22005502.48,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2021",
+      "value": 23097093.93,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2020",
+      "value": 22461306.25,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2019",
+      "value": 21916624.05,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2018",
+      "value": 17565644.01,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2017",
+      "value": 22923640,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2016",
+      "value": 23385497.4,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2015",
+      "value": 23141275.32,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2024",
+      "value": 24511344.7,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2023",
+      "value": 23976866.39,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2022",
+      "value": 20423028.86,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2021",
+      "value": 17094559.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2020",
+      "value": 22552257.46,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2019",
+      "value": 22314123.14,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2018",
+      "value": 20130243.11,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2017",
+      "value": 19286154.53,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2016",
+      "value": 22419770.81,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2015",
+      "value": 18255384.86,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2024",
+      "value": 55933133,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2023",
+      "value": 53065396,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2022",
+      "value": 48519329,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2021",
+      "value": 51304736,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2020",
+      "value": 47226053,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2019",
+      "value": 43912063,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2018",
+      "value": 43254398,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2017",
+      "value": 44299994.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2016",
+      "value": 42555022,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2015",
+      "value": 41081682,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2024",
+      "value": 39017292,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2023",
+      "value": 42193311,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2022",
+      "value": 38667033,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2021",
+      "value": 31864404,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2020",
+      "value": 37184688,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2019",
+      "value": 34398698,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2018",
+      "value": 34395628,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2017",
+      "value": 36126157,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2016",
+      "value": 35276615,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2015",
+      "value": 38632438,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2024",
+      "value": 454987916.06,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2023",
+      "value": 462631157.55,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2022",
+      "value": 408899960.3,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2021",
+      "value": 450200713.33,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2020",
+      "value": 433259869.82,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2019",
+      "value": 420873692.84,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2018",
+      "value": 439710828.46,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2017",
+      "value": 440271775.02,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2016",
+      "value": 503466147.24,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.PRD.CREL.MT",
+       "value": "Cereal production (metric tons)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2015",
+      "value": 431870370.62,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     }
+    ]
+   ]
+  },
+  {
+   "url": "https://api.worldbank.org/v2/country/IRN;TUR;EGY;PAK;CHN;USA/indicator/SP.POP.TOTL?format=json&per_page=5000",
+   "status": 200,
+   "retrieved_at": "2026-10-10T02:26:06+00:00",
+   "payload": [
+    {
+     "page": 1,
+     "pages": 1,
+     "per_page": 5000,
+     "total": 66,
+     "sourceid": "2",
+     "lastupdated": "2026-10-08"
+    },
+    [
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2025",
+      "value": 1406585000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2024",
+      "value": 1408975000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2023",
+      "value": 1410710000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2022",
+      "value": 1412175000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2021",
+      "value": 1412360000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2020",
+      "value": 1411100000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2019",
+      "value": 1407745000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2018",
+      "value": 1402760000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2017",
+      "value": 1396215000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2016",
+      "value": 1387790000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2015",
+      "value": 1379860000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2025",
+      "value": 118365995,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2024",
+      "value": 116538258,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2023",
+      "value": 114535772,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2022",
+      "value": 112618250,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2021",
+      "value": 110957008,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2020",
+      "value": 109315124,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2019",
+      "value": 107553158,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2018",
+      "value": 105682094,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2017",
+      "value": 103696057,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2016",
+      "value": 101644589,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2015",
+      "value": 99597342,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2025",
+      "value": 92417681,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2024",
+      "value": 91567738,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2023",
+      "value": 90608707,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2022",
+      "value": 89524246,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2021",
+      "value": 88455488,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2020",
+      "value": 87723443,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2019",
+      "value": 87051648,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2018",
+      "value": 86117998,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2017",
+      "value": 85026754,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2016",
+      "value": 83812228,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2015",
+      "value": 82619362,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2025",
+      "value": 255219554,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2024",
+      "value": 251269164,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2023",
+      "value": 247504495,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2022",
+      "value": 243700667,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2021",
+      "value": 239477801,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2020",
+      "value": 235001746,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2019",
+      "value": 230800899,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2018",
+      "value": 226928892,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2017",
+      "value": 223273967,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2016",
+      "value": 220138869,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2015",
+      "value": 217290883,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2025",
+      "value": 85878556,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2024",
+      "value": 85518661,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2023",
+      "value": 85325965,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2022",
+      "value": 84979913,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2021",
+      "value": 84147318,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2020",
+      "value": 83384680,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2019",
+      "value": 82579440,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2018",
+      "value": 81407204,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2017",
+      "value": 80312698,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2016",
+      "value": 79277962,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2015",
+      "value": 78218479,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2025",
+      "value": 341784857,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2024",
+      "value": 340003797,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2023",
+      "value": 336755052,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2022",
+      "value": 333996304,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2021",
+      "value": 332100166,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2020",
+      "value": 331578104,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2019",
+      "value": 330226227,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2018",
+      "value": 328529577,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2017",
+      "value": 326608609,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2016",
+      "value": 324353340,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SP.POP.TOTL",
+       "value": "Population, total"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2015",
+      "value": 321815121,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     }
+    ]
+   ]
+  },
+  {
+   "url": "https://api.worldbank.org/v2/country/IRN;TUR;EGY;PAK;CHN;USA/indicator/NV.AGR.TOTL.ZS?format=json&per_page=5000",
+   "status": 200,
+   "retrieved_at": "2026-10-10T02:26:07+00:00",
+   "payload": [
+    {
+     "page": 1,
+     "pages": 1,
+     "per_page": 5000,
+     "total": 66,
+     "sourceid": "2",
+     "lastupdated": "2026-10-08"
+    },
+    [
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2025",
+      "value": 6.65869070601804,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2024",
+      "value": 6.7975741844132,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2023",
+      "value": 6.88951941080068,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2022",
+      "value": 7.14788692830171,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2021",
+      "value": 7.08935251618004,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2020",
+      "value": 7.54018198521241,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2019",
+      "value": 7.00621575788341,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2018",
+      "value": 6.91714289236836,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2017",
+      "value": 7.32839239286042,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2016",
+      "value": 7.90065017505416,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2015",
+      "value": 8.22401359479525,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2025",
+      "value": 16.551922508574,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2024",
+      "value": 13.7121128792805,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2023",
+      "value": 10.6003111645036,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2022",
+      "value": 10.9457535224737,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2021",
+      "value": 11.4369326589725,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2020",
+      "value": 11.1668239443487,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2019",
+      "value": 10.6971354538956,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2018",
+      "value": 10.8302490249025,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2017",
+      "value": 10.9863806449848,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2016",
+      "value": 11.769316084742,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2015",
+      "value": 11.3940627685257,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2025",
+      "value": 10.5944482254371,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2024",
+      "value": 10.8003685937198,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2023",
+      "value": 10.750872506583,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2022",
+      "value": 10.6950417706195,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2021",
+      "value": 10.6344854027271,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2020",
+      "value": 11.6933506979702,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2019",
+      "value": 11.8081014676882,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2018",
+      "value": 9.63092024660805,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2017",
+      "value": 8.49044927227644,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2016",
+      "value": 8.44788029281743,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2015",
+      "value": 10.0916014141126,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2025",
+      "value": 23.0212949096389,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2024",
+      "value": 23.7319671905124,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2023",
+      "value": 23.426703596366,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2022",
+      "value": 22.3268646996031,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2021",
+      "value": 22.6625080760743,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2020",
+      "value": 21.8541325548966,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2019",
+      "value": 20.6778713222887,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2018",
+      "value": 21.6512353593957,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2017",
+      "value": 21.9632035366872,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2016",
+      "value": 22.3283302035697,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2015",
+      "value": 23.2628407756242,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2025",
+      "value": 5.20951196750004,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2024",
+      "value": 5.82042467876951,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2023",
+      "value": 6.38984597795627,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2022",
+      "value": 6.69360961922604,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2021",
+      "value": 5.70488171636816,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2020",
+      "value": 6.89122590909685,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2019",
+      "value": 6.6541535628227,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2018",
+      "value": 6.00418639185492,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2017",
+      "value": 6.19642323537778,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2016",
+      "value": 6.26556196399699,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2015",
+      "value": 6.87689834308907,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2024",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2023",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2022",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2021",
+      "value": 0.942961672907101,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2020",
+      "value": 0.934873150907349,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2019",
+      "value": 0.83262086291437,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2018",
+      "value": 0.898498260790929,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2017",
+      "value": 0.940362226343714,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2016",
+      "value": 0.937140437714336,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     },
+     {
+      "indicator": {
+       "id": "NV.AGR.TOTL.ZS",
+       "value": "Agriculture, forestry, and fishing, value added (% of GDP)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2015",
+      "value": 1.02890409132672,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+     }
+    ]
+   ]
+  },
+  {
+   "url": "https://api.worldbank.org/v2/country/IRN;TUR;EGY;PAK;CHN;USA/indicator/AG.LND.ARBL.HA?format=json&per_page=5000",
+   "status": 200,
+   "retrieved_at": "2026-10-10T02:26:08+00:00",
+   "payload": [
+    {
+     "page": 1,
+     "pages": 1,
+     "per_page": 5000,
+     "total": 66,
+     "sourceid": "2",
+     "lastupdated": "2026-10-08"
+    },
+    [
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2024",
+      "value": 108465620,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2023",
+      "value": 108845565,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2022",
+      "value": 107998721,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2021",
+      "value": 108974772,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2020",
+      "value": 108778580,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2019",
+      "value": 108939854,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2018",
+      "value": 110483230,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2017",
+      "value": 111630970,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2016",
+      "value": 113251480,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2015",
+      "value": 114870800,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2024",
+      "value": 3274000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2023",
+      "value": 3163000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2022",
+      "value": 3104000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2021",
+      "value": 3078000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2020",
+      "value": 3365000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2019",
+      "value": 3219000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2018",
+      "value": 3049000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2017",
+      "value": 2911968.8,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2016",
+      "value": 2786765.4,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2015",
+      "value": 2865877.1,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2024",
+      "value": 15699000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2023",
+      "value": 15699000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2022",
+      "value": 15699000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2021",
+      "value": 15699000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2020",
+      "value": 15660000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2019",
+      "value": 15620000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2018",
+      "value": 15581000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2017",
+      "value": 15134000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2016",
+      "value": 14687000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2015",
+      "value": 14687000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2024",
+      "value": 30690000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2023",
+      "value": 30260000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2022",
+      "value": 30230000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2021",
+      "value": 30280000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2020",
+      "value": 30930000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2019",
+      "value": 30530000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2018",
+      "value": 31160000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2017",
+      "value": 31210000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2016",
+      "value": 30990000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2015",
+      "value": 30400000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2024",
+      "value": 20224000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2023",
+      "value": 20277000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2022",
+      "value": 20213000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2021",
+      "value": 19881000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2020",
+      "value": 19586000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2019",
+      "value": 19580000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2018",
+      "value": 19723000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2017",
+      "value": 19998000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2016",
+      "value": 20382000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2015",
+      "value": 20650000,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2024",
+      "value": 151553420,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2023",
+      "value": 151563530,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2022",
+      "value": 151554225.1,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2021",
+      "value": 152711560,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2020",
+      "value": 153903600,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2019",
+      "value": 155092830,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2018",
+      "value": 156304950,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2017",
+      "value": 157427836,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2016",
+      "value": 156915020,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "AG.LND.ARBL.HA",
+       "value": "Arable land (hectares)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2015",
+      "value": 156453460,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     }
+    ]
+   ]
+  },
+  {
+   "url": "https://api.worldbank.org/v2/country/IRN;TUR;EGY;PAK;CHN;USA/indicator/SN.ITK.DEFC.ZS?format=json&per_page=5000",
+   "status": 200,
+   "retrieved_at": "2026-10-10T02:26:08+00:00",
+   "payload": [
+    {
+     "page": 1,
+     "pages": 1,
+     "per_page": 5000,
+     "total": 66,
+     "sourceid": "2",
+     "lastupdated": "2026-10-08"
+    },
+    [
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2024",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2023",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2022",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2021",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2020",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2019",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2018",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2017",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2016",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2015",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2024",
+      "value": 8.4,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2023",
+      "value": 8.6,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2022",
+      "value": 8.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2021",
+      "value": 8,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2020",
+      "value": 7.1,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2019",
+      "value": 6.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2018",
+      "value": 6.4,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2017",
+      "value": 6.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2016",
+      "value": 6.6,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2015",
+      "value": 6.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2024",
+      "value": 6.7,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2023",
+      "value": 6.7,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2022",
+      "value": 6.6,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2021",
+      "value": 6.8,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2020",
+      "value": 6.9,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2019",
+      "value": 7.7,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2018",
+      "value": 8,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2017",
+      "value": 8,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2016",
+      "value": 7.7,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2015",
+      "value": 7.4,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2024",
+      "value": 16.1,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2023",
+      "value": 17,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2022",
+      "value": 16.7,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2021",
+      "value": 16.4,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2020",
+      "value": 13.3,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2019",
+      "value": 12.9,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2018",
+      "value": 10.9,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2017",
+      "value": 11.7,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2016",
+      "value": 11.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2015",
+      "value": 13.3,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2024",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2023",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2022",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2021",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2020",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2019",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2018",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2017",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2016",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2015",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2024",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2023",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2022",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2021",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2020",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2019",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2018",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2017",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2016",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "SN.ITK.DEFC.ZS",
+       "value": "Prevalence of undernourishment (% of population)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2015",
+      "value": 2.5,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     }
+    ]
+   ]
+  },
+  {
+   "url": "https://api.worldbank.org/v2/country/IRN;TUR;EGY;PAK;CHN;USA/indicator/TM.VAL.FOOD.ZS.UN?format=json&per_page=5000",
+   "status": 200,
+   "retrieved_at": "2026-10-10T02:26:09+00:00",
+   "payload": [
+    {
+     "page": 1,
+     "pages": 1,
+     "per_page": 5000,
+     "total": 66,
+     "sourceid": "2",
+     "lastupdated": "2026-10-08"
+    },
+    [
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2025",
+      "value": 8.01385425531727,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2024",
+      "value": 8.10751053290446,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2023",
+      "value": 8.98411591719164,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2022",
+      "value": 8.50986398807462,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2021",
+      "value": 8.11967397205663,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2020",
+      "value": 8.21017119906821,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2019",
+      "value": 7.02820185377525,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2018",
+      "value": 6.18908395984885,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2017",
+      "value": 6.60739484217093,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2016",
+      "value": 6.79703829564838,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "CN",
+       "value": "China"
+      },
+      "countryiso3code": "CHN",
+      "date": "2015",
+      "value": 6.66132360581687,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2025",
+      "value": 19.053134525845,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2024",
+      "value": 20.4434848356971,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2023",
+      "value": 21.6972770278526,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2022",
+      "value": 22.1214154443618,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2021",
+      "value": 21.2684759245502,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2020",
+      "value": 23.1079323874633,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2019",
+      "value": 20.9318510685966,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2018",
+      "value": 18.3309787934642,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2017",
+      "value": 20.284907436335,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2016",
+      "value": 20.3753156142534,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "EG",
+       "value": "Egypt, Arab Rep."
+      },
+      "countryiso3code": "EGY",
+      "date": "2015",
+      "value": 19.4566174058816,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2025",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2024",
+      "value": null,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2023",
+      "value": 26.1044425224161,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2022",
+      "value": 29.4601700206271,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2021",
+      "value": 30.9322239984819,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2020",
+      "value": 26.7610078346309,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2019",
+      "value": 28.0531454667852,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2018",
+      "value": 25.5591386885995,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2017",
+      "value": 20.191545455076,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2016",
+      "value": 20.4927483499843,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "IR",
+       "value": "Iran, Islamic Rep."
+      },
+      "countryiso3code": "IRN",
+      "date": "2015",
+      "value": 22.4023283543476,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2025",
+      "value": 14.0071030722153,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2024",
+      "value": 14.1011260133402,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2023",
+      "value": 16.1107282427233,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2022",
+      "value": 13.2091941252982,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2021",
+      "value": 12.8684989494526,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2020",
+      "value": 14.993804992521,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2019",
+      "value": 10.7361855324182,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2018",
+      "value": 10.0377089627561,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2017",
+      "value": 11.8099304337959,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2016",
+      "value": 12.5083505742758,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "PK",
+       "value": "Pakistan"
+      },
+      "countryiso3code": "PAK",
+      "date": "2015",
+      "value": 12.0975233412564,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2025",
+      "value": 7.01186225685655,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2024",
+      "value": 6.21498601848316,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2023",
+      "value": 6.54790608311516,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2022",
+      "value": 6.31093067974344,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2021",
+      "value": 6.42706260735525,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2020",
+      "value": 6.7165834890423,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2019",
+      "value": 6.83311029375475,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2018",
+      "value": 6.0896624227992,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2017",
+      "value": 5.89323990944807,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2016",
+      "value": 6.01730834595265,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "TR",
+       "value": "Turkiye"
+      },
+      "countryiso3code": "TUR",
+      "date": "2015",
+      "value": 5.80119499346178,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2025",
+      "value": 6.70420188735133,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2024",
+      "value": 6.93248541682915,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2023",
+      "value": 6.78268948296484,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2022",
+      "value": 6.63381888216102,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2021",
+      "value": 6.61168444273988,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2020",
+      "value": 6.77430095157312,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2019",
+      "value": 6.18022472683816,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2018",
+      "value": 5.95676257518906,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2017",
+      "value": 6.08834023504952,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2016",
+      "value": 6.1193049372905,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     },
+     {
+      "indicator": {
+       "id": "TM.VAL.FOOD.ZS.UN",
+       "value": "Food imports (% of merchandise imports)"
+      },
+      "country": {
+       "id": "US",
+       "value": "United States"
+      },
+      "countryiso3code": "USA",
+      "date": "2015",
+      "value": 5.83172132728094,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 0
+     }
+    ]
+   ]
+  },
+  {
+   "url": "https://fenixservices.fao.org/faostat/static/bulkdownloads/Food_Security_Data_E_All_Data.zip",
+   "status": 200,
+   "retrieved_at": "2026-10-10T02:26:15+00:00",
+   "content_b64": "UEsDBBQAAAAIAAcvSl0pRPk+vAwAADNuAAAhAAAARm9vZF9TZWN1cml0eV9EYXRhX0VfQWxsX0RhdGEuY3N27Vxdj9u4FX0v0P8gBCiSAB6v+CGJAvoSBCsgD82m3bZAH5UZTSLEY7uyJ8X8t771j5UyqXs4IjkjOzNZOVgHHp3w49o+vKR4D0m96Zo6ebu5ahZvBpS8+ossXx/+v3i3b25Mdo8WP6+am2a9Nyn2P4t/rNv94l88TVPztzKX9+ai3xyoAjT5zPw16cym6bcAqgBNvrFnbVk7XL8lUAVo8o09a8vaEfqdAVWAJt/Ys7asHanfOVAFaPKNPWvL2sn0uwCqAE2+sWdtWTu5fiugCtDkG3vWlrVT6HcJVAGafGPP2rJ2FE9ZClQBmnxjz9qydkqdzYAqwEO+sWdtWTtMNznjQBWgyWfmr0m3dnSTMwFUAZp8Y8/asnZ0kzMJVAGafGPP2rJ2dJOzDKgCNPnGnrVl7egmZzlQBWjyjT1ry9rRTc4KoArQ5Bt71pa1o5ucKaAK0OQbe9aWtaObnJVAFaDJN/asLWtHNzlPgSpAk2/sWVvWjm5yzoAqwEO+sWdtWTuHfxyoAjT5zPw16daObnIugCpAk2/sWVvWjm5yLoEqQJNv7Flb1o5ucp4BVYAm39iztqwdU96Wzd7/8Q+SLV6yLF+8ePu5XdeL5KZu16t6ffViwVnfNd58bbr6U5Nctc2+7u6SZt10n+6S3e12u7pL6qvm37f15V3yatt0l3p0fZ28Ehd3Td0ltan4epEzzdI/69Vts/jTon/9vHiCC+M5oYKQGpBICXFCgpAklBEie4LsiXJAmqYBcQ8tFo/xyBcvfv1cd02yuY4wedV07dfmKrnuNjfJZaNvZqvdIuk2m/0u0WaS/e3Hpts9wPOLZyI6kx4QHuDHAOaBlIh0X4+RKsg5t91m37TrgctXn366rLc/XdV3YXcUliVb7Om4Ymm5JBdk6ZKci7ElORUTS3I/li3J7VjhpKsluR5Pl+R8nC3Jibljh2dLpxPQdziKz1Tnfuiar/WqWV8ePPV2rb1yvbnt2t3nwzzqu/fyP3PicGbwcTr1HOH97Y3utT2V22azXTX3GNWd/dVNu1q1m3WQTz1wGT5toeT95imI/ev3ujxGkEzH/rZr9K9vkuvN5ipp17vmUvO0v9Mw2X9ukv1mX6+S7WZ7u6r3PR/HeONzvL4PTWk5pulGRzNdvde4+52yIGXK7XoDXfrGQIRp7FLWDP3zpA55vkTp2c/bw1QjaW+2m26vZyHbRg9Raz2j63qP+Q3mdUuaX9EtDaOuoNufoFxJKSjFCA2314xuqAWhcokZnPt6jDW5+GBY6d2r7uqP2nP63ERPhtvttp/FaU9ru679dHy3exIWC/plBTGG6UVBTBXEYkGThiLA1FR0HI+s5zHRc7B2X5v+aCdwX+uurT+2q34oe/Xlsl7RfK7nS1m+kDF84De63sAPH+ajnCZb+TiFDxRSzMFLD5AD554d8tChoYZo4hHSsnLxbn3ZXg03A83Bpmsvk9Vmt2t0qLBPOh1etCsdZuz2Xfvx9uCAKz3qreCGI697EpdDNyzVKEkuUwdyFCyRKvwC91Mz32gBCEuMjaC9PsJrziiauNYk/taRhEqpTykMhApjnMqoi6scqejuCj1aIZpQJZUtGaAgY2UejR60671UTOd+utvu5y4PSAgAEAUQ4mcTUagGZAQeQNJDYe7OWBLIBwZyGQfCAzwO/MIgz32FiJyfDFBy6kMaMkARSGVuh5SAPFggCxTAUKFhbEbj8TbHcB9jGvSMnKjKiR4MeDlN8Nw0v1xBVmhQxKBJNtTywT4715B+uN8VRB4Jc+SIOaW5RIFk5aX5M0MIS85dxElTD5F37uG+8Y3qzS/JVb2vTUrhpeSjlMKrlXu1jG/et6NGKSz1DDE+TmCe6bAb/0CKAi88qnh5GA/dJCE8ioUZQO9VDNgy86l7SWbgGH3iuKJIp3yvcPOcvXqhWRv3A+H7r5Aet8Ij2+csRDbzP0/4SZn/eXJak8xQJ5EZ3dFciJuAxIgvIX5IukewJZZfaOSWJepToIV1BsmnBwdnoJJAQwojNRGVDyA5uj7O28xUEVqlk770QQ7mreTRyilFRrSeRXrJUInzcVkKsYb4K8DTbIUQHUvDNUj5EUsBhYQ7eiYKSBG0AJ/isMBUsKwMfZrIRtBeA6TOTAXJya8KCLkY7TJO3SxDj8skdc0MU/s8xWSXuakMZRU+LdZdWcoXL4WOTt91tR6x3u1W9Y12ur8129uPKw0216/nroyQ6ziIY4WZlAyIn04ayqWBtIdR6qFjGD1jvcTf6AAAXyZP9sADWyi8rPuv6fTOT0VxxU6s47i6Z0bdVGGGozA+KAnIIaJyJ3UAGBJUGp3jTORyjsqKG7DTj7ZXjK3uElExKqW8nJw4d+UD6DGFh44hcdZai7uCBl0FshMJm0HxSgUIDMhdQ9d2SjHvE46g9NwVmNILvEsvogtpMo/rNkUgxddtximZFzxKLzQ9xuN/IFlGjnmQfvCtg8kxozL1onbJvVYPV/REgYAM5Otqwm/6Y5rs7KUaUXq/XxQ+cbmvn/nSicj9pMJT2UK2Mv9LZH5F6XnCEU01QwlHYNQXWKGVDDClm4bArdmt5qRCfpcSgg22ZkinQEp36fuv6WzOX9zB0oeLymdHpzI6M9mHYj4CknZgUGBC80baY0RqBm10oRTSMeD0AyDdhyQhCybTN2M1iI4J6HgG+9IcsUc6Ug0PQaBUBSFxPNC3LLF3rgBUcgTtdTLNc9OHnNl3ie1ofArAvjhEiUWGeb0aAwWt6P5Ls5dni5eZyhcf6i/av+r13DUg8pgworMEKbSiNIBYAOEMgwgg5qXF+TtnxcfXd7wUSbdjWnKhEVbGQT4G918xMuen7+TO5gQnxnVSHTHB2bSgEAVjD4fb/aH0FhyCBnV3ERd3Q8zNUc1hGKcY5C4G4ZtJnBPCnmmG/UPugSTsH2IQ1N1q0C4Y5p6sQBrGxRiJs1ZzBHgROGAlsMVKYMLMMVPn2GfDIchwtALHlFswd6ZOUyq4qoQq6Uz7o4Seu5ZjfO6X6+v2stVfrNnt25te6WjX++ZTH0RfJf9p958TN9ozMf5xdUxzHlsnX7w5sk7f6IE6Jqs82pxRto+rY1auj/3ax9cxY89xdeIDww8kejEzkTzS2fhplU7oClKPO8c6Iu9vJBHH5lnY6R82aFYbjqzEThguOD/lk/gJnxT37vPXB9MTejvPT2FenTAWCX6CT2fB4b3PydMThv78+N+aiRNuS1l2gmtmxVOO1jMUUS84jtBfcElTqwuGzdw9pjIM+5l7zIIYgcUFy53ymDVfKMAyLv4FWZy/eOo8T4Bn7oT3O8JpXM5MNoXUQSETxUmZVyYfZ3FvgwgO1CBYtqAg2YoEWVs4QtZsRdJ7emWZATJAHoQqWBZ76hi01TTzqwn3OCKDJMv4CNprhNiZyaIFwvgC6nGBLasFxswCS0gKsa9CWYWBTpU4oAQxVDkW8ujCEtc/92Whm+7v//tv96W9a85d4guIdcIDD2SRBsA84G2inUbm/CQ+PT5DUKL+p5EjPmGbeo+5g1UQ4zbdP20npEDDdxk7yh3nKPXN4Vk38SfghGmcqdj3PZ98EyTm3EW7Z6bnR9KCnpuqsxcWnpmgGUaqzrQf6wY4hUVnNzjucDj7gXICR7wE9kIL5e4Pouktxmr3FeNs/nGpu3f2KZDzuIzh6pxnji33B9mbbXClI4DgrhIcsrqXilo4COceJsJxJPdcEVIzBF+ZkwoLORtBe43wOrPYqn80Ix61yDFh5cJJd6agzjEa6ZTOnEVXqE1MOOuywrEiCmdBt1xi84T70gwKtnipdADRP+Ra99df9/q2sOvd8c2NDqQu67lvTKFdDdNREUBYByeWSVFhtAOD0REbRv4JNJ3PM45icdeZAsRJILbdYhq5M4xqHQm5x3wCxlNenc7OcCqnf8orHmiMzWk9zhysHPxNvP4e6x4d606i9bli3+8WvD7BhHwKUeceC/cT8sgqYjQjDe8EMVnR/SMPZhUnZUUNxn9T/OdO7xs/UHx/eLh3hJAyzq+Ke0AfwEWzgovch6x4negqdxnf0nF4zFA8L+pS033g7IULIeNdQfB4Hi/jLcIfaGFexGnn8ZwHGlnHGFG3ORzFiuXlce+d7AAzFGbubxvAnOyClm77TQAlYeVsCMDzci44czYixDB9Dsfp9gs99/umgO4MhBusSD4nUh46jc+ZbSqg52RS1AvphYC/LxtxhgUIHgaAh5V6WePdChO5m60Mpge9ElAFUx1YhCDySwlI/oekHFAE62QjaK8TSZ6bJpZz54QARyCbO4EsOXGfSj8/Fw7G0Q+WY5BlhaOyFdhzzwqcBGGKRdXa/wNQSwECFAAUAAAACAAHL0pdKUT5PrwMAAAzbgAAIQAAAAAAAAAAAAAAgAEAAAAARm9vZF9TZWN1cml0eV9EYXRhX0VfQWxsX0RhdGEuY3N2UEsFBgAAAAABAAEATwAAAPsMAAAAAA=="
+  }
+ ]
+}

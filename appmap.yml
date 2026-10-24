@@ -1,0 +1,4 @@
+name: hydroma
+packages:
+  - path: services
+  - path: engine

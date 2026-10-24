@@ -1,0 +1,15 @@
+{
+  "drill_at": "2026-10-19T23:19:19.828763+00:00",
+  "source": "D:\\HyDroMA\\data\\test_drill.db",
+  "target": "D:\\HyDroMA\\data\\restore_drill.db",
+  "backup_path": "D:\\HyDroMA\\data\\restore_drill.db.backup",
+  "backup_sha256": "34f9e66522312d7680f03514786384b16df71e5cb365071ff33ea8e9784e7e36",
+  "backup_ms": 2.2,
+  "restore_ms": 66.4,
+  "rto_ms": 66.4,
+  "tables_compared": 2,
+  "total_rows_source": 150,
+  "total_rows_target": 150,
+  "mismatched_tables": [],
+  "result": "PASS"
+}

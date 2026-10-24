@@ -1,0 +1,4 @@
+case,T_m2_per_day,S,Q_m3_per_day,r_m,t_days,drawdown_reference_m,source,retrieved_from
+"Cooper-Jacob closed form (published approximation)",2000.0,0.0002,760.0,30.0,1.0,,,"Cooper & Jacob 1946; Jacob 1950 (s = Q/(4 pi T) * ln(2.25 T t / (r^2 S)))","https://www.kgs.ku.edu/Publications/Bulletins/GW3/ , https://www.twdb.texas.gov/groundwater/models/analytical/index.asp , https://www.aqtesolv.com/theis.htm"
+"Well-function series (published expansion)",2000.0,0.0002,760.0,30.0,1.0,,,"w(u) = -0.5772 - ln(u) + u - u^2/(2*2!) + u^3/(3*3!) - ... (Theis 1935; AQTESOLV; KGS GW3)","https://www.aqtesolv.com/theis.htm , https://www.kgs.ku.edu/Publications/Bulletins/GW3/"
+engine_reference_input,2000.0,0.0002,760.0,30.0,1.0,,"conftest THEIS_REFERENCE; the CANON-005 card's earlier '0.018 m' was wrong (measured 0.3062 m)","engine/strict_tests/conftest.py"

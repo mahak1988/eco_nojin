@@ -1,0 +1,503 @@
+"""JWT authentication & authorization (Phase 0 rewrite).
+
+Fixes W-016: real auth with roles. Secret key comes from settings
+(env/.env), never hard-coded. Adds:
+- role-aware JWT (farmer / advisor / admin)
+- ``get_current_user`` (strict 401) and ``get_current_user_optional``
+- ``require_roles`` RBAC dependency
+- API-key guard for telco webhooks (USSD/SMS/Voice)
+- Tenant-aware authentication for multi-tenant SaaS
+- httpOnly cookie support for secure token storage (C5 fix)
+
+Async version (Week 2 fix): uses async SQLAlchemy sessions to avoid
+thread-safety issues with SQLite in async FastAPI endpoints.
+"""
+
+from datetime import UTC, datetime, timedelta
+from typing import Annotated, NamedTuple
+
+import bcrypt
+from fastapi import Depends, Header, HTTPException, Request, Response, status
+from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError, jwt
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from database.hub import hub
+from database.models import User
+from engine.hydroma.config.settings import get_settings
+
+_settings = get_settings()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False)
+
+# Cookie names
+ACCESS_TOKEN_COOKIE = "econojin_access_token"
+REFRESH_TOKEN_COOKIE = "econojin_refresh_token"
+
+#: Values that must never be used to sign a JWT. These are public literals that
+#: appear in the source, so a token signed with any of them is forgeable.
+_WEAK_SIGNING_KEYS = frozenset(
+    {
+        "dev-secret-key",
+        "dev-jwt-secret",
+        "change-me-in-production",
+        "changeme",
+        "secret",
+        "dev",
+        "demo123",
+    }
+)
+
+
+async def _get_async_db():
+    """Dependency wrapper for async database session."""
+    async with hub.get_async_session() as session:
+        yield session
+
+
+# Well-known roles
+ROLE_FARMER = "farmer"
+ROLE_ADVISOR = "advisor"
+ROLE_ADMIN = "admin"
+ROLE_SECURITY_ADMIN = "security_admin"
+ROLE_CONTENT_ADMIN = "content_admin"
+ROLE_USER_ADMIN = "user_admin"
+ALL_ROLES = {
+    ROLE_FARMER,
+    ROLE_ADVISOR,
+    ROLE_ADMIN,
+    ROLE_SECURITY_ADMIN,
+    ROLE_CONTENT_ADMIN,
+    ROLE_USER_ADMIN,
+}
+
+ADMIN_ROLES = {ROLE_ADMIN, ROLE_SECURITY_ADMIN, ROLE_CONTENT_ADMIN, ROLE_USER_ADMIN}
+
+
+def hash_password(password: str) -> str:
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+
+
+def verify_password(plain: str, hashed: str) -> bool:
+    try:
+        return bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
+    except ValueError:
+        return False
+
+
+def _signing_key() -> str:
+    """Resolve the JWT signing key, failing fast rather than signing with a weak key.
+
+    ``Settings.jwt_signing_key`` prefers ``JWT_SECRET`` over ``SECRET_KEY``. In
+    production ``validate_production_settings`` has already rejected a short or
+    default value, so reaching the guard here means the process was started
+    without running the validator; refusing to mint a token is the safe answer
+    because a token signed with a public literal is forgeable by anyone who has
+    read the source.
+    """
+    key = _settings.jwt_signing_key
+    if not key or len(key) < 32 or key in _WEAK_SIGNING_KEYS:
+        raise RuntimeError(
+            "JWT signing key is missing, too short, or a known development default. "
+            "Set JWT_SECRET (64+ chars) to a random value before issuing tokens."
+        )
+    return key
+
+
+#: Issuer stamped on every token this service mints and verified on decode
+#: (SEC-18). ``aud`` is deliberately not required yet: the deployed tokens
+#: carry no audience, and demanding one would log out every live session at
+#: once; once a rotation window is planned it can be added the same way.
+ISSUER = "hydroma-api"
+
+
+def create_access_token(
+    data: dict,
+    expires_delta: timedelta | None = None,
+    subject: str | None = None,
+    role: str = ROLE_FARMER,
+    tenant_id: str | None = None,
+) -> str:
+    """Create signed JWT. ``data`` may carry extra claims."""
+    to_encode = data.copy()
+    if subject is not None:
+        to_encode["sub"] = str(subject)
+    to_encode["role"] = role
+    if tenant_id is not None:
+        to_encode["platform_id"] = tenant_id
+        to_encode["tenant_id"] = tenant_id
+    expire = datetime.now(UTC) + (
+        expires_delta or timedelta(minutes=_settings.access_token_expire_minutes)
+    )
+    to_encode.update({"exp": expire, "iss": ISSUER})
+    return jwt.encode(to_encode, _signing_key(), algorithm=_settings.jwt_algorithm)
+
+
+def decode_token(token: str) -> dict | None:
+    """Decode + validate signature/expiry. Returns payload or None.
+
+    The issuer claim is verified when present (``issuer=ISSUER``): tokens
+    minted by this service validate, and a token signed with a *different*
+    issuer claim is rejected. Tokens issued before SEC-18 carry no ``iss`` at
+    all and still decode, so the change does not log out live sessions.
+    """
+    try:
+        return jwt.decode(
+            token,
+            _signing_key(),
+            algorithms=[_settings.jwt_algorithm],
+            issuer=ISSUER,
+        )
+    except JWTError:
+        return None
+
+
+def create_refresh_token(
+    data: dict,
+    subject: str | None = None,
+    role: str = ROLE_FARMER,
+    tenant_id: str | None = None,
+) -> str:
+    """Create a refresh JWT (long-lived, ``type=refresh`` claim).
+
+    Separate lifetime from access tokens so short-lived access tokens can be
+    re-issued without re-authentication (token rotation on each refresh).
+
+    H12 FIX: Includes JTI (JWT ID) claim for refresh token tracking and rotation.
+    """
+    import secrets
+
+    to_encode = data.copy()
+    if subject is not None:
+        to_encode["sub"] = str(subject)
+    to_encode["role"] = role
+    to_encode["type"] = "refresh"
+    jti = to_encode.get("jti") or secrets.token_urlsafe(16)
+    to_encode["jti"] = jti
+    if tenant_id is not None:
+        to_encode["platform_id"] = tenant_id
+        to_encode["tenant_id"] = tenant_id
+    expire = datetime.now(UTC) + timedelta(minutes=_settings.refresh_token_expire_minutes)
+    to_encode.update({"exp": expire, "iss": ISSUER})
+    return jwt.encode(to_encode, _signing_key(), algorithm=_settings.jwt_algorithm)
+
+
+async def store_refresh_token(
+    jti: str, user_id: str, expires_at: datetime, db: AsyncSession
+) -> None:
+    """Store a refresh token JTI in the database for revocation tracking."""
+    from database.models import RefreshToken
+
+    db.add(
+        RefreshToken(
+            jti=jti,
+            user_id=user_id,
+            revoked=False,
+            expires_at=expires_at,
+        )
+    )
+    # Note: caller must commit the session
+
+
+async def is_refresh_token_revoked(jti: str, db: AsyncSession) -> bool:
+    """Check if a refresh token JTI is revoked in the database."""
+    from database.models import RefreshToken
+
+    result = await db.execute(select(RefreshToken).where(RefreshToken.jti == jti))
+    token = result.scalar_one_or_none()
+    if token is None:
+        # Token not found in DB - treat as revoked for security
+        return True
+    return token.revoked
+
+
+def decode_refresh_token(token: str) -> dict | None:
+    """Decode + validate a refresh token (signature, expiry, type claim)."""
+    payload = decode_token(token)
+    if payload is None or payload.get("type") != "refresh":
+        return None
+    return payload
+
+
+async def _user_from_payload(payload: dict, db: AsyncSession) -> User | None:
+    sub = payload.get("sub")
+    if sub is None:
+        return None
+    result = await db.execute(select(User).where(User.id == sub))
+    return result.scalar_one_or_none()
+
+
+async def get_current_user_optional(
+    request: Request,
+    response: Response,
+    token: Annotated[str | None, Depends(oauth2_scheme)],
+    db: Annotated[AsyncSession, Depends(_get_async_db)],
+) -> User | None:
+    """Return user for valid token, else None (public endpoints).
+
+    Checks both Authorization header and httpOnly cookies.
+    """
+    # Try header first, then cookie
+    if not token:
+        token = request.cookies.get(ACCESS_TOKEN_COOKIE)
+    if not token:
+        return None
+    payload = decode_token(token)
+    if payload is None:
+        return None
+    user = await _user_from_payload(payload, db)
+    if user is None or not user.is_active:
+        return None
+    # SEC-26: publish the presented token's session id on the user object so
+    # ``/auth/revoke-all-sessions`` can exclude the caller's own session. The
+    # attribute used to be read from a field nothing ever set, so the endpoint
+    # revoked the caller's current session along with the rest. ``sid`` is the
+    # refresh token's JTI, stamped into the access token at issue time.
+    user._request_token_jti = payload.get("sid")
+    return user
+
+
+async def get_current_user(
+    request: Request,
+    response: Response,
+    token: Annotated[str | None, Depends(oauth2_scheme)],
+    db: Annotated[AsyncSession, Depends(_get_async_db)],
+) -> User:
+    """Strict auth: 401 when missing/invalid token or unknown user.
+
+    Checks both Authorization header and httpOnly cookies.
+    """
+    user = await get_current_user_optional(request, response, token, db)
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user
+
+
+def require_roles(*roles: str):
+    """RBAC guard: current user must hold at least one of ``roles``."""
+
+    def _dependency(user: Annotated[User, Depends(get_current_user)]) -> User:
+        if user.role not in roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Role {user.role!r} not allowed. Required: {list(roles)}",
+            )
+        return user
+
+    return _dependency
+
+
+def require_admin(user: Annotated[User, Depends(require_roles(ROLE_ADMIN))]) -> User:
+    return user
+
+
+def require_security_admin(
+    user: Annotated[User, Depends(require_roles(ROLE_ADMIN, ROLE_SECURITY_ADMIN))],
+) -> User:
+    return user
+
+
+def require_content_admin(
+    user: Annotated[User, Depends(require_roles(ROLE_ADMIN, ROLE_CONTENT_ADMIN))],
+) -> User:
+    return user
+
+
+def require_user_admin(
+    user: Annotated[User, Depends(require_roles(ROLE_ADMIN, ROLE_USER_ADMIN))],
+) -> User:
+    return user
+
+
+async def require_admin_with_mfa(
+    request: Request,
+    response: Response,
+    token: Annotated[str | None, Depends(oauth2_scheme)],
+    db: Annotated[AsyncSession, Depends(_get_async_db)],
+) -> User:
+    """Require admin role AND MFA enabled. Returns user if both conditions met."""
+    user = await get_current_user(request, response, token, db)
+
+    if user.role not in ADMIN_ROLES:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Admin role required. Current role: {user.role}",
+        )
+
+    # Check MFA enabled - look in user settings or dedicated field
+    mfa_enabled = getattr(user, "two_factor_enabled", False)
+
+    # Also check in settings table for backward compatibility
+    if not mfa_enabled:
+        try:
+            from database.models import Setting
+
+            setting = db.query(Setting).filter(Setting.key == f"2fa_enabled_{user.id}").first()
+            if setting and setting.value == "true":
+                mfa_enabled = True
+        except Exception:
+            pass
+
+    if not mfa_enabled:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="MFA required for admin access. Enable 2FA in settings.",
+        )
+
+    # Require a valid TOTP code or step-up proof for admin actions.
+    # The X-TOTP-Code header carries a fresh TOTP code; X-Step-Up-Token carries
+    # a previously issued step-up proof (e.g. from /api/v1/security/step-up/challenge).
+    from services.security.step_up import verify_step_up
+
+    step_up_token = request.headers.get("X-Step-Up-Token")
+    if step_up_token:
+        try:
+            verify_step_up(step_up_token, str(user.id), "admin")
+        except HTTPException:
+            raise
+        return user
+
+    totp_code = request.headers.get("X-TOTP-Code")
+    if totp_code:
+        try:
+            from services.two_factor import verify_totp
+
+            secret = getattr(user, "two_factor_secret", None)
+            if not secret:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="2FA is enabled but no secret is provisioned; re-enable 2FA",
+                )
+            if not verify_totp(secret, totp_code):
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Invalid TOTP code",
+                )
+        except HTTPException:
+            raise
+        return user
+
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="A valid TOTP code (X-TOTP-Code) or step-up token (X-Step-Up-Token) is required for admin access",
+    )
+
+
+def require_api_key(
+    x_api_key: str | None = Header(default=None, alias="X-API-Key"),
+) -> str:
+    """Guard telco webhook endpoints with a shared secret (if configured)."""
+    expected = _settings.telco_webhook_key
+    if not expected:
+        # Webhook auth disabled — only acceptable outside production.
+        if _settings.is_production:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Webhook auth not configured",
+            )
+        return x_api_key or ""
+    if not x_api_key or x_api_key != expected:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid API key",
+        )
+    return x_api_key
+
+
+def role_of(user: User) -> str:
+    return user.role if user.role in ALL_ROLES else ROLE_FARMER
+
+
+class UserWithTenant(NamedTuple):
+    """Container for user and their tenant context."""
+
+    user: User
+    tenant_id: str | None
+
+
+async def get_current_user_with_tenant(
+    request: Request,
+    response: Response,
+    token: Annotated[str | None, Depends(oauth2_scheme)],
+    db: Annotated[AsyncSession, Depends(_get_async_db)],
+) -> UserWithTenant:
+    """Strict auth with tenant context: returns User and tenant_id from JWT only.
+
+    Extracts tenant_id from JWT payload (platform_id or tenant_id claim).
+    Does NOT fall back to X-Tenant-Id header for authenticated users.
+
+    Returns UserWithTenant(user, tenant_id) where tenant_id may be None if not in JWT.
+    """
+    user = await get_current_user(request, response, token, db)
+
+    tenant_id: str | None = None
+    payload = decode_token(token) if token else None
+    if payload:
+        tenant_id = payload.get("platform_id") or payload.get("tenant_id")
+
+    return UserWithTenant(user=user, tenant_id=tenant_id)
+
+
+# Backward-compatible alias: existing routers import `require_user`
+require_user = get_current_user
+
+
+def set_auth_cookies(response: Response, access_token: str, refresh_token: str) -> None:
+    """Set httpOnly secure cookies for access and refresh tokens.
+
+    C5 FIX: Moves JWT storage from localStorage to httpOnly cookies
+    to prevent XSS token theft.
+    """
+    is_production = _settings.is_production
+
+    # Access token - short lived
+    response.set_cookie(
+        key=ACCESS_TOKEN_COOKIE,
+        value=access_token,
+        httponly=True,
+        secure=is_production,  # HTTPS only in production
+        samesite="lax",  # CSRF protection
+        max_age=_settings.access_token_expire_minutes * 60,
+        path="/",
+    )
+
+    # Refresh token - long lived
+    response.set_cookie(
+        key=REFRESH_TOKEN_COOKIE,
+        value=refresh_token,
+        httponly=True,
+        secure=is_production,  # HTTPS only in production
+        samesite="lax",  # CSRF protection
+        max_age=_settings.refresh_token_expire_minutes * 60,
+        path="/",
+    )
+
+    # Double-submit CSRF token. Deliberately NOT httpOnly: the client has to
+    # read it and echo it back in the x-csrf-token header. It is not a
+    # credential, and without it CSRFMiddleware rejects every cookie-based
+    # unsafe request, because the cookie was previously never set anywhere.
+    from services.security.csrf import CSRF_COOKIE, new_csrf_token
+
+    response.set_cookie(
+        key=CSRF_COOKIE,
+        value=new_csrf_token(),
+        httponly=False,
+        secure=is_production,
+        samesite="lax",
+        max_age=_settings.refresh_token_expire_minutes * 60,
+        path="/",
+    )
+
+
+def clear_auth_cookies(response: Response) -> None:
+    """Clear auth cookies on logout."""
+    from services.security.csrf import CSRF_COOKIE
+
+    response.delete_cookie(ACCESS_TOKEN_COOKIE, path="/")
+    response.delete_cookie(REFRESH_TOKEN_COOKIE, path="/")
+    response.delete_cookie(CSRF_COOKIE, path="/")

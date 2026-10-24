@@ -1,0 +1,90 @@
+{
+  "measured_at": "2026-10-19T23:17:09.865511+00:00",
+  "samples_per_route": 20,
+  "routes": [
+    {
+      "path": "/health",
+      "method": "GET",
+      "samples": 20,
+      "p50_ms": 173.31,
+      "p95_ms": 3111.83,
+      "p99_ms": 3111.83,
+      "min_ms": 134.96,
+      "max_ms": 3111.83,
+      "errors": 0,
+      "error_rate": 0.0
+    },
+    {
+      "path": "/health/ready",
+      "method": "GET",
+      "samples": 20,
+      "p50_ms": 20.17,
+      "p95_ms": 25.46,
+      "p99_ms": 25.46,
+      "min_ms": 17.38,
+      "max_ms": 25.46,
+      "errors": 0,
+      "error_rate": 0.0
+    },
+    {
+      "path": "/api/v1/rules",
+      "method": "GET",
+      "samples": 20,
+      "p50_ms": 63.91,
+      "p95_ms": 192.67,
+      "p99_ms": 192.67,
+      "min_ms": 44.08,
+      "max_ms": 192.67,
+      "errors": 0,
+      "error_rate": 0.0
+    },
+    {
+      "path": "/api/v1/units",
+      "method": "GET",
+      "samples": 20,
+      "p50_ms": 56.42,
+      "p95_ms": 116.01,
+      "p99_ms": 116.01,
+      "min_ms": 46.73,
+      "max_ms": 116.01,
+      "errors": 0,
+      "error_rate": 0.0
+    },
+    {
+      "path": "/api/nojin/health",
+      "method": "GET",
+      "samples": 20,
+      "p50_ms": 77.62,
+      "p95_ms": 94.1,
+      "p99_ms": 94.1,
+      "min_ms": 16.53,
+      "max_ms": 94.1,
+      "errors": 0,
+      "error_rate": 0.0
+    },
+    {
+      "path": "/api/v1/tourism/tours",
+      "method": "GET",
+      "samples": 20,
+      "p50_ms": 200.82,
+      "p95_ms": 806.73,
+      "p99_ms": 806.73,
+      "min_ms": 148.45,
+      "max_ms": 806.73,
+      "errors": 0,
+      "error_rate": 0.0
+    },
+    {
+      "path": "/api/v1/knowledge/entries",
+      "method": "GET",
+      "samples": 20,
+      "p50_ms": 195.16,
+      "p95_ms": 285.09,
+      "p99_ms": 285.09,
+      "min_ms": 163.3,
+      "max_ms": 285.09,
+      "errors": 20,
+      "error_rate": 1.0
+    }
+  ]
+}

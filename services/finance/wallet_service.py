@@ -1,0 +1,503 @@
+"""EcoCoin Wallet Service - Manages user wallets, balances, and transactions"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
+from decimal import Decimal
+from enum import Enum
+
+from sqlalchemy import func, select
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from database.models import DailyEarnings, EcoWallet, FinAccount
+from services.api_gateway.exceptions import EcoNojinException
+from services.finance import earning_rates
+from services.finance.chart_of_accounts import (
+    AccountSpec,
+    ensure_account,
+    get_account_spec,
+    is_wallet_account_code,
+    wallet_account_spec,
+)
+from services.finance.ledger_service import LedgerService as FinanceLedgerService
+
+
+class TransactionType(Enum):
+    EARN = "earn"
+    REDEEM = "redeem"
+    TRANSFER = "transfer"
+    MINT = "mint"
+    BURN = "burn"
+    PLATFORM_FEE = "platform_fee"
+    ECOSYSTEM_GRANT = "ecosystem_grant"
+    GOVERNANCE = "governance"
+
+
+@dataclass
+class WalletTransaction:
+    transaction_id: str
+    user_id: str
+    amount: Decimal
+    transaction_type: TransactionType
+    description: str
+    category: str
+    balance_after: Decimal
+    reference_id: str | None = None
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
+
+
+class WalletService:
+    """
+    EcoCoin wallet service with atomic operations, audit trail, and phase-gated transfers.
+    """
+
+    # Earning/redemption rates live in services/finance/earning_rates.py, the
+    # single source of truth. They used to be declared here *and* in
+    # services/ecowallet/service.py, with three categories carrying the same
+    # values under different names, so an event emitted under one name was
+    # invisible to a system keyed on the other.
+    EARNING_RATES = earning_rates.EARNING_RATES
+    REDEMPTION_RATES = earning_rates.REDEMPTION_RATES
+    DAILY_EARN_CAP = earning_rates.DAILY_EARN_CAP
+    TRANSFER_MIN_BALANCE = earning_rates.TRANSFER_MIN_BALANCE
+
+    def __init__(self, db: AsyncSession):
+        self.db = db
+        # The canonical, validating ledger. This class used to define its own
+        # LedgerService with no batch-balance check, no amount check and no
+        # asset allowlist, and a balance computed as debits-minus-credits — the
+        # exact negation of the canonical sign convention. That made unbalanced
+        # journals creatable through the wallet path and made
+        # reconcile_wallet_ledger compare a balance against its own inverse.
+        self.ledger = FinanceLedgerService(db)
+
+    async def _get_or_create_wallet(self, user_id: str) -> EcoWallet:
+        result = await self.db.execute(select(EcoWallet).where(EcoWallet.user_id == user_id))
+        wallet = result.scalar_one_or_none()
+        if wallet:
+            return wallet
+
+        wallet = EcoWallet(
+            user_id=user_id,
+            balance=Decimal("0"),
+            total_earned=Decimal("0"),
+            total_redeemed=Decimal("0"),
+            is_active=True,
+            version=1,
+        )
+        self.db.add(wallet)
+        try:
+            await self.db.flush()
+        except IntegrityError:
+            await self.db.rollback()
+            result = await self.db.execute(select(EcoWallet).where(EcoWallet.user_id == user_id))
+            return result.scalar_one()
+        return wallet
+
+    async def earn(
+        self,
+        user_id: str,
+        category: str,
+        quantity: Decimal = Decimal("1"),
+        reference_id: str | None = None,
+    ) -> tuple[Decimal, Decimal]:
+        """Credit ECO tokens to user wallet for ecosystem activities"""
+        if category not in self.EARNING_RATES:
+            raise EcoNojinException(
+                f"Unknown earning category: {category}",
+                status_code=422,
+                code="UNKNOWN_CATEGORY",
+            )
+
+        if quantity <= 0:
+            raise EcoNojinException(
+                "Quantity must be positive", status_code=422, code="INVALID_QUANTITY"
+            )
+
+        amount = self.EARNING_RATES[category] * quantity
+
+        # Daily earning cap check
+        today = datetime.now(UTC).date()
+        result = await self.db.execute(
+            select(func.coalesce(func.sum(DailyEarnings.amount), Decimal("0"))).where(
+                DailyEarnings.user_id == user_id,
+                DailyEarnings.date == today,
+                DailyEarnings.status == "processed",
+            )
+        )
+        earned_today = result.scalar() or Decimal("0")
+        if earned_today + amount > self.DAILY_EARN_CAP:
+            raise EcoNojinException(
+                f"Daily earning cap ({self.DAILY_EARN_CAP}) exceeded",
+                status_code=400,
+                code="DAILY_CAP_EXCEEDED",
+            )
+
+        wallet = await self._get_or_create_wallet(user_id)
+
+        # Create journal batch
+        await self._create_earning_batch(user_id, amount, category)
+
+        # Update wallet balance
+        for attempt in range(3):
+            try:
+                result = await self.db.execute(
+                    select(EcoWallet).where(EcoWallet.user_id == user_id)
+                )
+                wallet = result.scalar_one()
+
+                wallet.balance += amount
+                wallet.total_earned += amount
+                wallet.last_activity = datetime.now(UTC)
+
+                self.db.add(wallet)
+                await self.db.commit()
+                await self.db.refresh(wallet)
+
+                # Record daily earnings
+                self.db.add(
+                    DailyEarnings(
+                        user_id=user_id,
+                        date=datetime.now(UTC).date(),
+                        earnings_type="eco_token",
+                        amount=amount,
+                        source=category,
+                        status="processed",
+                    )
+                )
+                await self.db.commit()
+
+                return amount, wallet.balance
+
+            except Exception as e:
+                await self.db.rollback()
+                if attempt == 2:
+                    raise ValueError("Failed to update wallet after retries") from e
+
+        raise ValueError("Failed to process earning")
+
+    async def redeem(
+        self,
+        user_id: str,
+        category: str,
+        reference_id: str | None = None,
+    ) -> tuple[Decimal, Decimal]:
+        """Redeem ECO tokens for platform services"""
+        if category not in self.REDEMPTION_RATES:
+            raise EcoNojinException(
+                f"Unknown redemption category: {category}",
+                status_code=422,
+                code="UNKNOWN_CATEGORY",
+            )
+
+        amount = self.REDEMPTION_RATES[category]
+
+        wallet = await self._get_or_create_wallet(user_id)
+        if wallet.balance < amount:
+            raise EcoNojinException(
+                f"Insufficient balance ({wallet.balance:.2f} < {amount:.2f})",
+                status_code=400,
+                code="INSUFFICIENT_BALANCE",
+            )
+
+        await self._create_redemption_batch(user_id, amount, category)
+
+        for attempt in range(3):
+            try:
+                result = await self.db.execute(
+                    select(EcoWallet).where(EcoWallet.user_id == user_id)
+                )
+                wallet = result.scalar_one()
+
+                if wallet.balance < amount:
+                    raise EcoNojinException(
+                        f"Insufficient balance ({wallet.balance:.2f} < {amount:.2f})",
+                        status_code=400,
+                        code="INSUFFICIENT_BALANCE",
+                    )
+
+                wallet.balance -= amount
+                wallet.total_redeemed += amount
+                wallet.last_activity = datetime.now(UTC)
+
+                self.db.add(wallet)
+                await self.db.commit()
+                await self.db.refresh(wallet)
+
+                return amount, wallet.balance
+
+            except ValueError:
+                await self.db.rollback()
+                raise
+            except Exception as e:
+                await self.db.rollback()
+                if attempt == 2:
+                    raise ValueError("Failed to update wallet after retries") from e
+
+        raise ValueError("Failed to process redemption")
+
+    async def transfer(
+        self,
+        from_user: str,
+        to_user: str,
+        amount: Decimal,
+        description: str = "",
+    ) -> bool:
+        """Transfer ECO between users (phase-gated)"""
+        if amount <= 0:
+            raise EcoNojinException(
+                "Amount must be positive", status_code=422, code="INVALID_AMOUNT"
+            )
+        if amount < 10:
+            raise EcoNojinException(
+                "Minimum transfer amount is 10 ECO",
+                status_code=422,
+                code="BELOW_MINIMUM_TRANSFER",
+            )
+
+        # Check if transfers are allowed in current phase
+        # In production: check PhaseGate contract
+        # For now, allow if both users exist
+
+        from_wallet = await self._get_or_create_wallet(from_user)
+        if from_wallet.balance < amount:
+            raise EcoNojinException(
+                f"Insufficient balance ({from_wallet.balance:.2f} < {amount:.2f})",
+                status_code=409,
+                code="INSUFFICIENT_BALANCE",
+            )
+
+        to_wallet = await self._get_or_create_wallet(to_user)
+
+        # Atomic transfer with journal
+        await self._create_transfer_batch(from_user, to_user, amount, "transfer")
+
+        for attempt in range(3):
+            try:
+                # Lock both wallets
+                from_result = await self.db.execute(
+                    select(EcoWallet).where(EcoWallet.user_id == from_user)
+                )
+                from_wallet = from_result.scalar_one()
+                to_result = await self.db.execute(
+                    select(EcoWallet).where(EcoWallet.user_id == to_user)
+                )
+                to_wallet = to_result.scalar_one()
+
+                if from_wallet.balance < amount:
+                    raise EcoNojinException(
+                        "Insufficient balance", status_code=400, code="INSUFFICIENT_BALANCE"
+                    )
+
+                from_wallet.balance -= amount
+                to_wallet.balance += amount
+                from_wallet.last_activity = datetime.now(UTC)
+                to_wallet.last_activity = datetime.now(UTC)
+
+                self.db.add(from_wallet)
+                self.db.add(to_wallet)
+                await self.db.commit()
+
+                return True
+
+            except Exception as e:
+                await self.db.rollback()
+                if attempt == 2:
+                    raise ValueError("Transfer failed after retries") from e
+
+        return False
+
+    async def get_wallet_state(self, user_id: str) -> dict:
+        wallet = await self._get_or_create_wallet(user_id)
+        return {
+            "user_id": user_id,
+            "balance": wallet.balance,
+            "total_earned": wallet.total_earned,
+            "total_redeemed": wallet.total_redeemed,
+            "is_active": wallet.is_active,
+        }
+
+    async def daily_cap_status(self, user_id: str) -> dict:
+        """What the user has actually earned today against the daily cap.
+
+        The cap is enforced in :meth:`earn` against the same ``daily_earnings``
+        rows, so the status a caller is shown must come from the same source --
+        otherwise the endpoint can report a full cap while the service refuses
+        the earning.
+        """
+        today = datetime.now(UTC).date()
+        result = await self.db.execute(
+            select(func.coalesce(func.sum(DailyEarnings.amount), Decimal("0"))).where(
+                DailyEarnings.user_id == user_id,
+                DailyEarnings.date == today,
+                DailyEarnings.status == "processed",
+            )
+        )
+        earned_today = Decimal(str(result.scalar() or Decimal("0")))
+        cap = Decimal(str(self.DAILY_EARN_CAP))
+        remaining = cap - earned_today
+        return {
+            "earned_today": earned_today,
+            "daily_cap": cap,
+            "remaining": remaining if remaining > 0 else Decimal("0"),
+        }
+
+    async def list_earnings(self, user_id: str, limit: int = 50) -> list[dict]:
+        result = await self.db.execute(
+            select(DailyEarnings)
+            .where(DailyEarnings.user_id == user_id)
+            .order_by(DailyEarnings.created_at.desc())
+            .limit(limit)
+        )
+        rows = result.scalars().all()
+        return [
+            {
+                "date": e.date.isoformat(),
+                "earnings_type": e.earnings_type,
+                "amount": str(e.amount),
+                "source": e.source,
+                "status": e.status,
+                "processed_at": e.processed_at.isoformat() if e.processed_at else None,
+            }
+            for e in rows
+        ]
+
+    async def _create_earning_batch(
+        self, user_id: str, amount: Decimal, category: str, reference_id: str | None = None
+    ):
+        eco_asset = await self._get_or_create_account("ECO_ASSET", "ECO", "asset")
+        reward_liability = await self._get_or_create_account("REWARD_LIABILITY", "ECO", "liability")
+
+        entries = [
+            {
+                # The canonical reference is the account CODE. See
+                # services/finance/account_ref.py: this column previously held
+                # the integer id while the commerce path held codes, and the
+                # reconciliation join could not satisfy both.
+                "account_id": eco_asset.code,
+                "entry_type": "debit",
+                "asset": "ECO",
+                "amount": str(amount),
+                "description": f"ECO earned: {category}",
+            },
+            {
+                "account_id": reward_liability.code,
+                "entry_type": "credit",
+                "asset": "ECO",
+                "amount": str(amount),
+                "description": f"ECO liability: {category}",
+            },
+        ]
+        batch = await self.ledger.create_journal_batch(
+            reference_type="eco_earning",
+            reference_id=reference_id or f"earn-{__import__('uuid').uuid4().hex[:8]}",
+            entries=entries,
+            description=f"ECO earning: {category}",
+            created_by=user_id,
+        )
+        # Trial balance and profit & loss aggregate posted batches only, so the
+        # batch is posted on creation instead of waiting for the admin route.
+        await self.ledger.post_journal_batch(batch.id)
+        return batch
+
+    async def _create_redemption_batch(
+        self, user_id: str, amount: Decimal, category: str, reference_id: str | None = None
+    ):
+        eco_asset = await self._get_or_create_account("ECO_ASSET", "ECO", "asset")
+        reward_liability = await self._get_or_create_account("REWARD_LIABILITY", "ECO", "liability")
+
+        entries = [
+            {
+                "account_id": eco_asset.code,
+                "entry_type": "credit",
+                "asset": "ECO",
+                "amount": str(amount),
+                "description": f"ECO redeemed: {category}",
+            },
+            {
+                "account_id": reward_liability.code,
+                "entry_type": "debit",
+                "asset": "ECO",
+                "amount": str(amount),
+                "description": f"ECO liability reduction: {category}",
+            },
+        ]
+        batch = await self.ledger.create_journal_batch(
+            reference_type="eco_redemption",
+            reference_id=reference_id or f"redeem-{__import__('uuid').uuid4().hex[:8]}",
+            entries=entries,
+            description=f"ECO redemption: {category}",
+            created_by=user_id,
+        )
+        # Trial balance and profit & loss aggregate posted batches only, so the
+        # batch is posted on creation instead of waiting for the admin route.
+        await self.ledger.post_journal_batch(batch.id)
+        return batch
+
+    async def _create_transfer_batch(
+        self, from_user: str, to_user: str, amount: Decimal, description: str
+    ):
+        await self._get_or_create_account("ECO_ASSET", "ECO", "asset")
+
+        entries = [
+            {
+                "account_id": (
+                    await self._get_or_create_account(f"ECO_USER_{from_user}", "ECO", "asset")
+                ).code,
+                "entry_type": "credit",
+                "asset": "ECO",
+                "amount": str(amount),
+                "description": f"Transfer to {to_user}",
+            },
+            {
+                "account_id": (
+                    await self._get_or_create_account(f"ECO_USER_{to_user}", "ECO", "asset")
+                ).code,
+                "entry_type": "debit",
+                "asset": "ECO",
+                "amount": str(amount),
+                "description": f"Transfer from {to_user}",
+            },
+        ]
+        batch = await self.ledger.create_journal_batch(
+            reference_type="eco_transfer",
+            reference_id=f"xfer-{__import__('uuid').uuid4().hex[:8]}",
+            entries=entries,
+            description="ECO transfer",
+            created_by="system",
+        )
+        # Trial balance and profit & loss aggregate posted batches only, so the
+        # batch is posted on creation instead of waiting for the admin route.
+        await self.ledger.post_journal_batch(batch.id)
+        return batch
+
+    async def _get_or_create_account(self, code: str, asset: str, type_: str) -> FinAccount:
+        """Resolve a wallet journal account through the canonical chart.
+
+        Used to create the row on the fly with the bare code for a name and no
+        parent, which meant ``ECO_ASSET``, ``REWARD_LIABILITY`` and the per-user
+        ``ECO_USER_<id>`` rows existed only as far as the ledger was concerned.
+        Canonical codes now take their chart attributes (and the per-user
+        accounts hang off ``ECO_ASSET``); anything else keeps the previous
+        fallback of a code-named ECO account.
+        """
+        spec = get_account_spec(code)
+        if spec is None:
+            spec = (
+                wallet_account_spec(code)
+                if is_wallet_account_code(code)
+                else AccountSpec(
+                    code=code, name=code, type=type_, asset=asset, currency="ECO"
+                )
+            )
+        return await ensure_account(
+            self.db,
+            code=spec.code,
+            name=spec.name,
+            type=spec.type,
+            asset=spec.asset,
+            currency=spec.currency,
+            parent_code=spec.parent_code,
+        )

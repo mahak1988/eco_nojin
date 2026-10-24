@@ -1,0 +1,3 @@
+location,date,latitude_deg,t_max_c,t_min_c,rh_max_pct,rh_min_pct,u2_m_s,rs_mj_m2_day,elevation_m,et0_reference_mm_day,example
+"Uccle (Brussels, Belgium)",6 July,50.80,21.5,12.3,84,63,2.078,22.07,100,3.9,FAO-56 Chapter 4 Example 18 (daily data)
+"Near Lyon (France)",15 July,45.72,26.6,14.8,100,48,2.0,22.29,200,4.56,"FAO-56 Chapter 4 Example 20 (missing-data estimates: Tdew~Tmin, u2=2 m/s, Rs=0.55*Ra per eq. 50)"

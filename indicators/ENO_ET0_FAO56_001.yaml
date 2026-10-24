@@ -1,0 +1,32 @@
+indicator_id: "ENO_ET0_FAO56_001"
+name:
+  en: "Reference Evapotranspiration FAO-56"
+  fa: "تبخیر و تعرق مرجع FAO-56"
+domain: "climate"
+formula: "ET0 = [0.408*Δ*(Rn-G) + gamma*(900/(T+273))*u2*(es-ea)] / [Δ + gamma*(1+0.34*u2)]"
+unit: "mm day-1"
+input_variables:
+  - name: "T_mean"
+    unit: "degC"
+    required: true
+  - name: "Rn"
+    unit: "MJ m-2 day-1"
+    required: true
+  - name: "u2"
+    unit: "m s-1"
+    required: true
+  - name: "es_minus_ea"
+    unit: "kPa"
+    required: true
+  - name: "G"
+    unit: "MJ m-2 day-1"
+    required: false
+    default: 0
+reference:
+  source: "Allen et al. 1998, FAO Paper 56"
+  url: "https://www.fao.org/4/X0490E/x0490e06.htm"
+validation_status: "VALIDATED_FAO56_EXAMPLE18"
+version: "1.1.0"
+zed_compliant: true
+maturity_target: "S3"
+implementation_note: "Python implementation at engine/hydroma/climate/et_calculator.py:256 (calc_et0_penman_monteith); validated 2026-10-10 against the primary FAO-56 Chapter 4 Example 18 (Uccle/Brussels, 6 July) - engine 3.8801 mm/day vs published 3.9, and against an independent first-principles eq.6 evaluation. Gap G-S6b CLOSED; the specification's earlier 'Rome/5.08' row was not FAO-56 Example 18 and is retained only as a documented finding in engine/tests/test_fao56_example18.py."

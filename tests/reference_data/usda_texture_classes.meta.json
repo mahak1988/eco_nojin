@@ -1,0 +1,23 @@
+{
+  "dataset_id": "usda_texture_classes",
+  "dataset_version": "1.0",
+  "source_id": "USDA_TEXTURE_CLASS_DEFINITIONS",
+  "source": "USDA Soil Survey Staff / USDA-NRCS soil texture class definitions (the twelve classes of the USDA soil texture triangle, by percentages of sand, silt and clay of the fine-earth fraction less than 2 mm); definitions as published by USDA Soil Survey Staff 1962, 1975 and reproduced in 'A GUIDE FOR PREPARING SOIL PROFILE DESCRIPTIONS' (Soils Properties and Processes NRE 430/EEB 489, University of Michigan, 2003), section 'Soil Texture and Rock Fragments'",
+  "variable": "usda_texture_class_defining_ranges",
+  "unit": "percent of the fine-earth fraction (sand, silt, clay; sum = 100)",
+  "url": "https://websites.umich.edu/~nre430/PDF/Soil_Profile_Descriptions.pdf",
+  "license": "Public domain USDA material transcribed for citation; the engine's classifier is checked against it so this project does not depend on the GPL-licensed texture package named in tests/reference_data/usda_texture_classes.md. See that file for the retrieval record: every USDA/NRCS host was unreachable from the acquisition environment, so the transcription was made from a secondary carrier (a university document reproducing the USDA definitions verbatim) and is labelled as such.",
+  "retrieved_at": "2026-10-10",
+  "processing_time": "2026-10-10",
+  "provider": "USDA Soil Survey Staff / USDA-NRCS (definitions); transcription carrier: University of Michigan NRE 430/EEB 489 field guide (2003)",
+  "valid_time": "not applicable - published class definitions, not a time series",
+  "spatial_reference": "not applicable - classification table, not a spatial dataset",
+  "geometry_or_location": "tests/reference_data/usda_texture_classes.csv",
+  "temporal_resolution": "n/a",
+  "spatial_resolution": "n/a",
+  "quality_flag": "published_reference_definitions",
+  "uncertainty": "The published definitions are inequalities over the whole fine-earth fraction (for example loam: 7 to 27 percent clay, 28 to 50 percent silt and less than 52 percent sand), not per-axis ranges. Evaluated over the 5151 integer compositions they answer all 5151 (the triangle is closed, unlike the engine's twelve range boxes, which leave 782 uncovered) and 190 integer compositions satisfy more than one definition, so the class order listed in the CSV (the order the definitions are published in) is the declared precedence. The clay_min/clay_max/silt_min/silt_max/sand_min/sand_max columns are the bounding box of each published defining region, derived by exhaustive evaluation and re-checked by the test.",
+  "processing_history": "transcribed the twelve published class definitions verbatim on 2026-10-10 (v1); corroborated against the USDA-NRCS eFOTG soil properties guide at https://efotg.sc.egov.usda.gov/references/Delete/2007-12-15/soilpropqual.htm, which independently states the loam bounds; bounding boxes and region sizes recomputed from the published definitions over the 5151-composition integer grid; no engine-derived value and no third-party texture package was used.",
+  "checksum_sha256": "07e8b2a7f115411653d4fa3d892b9711935ece54a411b0e16084e29ff16704b1",
+  "local_path": "tests/reference_data/usda_texture_classes.csv"
+}

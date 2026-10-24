@@ -1,0 +1,64 @@
+"""Rangeland response/request schemas (BG-014)."""
+
+from __future__ import annotations
+
+from datetime import datetime
+
+from pydantic import BaseModel, ConfigDict, Field
+
+from .models import Rangeland
+
+
+class RangelandOut(BaseModel):
+    """Rangeland resource exposed to the frontend (read-only projection)."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    rangeland_id: str
+    name: str
+    village_id: str
+    area_ha: str
+    vegetation_type: str | None = None
+    carrying_capacity_per_ha: str | None = None
+    usage_type: str
+    condition: str
+    productivity_index: str | None = None
+    management_practice: str | None = None
+    notes: str | None = None
+    created_at: str | None = None
+    updated_at: str | None = None
+
+
+class RangelandCreate(BaseModel):
+    rangeland_id: str
+    name: str
+    village_id: str
+    area_ha: float | None = None
+    vegetation_type: str | None = None
+    carrying_capacity_per_ha: float | None = None
+    usage_type: str = "grazing"
+    condition: str = "fair"
+    productivity_index: float | None = None
+    management_practice: str | None = None
+    notes: str | None = None
+
+
+class RangelandUpdate(BaseModel):
+    name: str | None = None
+    area_ha: float | None = None
+    vegetation_type: str | None = None
+    carrying_capacity_per_ha: float | None = None
+    usage_type: str | None = None
+    condition: str | None = None
+    productivity_index: float | None = None
+    management_practice: str | None = None
+    notes: str | None = None
+
+
+class RangelandStats(BaseModel):
+    """Aggregate stats for a territory's rangelands (BG-014)."""
+
+    total_area_ha: str
+    count: int
+    average_productivity_index: str | None = None
+    condition_distribution: dict[str, int]

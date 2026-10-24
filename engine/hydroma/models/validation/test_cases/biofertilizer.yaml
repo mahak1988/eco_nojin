@@ -1,0 +1,61 @@
+# Biofertilizer Formulation - Test Cases
+# Reference: FAO C/N ratio guidelines (25-35:1)
+
+model: biofertilizer
+reference: "FAO C/N ratio guidelines"
+category: soil
+language: python
+status: experimental
+
+tolerances:
+  rtol: 1e-2
+  atol: 1e-2
+
+cases:
+  - name: standard_cn_ratio
+    description: "Standard C/N ratio optimization"
+    inputs:
+      materials:
+        - name: "cattle_manure"
+          c_ratio: 40.0
+          n_ratio: 2.0
+          available_kg: 1000.0
+        - name: "straw"
+          c_ratio: 80.0
+          n_ratio: 0.5
+          available_kg: 500.0
+        - name: "green_waste"
+          c_ratio: 30.0
+          n_ratio: 2.5
+          available_kg: 800.0
+      target_cn_ratio: 30.0
+    expected:
+      optimal_mix_kg:
+        cattle_manure: 500.0
+        straw: 200.0
+        green_waste: 400.0
+      final_cn_ratio: 30.0
+      rtol: 1e-1
+
+  - name: high_nitrogen_materials
+    description: "Mix with high nitrogen materials"
+    inputs:
+      materials:
+        - name: "poultry_manure"
+          c_ratio: 15.0
+          n_ratio: 4.0
+          available_kg: 600.0
+        - name: "sawdust"
+          c_ratio: 400.0
+          n_ratio: 0.1
+          available_kg: 1000.0
+      target_cn_ratio: 25.0
+    expected:
+      final_cn_ratio: 25.0
+      rtol: 1e-1
+
+# Metadata for CI matrix
+ci_matrix:
+  backends: ["python"]
+  priority: low
+  estimated_time_seconds: 15

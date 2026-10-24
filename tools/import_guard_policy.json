@@ -1,0 +1,119 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-10-09",
+  "description": "ECO-04 §11 / INV-003 import-guard exception policy. Services must reach scientific computation through the Engine Gateway (engine.gateway.EngineGateway), not by importing engine internals. Every exception below is a sanctioned bridge documented in ADR-014 (docs/adr/014-import-guard-policy.md). Removing an entry here turns that import into a violation; adding one requires an ADR first.",
+  "ratchet": {
+    "max_allowed_imports": 8,
+    "hard_cap": 12,
+    "next_review": "2026-11-10"
+  },
+  "rules": {
+    "SERVICES_NO_ENGINE_INTERNALS": {
+      "allowed_imports": [
+        {
+          "module": "engine.hydroma.config.settings",
+          "rationale": "Read-only engine configuration (get_settings). No computation; safe for services to read.",
+          "expires": "2027-01-31",
+          "revisit": "2026-11-10",
+          "owner": "services-team"
+        },
+        {
+          "module": "engine.hydroma.config.rules",
+          "rationale": "Read-only engine rule tables. No computation.",
+          "expires": "2027-01-31",
+          "revisit": "2026-11-10",
+          "owner": "services-team"
+        },
+        {
+          "module": "engine.hydroma.biofertilizer.models",
+          "rationale": "Biofertilizer result data contracts (Pydantic models), not computation.",
+          "expires": "2027-01-31",
+          "revisit": "2026-11-10",
+          "owner": "engine-team"
+        },
+        {
+          "module": "engine.hydroma.core.models",
+          "rationale": "Core result data contracts (Plant/Material/SoilProfile ORM models), not computation.",
+          "expires": "2027-01-31",
+          "revisit": "2026-11-10",
+          "owner": "engine-team"
+        },
+        {
+          "module": "engine.hydroma.carbon.calculator",
+          "rationale": "POLICY GAP: this is a computation module (carbon sequestration). It should be reached through the Gateway's CARBON_SEQ handler, not imported directly. Retained here so the guard does not regress while the migration is pending; flagged for Track C2 migration.",
+          "expires": "2027-01-31",
+          "revisit": "2026-11-10",
+          "owner": "services-team"
+        },
+        {
+          "module": "engine.hydroma.cpp_bridge",
+          "rationale": "C++ backend capability probe (is_cpp_available). Not a computation call; checks whether the compiled backend is present.",
+          "expires": "2027-01-31",
+          "revisit": "2026-11-10",
+          "owner": "engine-team"
+        }
+      ],
+      "facade_files": [
+        {
+          "path": "services/_gateway_facade.py",
+          "rationale": "The sanctioned service-layer bridge. Its _execute() delegates to EngineGateway. The direct engine.hydroma imports it still contains (soil.chemistry, engine.hydroma.models, cpp_bridge) are the remaining migration debt tracked by Track C2."
+        },
+        {
+          "path": "services/_gateway_facade_adapters/soil.py",
+          "rationale": "A-2 step 1 adapter: holds the soil / land-surface engine imports that used to sit directly in services/_gateway_facade.py (engine.hydroma.models, engine.hydroma.models.hlhs, engine.hydroma.analyses.topography_analysis, engine.hydroma.land.erosion_risk, engine.hydroma.models.validation.runner). The same sanctioned bridge, split by domain; nothing here re-implements computation."
+        },
+        {
+          "path": "services/_gateway_facade_adapters/climate.py",
+          "rationale": "A-2 step 1 adapter: holds the climate / crop-water and simulation-chain engine imports moved out of services/_gateway_facade.py (engine.hydroma.calculations.crop_water_req_calc, engine.hydroma.simulation.calibration, engine.hydroma.simulation.contracts, engine.hydroma.simulation.orchestrator)."
+        },
+        {
+          "path": "services/_gateway_facade_adapters/carbon.py",
+          "rationale": "A-2 step 1 adapter: holds the carbon and MRV engine imports moved out of services/_gateway_facade.py (engine.hydroma.carbon.calculator, engine.hydroma.mrv, engine.hydroma.mrv.iot_ingest, engine.hydroma.mrv.satellite_cdse, engine.hydroma.mrv.schemas). The engine.hydroma.carbon.calculator POLICY GAP recorded in allowed_imports above travels with these imports unchanged."
+        },
+        {
+          "path": "services/_gateway_facade_adapters/economics.py",
+          "rationale": "A-2 step 1 adapter: holds the employment-economics engine import moved out of services/_gateway_facade.py (engine.hydroma.economics.employment) plus the thin public wrapper of the same name the facade has always exported."
+        },
+        {
+          "path": "services/_gateway_facade_adapters/groundwater.py",
+          "rationale": "A-2 step 1 adapter: holds the runoff and water-quality engine imports moved out of services/_gateway_facade.py (engine.hydroma.models.runoff_model, engine.hydroma.water.quality)."
+        },
+        {
+          "path": "services/_gateway_facade_adapters/runoff.py",
+          "rationale": "Adapter holding the grid-vectorised SCS-CN engine import (engine.hydroma.runoff.scs_cn_raster_depth_mm). The scalar CANON-004 path still dispatches through the gateway; this batch entry evaluates the same engine relation over raster arrays in one call, replacing one gateway round trip per distinct (precipitation, curve number) pair (2128x slower, measured). Not a new computation: the equation lives once, in the engine."
+        },
+        {
+          "path": "services/_gateway_facade_adapters/cppbackend.py",
+          "rationale": "A-2 step 1 adapter: holds the C++ backend engine imports and the is_cpp_available capability probe moved out of services/_gateway_facade.py (engine.hydroma.cpp_bridge). The policy already sanctions engine.hydroma.cpp_bridge as a capability probe in allowed_imports above; the kernels re-exported here are the accelerated entry points, each with a documented Python fallback."
+        },
+        {
+          "path": "services/api_gateway/routers/hydroma_common.py",
+          "rationale": "Shared API-Gateway router helpers that forward to the facade / Gateway."
+        }
+      ]
+    },
+    "ENGINE_NO_DATABASE": {
+      "description": "INV-002 sanctions exactly two engine -> database imports (the persistence bridge). The rule itself is enforced by tools/detect_imports.py:get_rules(); the two allowed modules are recorded here as data so they carry the same expiry/ratchet treatment as the service exceptions (B-1).",
+      "allowed_imports": [
+        {
+          "module": "database.config",
+          "rationale": "Sanctioned persistence bridge: the session factory / engine binding. The production PersistencePort adapter (adapters/persistence/sqlite_persistence.py) imports the same session factory, so reaching it directly is equivalent to the port contract and is not a computation dependency. Deletable once B-2 injects the port. B-2 landed 2026-10-11: engine/hydroma/biofertilizer/calibration.py now takes an injected CalibrationPersistencePort (engine/hydroma/biofertilizer/persistence_bridge.py) and no longer imports database.config, so the DB-backed wiring lives only in the services/adapters layer. Pending removal.",
+          "expires": "2027-01-31",
+          "revisit": "2026-11-10",
+          "owner": "engine-team",
+          "status": "pending-removal",
+          "removal_target": "2026-12-31"
+        },
+        {
+          "module": "database.base",
+          "rationale": "Sanctioned persistence bridge: the shared declarative Base registry every ORM model (including the engine's hydroma.core.models) is built on. Not a computation dependency. Deletable once B-2 injects the port. B-2 landed 2026-10-11 for the session-factory half (calibration.py is now port-injected); engine/hydroma/biofertilizer/models.py is the remaining sanctioned importer of this registry and is marked pending-removal with it, pending the same port-injection treatment.",
+          "expires": "2027-01-31",
+          "revisit": "2026-11-10",
+          "owner": "engine-team",
+          "status": "pending-removal",
+          "removal_target": "2026-12-31"
+        }
+      ]
+    }
+  }
+}

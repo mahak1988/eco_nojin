@@ -1,0 +1,13 @@
+texture,ks_cm_per_day,reference
+sand,100.0,Test Publication 1988
+loamy_sand,50.0,Test Publication 1988
+sandy_loam,33.333333333333336,Test Publication 1988
+loam,25.0,Test Publication 1988
+silt_loam,20.0,Test Publication 1988
+silt,16.666666666666668,Test Publication 1988
+sandy_clay_loam,14.285714285714286,Test Publication 1988
+clay_loam,12.5,Test Publication 1988
+silty_clay_loam,11.11111111111111,Test Publication 1988
+sandy_clay,10.0,Test Publication 1988
+silty_clay,9.090909090909092,Test Publication 1988
+clay,8.333333333333334,Test Publication 1988

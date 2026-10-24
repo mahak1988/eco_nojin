@@ -1,0 +1,22 @@
+indicator_id: "ENO_ETC_KC_001"
+name:
+  en: "Crop Evapotranspiration (Kc-based)"
+  fa: "تبخیر و تعرق محصول بر مبنای ضریب محصول"
+domain: "agriculture"
+formula: "ETc = Kc * ET0"
+unit: "mm day-1"
+input_variables:
+  - name: "et0_mm_day"
+    unit: "mm day-1"
+    required: true
+  - name: "kc"
+    unit: "dimensionless"
+    required: true
+reference:
+  source: "FAO-56 Chapter 6"
+  url: "https://www.fao.org/4/X0490E/x0490e06.htm"
+validation_status: "REFERENCE_DATA_REQUIRED"
+version: "1.0.0"
+zed_compliant: true
+maturity_target: "S3"
+implementation_note: "Partial only - engine/hydroma/data/kc_lookup.py and engine/hydroma/calculations/crop_water_req_calc.py; no validation corpus."

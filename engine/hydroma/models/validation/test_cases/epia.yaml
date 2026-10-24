@@ -1,0 +1,169 @@
+model: EPIA
+class: EPIA
+reference: FAO-56 (Allen et al. 1998)
+language: python
+status: validated
+recorded: 2026-09-29
+tolerances:
+  rtol: 0.01
+  atol: 0.01
+cases:
+- name: full_demand_no_rain
+  description: Five-day window at peak LAI with no rain in the forecast.
+  inputs:
+    et0: 4.2
+    lai:
+    - 2.1
+    - 2.4
+    - 2.6
+    - 2.3
+    - 1.9
+    soil_moisture: 0.32
+    rainfall_forecast_mm: 0.0
+  expected: 1.8829999999999998
+  expected_key: irrigation_need_mm
+  reduce: last
+  note: expected_key last compares the final day of the 5-day window, which is the peak-demand day this
+    case is about
+- name: mild_stress_below_field_capacity
+  description: Soil at 0.15 m3/m3, past the FAO-56 raw-depletion threshold.
+  inputs:
+    et0: 4.2
+    lai:
+    - 2.1
+    - 2.4
+    - 2.6
+    - 2.3
+    - 1.9
+    soil_moisture: 0.15
+    rainfall_forecast_mm: 0.0
+  expected: 0.5649
+  expected_key: irrigation_need_mm
+  reduce: last
+  note: 'Ks = 0.30 at this moisture under FAO-56, so ETc = 4.2 * 0.448 * 0.30. The old formula returned
+    0.75 here, over-stating demand by 2.5x.
+
+    '
+- name: light_shower_offsets_demand
+  description: '3 mm forecast rain: a real shower that partly offsets ETc.'
+  inputs:
+    et0: 4.2
+    lai:
+    - 2.1
+    - 2.4
+    - 2.6
+    - 2.3
+    - 1.9
+    soil_moisture: 0.32
+    rainfall_forecast_mm: 3.0
+  expected: 0.9292
+  expected_key: irrigation_need_mm
+  reduce: max
+  note: 'Peak-day demand, i.e. max(ETc - Pe) = 2.422 - 1.4928. The old implementation returned 0.0 here,
+    so this case fails against it.
+
+    '
+- name: effective_rainfall_lower_branch
+  description: Direct check of Pe at 100 mm, mid-way up the lower branch.
+  inputs:
+    et0: 4.2
+    lai:
+    - 2.1
+    - 2.4
+    - 2.6
+    - 2.3
+    - 1.9
+    soil_moisture: 0.32
+    rainfall_forecast_mm: 100.0
+  expected: 42.0
+  expected_key: effective_rainfall_mm
+  note: 'The term is reported in the output so the relation itself can be checked. Before 2026-10-01 it
+    was computed and discarded, so no fixture could reach it whatever the rain.
+
+    '
+- name: effective_rainfall_upper_branch
+  description: Direct check of Pe at 300 mm, above the 250 mm branch point.
+  inputs:
+    et0: 4.2
+    lai:
+    - 2.1
+    - 2.4
+    - 2.6
+    - 2.3
+    - 1.9
+    soil_moisture: 0.32
+    rainfall_forecast_mm: 300.0
+  expected: 155.0
+  expected_key: effective_rainfall_mm
+  note: 'The old upper branch rose seven times faster than the published one, so it claimed 200 of 300
+    mm was effective where the method gives 155.
+
+    '
+- name: et0_at_minimum
+  description: et0 pinned at its minimum (0.0) as declared by validate_inputs.
+  inputs:
+    et0: 0.0
+    lai:
+    - 2.1
+    - 2.4
+    - 2.6
+    - 2.3
+    - 1.9
+    soil_moisture: 0.32
+    rainfall_forecast_mm: 0.0
+  expected: 0.0
+  expected_key: irrigation_need_mm
+  reduce: last
+  recorded_note: recorded from the model on 2026-10-10 through the validation runner at this boundary
+    input; a regression anchor, not an external reference
+- name: et0_at_maximum
+  description: et0 pinned at its maximum (20.0) as declared by validate_inputs.
+  inputs:
+    et0: 20.0
+    lai:
+    - 2.1
+    - 2.4
+    - 2.6
+    - 2.3
+    - 1.9
+    soil_moisture: 0.32
+    rainfall_forecast_mm: 0.0
+  expected: 8.96666667
+  expected_key: irrigation_need_mm
+  reduce: last
+  recorded_note: recorded from the model on 2026-10-10 through the validation runner at this boundary
+    input; a regression anchor, not an external reference
+- name: soil_moisture_at_minimum
+  description: soil_moisture pinned at its minimum (0.0) as declared by validate_inputs.
+  inputs:
+    et0: 4.2
+    lai:
+    - 2.1
+    - 2.4
+    - 2.6
+    - 2.3
+    - 1.9
+    soil_moisture: 0.0
+    rainfall_forecast_mm: 0.0
+  expected: 0.0
+  expected_key: irrigation_need_mm
+  reduce: last
+  recorded_note: recorded from the model on 2026-10-10 through the validation runner at this boundary
+    input; a regression anchor, not an external reference
+- name: soil_moisture_at_maximum
+  description: soil_moisture pinned at its maximum (0.6) as declared by validate_inputs.
+  inputs:
+    et0: 4.2
+    lai:
+    - 2.1
+    - 2.4
+    - 2.6
+    - 2.3
+    - 1.9
+    soil_moisture: 0.6
+    rainfall_forecast_mm: 0.0
+  expected: 1.883
+  expected_key: irrigation_need_mm
+  reduce: last
+  recorded_note: recorded from the model on 2026-10-10 through the validation runner at this boundary
+    input; a regression anchor, not an external reference

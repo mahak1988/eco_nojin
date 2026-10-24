@@ -1,0 +1,13 @@
+texture,ks_cm_per_day
+sand,100.0
+loamy_sand,50.0
+sandy_loam,33.333333333333336
+loam,25.0
+silt_loam,20.0
+silt,16.666666666666668
+sandy_clay_loam,14.285714285714286
+clay_loam,12.5
+silty_clay_loam,11.11111111111111
+sandy_clay,10.0
+silty_clay,9.090909090909092
+clay,8.333333333333334

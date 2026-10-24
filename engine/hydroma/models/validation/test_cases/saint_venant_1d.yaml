@@ -1,0 +1,182 @@
+# Saint-Venant 1D - Test Cases
+# Reference: Toro 2001 (Riemann Solvers); Chow 1959 (Open Channel Hydraulics)
+# Equations: ∂U/∂t + ∂F(U)/∂x = S(U)
+# U = [A, Q], F = [Q, Q²/A + gA²/(2B)], S = [0, gA(S₀ - S_f)]
+# Rusanov flux, Manning friction, CFL condition
+
+model: saint_venant_1d
+reference: "Toro 2001 'Riemann Solvers and Numerical Methods for Fluid Dynamics'; Chow 1959"
+category: hydrology
+language: cpp
+status: validated
+
+tolerances:
+  rtol: 1e-4
+  atol: 1e-6
+  mass_balance_max: 1e-3
+  cfl_max: 0.9
+
+parameters:
+  g: 9.81  # m/s²
+  manning_n: 0.03  # s/m^(1/3)
+
+cases:
+  - name: dam_break_dry_bed
+    description: "Classic dam break over dry bed - analytical solution exists"
+    inputs:
+      nx: 200
+      dx: 10.0  # m
+      dt: 0.5  # seconds
+      n_steps: 200
+      channel_width: 10.0  # m
+      manning_n: 0.0
+      initial_conditions:
+        left:
+          depth: 10.0  # m
+          velocity: 0.0
+        right:
+          depth: 0.0  # dry
+          velocity: 0.0
+      boundary_conditions:
+        left: "wall"
+        right: "transmissive"
+    expected:
+      # Analytical solution: Ritter 1892
+      shock_position: "x = -2*sqrt(g*h_left)*t"
+      rarefaction_fan: "h = (2/3 - x/(3*sqrt(g*h_left)*t))^2 * h_left"
+      mass_balance_error: "< 1e-4"
+      shock_speed: "2*sqrt(g*h_left)"
+      # ------------------------------------------------------------------
+      # RECORDED 2026-10-10 from the compiled Saint-Venant kernel reached
+      # through engine/hydroma/cpp_bridge (nx 200, dx 10 m, t_end 100 s,
+      # B 10 m, n 0, cfl 0.5): mass_balance_error ~1e-15 (relative; the exact
+      # digits vary between runs at machine precision, so record it as an order
+      # of magnitude, not a value), stable=true, front at 1995 m of the 2000 m
+      # channel at t = 100 s, i.e. a mean front speed of 19.95 m/s against the
+      # 19.809 m/s the analytical relation above gives (2*sqrt(9.81*10)). These
+      # are the model's own outputs, recorded as a regression anchor; they are
+      # NOT external references. NOTE the recorded finding that keeps this case
+      # open: the run's free-surface profile is NOT the Ritter fan -- at
+      # t = 50 s the depth at the dam is 3.75 m against 4.44 m, and the upstream
+      # reservoir is still 10 m deep 150 m upstream of the break, where the
+      # analytical withdrawal front is already 990 m upstream -- so the upstream
+      # rarefaction does not propagate in the shipped kernel.
+      recorded_note: recorded from the model on 2026-10-10 through the validation
+        runner at this boundary input; a regression anchor, not an external
+        reference, and the case's analytical expectations are the reason it
+        cannot be settled
+      recorded_front_speed_m_s: 19.95
+
+  - name: dam_break_wet_bed
+    description: "Dam break over wet bed - shock + rarefaction"
+    inputs:
+      nx: 300
+      dx: 5.0
+      dt: 0.25
+      n_steps: 400
+      channel_width: 5.0
+      manning_n: 0.0
+      initial_conditions:
+        left:
+          depth: 5.0
+          velocity: 0.0
+        right:
+          depth: 1.0
+          velocity: 0.0
+      boundary_conditions:
+        left: "wall"
+        right: "transmissive"
+    expected:
+      # Two shocks or shock + rarefaction depending on depth ratio
+      mass_balance_error: "< 1e-3"
+      shock_speed: "reference_profiles/sv_wetbed_shock.npy"
+      # ------------------------------------------------------------------
+      # RECORDED 2026-10-10 from the compiled Saint-Venant kernel through
+      # engine/hydroma/cpp_bridge (nx 300, dx 5 m, t_end 100 s, B 5 m, n 0,
+      # cfl 0.5): mass_balance_error 1.056e-13 (relative), stable=true,
+      # 3087 m3 left through the transmissive right face. This is the model's
+      # own output, recorded as a regression anchor; it is NOT an external
+      # reference. The reference profile this case points at
+      # (reference_profiles/sv_wetbed_shock.npy) is not in the corpus, so the
+      # shock profile cannot be compared.
+      recorded_note: recorded from the model on 2026-10-10 through the validation
+        runner at this boundary input; a regression anchor, not an external
+        reference, and the pointer to reference_profiles/sv_wetbed_shock.npy is
+        unresolved because that file is not in the corpus
+
+  - name: steady_uniform_flow
+    description: "Steady uniform flow with Manning friction"
+    inputs:
+      nx: 100
+      dx: 10.0
+      dt: 1.0
+      n_steps: 1000
+      channel_width: 10.0
+      manning_n: 0.03
+      slope: 0.001
+      initial_conditions:
+        uniform:
+          depth: 2.0
+          velocity: 1.5
+      boundary_conditions:
+        left: "inflow"
+        right: "normal_depth"
+    expected:
+      # Normal depth should be maintained
+      depth_change: "< 1e-3"
+      velocity_change: "< 1e-3"
+      friction_slope: "~bed_slope"
+
+  - name: subcritical_flow_over_bump
+    description: "Subcritical flow over a smooth bump"
+    inputs:
+      nx: 200
+      dx: 5.0
+      dt: 0.5
+      n_steps: 500
+      channel_width: 5.0
+      manning_n: 0.0
+      bed_elevation: "bump(x) = 0.5 * exp(-(x-500)^2 / 5000)"  # m
+      initial_conditions:
+        uniform:
+          depth: 1.5
+          velocity: 0.8
+      boundary_conditions:
+        left: "subcritical_inflow"
+        right: "subcritical_outflow"
+    expected:
+      # Water surface rises over bump for subcritical flow
+      mass_balance_error: "< 1e-3"
+      depth_over_bump: "reference_profiles/sv_bump_depth.npy"
+
+  - name: supercritical_shock_capture
+    description: "Supercritical flow with hydraulic jump"
+    inputs:
+      nx: 200
+      dx: 5.0
+      dt: 0.25
+      n_steps: 800
+      channel_width: 10.0
+      manning_n: 0.02
+      slope: 0.01
+      initial_conditions:
+        left:
+          depth: 0.5
+          velocity: 5.0
+        right:
+          depth: 2.0
+          velocity: 1.0
+      boundary_conditions:
+        left: "supercritical_inflow"
+        right: "transmissive"
+    expected:
+      # Hydraulic jump should form and be captured
+      mass_balance_error: "< 1e-3"
+      jump_location: "reference_profiles/sv_jump_location.npy"
+      conjugate_depths: "Sequent depth formula: h2/h1 = 0.5*(sqrt(1+8*Fr1^2)-1)"
+
+# Metadata for CI matrix
+ci_matrix:
+  backends: ["cpp", "python"]
+  priority: high
+  estimated_time_seconds: 180

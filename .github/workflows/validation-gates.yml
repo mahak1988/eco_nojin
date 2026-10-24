@@ -1,0 +1,51 @@
+# ECO-VALIDATION-PROGRAM — scientific validation gates (additive).
+#
+# This workflow is a NEW, self-contained gate added by the ECO-VALIDATION-PROGRAM
+# (S0). It does not replace any existing CI; it pins the honesty of the
+# scientific layer that other jobs do not measure:
+#
+#   1. census           — computed model / equation / maturity numbers
+#   2. novelty-index    — no card claims VALIDATED_EXTERNAL without a reference
+#   3. import guard     — services never reach engine internals (architecture)
+#   4. validation corpus— match/mismatch/inconsistent_case/not_run (informational)
+#
+# It installs a curated, minimal scientific set (numpy/scipy/pandas/pyyaml)
+# rather than the full runtime, because these gates are static analysis over the
+# registry + indicator cards, not the API runtime. This also avoids the known
+# non-resolvable `cmake>=7.0` pin that would abort a full `-r requirements.txt`
+# install (documented in pyproject.toml under the `cpp` extra).
+#
+# Fails closed: a red blocking gate fails the job.
+
+name: validation-gates
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  scientific-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # pint is REQUIRED, not optional: the census imports engine.models.registry
+      # -> engine.gateway -> unit_converter -> pint_audit, which does an
+      # unconditional `import pint`. Omitting it fails the gate for an
+      # environment reason, not a science reason.
+      - name: Install minimal scientific gate dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "numpy>=1.26" "scipy>=1.11" "pandas>=2.0" "PyYAML>=6.0" "pint>=0.24"
+
+      - name: Run ECO-VALIDATION-PROGRAM gates
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          SECRET_KEY: ci-secret-key
+        run: python tools/run_validation_gates.py

@@ -1,0 +1,8 @@
+spi_min,spi_max,category_label,source
+2.00,+inf,extremely wet,"McKee et al. 1993 (8th Conf. Applied Climatology, AMS) classification table as operationalised in WMO No. 1090"
+1.50,1.99,very wet,"McKee et al. 1993 (8th Conf. Applied Climatology, AMS) classification table as operationalised in WMO No. 1090"
+1.00,1.49,moderately wet,"McKee et al. 1993 (8th Conf. Applied Climatology, AMS) classification table as operationalised in WMO No. 1090"
+-0.99,0.99,near normal,"McKee et al. 1993 (8th Conf. Applied Climatology, AMS) classification table as operationalised in WMO No. 1090"
+-1.49,-1.00,moderately dry,"McKee et al. 1993 (8th Conf. Applied Climatology, AMS) classification table as operationalised in WMO No. 1090"
+-1.99,-1.50,severely dry,"McKee et al. 1993 (8th Conf. Applied Climatology, AMS) classification table as operationalised in WMO No. 1090"
+-inf,-2.00,extremely dry,"McKee et al. 1993 (8th Conf. Applied Climatology, AMS) classification table as operationalised in WMO No. 1090"

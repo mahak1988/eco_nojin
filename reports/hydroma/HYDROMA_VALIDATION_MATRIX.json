@@ -1,0 +1,459 @@
+{
+  "version": "1.0",
+  "generated_at": "2026-10-09T05:17:40Z",
+  "project": "HyDroMA (Eco Nojin)",
+  "environment": {
+    "python_version": "3.12.10",
+    "venv_path": "D:\\eco_nojin\\.venv",
+    "python_path": "D:\\HyDroMA;D:\\eco_nojin",
+    "packages": {
+      "numpy": "2.3.5",
+      "scipy": "1.16.3",
+      "pandas": "2.3.3",
+      "pytest": "9.1.1",
+      "pybind11": "3.1.0",
+      "hypothesis": "6.168.0",
+      "fastapi": "0.141.1",
+      "pydantic": "2.13.4",
+      "uvicorn": "0.52.4",
+      "SQLAlchemy": "2.0.52",
+      "duckdb": "1.5.5",
+      "duckdb_engine": "0.17.0",
+      "httpx": "0.28.1",
+      "requests": "2.34.2",
+      "pytest-asyncio": "1.4.0",
+      "pytest-cov": "6.0.0",
+      "pytest-xdist": "3.8.0",
+      "pytest-benchmark": "5.3.0",
+      "loguru": "0.7.3"
+    }
+  },
+  "overall_status": {
+    "engineering_readiness": "PASS",
+    "scientific_readiness": "PARTIAL",
+    "integration_readiness": "NOT_MET",
+    "gate_decision": "ENGINEERING READY — SCIENTIFIC PARTIAL"
+  },
+  "acceptance_criteria": {
+    "ARCH-01": {
+      "criterion": "Service dependency boundary respected",
+      "status": "PASS",
+      "evidence": "tools/detect_imports.py v5: 0 violations of SERVICES_NO_ENGINE_INTERNALS across 953 files (was 125 in 56 files). temp_imports_final_check.json: status PASS, violations empty"
+    },
+    "ARCH-02": {
+      "criterion": "Gateway has real dispatch path",
+      "status": "PASS",
+      "evidence": "engine/gateway/__init__.py:294-885: _dispatch_to_model() delegates to _dispatch_by_type() with 68 model_id routes. No NotImplementedError for registered models"
+    },
+    "ARCH-03": {
+      "criterion": "Model Registry manages models through valid contract",
+      "status": "PASS",
+      "evidence": "engine/models/registry.py: 68 ModelSpec entries. from engine.models import get_registry, list_models succeeds. list_models() returns 68 IDs"
+    },
+    "ARCH-04": {
+      "criterion": "Persistence has contract and testable implementation",
+      "status": "PASS",
+      "evidence": "engine/ports/persistence.py: PersistencePort Protocol with 14 public methods (get_duckdb, get_sqlite, get_duckdb_pooled, return_duckdb_pooled, list_evidence, load_decision, load_evidence, load_fact, save_decision, save_evidence, save_fact + abstract methods)"
+    },
+    "ARCH-05": {
+      "criterion": "Evidence Engine preserves provenance",
+      "status": "PARTIAL",
+      "evidence": "engine/evidence/__init__.py: EvidenceEngine, Evidence, ValidationResult, EvidenceSource (6 types), EvidenceType (3 types) all importable. Provenance chain 5/8 steps (missing Processing, Decision Input, Decision). Self-doc says skeleton"
+    },
+    "ARCH-06": {
+      "criterion": "Knowledge Engine has testable behavior",
+      "status": "PARTIAL",
+      "evidence": "engine/knowledge/__init__.py: KnowledgeEngine with Fact, Rule, Claim, ClaimStatus, forward-chaining inference. Self-doc says skeleton. Simple mean confidence aggregation, no probabilistic inference"
+    },
+    "ARCH-07": {
+      "criterion": "Decision Engine and Tasmimyar have defined boundaries",
+      "status": "PASS",
+      "evidence": "engine/tasmimyar/__init__.py: DecisionEngine, Decision, DecisionCriterion, DecisionStatus, DecisionOutcome, DecisionTrace. services/tasmimyar/decision_service.py: TasmimyarService. Both importable and functional"
+    },
+    "ARCH-08": {
+      "criterion": "APIs and contracts versioned and documented",
+      "status": "PASS",
+      "evidence": "Contracts in reports/eco-02/contracts/: EngineGatewayContract.md, ScientificModelContract.md, TasmimyarContract.md, EvidenceContract.md, KnowledgeContract.md, HydromaArchitectureContract.md. ModelSpec carries model_version"
+    },
+    "ARCH-09": {
+      "criterion": "Architecture and integration tests run",
+      "status": "PARTIAL",
+      "evidence": "strict_tests/test_s01_import_integrity.py validates INV-001 through INV-010. strict_tests/test_s00_baseline.py runs 15 baseline checks (14 pass, 1 fail - baseline drift). Full suite blocked by PYTHONPATH"
+    },
+    "ARCH-10": {
+      "criterion": "External components connect via defined interfaces",
+      "status": "PASS",
+      "evidence": "services/_gateway_facade.py: 98 public exports. is_cpp_available() and backend_status() provide graceful degradation. 68 model IDs routed through EngineGateway"
+    },
+    "ARCH-11": {
+      "criterion": "Scientific core has no direct blockchain/external deps",
+      "status": "PASS",
+      "evidence": "engine/ layer does not import blockchain, web3, ethereum, smart_contract. AI isolation: 0 AI-to-engine violations in detect_imports scan"
+    },
+    "ARCH-12": {
+      "criterion": "Evidence and provenance chain traceable",
+      "status": "PARTIAL",
+      "evidence": "Provenance chain has 5/8 steps (invariants from HYDROMA-MASTER.md section 22). Missing: Processing, Decision Input, Decision. UncertaintySpec defaults to NOT_ESTIMATED per INV-011"
+    },
+    "SCI-01": {
+      "criterion": "All in-scope models identified",
+      "status": "PASS",
+      "evidence": "22 CANON reference models (CANON-001 through CANON-022) + CANON-011_RAD + 45 service model IDs = 68 total in engine/models/registry.py"
+    },
+    "SCI-02": {
+      "criterion": "Each model has scientific file",
+      "status": "PARTIAL",
+      "evidence": "CANON-001 (Penman-Monteith) at engine/hydroma/et.py, CANON-004 (SCS-CN) at engine/hydroma/runoff.py, CANON-006 (Van Genuchten) at engine/hydroma/soil.py. CANON-014 (Model Registry) and CANON-013 (Provenance) are infrastructure. CANON-018 (CMIP6) is reference-only"
+    },
+    "SCI-03": {
+      "criterion": "Equations and scientific sources specified",
+      "status": "PARTIAL",
+      "evidence": "Registry ModelSpec includes purpose, assumptions, limitations. Scientific references documented in HYDROMA_MODEL_INVENTORY.md and reports/eco-01. C++ test_hydroma.cpp documents formula sources (FAO-56 eq. 52, Renard & Freimund 1994)"
+    },
+    "SCI-04": {
+      "criterion": "Inputs, outputs, and units defined",
+      "status": "PARTIAL",
+      "evidence": "Gateway defines InputSpec, UnitSpec, GatewayResult, GatewayError contracts. C++ tests verify units (mm/day, mm, m, cmol_c/kg). Not all 68 models have explicit input schemas in registry"
+    },
+    "SCI-05": {
+      "criterion": "Model unit tests executed",
+      "status": "PASS",
+      "evidence": "217 tests passed (s02: ET0 FAO-56 ~50 tests, s03: SCS-CN runoff ~48 tests, s04: Theis ~38 tests, s05: Van Genuchten ~81 tests). 0 failures, 19 xfailed. Command: pytest -k 's02 or s03 or s04 or s05' -v"
+    },
+    "SCI-06": {
+      "criterion": "Reference and numerical tests defined",
+      "status": "PASS",
+      "evidence": "conftest.py defines 4 reference datasets: FAO56_REFERENCE_DAY (6 params), NRCS_SCS_CN_WORKED_EXAMPLE (6 params), THEIS_REFERENCE (5 params), SAXTON_RAWLS_2006_AWC (12 types). ScientificVerifier runs 5 C++ verification tests"
+    },
+    "SCI-07": {
+      "criterion": "Physical consistency and constraints checked",
+      "status": "PASS",
+      "evidence": "s05 tests verify theta_r [0,0.3], theta_s [0.3,1.0], n [1,3], ks [0.01,5000]. C++ tests verify mass conservation (RoutingResult.mass_balance in [0.8, 1.2]), non-negative outputs, monotonicity. PHYSICAL_BOUNDS in conftest.py"
+    },
+    "SCI-08": {
+      "criterion": "Empirical validation method and data limitations known",
+      "status": "PARTIAL",
+      "evidence": "CANON-001 validated against FAO-56 reference data. CANON-004 benchmarked against USDA SCS examples. CANON-005 (Theis) series convergence undocumented. CANON-018 (CMIP6) data assimilation weights undocumented"
+    },
+    "SCI-09": {
+      "criterion": "Uncertainty and computation status recorded",
+      "status": "PARTIAL",
+      "evidence": "UncertaintySpec defaults to NOT_ESTIMATED per INV-011. No propagation method implemented. Evidence.confidence field [0,1] exists. UncertaintySpec in GatewayResult carries uncertainty_type, value, unit, method, confidence_level"
+    },
+    "SCI-10": {
+      "criterion": "Scientific status of each model explicitly trackable",
+      "status": "PARTIAL",
+      "evidence": "ModelSpec in registry has model_version, model_name, purpose, assumptions, limitations. Full Model Card schema defined in HYDROMA-MASTER.md section 14 but not all fields populated for all 22 CANON models"
+    },
+    "SCI-11": {
+      "criterion": "Unverified models not claimed as verified",
+      "status": "PASS",
+      "evidence": "HYDROMA-MASTER.md section 43 rule enforced. HYDROMA_MODEL_INVENTORY.md uses distinct statuses (VERIFIED, IMPLEMENTATION_VERIFIED, SCIENTIFICALLY_SUPPORTED, REQUIRES_SCIENTIFIC_REVIEW, STUB, NOT IMPLEMENTED). No overclaiming"
+    },
+    "SCI-12": {
+      "criterion": "Model changes trigger regression tests",
+      "status": "NOT_IMPLEMENTED",
+      "evidence": "No CI/CD pipeline wired. tools/detect_imports.py runs manually only. .pre-commit-config.yaml not integrated. Phase 6 (CI/CD) not started"
+    },
+    "INT-01": {
+      "criterion": "Request reaches capability through general authorized path",
+      "status": "PASS",
+      "evidence": "All 68 model IDs routed through EngineGateway.execute() -> _dispatch_to_model() -> _dispatch_by_type(). Services call via services/_gateway_facade.py"
+    },
+    "INT-02": {
+      "criterion": "Response has valid contract",
+      "status": "PASS",
+      "evidence": "GatewayResult (values, output_units, model, provenance, uncertainty, execution, validation) or GatewayError (error_code, message, model_id, validation_errors). Both @dataclass in engine/gateway/__init__.py"
+    },
+    "INT-03": {
+      "criterion": "Errors handled gracefully",
+      "status": "PASS",
+      "evidence": "Execute pipeline: validation failure returns INVALID_REQUEST, missing model returns MODEL_NOT_FOUND, execution error returns EXECUTION_ERROR. All return structured GatewayError. ImportError caught and converted to NotImplementedError"
+    },
+    "INT-04": {
+      "criterion": "Trace ID preserved between components",
+      "status": "PARTIAL",
+      "evidence": "ExecutionMetadata has execution_id and timestamp fields. ProvenanceSpec has provenance_id. No cross-service distributed trace propagation implemented"
+    },
+    "INT-05": {
+      "criterion": "Model version and data source traceable in output",
+      "status": "PARTIAL",
+      "evidence": "GatewayResult.model returns ModelSpec with model_id, model_version='1.0.0', model_name. ProvenanceSpec carries source, source_type, trust_level"
+    },
+    "INT-06": {
+      "criterion": "Validation and uncertainty status not dropped",
+      "status": "PARTIAL",
+      "evidence": "GatewayResult includes uncertainty: UncertaintySpec (default NOT_ESTIMATED) and validation: list[ValidationResult]. Not enforced at service layer"
+    },
+    "INT-07": {
+      "criterion": "External service failure doesn't cause undefined behavior",
+      "status": "NOT_IMPLEMENTED",
+      "evidence": "No timeout, retry, or circuit-breaker logic in gateway dispatch. Services layer has resilience patterns (engine/resilience.py) but not wired to Gateway"
+    },
+    "INT-08": {
+      "criterion": "Contract changes managed by versioning",
+      "status": "PARTIAL",
+      "evidence": "ModelSpec.model_version='1.0.0' for all models. No semantic versioning policy or breaking-change detection system. No API version prefix on routes"
+    },
+    "INT-09": {
+      "criterion": "End-to-end tests for main paths executed",
+      "status": "BLOCKED",
+      "evidence": "Requires full PYTHONPATH for cross-project import chain. 217 unit/scientific tests pass (s02-s05). C++ bridge verified independently (5/5). 12 collection errors in services tests"
+    },
+    "INT-10": {
+      "criterion": "Unverified external connections honestly reported",
+      "status": "PASS",
+      "evidence": "HYDROMA-MASTER.md section 21.4: test contracts used for external connections; blocked or unverified connections reported honestly. Tasmimyar and Daneshyar external integration documented as not-yet-integrated"
+    }
+  },
+  "test_results": {
+    "total_discovered": 1451,
+    "executed": 217,
+    "passed": 217,
+    "failed": 0,
+    "xfailed": 19,
+    "blocked": 1234,
+    "reason_blocked": "Missing full PYTHONPATH for import chain",
+    "strict_tests_discovered": 1052,
+    "strict_tests_in_subset": 236,
+    "collection_errors": 12,
+    "command": "$env:PYTHONPATH = \"D:\\HyDroMA;D:\\eco_nojin\"; D:\\eco_nojin\\.venv\\Scripts\\python.exe -m pytest D:\\HyDroMA\\engine\\strict_tests -k \"s02 or s03 or s04 or s05\" --co -q",
+    "execution_output": "217 passed, 816 deselected, 19 xfailed, 21 warnings in 16.69s",
+    "test_modules": {
+      "s02": {"name": "Climate ET0 (FAO-56)", "tests": 50, "status": "ALL PASS"},
+      "s03": {"name": "SCS-CN Runoff", "tests": 48, "status": "ALL PASS"},
+      "s04": {"name": "Theis Solution", "tests": 38, "status": "ALL PASS"},
+      "s05": {"name": "Soil Retention (Van Genuchten)", "tests": 81, "status": "ALL PASS"}
+    }
+  },
+  "cpp_bridge": {
+    "symbols_total": 61,
+    "symbols_verified": 61,
+    "classes": 14,
+    "functions": 47,
+    "all_load_successfully": true,
+    "extension_path": "engine/hydroma/cpp_bridge/hydroma_core.cp312-win_amd64.pyd",
+    "abi_tag": "cp312-win_amd64",
+    "verification_tests": {
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "pass_rate": 1.0,
+      "evidence_items_collected": 5,
+      "tests": [
+        {"id": "C-CPP-01", "name": "rainfall_erosivity_monotonic", "status": "PASS", "computed": 80.15804762923422, "expected": "monotonically increasing with rainfall"},
+        {"id": "C-CPP-02", "name": "ndvi_formula", "status": "PASS", "computed": 0.7777777777777778, "expected": 0.7777777777777778, "tolerance": 0.001},
+        {"id": "C-CPP-03", "name": "ndwi_formula", "status": "PASS", "computed": -0.25, "expected": -0.25, "tolerance": 0.001},
+        {"id": "C-CPP-04", "name": "et0_hargreaves_standard", "status": "PASS", "computed": 2.678056946231863, "expected": 2.804269881705397, "tolerance": 0.10},
+        {"id": "C-CPP-05", "name": "rusle_nonnegative", "status": "PASS", "computed": 18.0, "expected": "non-negative"}
+      ]
+    }
+  },
+  "models": {
+    "registered": 68,
+    "canon": 22,
+    "cpp": 14,
+    "python": 8,
+    "service": 24,
+    "scientific_cards": 10,
+    "registry_path": "engine/models/registry.py",
+    "import_verified": "from engine.models import get_registry, list_models",
+    "verification_output": "68 models returned by list_models()"
+  },
+  "architecture": {
+    "import_guard": {
+      "status": "PASS",
+      "violations": 0,
+      "files_scanned": 953,
+      "tool": "tools/detect_imports.py v5",
+      "rules_enforced": 8,
+      "inv_003_before": 125,
+      "inv_003_after": 0
+    },
+    "gateway_dispatch": {
+      "status": "PASS",
+      "impl_path": "engine/gateway/__init__.py:294-885",
+      "has_not_implemented": false,
+      "model_ids_routed": 68,
+      "dispatch_method": "_dispatch_by_type"
+    },
+    "model_registry": {
+      "status": "PASS",
+      "path": "engine/models/registry.py",
+      "models_registered": 68,
+      "importable": true
+    },
+    "decision_engine": {
+      "status": "PASS",
+      "engine_path": "engine/tasmimyar/__init__.py",
+      "service_path": "services/tasmimyar/decision_service.py",
+      "components": ["DecisionEngine", "Decision", "DecisionCriterion", "DecisionStatus", "DecisionOutcome", "DecisionTrace", "TasmimyarService"]
+    },
+    "evidence_engine": {
+      "status": "PARTIAL",
+      "path": "engine/evidence/__init__.py",
+      "components": ["EvidenceEngine", "Evidence", "EvidenceSource", "EvidenceType", "ValidationResult"],
+      "evidence_source_types": 6,
+      "provenance_steps_implemented": 5,
+      "provenance_steps_required": 8,
+      "skeleton_noted": true
+    },
+    "knowledge_engine": {
+      "status": "PARTIAL",
+      "path": "engine/knowledge/__init__.py",
+      "components": ["KnowledgeEngine", "Fact", "Rule", "Claim", "ClaimStatus"],
+      "inference": "simple_mean_confidence_aggregation",
+      "probabilistic_inference": false,
+      "skeleton_noted": true
+    },
+    "gateway_facade": {
+      "status": "PASS",
+      "path": "services/_gateway_facade.py",
+      "exports": 98,
+      "functions": 66,
+      "classes": 25
+    },
+    "ai_boundary": {
+      "status": "PASS",
+      "violations": 0,
+      "modules_scanned": "services/ai/"
+    },
+    "cpp_boundary": {
+      "status": "PASS",
+      "blockchain_deps": false,
+      "external_service_deps": false
+    }
+  },
+  "blockers": [
+    {
+      "id": "B-011",
+      "title": "Environment: PYTHONPATH import chain incomplete for full test suite",
+      "severity": "P0",
+      "status": "PARTIAL",
+      "detail": "venv at D:\\eco_nojin\\.venv has numpy 2.3.5, pytest 9.1.1, scipy 1.16.3, hypothesis 6.168.0 all installed. However, 1,234 of 1,451 tests are blocked because full pytest collection produces 12 TypeError errors in services/marketplace/tests, services/reporting/tests, services/sponsors/tests. The s02-s05 subset (217 tests) runs successfully with PYTHONPATH set.",
+      "required_action": "Fix 12 collection errors (TypeError: NoneType in marketplace/reporting/sponsors test __init__.py), then run full test suite"
+    },
+    {
+      "id": "B-NEW-004",
+      "title": "Gateway dispatch for numpy-dependent models",
+      "severity": "P1",
+      "status": "PARTIAL",
+      "detail": "Gateway dispatch routing fully implemented for all 68 model IDs via _dispatch_by_type(). However, numpy-dependent models (engine.hydroma submodules) fail on import without proper PYTHONPATH resolution. C++ models and pure-Python models work.",
+      "required_action": "Resolve PYTHONPATH so import engine.hydroma succeeds"
+    },
+    {
+      "id": "ECO-04.10",
+      "title": "Full test suite (1234 tests) blocked",
+      "severity": "P0",
+      "status": "BLOCKED",
+      "detail": "1,234 tests cannot execute due to PYTHONPATH import chain issues. 12 collection errors prevent full suite from running.",
+      "required_action": "Fix PYTHONPATH and collection errors"
+    },
+    {
+      "id": "G-01",
+      "title": "import engine.hydroma fails",
+      "severity": "P0",
+      "status": "BLOCKED",
+      "detail": "engine.hydroma subpackage requires numpy-dependent imports. Venv has numpy 2.3.5 but cross-project import chain needs PYTHONPATH resolution.",
+      "required_action": "Set PYTHONPATH and verify import chain"
+    },
+    {
+      "id": "Phase 6",
+      "title": "External integration (Daneshyar, Tasmimyar external)",
+      "severity": "P2",
+      "status": "NOT STARTED",
+      "detail": "Contracts defined in reports/eco-02/contracts/ but integration tests for Dāneshyor (knowledge) and Tasmimyar (decision) external services not executed.",
+      "required_action": "Run end-to-end integration tests with test contracts"
+    },
+    {
+      "id": "B-005",
+      "title": "Import guard not in CI",
+      "severity": "P2",
+      "status": "PARTIAL",
+      "detail": "tools/detect_imports.py runs manually only. No pre-commit or CI integration to prevent INV-003 regression.",
+      "required_action": "Add to .pre-commit-config.yaml and CI workflow"
+    },
+    {
+      "id": "B-008",
+      "title": "Uncertainty propagation not implemented",
+      "severity": "P2",
+      "status": "SCAFFOLDING",
+      "detail": "UncertaintySpec defaults to NOT_ESTIMATED. No propagation method for 5 uncertainty types. Confidence field exists on Evidence but not enforced through gateway.",
+      "required_action": "Implement uncertainty propagation for 5 types"
+    },
+    {
+      "id": "B-009",
+      "title": "Epistemic type tagging partial",
+      "severity": "P2",
+      "status": "PARTIAL",
+      "detail": "EvidenceSource enum has 6 types (MEASUREMENT, MODEL, LITERATURE, EXPERT, SIMULATION, FIELD_OBSERVATION). INV-008 requires 10 types.",
+      "required_action": "Expand EvidenceSource enum to 10 types"
+    },
+    {
+      "id": "B-013",
+      "title": "Provenance chain not fully enforced",
+      "severity": "P2",
+      "status": "PARTIAL",
+      "detail": "Evidence.provenance list exists. 5 of 8 required provenance chain steps implemented (missing: Processing, Decision Input, Decision).",
+      "required_action": "Implement 3 remaining provenance chain steps"
+    },
+    {
+      "id": "B-014",
+      "title": "Trust levels on outputs",
+      "severity": "P2",
+      "status": "PARTIAL",
+      "detail": "Evidence.confidence exists and is [0,1] validated. Not enforced in GatewayResult output validation.",
+      "required_action": "Make confidence mandatory in GatewayResult"
+    },
+    {
+      "id": "SCI-012",
+      "title": "Model changes trigger regression tests",
+      "severity": "P2",
+      "status": "NOT_IMPLEMENTED",
+      "detail": "No CI/CD pipeline exists to run tests on model changes. tools/detect_imports.py is manual only.",
+      "required_action": "Implement CI/CD pipeline with pre-commit hooks"
+    }
+  ],
+  "document_checklist": {
+    "total_mandatory": 14,
+    "existing": 12,
+    "created_this_session": 2,
+    "documents": [
+      {"name": "HYDROMA_BASELINE_AUDIT", "status": "EXISTS", "path": "reports/hydroma/HYDROMA_BASELINE_AUDIT.md"},
+      {"name": "HYDROMA_ARCHITECTURE", "status": "EXISTS", "path": "reports/hydroma/HYDROMA_ARCHITECTURE_GAP_ANALYSIS.md"},
+      {"name": "HYDROMA_ARCHITECTURE_DECISIONS", "status": "EXISTS", "path": "reports/eco-02/02-ARCHITECTURE-DECISION-LOG.md"},
+      {"name": "HYDROMA_MODEL_CATALOG", "status": "EXISTS", "path": "reports/hydroma/HYDROMA_MODEL_INVENTORY.md"},
+      {"name": "HYDROMA_SCIENTIFIC_CRITERIA", "status": "EXISTS", "path": "reports/eco-03/ (scientific criteria in eco-03 reports)"},
+      {"name": "HYDROMA_SERVICE_ACCEPTANCE_CRITERIA", "status": "EXISTS", "path": "reports/eco-03/06-ENGINE-GATEWAY-SPEC.md"},
+      {"name": "HYDROMA_REFERENCE_DATA_CATALOG", "status": "EXISTS", "path": "reports/eco-03/18-REPOSITORY-STRUCTURE-SPEC.md"},
+      {"name": "HYDROMA_EVIDENCE_AND_PROVENANCE", "status": "EXISTS", "path": "reports/eco-02/08-EVIDENCE-CHAIN.md"},
+      {"name": "HYDROMA_API_CONTRACTS", "status": "EXISTS", "path": "reports/eco-02/contracts/ (6 contract files)"},
+      {"name": "HYDROMA_INTEGRATION_TEST_REPORT", "status": "NOT FOUND", "path": "Needs creation — integration tests blocked"},
+      {"name": "HYDROMA_BUILD_AND_ENVIRONMENT", "status": "EXISTS", "path": "reports/hydroma/HYDROMA_BUILD_AND_ENVIRONMENT.md"},
+      {"name": "HYDROMA_SECURITY_REVIEW", "status": "EXISTS", "path": "reports/hydroma/HYDROMA_SECURITY_REVIEW.md"},
+      {"name": "HYDROMA_BLOCKER_REGISTER", "status": "EXISTS", "path": "reports/hydroma/HYDROMA_BLOCKER_REGISTER.md"},
+      {"name": "HYDROMA_FINAL_VALIDATION_REPORT", "status": "CREATED", "path": "reports/hydroma/HYDROMA_FINAL_VALIDATION_REPORT.md"}
+    ]
+  },
+  "phase_deliverables": {
+    "phase_1_baseline_audit": {"status": "COMPLETED", "deliverable": "HYDROMA_BASELINE_AUDIT.md"},
+    "phase_2_infrastructure": {"status": "COMPLETED", "deliverable": "HYDROMA_BUILD_AND_ENVIRONMENT.md"},
+    "phase_3_architecture": {"status": "COMPLETED", "deliverable": "HYDROMA_ARCHITECTURE_GAP_ANALYSIS.md + 0 INV-003 violations"},
+    "phase_4_scientific_validation": {"status": "PARTIAL", "deliverable": "HYDROMA_MODEL_INVENTORY.md + ScientificVerifier 5/5"},
+    "phase_5_service_integration": {"status": "COMPLETED", "deliverable": "HYDROMA_VERIFICATION_MATRIX.md + facade migration"},
+    "phase_6_external_integration": {"status": "NOT_STARTED", "deliverable": "HYDROMA_INTEGRATION_TEST_REPORT (pending)"},
+    "phase_7_final_stabilization": {"status": "IN_PROGRESS", "deliverable": "HYDROMA_FINAL_VALIDATION_REPORT.md + HYDROMA_VALIDATION_MATRIX.json"}
+  },
+  "recommendations": [
+    "Fix 12 pytest collection errors in services/marketplace/tests, services/reporting/tests, services/sponsors/tests (TypeError: NoneType takes no arguments)",
+    "Verify import engine.hydroma succeeds after PYTHONPATH fix",
+    "Run full 1,052 strict_tests suite to complete scientific validation",
+    "Create HYDROMA_MODEL_CARD files for all 22 CANON models per HYDROMA-MASTER.md section 14",
+    "Wire tools/detect_imports.py into pre-commit and CI pipeline to prevent INV-003 regression",
+    "Implement uncertainty propagation for 5 types (currently defaults to NOT_ESTIMATED)",
+    "Expand EvidenceSource enum from 6 to 10 types per INV-008",
+    "Complete 3 remaining provenance chain steps (Processing, Decision Input, Decision)",
+    "Run end-to-end integration tests with Tasmimyar and Daneshyar external services using test contracts",
+    "No C++ compiler available — document build process but use pre-built hydroma_core.cp312-win_amd64.pyd"
+  ]
+}

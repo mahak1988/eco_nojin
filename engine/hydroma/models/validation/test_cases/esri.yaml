@@ -1,0 +1,161 @@
+model: ESRI
+class: ESRI
+reference: optical salinity indices, Sentinel-2 band ratios
+language: python
+status: validated
+recorded: 2026-09-29
+tolerances:
+  rtol: 0.01
+  atol: 0.01
+cases:
+- name: four_pixel_dry_scene
+  description: Four consecutive pixels with rising NIR over dry soil.
+  inputs:
+    blue:
+    - 0.07
+    - 0.08
+    - 0.09
+    - 0.1
+    red:
+    - 0.09
+    - 0.1
+    - 0.12
+    - 0.13
+    nir:
+    - 0.28
+    - 0.34
+    - 0.41
+    - 0.46
+    swir:
+    - 0.22
+    - 0.2
+    - 0.18
+    - 0.16
+    ec_soil_dsm: 2.0
+    ec_irrigation_dsm: 0.5
+  expected: 0.0644375616
+  expected_key: esri
+  reduce: mean
+  note: ESRI.validate_against_reference compares the mean of the esri array, so the fixture names the
+    same field and the same reduction. Recording the mean of a different field would fail for the right
+    reason and be fixed by pointing at what the model actually measures.
+- name: ec_soil_dsm_at_minimum
+  description: ec_soil_dsm pinned at its minimum (0.0) as declared by validate_inputs.
+  inputs:
+    blue:
+    - 0.07
+    - 0.08
+    - 0.09
+    - 0.1
+    red:
+    - 0.09
+    - 0.1
+    - 0.12
+    - 0.13
+    nir:
+    - 0.28
+    - 0.34
+    - 0.41
+    - 0.46
+    swir:
+    - 0.22
+    - 0.2
+    - 0.18
+    - 0.16
+    ec_soil_dsm: 0.0
+    ec_irrigation_dsm: 0.5
+  expected: 0.06458539
+  expected_key: salinity_index
+  reduce: mean
+  recorded_note: recorded from the model on 2026-10-10 through the validation runner at this boundary
+    input; a regression anchor, not an external reference
+- name: ec_soil_dsm_at_maximum
+  description: ec_soil_dsm pinned at its maximum (30.0) as declared by validate_inputs.
+  inputs:
+    blue:
+    - 0.07
+    - 0.08
+    - 0.09
+    - 0.1
+    red:
+    - 0.09
+    - 0.1
+    - 0.12
+    - 0.13
+    nir:
+    - 0.28
+    - 0.34
+    - 0.41
+    - 0.46
+    swir:
+    - 0.22
+    - 0.2
+    - 0.18
+    - 0.16
+    ec_soil_dsm: 30.0
+    ec_irrigation_dsm: 0.5
+  expected: 0.06458539
+  expected_key: salinity_index
+  reduce: mean
+  recorded_note: recorded from the model on 2026-10-10 through the validation runner at this boundary
+    input; a regression anchor, not an external reference
+- name: ec_irrigation_dsm_at_minimum
+  description: ec_irrigation_dsm pinned at its minimum (0.0) as declared by validate_inputs.
+  inputs:
+    blue:
+    - 0.07
+    - 0.08
+    - 0.09
+    - 0.1
+    red:
+    - 0.09
+    - 0.1
+    - 0.12
+    - 0.13
+    nir:
+    - 0.28
+    - 0.34
+    - 0.41
+    - 0.46
+    swir:
+    - 0.22
+    - 0.2
+    - 0.18
+    - 0.16
+    ec_soil_dsm: 2.0
+    ec_irrigation_dsm: 0.0
+  expected: 0.06458539
+  expected_key: salinity_index
+  reduce: mean
+  recorded_note: recorded from the model on 2026-10-10 through the validation runner at this boundary
+    input; a regression anchor, not an external reference
+- name: ec_irrigation_dsm_at_maximum
+  description: ec_irrigation_dsm pinned at its maximum (10.0) as declared by validate_inputs.
+  inputs:
+    blue:
+    - 0.07
+    - 0.08
+    - 0.09
+    - 0.1
+    red:
+    - 0.09
+    - 0.1
+    - 0.12
+    - 0.13
+    nir:
+    - 0.28
+    - 0.34
+    - 0.41
+    - 0.46
+    swir:
+    - 0.22
+    - 0.2
+    - 0.18
+    - 0.16
+    ec_soil_dsm: 2.0
+    ec_irrigation_dsm: 10.0
+  expected: 0.06458539
+  expected_key: salinity_index
+  reduce: mean
+  recorded_note: recorded from the model on 2026-10-10 through the validation runner at this boundary
+    input; a regression anchor, not an external reference

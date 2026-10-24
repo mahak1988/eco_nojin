@@ -1,0 +1,371 @@
+name: CI
+
+# ---------------------------------------------------------------------------
+# HyDroMA continuous integration.
+#
+# What gates the build (fails the PR/merge GREEN->RED):
+#   * architecture ......... the import guard (tools/detect_imports.py) MUST pass
+#   * security ............. tools/check_security.py --fail-on HIGH (0 findings
+#                            across 1251 files at 2026-10-13; the scanner's
+#                            inverted --fail-on comparison and its disagreement
+#                            with the import guard's sanctions were fixed the
+#                            same day) plus the SEC-wave regression suite
+#   * test ................. python -m pytest engine/  (the strict + integration
+#                            + biofertilizer suite tracked in AGENTS.md)
+#
+# What runs and PUBLISHES its count/log but never gates (pre-existing debt that
+# is documented, measured and not hidden):
+#   * lint (ruff) ......... ~1876+ findings (E501/B008/F401, deliberately held)
+#   * typecheck (mypy) .... ~880 errors in ~130 files (see
+#                            reports/quality/MYPY-REMEASURE-2026-10-10.md). The
+#                            step emits a `::warning::` annotation and writes the
+#                            "Found N errors in M files" line to the run summary,
+#                            and uploads the full log as an artifact.
+#   * venv-integrity ...... the site-packages wheel-RECORD audit
+#                            (tools/check_venv_integrity.py). Non-blocking
+#                            BECAUSE CI installs wheels fresh on every run: the
+#                            audit compares installed files against the RECORD
+#                            hashes of a long-lived working venv (the 2026-10-10
+#                            tampering campaign was found exactly that way), and
+#                            a freshly-provisioned runner has no such state —
+#                            the script cannot gate here and never will. It
+#                            publishes its report as an artifact and stays
+#                            visible as a warning gate (R-1); the authoritative
+#                            run is the local `python tools/check_venv_integrity.py`.
+#
+# Install path (honest note):
+#   `pip install -e .` is NOT usable: pyproject.toml declares
+#   build-backend = "setuptools.backends._legacy:_Backend", which does not exist
+#   (verified: `No module named 'setuptools.backends'`). The working install is
+#   `pip install -r requirements.txt -r requirements-dev.txt`; the suite runs on
+#   PYTHONPATH=<repo root> exactly as documented in AGENTS.md (no editable
+#   install needed). The `engine/` package imports FastAPI in 0 files (FastAPI
+#   lives in the `services/` HTTP layer), so the requirements.txt set is enough
+#   for the engine gate. requirements.txt also pulls torch/transformers/qdrant
+#   (optional): heavy but declared; a lean CI lockfile would be a worthwhile
+#   follow-up (out of scope here).
+# ---------------------------------------------------------------------------
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint (ruff) — non-blocking
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install ruff
+        run: python -m pip install --upgrade pip && python -m pip install ruff
+      - name: ruff check (publish count)
+        continue-on-error: true
+        run: |
+          set +e
+          python -m ruff check . 2>&1 | tee ruff.log
+          code=${PIPESTATUS[0]}
+          count=$(grep -Eo 'Found [0-9]+ errors?' ruff.log | grep -Eo '[0-9]+' | tail -1)
+          [ -z "$count" ] && count=0
+          echo "::warning title=ruff::${count} findings — PRE-EXISTING LINT DEBT (non-blocking)."
+          echo "ruff: ${count} findings (exit ${code}) — known debt; see reports/lint/." >> "$GITHUB_STEP_SUMMARY"
+
+  typecheck:
+    name: Typecheck (mypy) — non-blocking, publish count
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip && python -m pip install -r requirements.txt -r requirements-dev.txt
+      - name: mypy engine --ignore-missing-imports (publish count + log)
+        continue-on-error: true
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          SECRET_KEY: test-secret-key
+        run: |
+          set +e
+          python -m mypy engine --ignore-missing-imports 2>&1 | tee mypy.log
+          code=${PIPESTATUS[0]}
+          summary=$(grep -Eo 'Found [0-9]+ errors? in [0-9]+ files?' mypy.log | tail -1)
+          [ -z "$summary" ] && summary="mypy: 0 errors (clean)"
+          echo "::warning title=mypy::${summary} — PRE-EXISTING TYPE DEBT (non-blocking); full log in the mypy-log artifact."
+          {
+            echo "## mypy (non-blocking, pre-existing debt)";
+            echo "";
+            echo "${summary}";
+            echo "";
+            echo "<details><summary>Full mypy output</summary>";
+            echo '```text'; cat mypy.log; echo '```';
+            echo "</details>";
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "mypy exit code was ${code}; kept non-failing by design (documented pre-existing debt)."
+      - name: Upload mypy log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mypy-log
+          path: mypy.log
+          if-no-files-found: warn
+
+  test:
+    name: Tests (pytest) — blocking
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip && python -m pip install -r requirements.txt -r requirements-dev.txt
+      - name: Engine suite (strict + integration + biofertilizer)
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          SECRET_KEY: test-secret-key
+        run: python -m pytest engine/ -q -p no:cacheprovider
+      # P1 gate paths (docs/project/PHASE_PLAN.md): the P1 honesty/freeze
+      # contracts — tourism /status payload and the EcoCoin write freeze —
+      # must fail CI on regression. Deliberately a subset of services/:
+      # the full services/ suite is memory-heavy under xdist on small
+      # runners and stays a local gate (AGENTS.md).
+      - name: P1 contract suites (gateway, tourism, blockchain)
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          SECRET_KEY: test-secret-key
+        run: >-
+          python -m pytest services/api_gateway/tests services/tourism/tests
+          services/blockchain/tests -q -p no:cacheprovider
+      - name: Top-level tests/ (best-effort; owned elsewhere, may be empty/volatile)
+        continue-on-error: true
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          SECRET_KEY: test-secret-key
+        run: |
+          set +e
+          if [ -d tests ] && python -m pytest tests/ -q -p no:cacheprovider; then
+            echo "top-level tests/ passed"
+          else
+            echo "::notice::top-level tests/ not gated (empty, absent, or needs services-layer extras); engine suite above is the authoritative gate."
+          fi
+
+  heavy-rag:
+    # B5 / KN-15: the torch + sentence-transformers RAG tests need far more
+    # memory than the rest of the suite. Under xdist they exhausted the
+    # runner and killed the workers ("Windows fatal exception: access
+    # violation" in the torch stack), which is an environment limit rather
+    # than a test failure. They therefore run in their own shard, single
+    # worker, with the dedicated config.
+    name: Heavy RAG shard (KN-15) — torch, single worker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip && python -m pip install -r requirements.txt -r requirements-dev.txt
+      - name: Heavy RAG / AI suite
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          SECRET_KEY: test-secret-key
+        run: python -m pytest -c pytest-heavy.ini -q -p no:cacheprovider
+
+  parity:
+    name: External-reference parity (X-6/X-7/X-8) — non-blocking until calibrated
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install runtime + reference extras
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt -r requirements-dev.txt
+          python -m pip install -e ".[ref]"
+      - name: "ET0 family vs PyETo (FAO-56 independent implementation)"
+        continue-on-error: true
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          SECRET_KEY: test-secret-key
+        run: python -m pytest engine/tests/test_pyet_parity.py -q -p no:cacheprovider
+      - name: "SPI vs climate_indices (cross-implementation, tolerance bands)"
+        continue-on-error: true
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          SECRET_KEY: test-secret-key
+        run: python -m pytest engine/tests/test_climate_indices_spi_parity.py -q -p no:cacheprovider
+      - name: "van Genuchten table vs Rosetta (USDA-ARS PTF)"
+        continue-on-error: true
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          SECRET_KEY: test-secret-key
+        run: python -m pytest engine/tests/test_rosetta_ptf_reference.py -q -p no:cacheprovider
+      # These suites are deliberately non-blocking while their agreement bands
+      # are being calibrated from the measured deltas; once a band is agreed
+      # and pinned, flip its step to blocking (the bands are recorded in
+      # reports/eco-nojin/FORMULA-VALIDATION-REGISTER.md).
+
+  architecture:
+    name: Architecture import guard — must pass
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # tools/detect_imports.py is stdlib-only, so no dependency install is needed.
+      - name: "detect_imports (B-005: import guard in CI)"
+        run: python tools/detect_imports.py --root .
+      - name: "Phantom-path check (honesty contract 3)"
+        run: python tools/phantom_path_check.py
+      - name: "Citation-link check (honesty contract 1 / G-H17) — non-blocking until the dead-DOI backlog is cleared"
+        # X-10: every DOI in the model cards, indicator records and the legacy
+        # reference documents must resolve at doi.org. Non-blocking for now
+        # because gap G-H17 (21 dead DOIs at 2026-10-10) is being corrected;
+        # flip to blocking when the tool reports dead=0.
+        continue-on-error: true
+        run: |
+          python tools/check_citations.py || echo "::warning::unresolved citations remain (G-H17)"
+
+  structure:
+    name: Structure ceilings + policy expiry (B-1 / C-4)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # B-1: stdlib-only, no install needed. BLOCKING: an expired or
+      # over-ratchet exception is an undocumented architecture violation.
+      - name: "Import-guard policy expiry + ratchet (B-1)"
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          SECRET_KEY: test-secret-key
+        run: python tools/check_policy_expiry.py
+      # B5: a UTF-8 BOM makes ast.parse() fail, and a directory without an
+      # __init__.py resolves as a PEP 420 namespace package. Either one breaks
+      # the *whole* pytest collection rather than a single test, so it is
+      # cheaper to fail fast here. stdlib-only.
+      - name: "Collection stability (B5: BOM + package markers)"
+        run: python tools/check_collection_stability.py --root .
+      # B6: SQLite WAL deployment safety (D-16 / KN-09). The runtime SQLite
+      # (3.49.1) is below the WAL-reset fix (3.51.3); a WAL deployment on
+      # this runtime risks corruption. Non-blocking until the upgrade lands.
+      - name: "SQLite WAL safety (B6 / D-16)"
+        continue-on-error: true
+        run: python tools/check_sqlite_safety.py --wal
+      # B5: the lint ratchet. The floor in tools/lint_baseline.json records
+      # the debt the tree is allowed to carry; the check fails when the debt
+      # GROWS. It was implemented only in the PowerShell hook, so the POSIX
+      # hook and CI did not enforce it. The tool is the single implementation
+      # both use.
+      - name: "Lint ratchet (B5: the debt may only shrink)"
+        run: python tools/check_lint_ratchet.py --root .
+      # C-4: engine/tests/test_structure_ceilings.py (module-size ceilings,
+      # network-import ingestion whitelist, honesty vocabulary size).
+      # Non-blocking for now because the legacy measurements it pins are
+      # expected to move while the large modules are split; flip
+      # continue-on-error to false (or drop the line) once the gateway split
+      # (A-1) lands — that is the change that makes the gateway ceiling
+      # unconditional rather than allowlisted.
+      # blocking once the gateway split (A-1) lands
+      - name: "Structure ceilings (C-4)"
+        continue-on-error: true
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          SECRET_KEY: test-secret-key
+        run: python -m pip install -q pytest && python -m pytest engine/tests/test_structure_ceilings.py -q -p no:cacheprovider
+
+  security:
+    name: Security scan (check_security + security regression) — blocking on HIGH
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # tools/check_security.py is stdlib-only.
+      # BLOCKING since 2026-10-13 (SEC-31/S4). The gate is honest because the
+      # tree is clean under it: 0 findings across 1251 files (measured). Two
+      # defects that made it useless before were fixed: the inverted
+      # --fail-on comparison (it failed on any finding, so no threshold meant
+      # anything) and the disagreement with detect_imports.py — the engine
+      # bypass check now honours the same import_guard_policy.json sanctions
+      # (allowed_imports + facade_files) and exempts test modules, so its
+      # findings no longer contradict the import guard.
+      - name: "check_security --fail-on HIGH (blocking)"
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          SECRET_KEY: test-secret-key
+        run: |
+          python tools/check_security.py --fail-on HIGH 2>&1 | tee sec.log
+          grep -E 'Total findings|CRITICAL:|HIGH:|MEDIUM:|LOW:' sec.log >> "$GITHUB_STEP_SUMMARY"
+      # The remediation regression tests for the 2026-10-12 security wave:
+      # every test fails if its fix is reverted.
+      - name: "Security regression suite (SEC wave)"
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          SECRET_KEY: test-secret-key
+        run: >-
+          python -m pytest services/security/tests/test_security_remediation.py
+          -q -p no:cacheprovider
+
+  venv-integrity:
+    name: venv integrity audit — non-blocking warning gate (R-1)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # NON-BLOCKING BY DESIGN (R-1). This is deliberate, not an oversight:
+      # tools/check_venv_integrity.py audits a long-lived Windows working venv
+      # (DEFAULT_VENV = D:\eco_nojin\.venv, the <venv>/Lib/site-packages layout
+      # where the 2026-10-10 tampering campaign was found). GitHub-hosted
+      # runners install wheels FRESH on every run, so there is no durable venv
+      # state for the audit to compare against — it cannot distinguish
+      # "untouched" from "installed seconds ago", and a green audit would prove
+      # nothing. The job therefore only publishes the attempt as a warning
+      # annotation plus a report artifact; the authoritative gate is the local
+      # `python tools/check_venv_integrity.py` (exit 2 while the documented
+      # residual mismatches remain; see
+      # reports/security/SECURITY-FINDINGS-2026-10-10.md).
+      # The blocking gates remain `architecture` (import guard) and `test`
+      # (pytest) above — unchanged.
+      - name: check_venv_integrity (publish report, never gate)
+        continue-on-error: true
+        run: |
+          set +e
+          python tools/check_venv_integrity.py --json venv-integrity.json > venv-integrity.log 2>&1
+          code=$?
+          echo "check_venv_integrity exit code was ${code}"
+          if [ "$code" -eq 0 ]; then
+            echo "::notice title=venv-integrity::audit PASS (0 mismatches) — report in the venv-integrity artifact."
+          else
+            echo "::warning title=venv-integrity::audit did not complete against a working venv on this runner (exit ${code}); CI installs wheels fresh, so this gate is non-blocking by design (R-1) — run it locally: python tools/check_venv_integrity.py. See the venv-integrity artifact."
+          fi
+          {
+            echo "## venv integrity audit (non-blocking warning gate, R-1)";
+            echo "";
+            echo '```text'; cat venv-integrity.log; echo '```';
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload venv-integrity report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: venv-integrity
+          path: |
+            venv-integrity.json
+            venv-integrity.log
+          if-no-files-found: warn

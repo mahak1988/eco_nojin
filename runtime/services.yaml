@@ -1,0 +1,75 @@
+# Eco Nojin / HyDroMA — internal service map (DP-2 replacement for Docker
+# orchestration). No containers: every entry below is launched in-process as
+#   python -m uvicorn <app> --host <host> --port <port> --workers <workers>
+# by `python -m runtime.supervise up`. Storage tier comes from the
+# HYDROMA_STORAGE_TIER environment variable and is read by the services.
+#
+# Every entry is a REAL ASGI app discovered in this repository (a module-level
+# `app = FastAPI(...)` in <package>/main.py). Six such apps exist, so no
+# template placeholders are needed.
+#
+# health_path points at an endpoint that really answers 200 for that app:
+#   * api_gateway exposes /health (services/api_gateway/main.py)
+#   * workflow exposes /api/v1/workflow/health
+#   * auth / notification / ledger / reporting have no dedicated liveness route
+#     yet, so the supervisor probes /openapi.json (served by FastAPI, 200 OK).
+
+services:
+  - name: api-gateway
+    app: services.api_gateway.main:app
+    host: 127.0.0.1
+    port: 8100
+    workers: 1
+    health_path: /health
+    depends_on:
+      - auth
+      - ledger
+      - workflow
+      - notification
+      - reporting
+    enabled: true
+
+  - name: auth
+    app: services.auth.main:app
+    host: 127.0.0.1
+    port: 8101
+    workers: 1
+    health_path: /openapi.json
+    depends_on: []
+    enabled: true
+
+  - name: ledger
+    app: services.ledger.main:app
+    host: 127.0.0.1
+    port: 8102
+    workers: 1
+    health_path: /openapi.json
+    depends_on: []
+    enabled: true
+
+  - name: workflow
+    app: services.workflow.main:app
+    host: 127.0.0.1
+    port: 8103
+    workers: 1
+    health_path: /api/v1/workflow/health
+    depends_on: []
+    enabled: true
+
+  - name: notification
+    app: services.notification.main:app
+    host: 127.0.0.1
+    port: 8104
+    workers: 1
+    health_path: /openapi.json
+    depends_on: []
+    enabled: true
+
+  - name: reporting
+    app: services.reporting.main:app
+    host: 127.0.0.1
+    port: 8105
+    workers: 1
+    health_path: /openapi.json
+    depends_on: []
+    enabled: true

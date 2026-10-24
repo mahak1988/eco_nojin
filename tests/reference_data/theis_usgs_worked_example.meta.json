@@ -1,0 +1,9 @@
+{
+  "source": "USGS Python for Hydrology, Part 0, notebook 07a Theis example: s=1.40636669 m for T=1000 m2/day, S=3e-4, Q=4088 m3/day, r=1000 m, t=10 d; https://doi-usgs.github.io/python-for-hydrology/latest/notebooks/part0_python_intro/solutions/07a_Theis-exercise-solution.html",
+  "kind": "worked_example",
+  "checksum_sha256": "d92147a2d68b6ef1d06bd1db8ccf4104755f7620405c2022d0dc9445f0b666f1",
+  "vendored_at": "2026-10-15T17:51:06.310122+00:00",
+  "offline": true,
+  "promoted_model": "CANON-005",
+  "register_family": "THEIS_DRAWDOWN_USGS"
+}

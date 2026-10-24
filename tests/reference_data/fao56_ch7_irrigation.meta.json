@@ -1,0 +1,20 @@
+{
+  "dataset_id": "fao56_ch7_irrigation",
+  "dataset_version": "1.0.0",
+  "source_id": "FAO56_CH7_IRRIGATION_INTERVAL",
+  "source": "Allen, R.G., Pereira, L.S., Raes, D. and Smith, M. (1998), Crop evapotranspiration - Guidelines for computing crop water requirements, FAO Irrigation and Drainage Paper 56, Chapter 7 'Irrigation scheduling', Section 7.2: I = (TAW * p) / ETc. Published at https://www.fao.org/4/X0490E/x0490e0c.htm",
+  "variable": "irrigation_interval_days",
+  "unit": "days",
+  "url": "https://www.fao.org/4/X0490E/x0490e0c.htm",
+  "license": "Copyright FAO 1998; quoted verbatim for non-commercial scientific validation with attribution - see tests/reference_data/fao56_ch7_irrigation.md",
+  "retrieved_at": "2026-10-16",
+  "processing_time": "2026-10-16",
+  "provider": "Food and Agriculture Organization of the United Nations (FAO)",
+  "spatial_resolution": "point_example",
+  "temporal_resolution": "single_calculation",
+  "quality_flag": "published_reference_value",
+  "uncertainty": "I = (TAW * p) / ETc = (100 * 0.55) / 6.0 = 9.17, rounded to 9 days per FAO-56 convention",
+  "processing_history": "transcribed from the FAO-56 Ch.7 worked example cited in engine/strict_tests/test_s08_irrigation.py:139 into CSV on 2026-10-16; engine/hydroma/irrigation/scheduler.py::calculate_interval reproduces I = ceil((TAW*p)/ETc) = 9",
+  "checksum_sha256": "e01288de1c533cc3a7bad63ec8a164824387f9ce4a213019a493ffbe685d69a9",
+  "local_path": "tests/reference_data/fao56_ch7_irrigation.csv"
+}

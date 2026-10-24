@@ -1,0 +1,23 @@
+indicator_id: "ENO_SPI_001"
+name:
+  en: "Standardized Precipitation Index"
+  fa: "شاخص استانداردشده بارش"
+domain: "climate"
+formula: "SPI = phi^-1(GammaCDF(P_accumulated over time scale)), with the McKee zero-precipitation probability term"
+unit: "index"
+input_variables:
+  - name: "precipitation_mm_monthly"
+    unit: "mm month-1"
+    required: true
+  - name: "time_scale_months"
+    unit: "months"
+    required: true
+    default: 12
+reference:
+  source: "McKee et al. 1993; WMO No. 1090"
+  url: "https://public.wmo.int/en/resources/library/standardized-precipitation-index-user-guide"
+validation_status: "VALIDATED_METHOD_CONFORMANCE"
+version: "1.1.0"
+zed_compliant: true
+maturity_target: "S3"
+implementation_note: "Implemented in engine/hydroma/spi_calculator.py (McKee et al. 1993 / WMO No. 1090: moving-sum accumulation, gamma MLE with the zero-precipitation probability term, Phi^-1 transform). Verified 2026-10-10 in engine/tests/test_spi_calculator.py by a from-scratch implementation sharing no code (Newton MLE solved from the published score equation ln(a)-psi(a)=ln(mean)-mean(ln x), regularized incomplete gamma via series/continued fraction checked against the exact Erlang closed form for integer shapes, and the stdlib AS241 inverse normal), plus the published classification bands pinned in tests/reference_data/mckee_spi_classification.csv. HONEST REMAINING GAP: no published numeric SPI value table (e.g. Guttman 1999) is available offline (ZED forbids live download), so conformance to the published procedure is verified, not external index values."

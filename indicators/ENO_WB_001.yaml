@@ -1,0 +1,28 @@
+indicator_id: "ENO_WB_001"
+name:
+  en: "Water Balance"
+  fa: "موازنده جرم"
+domain: "hydrology"
+formula: "P = ET + Q + dS"
+unit: "mm"
+input_variables:
+  - name: "precipitation_mm"
+    unit: "mm"
+    required: true
+  - name: "et_mm"
+    unit: "mm"
+    required: true
+  - name: "runoff_mm"
+    unit: "mm"
+    required: true
+  - name: "storage_change_mm"
+    unit: "mm"
+    required: true
+reference:
+  source: "Water balance equation (Thornthwaite/FAO-56 style mass balance)"
+  url: "https://www.fao.org/3/X0490E/x0490e00.htm"
+validation_status: "VALIDATED_MASS_CONSERVATION"
+version: "1.1.0"
+zed_compliant: true
+maturity_target: "S3"
+implementation_note: "Implemented in engine/hydroma/water_balance.py as a mass-conserving bucket for P = ET + Q + dS (mm per period); storage clamped at >= 0 with the clamped demand reported per period in excess_mm. Verified 2026-10-10 in engine/tests/test_water_balance.py: mass closure on a deterministic series is 7.1e-15 mm, the storage clamp reports the exact overflow instead of silently dropping water, and zero fluxes give zero storage change. This is a definitional identity (conservation of water), so the applicable verification is closure and unit consistency, which pass; an external catchment benchmark is still tracked as a separate gap."

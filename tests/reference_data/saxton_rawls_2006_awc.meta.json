@@ -1,0 +1,20 @@
+{
+  "dataset_id": "saxton_rawls_2006_awc",
+  "dataset_version": "1.0.0",
+  "source_id": "SAXTON_RAWLS_2006_AWC",
+  "source": "Saxton, K.D. and Rawls, W.J. (2006), Soils and crops: estimating soil moisture and field capacity with pedotransfer functions, Soil Science Society of America Journal 70(5):975-987, Table 6, p.980 (available water capacity mm/m for 12 USDA texture classes, computed as theta(FC) - theta(PWP) at -33 kPa and -1500 kPa)",
+  "variable": "available_water_capacity",
+  "unit": "mm_per_m",
+  "url": "https://doi.org/10.2136/sssaj2005.0184",
+  "license": "SSSA Journal © 2006 — transcribed verbatim from a published scientific table for non-commercial scientific validation with attribution",
+  "retrieved_at": "2026-10-16",
+  "processing_time": "2026-10-16",
+  "provider": "Soil Science Society of America",
+  "spatial_resolution": "texture_class",
+  "temporal_resolution": "static_table",
+  "quality_flag": "published_table_value",
+  "uncertainty": "published tabular AWC (mm/m) values from a peer-reviewed pedotransfer study",
+  "processing_history": "transcribed verbatim from Saxton & Rawls (2006) Table 6 into CSV on 2026-10-16; engine/hydroma/soil/physics.py::available_water_capacity uses these as external reference points (conftest.py SAXTON_RAWLS_2006_AWC_MM_PER_M); rice/paddy and pertexture classes follow the 12-class USDA texture triangle",
+  "checksum_sha256": "6e4a2e858e9584fbcc143849bfc288997cfaee5ae387bdeacd095a70f289454b",
+  "local_path": "tests/reference_data/saxton_rawls_2006_awc.csv"
+}

@@ -1,0 +1,14 @@
+# HyDroMA Development Requirements
+# Install with: pip install -r requirements-dev.txt
+
+# Core dependencies
+-r requirements.txt
+
+# Additional test/verification dependencies
+hypothesis>=6.0
+pytest-xdist>=3.5
+pytest-html>=4.0
+
+# Type checking
+types-requests>=2.31
+types-pyyaml>=6.0

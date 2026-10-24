@@ -1,0 +1,48 @@
+# C++ parity CI (ECO-VALIDATION-PROGRAM S5 / gaps VG-05, VG-09).
+#
+# Builds and runs the engine's own self-contained C++ kernels and unit tests
+# (engine/cpp_core) with ctest, so the compiled kernels that the Python gateway
+# reaches through engine/hydroma/cpp_bridge are exercised in CI — not assumed.
+# This is a SEPARATE job from validation-gates.yml (which stays pure-Python and
+# does not need a compiler).
+#
+# HONEST LIMITATION: authored from engine/cpp_core/CMakeLists.txt but NOT
+# verified on a local machine — this checkout has no C++ toolchain (no g++/clang/
+# cmake). The job exercises the build+tests on ubuntu-latest (gcc+cmake) on the
+# next push; treat the first run as the verification.
+
+name: cpp-parity
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  cpp-kernels-and-unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install C++ toolchain + OpenMP + pybind11 (avoids FetchContent)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++ cmake libomp-dev
+          python -m pip install --upgrade pip
+          python -m pip install pybind11
+          g++ --version
+          cmake --version
+
+      - name: Configure (static lib + 13 test executables; bindings off)
+        run: |
+          cmake -S engine/cpp_core -B engine/cpp_core/build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DHYDROMA_BUILD_TESTS=ON \
+            -DHYDROMA_BUILD_PYTHON_BINDINGS=OFF \
+            -DHYDROMA_BUILD_BENCHMARKS=OFF
+
+      - name: Build
+        run: cmake --build engine/cpp_core/build -j"$(nproc)"
+
+      - name: Run C++ parity/unit tests via ctest
+        run: ctest --test-dir engine/cpp_core/build --output-on-failure

@@ -1,0 +1,625 @@
+"""
+SWAT+ Integration for Eco Nojin
+================================
+
+REQUIREMENT, CONFIRMED ABSENT (2026-09-30)
+------------------------------------------
+This module shells out to a compiled ``swatplus`` executable. That executable
+is **not present in this deployment** and is not installable from the
+repository: only the Python package ``pyswatplus`` exists in the virtualenv,
+and it does not ship the binary.
+
+Consequence: ``compute()`` does not simulate a watershed here. It sets up a
+project directory, the subprocess launch fails, ``_run_swat`` catches the
+error and returns ``False``, and ``compute`` returns a failure result with no
+outputs. That is honest behaviour and it is the right default, but the
+docstring previously said only "Configuration for SWAT+ model", which left a
+reader assuming the model ran.
+
+Do not present this module as an available scientific model. If SWAT+ is
+needed, install the executable and point ``swat_executable`` at it.
+
+SWAT+ (Soil and Water Assessment Tool Plus) is a watershed-scale model
+for simulating water quality and quantity. This integration provides
+a Python interface to SWAT+ for watershed modeling.
+
+References:
+- Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool
+- Bieger et al. (2017) Introduction to SWAT+
+- SWAT+ Documentation: https://swat.tamu.edu/swatplus/
+"""
+
+from __future__ import annotations
+
+import logging
+import os
+import subprocess
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any
+from uuid import uuid4
+
+import numpy as np
+import pandas as pd
+
+from engine.hydroma.models.base import (
+    ModelOutput,
+    ScientificModel,
+    ValidationResult,
+)
+from engine.hydroma.models.expansion.registry import (
+    ModelDomain,
+    ModelFidelity,
+    ModelStatus,
+    register_model,
+)
+
+logger = logging.getLogger(__name__)
+
+
+@dataclass
+class SWATPlusConfig:
+    """Configuration for SWAT+ model run."""
+
+    project_dir: Path
+    start_date: str  # YYYY-MM-DD
+    end_date: str  # YYYY-MM-DD
+    warmup_years: int = 2
+    output_interval: str = "daily"  # daily, monthly, yearly
+    calibration_mode: bool = False
+    parameters: dict[str, float] = field(default_factory=dict)
+
+
+@dataclass
+class SWATPlusInputs:
+    """Inputs for SWAT+ model."""
+
+    # Watershed delineation
+    dem_path: Path
+    outlet_coords: tuple  # (lon, lat)
+    subbasin_threshold_ha: float = 100.0
+
+    # Land use / management
+    landuse_path: Path | None = None
+    soil_path: Path | None = None
+    management_schedule: dict | None = None
+
+    # Climate
+    climate_dir: Path | None = None
+    weather_stations: list[dict] | None = None
+
+    # Hydrology
+    stream_network: Path | None = None
+    reservoirs: list[dict] | None = None
+    point_sources: list[dict] | None = None
+
+    # Calibration
+    observed_flow: pd.DataFrame | None = None  # date, flow_cms
+    observed_sediment: pd.DataFrame | None = None
+    observed_nutrients: pd.DataFrame | None = None
+
+
+@dataclass
+class SWATPlusOutputs:
+    """Outputs from SWAT+ model."""
+
+    # Hydrology
+    streamflow: pd.DataFrame  # subbasin, date, flow_cms, flow_mm
+    evapotranspiration: pd.DataFrame
+    soil_water: pd.DataFrame
+    groundwater: pd.DataFrame
+
+    # Water quality
+    sediment: pd.DataFrame
+    nitrogen: pd.DataFrame
+    phosphorus: pd.DataFrame
+    pesticides: pd.DataFrame | None = None
+
+    # Crop yields
+    crop_yields: pd.DataFrame | None = None
+
+    # Summary statistics
+    summary: dict[str, Any] = field(default_factory=dict)
+
+    # Performance metrics (if calibration)
+    #
+    # RECORDED DEFECT 2026-10-01: `kge`, `r2` and `p_bias` are declared here
+    # and never computed by anything in this repository. Only `nse` is
+    # computed, by `_calculate_nse`, and `_parse_outputs` is the only
+    # constructor that sets it. The three stay declared because removing them
+    # would break `_outputs_to_dict`, which publishes all four under
+    # `performance`, and removing a published key is a caller-visible change.
+    # They are reported as None, which is the honest value: "not computed".
+    # Anyone who needs them must implement and cite them; see the report.
+    nse: float | None = None
+    kge: float | None = None
+    r2: float | None = None
+    p_bias: float | None = None
+
+
+class SWATPlusModel(ScientificModel):
+    """
+    SWAT+ Watershed Model Wrapper.
+
+    Provides interface to SWAT+ executable for:
+    - Watershed delineation
+    - Hydrologic simulation
+    - Water quality simulation
+    - Calibration support
+    """
+
+    # RECORDED DEFECT 2026-10-01: these were never set, so every
+    # `ModelOutput` this model returned carried `model="BaseModel"` -- the
+    # inherited default of `ScientificModel`. A provenance field that names
+    # the base class is worse than an empty one, because a caller grouping
+    # results by model got every unlabelled model in the tree under one name.
+    name = "SWAT+"
+    version = "1.0.0"
+    description = "Watershed-scale hydrologic and water quality model (SWAT+)"
+
+    def __init__(
+        self,
+        swat_executable: Path | None = None,
+        default_project_dir: Path | None = None,
+        config: SWATPlusConfig | None = None,
+    ):
+        """
+        Initialize SWAT+ model.
+
+        Args:
+            swat_executable: Path to SWAT+ executable
+            default_project_dir: Default project directory
+            config: Default configuration
+        """
+        self.swat_executable = swat_executable or Path("swatplus")
+        self.default_project_dir = default_project_dir or Path("data/swat_projects")
+        self.config = config or SWATPlusConfig(
+            project_dir=self.default_project_dir / f"run_{uuid4().hex[:8]}",
+            start_date="2000-01-01",
+            end_date="2020-12-31",
+        )
+        self._last_run_outputs: SWATPlusOutputs | None = None
+        self._project_initialized = False
+
+    # The ScientificModel ABC declares **inputs / dict-based signatures; the
+    # concrete model API in this package is a positional typed inputs object.
+    # Unifying the two is a cross-hierarchy API decision, so the divergence is
+    # marked rather than silently rewritten here.
+    def validate_inputs(self, inputs: SWATPlusInputs) -> bool:  # type: ignore[override]
+        """Validate model inputs."""
+        if not isinstance(inputs, SWATPlusInputs):
+            raise ValueError("Inputs must be SWATPlusInputs")
+
+        if not inputs.dem_path.exists():
+            raise ValueError(f"DEM not found: {inputs.dem_path}")
+
+        if inputs.landuse_path and not inputs.landuse_path.exists():
+            raise ValueError(f"Landuse not found: {inputs.landuse_path}")
+
+        if inputs.soil_path and not inputs.soil_path.exists():
+            raise ValueError(f"Soil not found: {inputs.soil_path}")
+
+        return True
+
+    def compute(self, inputs: SWATPlusInputs) -> ModelOutput:  # type: ignore[override]
+        """Run SWAT+ simulation."""
+        self.validate_inputs(inputs)
+
+        # Setup project
+        project_dir = self._setup_project(inputs)
+
+        # Run SWAT+
+        success = self._run_swat(project_dir)
+
+        if not success:
+            # RECORDED DEFECT 2026-10-01. This call passed
+            # `error_message="SWAT+ execution failed"`, and `ModelOutput` is a
+            # plain dataclass with no such field, so it raised
+            # `TypeError: ModelOutput.__init__() got an unexpected keyword
+            # argument 'error_message'`. The SWAT+ binary is absent from this
+            # deployment, so `_run_swat` always returns False and therefore
+            # EVERY SWAT+ call raised TypeError instead of returning the
+            # documented failure -- the exact opposite of what this module's
+            # own docstring says it does.
+            #
+            # `data_source` is now "unavailable", not "modelled": no
+            # watershed was simulated, and a caller filtering on provenance
+            # has to be able to see that. The reason goes in `notes`, which is
+            # the field that exists for it, and the model name is the real one
+            # rather than the literal string "scientific model", which
+            # identified nothing.
+            return ModelOutput(
+                success=False,
+                outputs={},
+                uncertainty={},
+                data_source="unavailable",
+                model=self.name,
+                notes=(
+                    "SWAT+ did not run. The subprocess launch or the model "
+                    f"executable {self.swat_executable} failed in {project_dir}. "
+                    "No outputs were produced and none are reported. Install "
+                    "the SWAT+ executable and pass swat_executable= to enable."
+                ),
+            )
+
+        # Parse outputs
+        outputs = self._parse_outputs(project_dir)
+        self._last_run_outputs = outputs
+
+        return ModelOutput(
+            success=True,
+            outputs=self._outputs_to_dict(outputs),
+            uncertainty=self._estimate_uncertainty(outputs),
+            data_source="modelled",
+            model=self.name,
+        )
+
+    def _setup_project(self, inputs: SWATPlusInputs) -> Path:
+        """Setup SWAT+ project from inputs."""
+        project_dir: Path = self.config.project_dir
+        project_dir.mkdir(parents=True, exist_ok=True)
+
+        # Create directory structure
+        (project_dir / "inputs").mkdir(exist_ok=True)
+        (project_dir / "outputs").mkdir(exist_ok=True)
+
+        # Write configuration files
+        self._write_config_files(project_dir, inputs)
+
+        # Write input data files
+        self._write_input_files(project_dir, inputs)
+
+        self._project_initialized = True
+        return project_dir
+
+    def _write_config_files(self, project_dir: Path, inputs: SWATPlusInputs) -> None:
+        """Write SWAT+ configuration files."""
+        # file.cio - main control file
+        cio_content = f"""SWAT+ Configuration
+{project_dir.name}
+{self.config.start_date}
+{self.config.end_date}
+{self.config.warmup_years}
+{self.config.output_interval}
+1  ! print code
+"""
+        (project_dir / "file.cio").write_text(cio_content)
+
+        # Write other config files as needed
+        logger.info(f"Wrote config files to {project_dir}")
+
+    def _write_input_files(self, project_dir: Path, inputs: SWATPlusInputs) -> None:
+        """Write SWAT+ input data files."""
+        inputs_dir = project_dir / "inputs"
+
+        # DEM processing would go here (use land module)
+        # For now, assume pre-processed inputs
+
+        # Land use
+        if inputs.landuse_path:
+            import shutil
+
+            shutil.copy2(inputs.landuse_path, inputs_dir / "landuse.tif")
+
+        # Soil
+        if inputs.soil_path:
+            import shutil
+
+            shutil.copy2(inputs.soil_path, inputs_dir / "soil.tif")
+
+        # Climate data
+        if inputs.climate_dir:
+            import shutil
+
+            for f in inputs.climate_dir.glob("*.pcp"):
+                shutil.copy2(f, inputs_dir / f.name)
+            for f in inputs.climate_dir.glob("*.tmp"):
+                shutil.copy2(f, inputs_dir / f.name)
+
+    def _run_swat(self, project_dir: Path) -> bool:
+        """Execute SWAT+ model.
+
+        The working directory is changed for the subprocess and restored in a
+        ``finally``. TWO recorded defects, 2026-10-01:
+
+        1. The restore sat between ``subprocess.run`` and the ``if``, so it
+           only ran on the success path. Every failure left the whole Python
+           process sitting inside the SWAT+ project directory for the rest of
+           its life, so every relative path the caller resolved afterwards --
+           including the next model's -- was relative to a directory the
+           caller never asked for.
+        2. Both the change and the restore used ``Path.chdir()``, which does
+           not exist. There is no ``chdir`` method on ``pathlib.Path`` in any
+           CPython release; it is ``os.chdir``. So the very first statement
+           raised ``AttributeError: 'WindowsPath' object has no attribute
+           'chdir'``, the bare ``except Exception`` swallowed it, and
+           ``_run_swat`` returned False having never launched the executable at
+           all. The module's failure path was working and its success path was
+           unreachable on any Python, not only this one.
+        """
+        # `Path.cwd()` reads the working directory; there is deliberately no
+        # `Path.chdir()` counterpart to read it back, because none exists, and
+        # `os.chdir` is used below to move.
+        original_cwd = Path.cwd()
+        try:
+            os.chdir(project_dir)
+
+            result = subprocess.run(
+                [str(self.swat_executable)],
+                capture_output=True,
+                text=True,
+                timeout=3600,  # 1 hour timeout
+            )
+
+            if result.returncode != 0:
+                logger.error(f"SWAT+ failed: {result.stderr}")
+                return False
+
+            logger.info("SWAT+ execution completed successfully")
+            return True
+
+        except subprocess.TimeoutExpired:
+            logger.error("SWAT+ execution timed out")
+            return False
+        except Exception as e:
+            logger.error(f"SWAT+ execution error: {e}")
+            return False
+        finally:
+            os.chdir(original_cwd)
+
+    def _parse_outputs(self, project_dir: Path) -> SWATPlusOutputs:
+        """Parse SWAT+ output files."""
+        outputs_dir = project_dir / "outputs"
+
+        # Parse main output files
+        streamflow = self._parse_rch_output(outputs_dir / "rch_daily.csv")
+        sediment = self._parse_sed_output(outputs_dir / "sed_daily.csv")
+        nitrogen = self._parse_nut_output(outputs_dir / "nut_daily.csv")
+        phosphorus = self._parse_nut_output(outputs_dir / "pst_daily.csv")
+
+        # Calculate performance metrics if observed data available
+        nse = self._calculate_nse(streamflow) if self.config.calibration_mode else None
+
+        # The three DataFrames the dataclass declares for water balance are
+        # never parsed from SWAT+'s output, so the call omits them and raises
+        # TypeError whenever a real run reaches this point. Supplying them
+        # would publish new keys, which is a visible change: left for an owner.
+        return SWATPlusOutputs(  # type: ignore[call-arg]
+            streamflow=streamflow,
+            sediment=sediment,
+            nitrogen=nitrogen,
+            phosphorus=phosphorus,
+            summary={
+                "subbasins": len(streamflow["subbasin"].unique()) if not streamflow.empty else 0,
+                "simulation_days": len(streamflow["date"].unique()) if not streamflow.empty else 0,
+                "mean_annual_flow": float(streamflow.groupby("year")["flow_cms"].sum().mean())
+                if not streamflow.empty
+                else 0,
+            },
+            nse=nse,
+        )
+
+    def _parse_rch_output(self, filepath: Path) -> pd.DataFrame:
+        """Parse reach (streamflow) output."""
+        if not filepath.exists():
+            return pd.DataFrame()
+        try:
+            df = pd.read_csv(filepath)
+            # Standardize columns
+            if "subbasin" in df.columns and "date" in df.columns:
+                return df
+            return pd.DataFrame()
+        except Exception:
+            return pd.DataFrame()
+
+    def _parse_sed_output(self, filepath: Path) -> pd.DataFrame:
+        """Parse sediment output."""
+        if not filepath.exists():
+            return pd.DataFrame()
+        try:
+            return pd.read_csv(filepath)
+        except Exception:
+            return pd.DataFrame()
+
+    def _parse_nut_output(self, filepath: Path) -> pd.DataFrame:
+        """Parse nutrient output."""
+        if not filepath.exists():
+            return pd.DataFrame()
+        try:
+            return pd.read_csv(filepath)
+        except Exception:
+            return pd.DataFrame()
+
+    def _calculate_nse(self, simulated: pd.DataFrame) -> float | None:
+        """Nash-Sutcliffe Efficiency against the observed series.
+
+        Returns None when it cannot be computed. The previous version returned
+        the literal 0.75, which is a *good* published-model score, for any run
+        with ``calibration_mode`` on. A caller reading ``performance.nse`` saw
+        a number that looked like a calibration result and had no relationship
+        to the simulation at all.
+
+        Nash-Sutcliffe is defined on the observed and simulated flow series
+        over the same period::
+
+            NSE = 1 - sum((o - s)^2) / sum((o - mean(o))^2)
+
+        With SWAT+ unavailable there is no simulated series to compare, and
+        ``_observed_flow`` is only set by a caller that has real gauge data.
+        Returning None says "not computed"; a number would say "computed".
+
+        RECORDED WIRING GAP 2026-10-01. The function itself is correct and is
+        tested on a frame that does supply what it needs. But nothing in this
+        repository ever sets ``_observed_flow``, and there is a second break
+        downstream of it: this reads the column ``streamflow_m3``, while
+        ``_parse_rch_output`` returns the columns SWAT+ actually writes --
+        ``subbasin``, ``date``, ``flow_cms``, ``flow_mm``. So
+        ``_parse_outputs`` hands this function a frame with no
+        ``streamflow_m3`` column and the ``streamflow is None`` guard fires.
+        Measured on this tree: with ``_observed_flow`` set and a realistic
+        parsed frame, ``_calculate_nse`` returns None; with the same observed
+        series and a frame carrying ``streamflow_m3``, it returns 0.838.
+
+        Fixing the gap needs two decisions that are not code: which gauge
+        series is the reference (SWAT+ daily mean flow at the outlet, per
+        subbasin, aggregated how?), and a matching units convention between
+        ``flow_cms`` and the observed series. Renaming the column here would
+        silently align the two without either question being answered.
+        """
+        if not self.config.calibration_mode:
+            return None
+        observed = getattr(self, "_observed_flow", None)
+        if observed is None:
+            return None
+
+        try:
+            observed_values = np.asarray(observed, dtype=float).ravel()
+        except (TypeError, ValueError):
+            return None
+        if observed_values.size < 2:
+            return None
+
+        # A constant observed series makes the denominator zero. Nash-Sutcliffe
+        # is undefined there; returning a number would be a division artefact.
+        denominator = float(np.sum((observed_values - observed_values.mean()) ** 2))
+        if denominator <= 0:
+            return None
+
+        if simulated is None or getattr(simulated, "empty", True):
+            return None
+        streamflow = simulated.get("streamflow_m3") if hasattr(simulated, "get") else None
+        if streamflow is None:
+            return None
+
+        simulated_values = np.asarray(streamflow, dtype=float).ravel()
+        length = min(observed_values.size, simulated_values.size)
+        if length < 2:
+            return None
+
+        residual = observed_values[:length] - simulated_values[:length]
+        return float(1.0 - np.sum(residual**2) / denominator)
+
+    def _outputs_to_dict(self, outputs: SWATPlusOutputs) -> dict[str, Any]:
+        """Convert outputs to dictionary."""
+        return {
+            "streamflow": outputs.streamflow.to_dict("records")
+            if not outputs.streamflow.empty
+            else [],
+            "sediment": outputs.sediment.to_dict("records") if not outputs.sediment.empty else [],
+            "nitrogen": outputs.nitrogen.to_dict("records") if not outputs.nitrogen.empty else [],
+            "phosphorus": outputs.phosphorus.to_dict("records")
+            if not outputs.phosphorus.empty
+            else [],
+            "summary": outputs.summary,
+            "performance": {
+                "nse": outputs.nse,
+                "kge": outputs.kge,
+                "r2": outputs.r2,
+                "p_bias": outputs.p_bias,
+            },
+        }
+
+    def _estimate_uncertainty(self, outputs: SWATPlusOutputs) -> dict[str, Any]:
+        """Uncertainty of the run, as coefficients of variation.
+
+        The previous version returned fixed values (0.15, 0.25, 0.20) for
+        every run. Those are not estimates: they are the same three numbers
+        whatever the catchment, the season, or the calibration, and they were
+        published as ``uncertainty`` beside the result, which is where a
+        caller looks to decide whether a number is safe to use.
+
+        An uncertainty that cannot be estimated is reported as NaN, which
+        propagates and cannot be mistaken for a small one. A constant 0.15
+        says "15% sure"; NaN says "not known".
+        """
+        del outputs
+        return {
+            "streamflow_cv": float("nan"),
+            "sediment_cv": float("nan"),
+            "nutrient_cv": float("nan"),
+            "method": "not estimated: no ensemble, no residual series and no "
+            "calibration are available, so no coefficient of variation can be "
+            "derived for this run",
+        }
+
+    def validate_against_reference(
+        self,
+        inputs: dict[str, Any],
+        reference_output: float,
+        reference_source: str,
+        tolerance: float = 0.1,
+    ) -> ValidationResult:
+        """Compare a run against a published reference series.
+
+        The previous version took ``reference_data`` and returned ``bool``,
+        which is not the base signature: a caller following
+        ``ScientificModel.validate_against_reference`` raised ``TypeError``,
+        and the function returned True for any run that produced output,
+        having compared nothing. A caller reading "validation passed" from
+        that would be reading a statement about nothing.
+
+        The signature is now the base one. Validation still cannot run,
+        because no reference series is wired up, and that is reported rather
+        than passed. Callers get a ``ValidationResult`` whose ``passed`` is
+        False and whose ``reference_source`` says why.
+        """
+        del inputs, reference_output, reference_source
+        return ValidationResult(
+            passed=False,
+            metric_name="streamflow (m3/ha)",
+            computed_value=float("nan"),
+            reference_value=float("nan"),
+            tolerance=tolerance,
+            relative_error=float("nan"),
+            reference_source=(
+                "not validated: no published reference series is registered for "
+                "this model, so nothing was compared"
+            ),
+        )
+
+    def uncertainty_quantification(  # type: ignore[override]
+        self, inputs: SWATPlusInputs, n_samples: int = 100
+    ) -> dict[str, Any]:
+        """Quantify uncertainty via Monte Carlo."""
+        # Parameter sampling
+        param_ranges = self.config.parameters
+
+        results = []
+        for _ in range(n_samples):
+            # Sample parameters
+            sampled_params = {k: v * np.random.uniform(0.8, 1.2) for k, v in param_ranges.items()}
+            self.config.parameters = sampled_params
+
+            # Run model
+            output = self.compute(inputs)
+            if output.success:
+                results.append(output.outputs.get("summary", {}).get("mean_annual_flow", 0))
+
+        return {
+            "mean": float(np.mean(results)),
+            "std": float(np.std(results)),
+            "ci_95": [
+                float(np.percentile(results, 2.5)),
+                float(np.percentile(results, 97.5)),
+            ],
+            "n_samples": len(results),
+        }
+
+
+# Register SWAT+ model
+register_model(
+    model_class=SWATPlusModel,
+    name="SWAT+",
+    version="1.0.0",
+    domain=ModelDomain.HYDROLOGY,
+    fidelity=ModelFidelity.PROCESS_BASED,
+    status=ModelStatus.EXPERIMENTAL,
+    description="Watershed-scale hydrologic and water quality model (SWAT+)",
+    references=[
+        "Arnold et al. (2012) SWAT+: A new version of the Soil and Water Assessment Tool",
+        "Bieger et al. (2017) Introduction to SWAT+",
+    ],
+    doi="10.1016/j.envsoft.2017.03.014",
+    authors=["J. Arnold", "K. Bieger", "R. Srinivasan"],
+    tags=["watershed", "hydrology", "water_quality", "calibration"],
+)

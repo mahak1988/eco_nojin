@@ -1,0 +1,76 @@
+{
+  "source": "Stage 41 shard JSONL files",
+  "computed_records": 1081,
+  "manifest_records": 1722,
+  "metrics": {
+    "baseline_epsilon_2_2": {
+      "n": 1081,
+      "r2": -12.070427613067386,
+      "rmse": 4.012983479209092,
+      "mae": 3.863509825197915,
+      "bias": -3.863509825197915,
+      "mape": 86.9736088611192
+    },
+    "calibrated_epsilon_2_63": {
+      "n": 1081,
+      "r2": -11.413576992682723,
+      "rmse": 3.910848071384642,
+      "mae": 3.7563649559887438,
+      "bias": -3.7563649559887438,
+      "mape": 84.42754150215615
+    },
+    "mean_predictor": {
+      "n": 1081,
+      "r2": 0.0,
+      "rmse": 1.1099987090837442,
+      "mae": 0.9277161397650615,
+      "bias": -4.8475972953105815e-17,
+      "mape": 24.946382060747634
+    }
+  },
+  "comparison": {
+    "calibrated_rmse_minus_baseline_rmse": -0.1021354078244503,
+    "calibrated_rmse_minus_mean_rmse": 2.8008493623008976,
+    "stage40_rmse_reference": 1.2828,
+    "calibrated_rmse_minus_stage40": 2.628048071384642
+  },
+  "stage40_shared_record_comparison": {
+    "stage40_computed_rows": 450,
+    "stage41_computed_rows": 1081,
+    "shared_ids_with_same_observed_yield": 294,
+    "metrics": {
+      "stage40_calibrated": {
+        "n": 294,
+        "r2": -0.32101534341790017,
+        "rmse": 1.3001993926766684,
+        "mae": 1.0241525877948348,
+        "bias": -0.49654740016869936,
+        "mape": 23.38536062089957
+      },
+      "stage41_baseline_epsilon_2_2": {
+        "n": 294,
+        "r2": -11.901968641712857,
+        "rmse": 4.0633480037409,
+        "mae": 3.921253098899241,
+        "bias": -3.921253098899241,
+        "mape": 87.2710274191642
+      },
+      "stage41_calibrated_epsilon_2_63": {
+        "n": 294,
+        "r2": -11.238442324892835,
+        "rmse": 3.957483389028232,
+        "mae": 3.8127016405857628,
+        "bias": -3.8127016405857628,
+        "mape": 84.78309186927359
+      },
+      "mean_predictor": {
+        "n": 294,
+        "r2": 0.0,
+        "rmse": 1.1312433204621541,
+        "mae": 0.9333742884909065,
+        "bias": 5.468037209718458e-16,
+        "mape": 25.23942077353592
+      }
+    }
+  }
+}

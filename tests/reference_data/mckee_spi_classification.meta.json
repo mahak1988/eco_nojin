@@ -1,0 +1,22 @@
+{
+  "dataset_id": "mckee_spi_classification",
+  "dataset_version": "1.0",
+  "source_id": "MCKEE_1993_SPI_CLASSIFICATION",
+  "source": "McKee, T.B., Doesken, N.J. and Kleist, J. (1993), The relationship of drought frequency and duration to time scales, Eighth Conference on Applied Climatology, AMS, Anaheim CA, pp. 179-186; classification table as operationalised in the WMO No. 1090 Standardized Precipitation Index User Guide",
+  "variable": "spi_classification_bands",
+  "unit": "index",
+  "url": "https://public.wmo.int/en/resources/library/standardized-precipitation-index-user-guide",
+  "license": "Published classification thresholds (SPI ranges and category labels); factual, non-copyrightable thresholds, cited with attribution",
+  "retrieved_at": "2026-10-10",
+  "processing_time": "2026-10-10",
+  "provider": "Colorado Climate Center (McKee et al. 1993) / World Meteorological Organization (WMO No. 1090)",
+  "valid_time": "not applicable - classification table, not a time series",
+  "spatial_reference": "not applicable - classification table",
+  "spatial_resolution": "n/a",
+  "temporal_resolution": "n/a",
+  "quality_flag": "published_reference_table",
+  "uncertainty": "exact band edges as published (SPI 2.00/+inf extremely wet ... -inf/-2.00 extremely dry)",
+  "processing_history": "transcribed the published classification bands verbatim on 2026-10-10; pinned by engine/tests/test_spi_calculator.py::test_published_classification_table_is_intact",
+  "checksum_sha256": "1cbf82e09cca59f4eedb35e7bdbdae3fb2e0e1bdbe5f079323c64289315df32f",
+  "local_path": "tests/reference_data/mckee_spi_classification.csv"
+}

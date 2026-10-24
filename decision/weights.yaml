@@ -1,0 +1,98 @@
+# decision/weights.yaml
+#
+# Governance record of the Decision Engine (Tasmimyar) default criteria weights.
+# Spec: ECO-NOJIN MASTER EXECUTION SPECIFICATION, ECO-13 mandatory output
+# "decision/weights.yaml", guarded by brake 8 (decision weight changes are a
+# stop condition).
+#
+# The values below are copied verbatim from the engine's hardcoded defaults in
+# engine/tasmimyar/__init__.py (DecisionEngine._default_criteria, lines
+# 144-163). That code still holds the values and still drives behaviour; this
+# file is the governance record. engine/tasmimyar/weights_loader.py reads this
+# file and provides a drift tripwire (matches_engine_defaults) but never edits,
+# wraps or patches the engine. Migrating the engine to consume this record is a
+# Wave-3 decision (brake 2/8) and is not performed by this change.
+
+schema_version: "1.0.0"
+owner: "Tasmimyar / Decision Engine"
+
+change_control:
+  brake: 8
+  spec: "ECO-NOJIN MASTER EXECUTION SPECIFICATION — ترمز ۸: تغییر در Decision Weights"
+  quote: "تغییر وزن‌های تصمیم‌یار بدون مجوز صریح ممنوع"
+  spec_text: "اگر وزن‌های Tasmimyar تغییر می‌کند، متوقف شو."
+  rule: >
+    Changing decision weights without explicit permission is prohibited. This
+    YAML is now the governance record of the weights the Decision Engine
+    hardcodes as defaults; if this file and the engine ever disagree, the
+    drift must be reconciled deliberately, never by editing one side quietly.
+    STOP and obtain an explicit user mandate before changing any weight here
+    or in engine/tasmimyar/__init__.py.
+
+default_criteria:
+  - name: evidence_count
+    weight: 0.3
+    threshold: 0.5
+    direction: maximize
+  - name: evidence_quality
+    weight: 0.4
+    threshold: 0.6
+    direction: maximize
+  - name: confidence
+    weight: 0.3
+    threshold: 0.5
+    direction: maximize
+
+verdict_bands:
+  insufficient_evidence:
+    condition: "confidence < 0.2"
+    outcome: insufficient_evidence
+  recommend:
+    condition: "score >= 0.7"
+    outcome: recommend
+  caution:
+    condition: "score >= 0.4"
+    outcome: caution
+  reject:
+    condition: "otherwise"
+    outcome: reject
+  threshold_gate:
+    note: >
+      Threshold gate: if any weighted criterion (weight > 0) scores below its
+      own threshold, the outcome is capped at CAUTION -- it can never reach
+      RECOMMEND. Documented here for completeness; currently enforced only in
+      the engine code (engine/tasmimyar/__init__.py,
+      DecisionEngine._determine_outcome). This YAML records the gate; it does
+      not enforce it.
+
+sources:
+  engine_defaults:
+    file: "engine/tasmimyar/__init__.py"
+    location: "DecisionEngine.__init__ / _default_criteria, lines 144-163"
+    note: >
+      The DecisionEngine's hardcoded default criteria: evidence_count 0.3 /
+      evidence_quality 0.4 / confidence 0.3, thresholds 0.5 / 0.6 / 0.5,
+      direction maximize. This file records those values verbatim today so
+      that the governance record and the engine agree (see
+      engine/tasmimyar/weights_loader.py::matches_engine_defaults).
+  criteria_meanings:
+    evidence_count: >
+      Support ratio of the evidence: len(supporting) / (len(supporting) +
+      len(contradicting)), normalized to [0, 1]. Measures the abundance and
+      balance of the evidence base.
+    evidence_quality: >
+      Mean confidence of the supporting facts, in [0, 1]. Measures how
+      trustworthy the supporting evidence is.
+    confidence: >
+      The Knowledge Engine's claim confidence for the claim under decision.
+  governance: >
+    The weights are governance decisions, not scientific constants: they
+    encode how much the decision process trusts abundance of evidence, its
+    quality, and claim confidence. No scientific derivation makes 0.3 / 0.4 /
+    0.3 "correct"; they are the sanctioned governance posture and can only
+    change with an explicit mandate (brake 8).
+  status: >
+    Read-only governance record. The Decision Engine still reads its
+    hardcoded defaults; this file changes no engine behaviour and no public
+    API. Engine consumption of this record is a future Wave-3 decision
+    (brake 2/8).

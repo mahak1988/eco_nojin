@@ -1,0 +1,22 @@
+{
+  "dataset_id": "fao56_examples",
+  "dataset_version": "3.0",
+  "source_id": "FAO56_EXAMPLE18",
+  "source": "Allen, R.G., Pereira, L.S., Raes, D. and Smith, M. (1998), Crop evapotranspiration - Guidelines for computing crop water requirements, FAO Irrigation and Drainage Paper 56, Chapter 4, Example 18 'Determination of ET0 with daily data' (Uccle/Brussels, 6 July)",
+  "variable": "reference_evapotranspiration_inputs",
+  "unit": "mm/day",
+  "url": "https://www.fao.org/4/X0490E/x0490e08.htm",
+  "license": "Copyright FAO 1998; quoted verbatim for non-commercial scientific validation with attribution - see tests/reference_data/fao56_examples.md",
+  "retrieved_at": "2026-10-10",
+  "processing_time": "2026-10-10",
+  "provider": "Food and Agriculture Organization of the United Nations (FAO)",
+  "valid_time": "6 July, day-of-year 187 under FAO's non-leap convention; no calendar year is stated in the published example",
+  "spatial_reference": "Uccle (Brussels), Belgium; point sample at 50.80 deg N, no CRS (tabular record)",
+  "spatial_resolution": "point",
+  "temporal_resolution": "daily",
+  "quality_flag": "published_reference_value",
+  "uncertainty": "published ET0 reference 3.9 mm/day (3.88 unrounded) with tolerance +/- 0.05 mm/day",
+  "processing_history": "transcribed verbatim from the primary source into CSV on 2026-10-10 (v2: replaces the specification's invalid 'Rome / 5.08' row, which is not FAO-56 Example 18); no engine-derived values v3 2026-10-10: added FAO-56 Chapter 4 Example 20 row (near Lyon, France, ET0=4.56 mm/day PM and 5.0 mm/day Hargreaves) as a second external anchor.",
+  "checksum_sha256": "843d1ff028b8df795e4be51a9d78b7170ac3dd2b8c5f5fb11e1771fde0911d27",
+  "local_path": "tests/reference_data/fao56_examples.csv"
+}

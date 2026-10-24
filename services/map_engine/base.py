@@ -1,0 +1,187 @@
+"""Base classes for Map Generation Engine."""
+
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
+from datetime import datetime
+from enum import StrEnum
+from pathlib import Path
+from typing import Any
+from uuid import uuid4
+
+import xarray as xr
+from shapely.geometry import Polygon
+
+
+class MapType(StrEnum):
+    """Supported map types."""
+
+    M_TOP = "topographic"  # Base topographic map
+    M_SLP = "slope_aspect"  # Slope and aspect
+    M_RUN = "runoff_potential"  # SCS-CN runoff
+    M_RCH = "recharge_potential"  # Groundwater recharge
+    M_TEX = "soil_texture"  # Soil texture classification
+    M_SAL = "salinity"  # Soil salinity (EC)
+    M_OMC = "organic_carbon"  # Soil organic carbon
+    M_VEG = "vegetation"  # NDVI/EVI time series
+    M_ERS = "erosion_rusle"  # RUSLE erosion
+    M_HYD = "watershed"  # Watershed delineation
+    M_LULC = "land_use_cover"  # Land use/land cover
+    M_REG = "regional_context"  # Regional context map
+    M_GEO = "geology"  # Geology map
+    M_PRI = "priority"  # Implementation priority
+
+
+@dataclass
+class MapRequest:
+    """Request to generate a map."""
+
+    map_type: MapType
+    region: Polygon  # Bounding polygon in WGS84 (EPSG:4326)
+    target_crs: str = "auto"  # "auto" = UTM zone based on centroid
+    resolution: float = 10.0  # meters
+    parameters: dict[str, Any] = field(default_factory=dict)
+    request_id: str = field(default_factory=lambda: str(uuid4()))
+
+
+@dataclass
+class MapResult:
+    """Result of map generation."""
+
+    map_id: str
+    map_type: MapType
+    cog_path: Path
+    vector_tiles_path: Path | None = None
+    metadata: dict[str, Any] = field(default_factory=dict)
+    processing_time_seconds: float = 0.0
+    data_sources: list[str] = field(default_factory=list)
+    crs: str = ""
+    bounds: tuple = ()
+    resolution: float = 0.0
+    created_at: datetime = field(default_factory=datetime.utcnow)
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert to dictionary for storage."""
+        return {
+            "map_id": self.map_id,
+            "map_type": self.map_type.value,
+            "cog_path": str(self.cog_path),
+            "metadata": self.metadata,
+            "processing_time_seconds": self.processing_time_seconds,
+            "data_sources": self.data_sources,
+            "crs": self.crs,
+            "bounds": list(self.bounds),
+            "resolution": self.resolution,
+            "created_at": self.created_at.isoformat(),
+        }
+
+
+class MapPipeline(ABC):
+    """Abstract base class for map generation pipelines."""
+
+    def __init__(self, cache_dir: Path | None = None):
+        self.cache_dir = cache_dir or Path("data/maps/cache")
+        self.cache_dir.mkdir(parents=True, exist_ok=True)
+
+    @property
+    @abstractmethod
+    def map_type(self) -> MapType:
+        """Map type this pipeline produces."""
+        pass
+
+    @abstractmethod
+    def get_required_layers(self) -> list[str]:
+        """Return list of required base layers (e.g., 'dem', 'sentinel2')."""
+        pass
+
+    @abstractmethod
+    async def execute(
+        self,
+        base_layers: dict[str, xr.DataArray],
+        request: MapRequest,
+    ) -> MapResult:
+        """Execute the pipeline and return a MapResult."""
+        pass
+
+    def detect_utm_zone(self, region: Polygon) -> str:
+        """Auto-detect UTM zone from region centroid."""
+        centroid = region.centroid
+        lon = centroid.x
+        lat = centroid.y
+
+        # Calculate UTM zone number
+        zone_number = int((lon + 180) / 6) + 1
+
+        # Determine hemisphere
+        hemisphere = "N" if lat >= 0 else "S"
+
+        # EPSG codes: 326XX (North), 327XX (South)
+        epsg = 32600 + zone_number if hemisphere == "N" else 32700 + zone_number
+
+        return f"EPSG:{epsg}"
+
+
+class DataOrigin(StrEnum):
+    """Where a layer's pixels actually came from.
+
+    Added by the phase 4 group 5 decision. Every fetcher in this package
+    currently produces random numbers, and that was invisible at the API
+    boundary: ``/motors/map/{type}`` fed those rasters into SWAT/AquaCrop/RUSLE
+    and returned the answer with no indication that the terrain, rainfall and
+    soil were invented. That is the same defect as ``land_profile`` reporting
+    ``dem_source="SRTM"`` for an elevation range it made up.
+
+    A fetcher must declare its origin, and a synthetic one can never be
+    reported as ``OK``.
+    """
+
+    MEASURED = "measured"
+    """Real observations from an instrument or survey."""
+
+    DERIVED = "derived"
+    """Computed from measured inputs by a documented method."""
+
+    EXTERNAL = "external"
+    """Fetched from a named third-party data service."""
+
+    SYNTHETIC = "synthetic"
+    """Generated. Not an observation. Must never be presented as science."""
+
+
+class MapFetcher(ABC):
+    """Abstract base class for data fetchers."""
+
+    #: Every concrete fetcher must set this. Defaults to the safe answer:
+    #: a fetcher that has not declared where its data came from is treated as
+    #: synthetic, not as trusted.
+    DATA_ORIGIN: DataOrigin = DataOrigin.SYNTHETIC
+
+    #: Human-readable detail for the origin, surfaced in API responses.
+    ORIGIN_DETAIL: str = "fetcher did not declare a data origin"
+
+    @abstractmethod
+    async def fetch(self, region: Polygon, **kwargs) -> xr.DataArray:
+        """Fetch data for the given region."""
+        pass
+
+    @property
+    @abstractmethod
+    def layer_name(self) -> str:
+        """Name of the layer this fetcher provides."""
+        pass
+
+    @classmethod
+    def provenance(cls, instance: MapFetcher | None = None) -> dict[str, Any]:
+        """Provenance record for this fetcher, per the S-HONEST contract."""
+        layer = None
+        try:
+            layer = cls.layer_name.fget(instance) if instance is not None else None
+        except Exception:  # pragma: no cover - property access is best effort
+            layer = None
+        return {
+            "layer": layer,
+            "origin": cls.DATA_ORIGIN.value,
+            "synthetic": cls.DATA_ORIGIN is DataOrigin.SYNTHETIC,
+            "detail": cls.ORIGIN_DETAIL,
+        }

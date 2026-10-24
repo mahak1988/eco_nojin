@@ -1,0 +1,162 @@
+model: HYRUE
+class: HYRUE
+reference: Monteith 1977 (Phil Trans R Soc B 281:277); Steduto et al. 2009
+language: python
+status: validated
+recorded: 2026-09-29
+tolerances:
+  rtol: 0.01
+  atol: 0.01
+cases:
+- name: mid_season_wheat
+  description: LAI 2.3, mild water stress, 18 C, 20 MJ/m2 of PAR.
+  inputs:
+    par: 20.0
+    lai:
+    - 2.1
+    - 2.4
+    - 2.6
+    - 2.3
+    - 1.9
+    ewsi:
+    - 0.45
+    - 0.52
+    - 0.61
+    - 0.58
+    - 0.4
+    t_mean: 18.0
+  expected: 0.04452198
+  expected_key: yield_t_ha
+  reduce: last
+- name: par_at_minimum
+  description: par pinned at its minimum (0.0) as declared by validate_inputs.
+  inputs:
+    par: 0.0
+    lai:
+    - 2.1
+    - 2.4
+    - 2.6
+    - 2.3
+    - 1.9
+    ewsi:
+    - 0.45
+    - 0.52
+    - 0.61
+    - 0.58
+    - 0.4
+    t_mean: 18.0
+  expected: 0.0
+  expected_key: yield_t_ha
+  reduce: last
+  recorded_note: recorded from the model on 2026-10-10 through the validation runner at this boundary
+    input; a regression anchor, not an external reference
+- name: par_at_maximum
+  description: par pinned at its maximum (50.0) as declared by validate_inputs.
+  inputs:
+    par: 50.0
+    lai:
+    - 2.1
+    - 2.4
+    - 2.6
+    - 2.3
+    - 1.9
+    ewsi:
+    - 0.45
+    - 0.52
+    - 0.61
+    - 0.58
+    - 0.4
+    t_mean: 18.0
+  expected: 0.11130496
+  expected_key: yield_t_ha
+  reduce: last
+  recorded_note: recorded from the model on 2026-10-10 through the validation runner at this boundary
+    input; a regression anchor, not an external reference
+- name: ewsi_at_minimum
+  description: ewsi pinned at its minimum (0.0) as declared by validate_inputs.
+  inputs:
+    par: 20.0
+    lai:
+    - 2.1
+    - 2.4
+    - 2.6
+    - 2.3
+    - 1.9
+    ewsi:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    t_mean: 18.0
+  expected: 0.0742033
+  expected_key: yield_t_ha
+  reduce: last
+  recorded_note: recorded from the model on 2026-10-10 through the validation runner at this boundary
+    input; a regression anchor, not an external reference
+- name: ewsi_at_maximum
+  description: ewsi pinned at its maximum (1.0) as declared by validate_inputs.
+  inputs:
+    par: 20.0
+    lai:
+    - 2.1
+    - 2.4
+    - 2.6
+    - 2.3
+    - 1.9
+    ewsi:
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    t_mean: 18.0
+  expected: 0.0
+  expected_key: yield_t_ha
+  reduce: last
+  recorded_note: recorded from the model on 2026-10-10 through the validation runner at this boundary
+    input; a regression anchor, not an external reference
+- name: t_mean_at_minimum
+  description: t_mean pinned at its minimum (-10.0) as declared by validate_inputs.
+  inputs:
+    par: 20.0
+    lai:
+    - 2.1
+    - 2.4
+    - 2.6
+    - 2.3
+    - 1.9
+    ewsi:
+    - 0.45
+    - 0.52
+    - 0.61
+    - 0.58
+    - 0.4
+    t_mean: -10.0
+  expected: 0.0
+  expected_key: yield_t_ha
+  reduce: last
+  recorded_note: recorded from the model on 2026-10-10 through the validation runner at this boundary
+    input; a regression anchor, not an external reference
+- name: t_mean_at_maximum
+  description: t_mean pinned at its maximum (50.0) as declared by validate_inputs.
+  inputs:
+    par: 20.0
+    lai:
+    - 2.1
+    - 2.4
+    - 2.6
+    - 2.3
+    - 1.9
+    ewsi:
+    - 0.45
+    - 0.52
+    - 0.61
+    - 0.58
+    - 0.4
+    t_mean: 50.0
+  expected: 0.0
+  expected_key: yield_t_ha
+  reduce: last
+  recorded_note: recorded from the model on 2026-10-10 through the validation runner at this boundary
+    input; a regression anchor, not an external reference

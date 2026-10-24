@@ -1,0 +1,2 @@
+case,etc_mm_per_day,taw_mm,allowable_depletion,etc_published_interval_days,source
+wheat_silt_loam,6.0,100.0,0.55,9,"FAO-56 Ch.7 Section 7.2 (Allen et al. 1998): I = (TAW*p)/ETc = (100*0.55)/6 = 9.17, rounded to 9 days per FAO-56 worked example; cited in engine/strict_tests/test_s08_irrigation.py:139 as 'the FAO-56 worked example'"

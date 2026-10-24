@@ -1,0 +1,117 @@
+{
+  "venv": "D:\\eco_nojin\\.venv",
+  "packages_audited": 475,
+  "files_checked": 60598,
+  "missing": 7,
+  "unreadable": 0,
+  "mismatches": [
+    {
+      "package": "astroid",
+      "dist_info": "astroid-4.0.4.dist-info",
+      "path": "astroid\\rebuilder.py",
+      "recorded_size": "71520",
+      "actual_size": "73516",
+      "size_matches": false,
+      "sibling_dist_info": "1"
+    },
+    {
+      "package": "bandit",
+      "dist_info": "bandit-1.8.0.dist-info",
+      "path": "bandit\\plugins\\injection_shell.py",
+      "recorded_size": "26497",
+      "actual_size": "27220",
+      "size_matches": false,
+      "sibling_dist_info": "1"
+    },
+    {
+      "package": "blosc2",
+      "dist_info": "blosc2-4.11.0.dist-info",
+      "path": "blosc2\\ctable_indexing.py",
+      "recorded_size": "88260",
+      "actual_size": "88287",
+      "size_matches": false,
+      "sibling_dist_info": "1"
+    },
+    {
+      "package": "dnspython",
+      "dist_info": "dnspython-2.8.0.dist-info",
+      "path": "dns\\tsig.py",
+      "recorded_size": "11576",
+      "actual_size": "11943",
+      "size_matches": false,
+      "sibling_dist_info": "1"
+    },
+    {
+      "package": "ecdsa",
+      "dist_info": "ecdsa-0.19.2.dist-info",
+      "path": "ecdsa\\test_ecdh.py",
+      "recorded_size": "15380",
+      "actual_size": "15829",
+      "size_matches": false,
+      "sibling_dist_info": "1"
+    },
+    {
+      "package": "fsspec",
+      "dist_info": "fsspec-2026.7.0.dist-info",
+      "path": "fsspec\\spec.py",
+      "recorded_size": "79674",
+      "actual_size": "82018",
+      "size_matches": false,
+      "sibling_dist_info": "1"
+    },
+    {
+      "package": "polars",
+      "dist_info": "polars-1.44.1.dist-info",
+      "path": "polars\\_utils\\various.py",
+      "recorded_size": "24824",
+      "actual_size": "25625",
+      "size_matches": false,
+      "sibling_dist_info": "1"
+    },
+    {
+      "package": "pulp",
+      "dist_info": "pulp-3.3.2.dist-info",
+      "path": "pulp\\apis\\copt_api.py",
+      "recorded_size": "35702",
+      "actual_size": "36828",
+      "size_matches": false,
+      "sibling_dist_info": "1"
+    },
+    {
+      "package": "python_jose",
+      "dist_info": "python_jose-3.5.0.dist-info",
+      "path": "jose\\jws.py",
+      "recorded_size": "7894",
+      "actual_size": "8166",
+      "size_matches": false,
+      "sibling_dist_info": "1"
+    },
+    {
+      "package": "statsmodels",
+      "dist_info": "statsmodels-0.14.6.dist-info",
+      "path": "statsmodels\\tests\\test_package.py",
+      "recorded_size": "1152",
+      "actual_size": "1236",
+      "size_matches": false,
+      "sibling_dist_info": "1"
+    },
+    {
+      "package": "sympy",
+      "dist_info": "sympy-1.14.0.dist-info",
+      "path": "sympy\\external\\tests\\test_codegen.py",
+      "recorded_size": "12598",
+      "actual_size": "12974",
+      "size_matches": false,
+      "sibling_dist_info": "1"
+    }
+  ],
+  "mismatch_count": 11,
+  "stale_dist_info": [
+    "bcrypt-5.0.0.dist-info",
+    "ruff-0.16.4.dist-info",
+    "torch-2.13.0.dist-info",
+    "vulture-2.16.dist-info",
+    "websockets-17.1.dist-info"
+  ],
+  "status": "FAIL"
+}

@@ -1,0 +1,43 @@
+{
+  "env-00_gate_status": "ENVIRONMENT_BLOCKED",
+  "python_version": "3.12.10",
+  "python_path": "C:\\Users\\hp\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+  "pip_version": "25.0.1",
+  "network_available": false,
+  "c_compiler_available": false,
+  "cmake_available": false,
+  "cmake_version": null,
+  "pybind11_available": false,
+  "installed_packages": {
+    "pydantic": "2.13.4",
+    "duckdb": "1.5.5"
+  },
+  "missing_packages": {
+    "numpy": false,
+    "scipy": false,
+    "pandas": false,
+    "pytest": false,
+    "loguru": false,
+    "pybind11": false,
+    "requests": false,
+    "httpx": false,
+    "supabase": false
+  },
+  "installation_attempt": {
+    "command": "pip install -e .[dev]",
+    "result": "FAILED",
+    "error": "No network access to PyPI"
+  },
+  "engine_import_status": {
+    "import_engine": "SUCCESS",
+    "import_engine_hydroma": "FAILED (numpy missing)"
+  },
+  "import_guard_status": {
+    "runs": true,
+    "violations_detected": 7,
+    "all_database_related": true
+  },
+  "test_execution_possible": false,
+  "cpp_build_possible": false,
+  "recommendation": "Proceed with architecture work that does not require runtime dependencies. Defer test execution and C++ build to CI environment."
+}

@@ -1,0 +1,7 @@
+{
+  "indicator_id": "VAN_GENUCHTEN_THETA_K",
+  "evidence_class": "REQUIRED: set on --apply",
+  "basis": "REQUIRED: describe the external evidence",
+  "reference": "REQUIRED: full citation + vendored file path",
+  "gap": null
+}

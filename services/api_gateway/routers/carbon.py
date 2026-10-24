@@ -1,0 +1,228 @@
+"""Carbon tokenization API router.
+
+Endpoints for on-chain carbon credit management and Verra integration.
+
+Authorization model
+-------------------
+The write endpoints (mint, transfer, retire, Verra sync) were previously
+gated on ``require_user`` only, so any authenticated account could mint
+arbitrary credits for any ``project_id``, move credits out of any
+``from_address``, retire any ``token_id``, and import arbitrary Verra projects.
+None of them verify that the caller owns the project or the address, because
+no project-ownership table is wired into this router. Until one is, minting
+and settlement are admin-only. Read endpoints stay on ``require_user``: they
+expose public ledger state and carry no personal data.
+"""
+import logging
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException, Query
+from pydantic import BaseModel, Field
+
+from database.models import User
+from services.api_gateway.auth import require_admin, require_user
+from services.api_gateway.errors import safe_detail_for_status
+
+logger = logging.getLogger(__name__)
+
+router = APIRouter(prefix="/api/v1/carbon", tags=["Carbon Credits"])
+
+
+class _LazyCarbonService:
+    _instance = None
+
+    def __getattr__(self, name):
+        if self._instance is None:
+            from services.business_modules.carbon.tokenization import get_tokenization_service
+
+            self._instance = get_tokenization_service()
+        return getattr(self._instance, name)
+
+
+class _LazyVerraService:
+    _instance = None
+
+    def __getattr__(self, name):
+        if self._instance is None:
+            from services.business_modules.carbon.verra_integration import get_verra_integration
+
+            self._instance = get_verra_integration()
+        return getattr(self._instance, name)
+
+
+_carbon_service = _LazyCarbonService()
+_verra_service = _LazyVerraService()
+
+
+class TokenizeRequest(BaseModel):
+    project_id: str = Field(..., min_length=1)
+    amount_tonnes: float = Field(..., gt=0)
+    credit_type: str = Field("VCS")
+    recipient_address: str | None = None
+
+
+class TransferRequest(BaseModel):
+    from_address: str = Field(..., min_length=1)
+    to_address: str = Field(..., min_length=1)
+    token_id: str = Field(..., min_length=1)
+
+
+class RetireRequest(BaseModel):
+    token_id: str = Field(..., min_length=1)
+    retirement_justification: str = Field(default="")
+
+
+class VerraSearchRequest(BaseModel):
+    country: str | None = None
+    methodology: str | None = None
+    page: int = Field(default=1, ge=1)
+
+
+@router.post("/tokenize", dependencies=[Depends(require_admin)])
+def tokenize_credits(
+    payload: TokenizeRequest,
+    user: Annotated[User, Depends(require_admin)],
+):
+    """Mint carbon credits on-chain. Admin-only until projects carry an owner."""
+    try:
+        result = _carbon_service.issue_credits(
+            project_id=payload.project_id,
+            amount=payload.amount_tonnes,
+            credit_type=payload.credit_type,
+            recipient_address=payload.recipient_address,
+        )
+    except Exception as exc:
+        # The previous `detail=str(exc)` forwarded the raw driver/RPC error to
+        # the client, which can carry configuration and endpoint details.
+        logger.exception("Tokenization failed for project %s", payload.project_id)
+        raise HTTPException(status_code=400, detail="Tokenization failed") from exc
+
+    return {
+        **result,
+        "requested_by": user.id,
+        "project_id": payload.project_id,
+    }
+
+
+@router.post("/credits/transfer", dependencies=[Depends(require_admin)])
+def transfer_credits(
+    payload: TransferRequest,
+    user: Annotated[User, Depends(require_admin)],
+):
+    """Transfer carbon credits. Admin-only until addresses carry an owner."""
+    try:
+        result = _carbon_service.transfer_credits(
+            from_address=payload.from_address,
+            to_address=payload.to_address,
+            token_id=payload.token_id,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=safe_detail_for_status(exc, 400)) from exc
+    except Exception as exc:
+        logger.exception("Transfer failed for token %s", payload.token_id)
+        raise HTTPException(status_code=400, detail="Transfer failed") from exc
+
+    return {**result, "requested_by": user.id}
+
+
+@router.post("/credits/retire", dependencies=[Depends(require_admin)])
+def retire_credits(
+    payload: RetireRequest,
+    user: Annotated[User, Depends(require_admin)],
+):
+    """Retire carbon credits. Admin-only until tokens carry an owner."""
+    try:
+        result = _carbon_service.retire_credits(
+            token_id=payload.token_id,
+            retirement_justification=payload.retirement_justification,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=safe_detail_for_status(exc, 400)) from exc
+
+    return {**result, "retired_by": user.id}
+
+
+@router.get("/credits/balance")
+def get_balance(
+    address: Annotated[str, Query(min_length=1)],
+    user: Annotated[User, Depends(require_user)],
+):
+    """Get token balance for address."""
+    balance = _carbon_service.get_balance(address)
+    return {"address": address, "balance": balance, "unit": "base_units"}
+
+
+@router.get("/credits/{token_id}/history")
+def get_credit_history(
+    token_id: str,
+    user: Annotated[User, Depends(require_user)],
+):
+    """Get credit lifecycle history."""
+    try:
+        history = _carbon_service.get_credit_history(token_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=safe_detail_for_status(exc, 404)) from exc
+    return {"token_id": token_id, "history": history}
+
+
+@router.get("/credits/{token_id}/verify")
+def verify_credit(
+    token_id: str,
+    user: Annotated[User, Depends(require_user)],
+):
+    """Verify credit on-chain."""
+    try:
+        result = _carbon_service.verify_on_chain(token_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=safe_detail_for_status(exc, 404)) from exc
+    return result
+
+
+@router.get("/verra/standards")
+async def list_standards(user: Annotated[User, Depends(require_user)]):
+    """List available carbon credit standards."""
+    standards = await _verra_service.list_standards()
+    return {"standards": standards}
+
+
+@router.post("/verra/search")
+async def search_verra(
+    payload: VerraSearchRequest | None = None,
+    user: Annotated[User, Depends(require_user)] = None,
+):
+    """Search Verra registry."""
+    payload = payload or VerraSearchRequest()
+    results = await _verra_service.search_projects(
+        payload.country, payload.methodology, payload.page
+    )
+    return {"results": results, "page": payload.page}
+
+
+@router.post("/verra/sync", dependencies=[Depends(require_admin)])
+async def sync_verra_project(
+    registry_id: Annotated[str, Query(min_length=1)],
+    user: Annotated[User, Depends(require_admin)],
+):
+    """Sync a Verra project into Eco Nojin. Admin-only: writes platform state."""
+    try:
+        result = await _verra_service.sync_project_from_verra(registry_id)
+    except Exception as exc:
+        logger.exception("Verra sync failed for %s", registry_id)
+        raise HTTPException(status_code=400, detail="Verra sync failed") from exc
+    return result
+
+
+@router.get("/verra/{registry_id}")
+async def get_verra_project(
+    registry_id: str,
+    user: Annotated[User, Depends(require_user)],
+):
+    """Get Verra project details."""
+    try:
+        result = await _verra_service.get_project(registry_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=safe_detail_for_status(exc, 404)) from exc
+    except Exception as exc:
+        logger.exception("Verra lookup failed for %s", registry_id)
+        raise HTTPException(status_code=400, detail="Verra lookup failed") from exc
+    return result

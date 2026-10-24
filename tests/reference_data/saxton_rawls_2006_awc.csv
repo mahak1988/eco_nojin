@@ -1,0 +1,13 @@
+texture_class,awc_mm_per_m,source
+sand,16.0,Saxton & Rawls 2006 SSSAJ 70:975-987 Table 6, p. 980
+loamy_sand,22.0,Saxton & Rawls 2006 SSSAJ 70:975-987 Table 6, p. 980
+sandy_loam,63.0,Saxton & Rawls 2006 SSSAJ 70:975-987 Table 6, p. 980
+loam,110.0,Saxton & Rawls 2006 SSSAJ 70:975-987 Table 6, p. 980
+silt_loam,140.0,Saxton & Rawls 2006 SSSAJ 70:975-987 Table 6, p. 980
+silt,150.0,Saxton & Rawls 2006 SSSAJ 70:975-987 Table 6, p. 980
+sandy_clay_loam,86.0,Saxton & Rawls 2006 SSSAJ 70:975-987 Table 6, p. 980
+clay_loam,120.0,Saxton & Rawls 2006 SSSAJ 70:975-987 Table 6, p. 980
+silty_clay_loam,111.0,Saxton & Rawls 2006 SSSAJ 70:975-987 Table 6, p. 980
+sandy_clay,80.0,Saxton & Rawls 2006 SSSAJ 70:975-987 Table 6, p. 980
+silty_clay,120.0,Saxton & Rawls 2006 SSSAJ 70:975-987 Table 6, p. 980
+clay,130.0,Saxton & Rawls 2006 SSSAJ 70:975-987 Table 6, p. 980

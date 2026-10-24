@@ -1,0 +1,37 @@
+name: Import Guard
+
+# Dedicated, fast gate for the architecture import guard (blocker B-005).
+# Runs independently of the full CI so an architectural violation is reported on
+# its own, with no dependency install (tools/detect_imports.py is stdlib-only).
+
+on:
+  push:
+    paths:
+      - "engine/**"
+      - "services/**"
+      - "database/**"
+      - "infra/**"
+      - "tools/**"
+  pull_request:
+    paths:
+      - "engine/**"
+      - "services/**"
+      - "database/**"
+      - "infra/**"
+      - "tools/**"
+
+concurrency:
+  group: import-guard-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  detect-imports:
+    name: Architecture is intact
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Import guard must pass (0 violations)
+        run: python tools/detect_imports.py --root .

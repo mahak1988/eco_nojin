@@ -1,0 +1,20 @@
+{
+  "dataset_id": "fao56_table12_kc",
+  "dataset_version": "1.0.0",
+  "source_id": "FAO56_TABLE12_KC_MID",
+  "source": "Allen, R.G., Pereira, L.S., Raes, D. and Smith, M. (1998), Crop evapotranspiration - Guidelines for computing crop water requirements, FAO Irrigation and Drainage Paper 56, Chapter 6, Table 12: single crop coefficient (Kc) values; published at https://www.fao.org/4/X0490E/x0490e0b.htm",
+  "variable": "crop_coefficient_mid_season",
+  "unit": "dimensionless",
+  "url": "https://www.fao.org/4/X0490E/x0490e0b.htm",
+  "license": "Copyright FAO 1998; quoted verbatim for non-commercial scientific validation with attribution - see tests/reference_data/fao56_table12_kc.md",
+  "retrieved_at": "2026-10-16",
+  "processing_time": "2026-10-16",
+  "provider": "Food and Agriculture Organization of the United Nations (FAO)",
+  "spatial_resolution": "global_table",
+  "temporal_resolution": "seasonal",
+  "quality_flag": "published_reference_value",
+  "uncertainty": "published Kc_mid tabulated values (tolerance +/- 0.05 per FAO-56 Table 12 convention)",
+  "processing_history": "transcribed verbatim from FAO-56 Table 12 into CSV on 2026-10-16; engine/hydroma/data/kc_data.csv carries kc_gs_avg values that match Kc_mid for corn (1.20) and wheat (1.15)",
+  "checksum_sha256": "7dd08e3b92c8aca0e7d0844861745f4bfd77321663ce4728af24a31eb7a3e2fe",
+  "local_path": "tests/reference_data/fao56_table12_kc.csv"
+}

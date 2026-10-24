@@ -1,0 +1,308 @@
+{
+  "register_id": "FORMULA-EVIDENCE-REGISTER",
+  "version": "1.0.0",
+  "generated_at": "2026-10-10",
+  "schema": {
+    "indicator_id": "canonical formula/model family id",
+    "evidence_class": "one of VALIDATED_EXTERNAL | VALIDATED_METHOD_CONFORMANCE | REGRESSION_ANCHOR_STABLE | PARTIAL | UNVALIDATED | BLOCKED",
+    "basis": "what kind of evidence exists today",
+    "reference": "the external citation, or the evidence location, or 'none'",
+    "gap": "gap-register id that tracks the missing evidence, or null"
+  },
+  "entries": [
+    {
+      "indicator_id": "ENO_ET0_FAO56_001",
+      "evidence_class": "VALIDATED_EXTERNAL",
+      "basis": "primary-source reference test on two published worked examples plus an independent eq.-6 oracle",
+      "reference": "FAO-56 Ch.4 Ex.18 (Uccle, ET0=3.9): engine 3.8801; Ex.20 (Lyon, ET0=4.56): engine measured; fao.org/4/X0490E/x0490e08.htm; engine/tests/test_fao56_example18.py, test_fao56_example20_missing_data.py",
+      "gap": null
+    },
+    {
+      "indicator_id": "ENO_HARGREAVES_ET0",
+      "evidence_class": "VALIDATED_EXTERNAL",
+      "basis": "primary-source reference test (FAO-56 Example 20, published Hargreaves 5.0 mm/day; engine 5.03) PLUS cross-implementation agreement with PyETo (measured delta +0.0018 mm/day)",
+      "reference": "FAO-56 Ch.4 Ex.20; engine/tests/test_fao56_example20_missing_data.py; engine/tests/test_pyet_parity.py",
+      "gap": null
+    },
+    {
+      "indicator_id": "ET0_PRIESTLEY_TAYLOR",
+      "evidence_class": "VALIDATED_METHOD_CONFORMANCE",
+      "basis": "cross-implementation agreement with PyETo (alpha=1.26, measured delta +0.0042 mm/day); residual traced to the latent-heat constant",
+      "reference": "Priestley & Taylor 1972; engine/tests/test_pyet_parity.py",
+      "gap": "no published value; engine feeds Rn = 0.75*Rs (uncited proxy)"
+    },
+    {
+      "indicator_id": "ET0_MAKKINK",
+      "evidence_class": "PARTIAL",
+      "basis": "cross-implementation agreement for the matched-slope core form (delta +0.0033); the engine's 0.61 coefficient and -0.12 intercept form is a DIFFERENT published variant from PyETo's 0.65 no-intercept form (-8.99% between variants)",
+      "reference": "Makkink 1957; engine/tests/test_pyet_parity.py",
+      "gap": "variant must be pinned and cited (which published form is intended)"
+    },
+    {
+      "indicator_id": "ET0_TURC",
+      "evidence_class": "VALIDATED_METHOD_CONFORMANCE",
+      "basis": "cross-implementation agreement with PyETo at both humidity branches (delta < 0.001 mm/day)",
+      "reference": "Turc 1961 + FAO-24 correction; engine/tests/test_pyet_parity.py",
+      "gap": "cal-to-MJ constant documented; no published value"
+    },
+    {
+      "indicator_id": "ET0_BLANEY_CRIDDLE",
+      "evidence_class": "PARTIAL",
+      "basis": "cross-implementation agreement only for the identically-parameterised core (delta 0.0002); the engine's single-day fraction convention and PyETo's monthly percentage convention differ by ~65x at the defaults",
+      "reference": "Blaney & Criddle 1950 / FAO-24; engine/tests/test_pyet_parity.py",
+      "gap": "convention (monthly percentage x 0.65 vs single-day fraction) must be pinned and cited"
+    },
+    {
+      "indicator_id": "ANSTROM_RS_EQ35",
+      "evidence_class": "UNVALIDATED",
+      "basis": "not implemented in the engine at all; PyETo implements it (22.17 MJ/m2/day on the reference case)",
+      "reference": "FAO-56 eq. 35; absent from engine/hydroma/climate",
+      "gap": "G-H8 family - eq. 35 and eq. 47 are unimplemented; platform.py:602 implements eq. 50 without the Rso cap"
+    },
+    {
+      "indicator_id": "FAO56_RA",
+      "evidence_class": "VALIDATED_EXTERNAL",
+      "basis": "published values for five examples reproduced (Ex.8/10/17/18/20) and a cosine-integration oracle",
+      "reference": "FAO-56 eq. 21 / Annex 2 Table 2.6; engine/strict_tests/test_s02_climate_et0.py:238",
+      "gap": null
+    },
+    {
+      "indicator_id": "FAO56_ES_DELTA_GAMMA",
+      "evidence_class": "VALIDATED_EXTERNAL",
+      "basis": "Annex 2 tables and published examples pinned in the strict suite",
+      "reference": "FAO-56 eq. 7/8/11/13; Annex 2 Tables 2.1-2.4; test_s02_climate_et0.py:175-224",
+      "gap": null
+    },
+    {
+      "indicator_id": "FAO56_RADIATION_TERMS",
+      "evidence_class": "VALIDATED_METHOD_CONFORMANCE",
+      "basis": "reproduced only through the composite ET0; no individual Rnl/Rn anchor",
+      "reference": "FAO-56 eq. 37-40; engine/tests/test_fao56_example18.py oracle; test_s02:433",
+      "gap": "G-H8 (Rs/Rso clamp attributed to FAO)"
+    },
+    {
+      "indicator_id": "ENO_SPI_001",
+      "evidence_class": "VALIDATED_METHOD_CONFORMANCE",
+      "basis": "from-scratch McKee/WMO-1090 re-implementation (Newton MLE, incomplete gamma vs exact Erlang, AS241), published classification bands pinned, AND cross-implementation agreement with climate_indices 2.4.0 (corr 0.961-0.992, mean |delta| 0.075-0.181, sign agreement 0.954-0.987, NaN masks coincide; scale 1 is the binding scale)",
+      "reference": "McKee et al. 1993; WMO No. 1090; engine/tests/test_spi_calculator.py; engine/tests/test_climate_indices_spi_parity.py; tests/reference_data/mckee_spi_classification.csv",
+      "gap": "published numeric SPI value table unavailable offline (Guttman 1999); climate_indices differs by method (method-of-moments on calendar-month subsets, +/-3.09 clip) so the agreement is a tolerance band"
+    },
+    {
+      "indicator_id": "ENO_WB_001",
+      "evidence_class": "VALIDATED_METHOD_CONFORMANCE",
+      "basis": "definitional identity with measured mass closure 7.1e-15 mm",
+      "reference": "water balance P = ET + Q + dS; engine/tests/test_water_balance.py",
+      "gap": "no published catchment benchmark"
+    },
+    {
+      "indicator_id": "ENO_WP_001",
+      "evidence_class": "VALIDATED_METHOD_CONFORMANCE",
+      "basis": "definitional ratio with exact unit arithmetic (5000 kg/ha and 500 mm -> 1.0 kg/m3)",
+      "reference": "FAO WaPOR definition; engine/tests/test_water_productivity.py",
+      "gap": "no published WaPOR benchmark values"
+    },
+    {
+      "indicator_id": "ENO_ETC_KC_001",
+      "evidence_class": "PARTIAL",
+      "basis": "definition only; Kc table has no provenance and no stage structure",
+      "reference": "FAO-56 Ch.6/7; engine/hydroma/data/kc_lookup.py; engine/hydroma/calculations/crop_water_req_calc.py (Rs-substituted Ra, documented)",
+      "gap": "G-S6 (Kc provenance, Kc(LAI) project-invented in epia)"
+    },
+    {
+      "indicator_id": "SCS_CN_RUNOFF",
+      "evidence_class": "VALIDATED_EXTERNAL",
+      "basis": "published NEH/TR-55 worked example pinned to rel=1e-9",
+      "reference": "USDA NEH Sec.4 / TR-55; engine/strict_tests/test_s03:58; tests/reference_data corpus scs_cn.yaml",
+      "gap": null
+    },
+    {
+      "indicator_id": "RUSLE_LS",
+      "evidence_class": "VALIDATED_EXTERNAL",
+      "basis": "two independent hand re-derivations at rel=1e-12 and live C++/Python parity (AH-703 form)",
+      "reference": "Renard et al. 1997 USDA AH-703; engine/cpp_core/src/erosion.cpp:22-46; test_unwired_model_wiring.py:123-141",
+      "gap": "two divergent sibling LS forms (G-H6)"
+    },
+    {
+      "indicator_id": "ROTHC_TEMP_FACTOR",
+      "evidence_class": "VALIDATED_EXTERNAL",
+      "basis": "five published tabulated points reproduced to 2e-3",
+      "reference": "Coleman, Prout & Milne 2024 sec 1.6.1 eq (1); engine/strict_tests/test_s20_simulation_validation.py:392",
+      "gap": "rest of RothC unvalidated (3 divergent ports)"
+    },
+    {
+      "indicator_id": "SOIL_SALINITY_CLASSES",
+      "evidence_class": "VALIDATED_EXTERNAL",
+      "basis": "published class edges asserted as equality",
+      "reference": "USDA Handbook 60 (1954); engine/strict_tests/test_s18:91-100",
+      "gap": null
+    },
+    {
+      "indicator_id": "NDVI_EVI_SAVI_NDWI_NBR",
+      "evidence_class": "VALIDATED_EXTERNAL",
+      "basis": "closed forms with C++/Numba/Python parity and a C++ unit test",
+      "reference": "Rouse 1974, Huete, Gao; engine/land/indices.py:47-89; engine/cpp_core/tests/test_indices_unit.cpp",
+      "gap": null
+    },
+    {
+      "indicator_id": "VAN_GENUCHTEN_THETA_K",
+      "evidence_class": "VALIDATED_METHOD_CONFORMANCE",
+      "basis": "independent re-derivation at rel=1e-12 for the theta and K forms; the 12-texture PARAMETER table additionally compared against Rosetta 3 (rosetta-soil 0.3.2, CC0): |d_theta_r| <= 0.073, |d_theta_s| <= 0.070, |d_n| <= 0.932, |d_log10 Ks| <= 1.142 decades",
+      "reference": "van Genuchten 1980; Mualem 1976; Schaap et al. 2001/Rosetta; test_s05:159-257, test_s18:132-171; engine/tests/test_rosetta_ptf_reference.py",
+      "gap": "SOIL_VG_PARAMETERS table provenance withdrawn (G-S6/G-H4); alpha diverges up to 3.8x on the three coarsest textures"
+    },
+    {
+      "indicator_id": "SOIL_VG_TABLE",
+      "evidence_class": "PARTIAL",
+      "basis": "every value is now measured against Rosetta 3 but the table itself is unreconciled: alpha up to 3.797x (sand, loamy_sand 3.338, sandy_loam 2.139), n off by 0.92-0.93 on the same three rows, theta_s off by 0.070 on sand",
+      "reference": "Rosetta (CC0, USDA-ARS) comparison in engine/tests/test_rosetta_ptf_reference.py",
+      "gap": "G-S6: the table is a design assumption with a withdrawn Carsel & Parrish attribution; reconciling it is a table-replacement decision, not a test change"
+    },
+    {
+      "indicator_id": "SOIL_PEDOTRANSFER_KS",
+      "evidence_class": "UNVALIDATED",
+      "basis": "measured, not asserted: ks_cm_per_day_unconfirmed vs Rosetta Ks spans 1.6e3 to 8.5e15 (sandy_clay_loam); the value is gated with ks_confirmed=False + UNCONFIRMED_UNITHED_CONSTANTS",
+      "reference": "engine/tests/test_rosetta_ptf_reference.py; engine/hydroma/soil/pedotransfer.py",
+      "gap": "G-H4: unattributed regression; replacement requires a PTF decision (Rosetta or a fitted artifact)"
+    },
+    {
+      "indicator_id": "SAR_ESP_LEACHING",
+      "evidence_class": "VALIDATED_METHOD_CONFORMANCE",
+      "basis": "exact re-derivations of the published relations",
+      "reference": "USDA HB60; FAO-29/Rhoades 1974; test_s18:64-125",
+      "gap": "uncited class edges and the 0.95 ceiling"
+    },
+    {
+      "indicator_id": "MUSKINGUM_CUNGE",
+      "evidence_class": "VALIDATED_METHOD_CONFORMANCE",
+      "basis": "coefficient identity, volume conservation, stability-window proof; no published routed hydrograph",
+      "reference": "Muskingum 1935; Cunge 1969; test_s06:675-742",
+      "gap": "duplicate with divergent unit convention and silent clamp (G-H6)"
+    },
+    {
+      "indicator_id": "THEIS_HANTUSH_COOPER_NEUMAN",
+      "evidence_class": "VALIDATED_METHOD_CONFORMANCE",
+      "basis": "independent re-derivations and published mathematical limits (rho->0, u->0)",
+      "reference": "Theis 1935; Hantush & Jacob 1955; Cooper & Jacob 1946; Neuman 1972 blend self-labelled not-the-type-curve; test_s04, test_groundwater_extended",
+      "gap": "no published drawdown value; card prints a wrong one (G-H1/G-H12)"
+    },
+    {
+      "indicator_id": "KIRPICH_TC",
+      "evidence_class": "PARTIAL",
+      "basis": "correct metric constant reproduced, but no published time-of-concentration value is asserted anywhere",
+      "reference": "Kirpich 1940; engine/hydroma/watershed/calculator.py:850",
+      "gap": "duplicate with percent-slope/hour-label unit error (G-H6)"
+    },
+    {
+      "indicator_id": "ECSI_ROTHC_PORT",
+      "evidence_class": "REGRESSION_ANCHOR_STABLE",
+      "basis": "corpus cases match recorded outputs of 2026-09-29; no published RothC run in the repo",
+      "reference": "Coleman & Jenkinson 1996; engine/hydroma/models/ecsi.py; ecsi.yaml (recorded)",
+      "gap": "G-H1 (status: validated), G-H6 (3 divergent ports), G-H7 (dead anchors)"
+    },
+    {
+      "indicator_id": "EPIA_ETC",
+      "evidence_class": "REGRESSION_ANCHOR_STABLE",
+      "basis": "5 corpus matches are recorded anchors; Kc(LAI) and effective-rain are property-tested",
+      "reference": "FAO-56; epia.yaml (recorded); engine/hydroma/models/epia.py",
+      "gap": "G-H1"
+    },
+    {
+      "indicator_id": "ESRI_ECSI_PROXY",
+      "evidence_class": "UNVALIDATED",
+      "basis": "band-ratio algebra reproduces; composite weights and rescalings are project-invented",
+      "reference": "esri.yaml (own docstring: 'NO PUBLISHED SOURCE'); engine/hydroma/models/esri.py",
+      "gap": "G-H1"
+    },
+    {
+      "indicator_id": "EWSI",
+      "evidence_class": "UNVALIDATED",
+      "basis": "composite weights 0.4/0.3/0.3 project-invented; VPD ramp saturates at 4 kPa of a 10 kPa declared range",
+      "reference": "Gao 1996 is the NDWI paper, not NDMI (module says so); engine/hydroma/models/ewsi.py",
+      "gap": "G-H1, G-H7"
+    },
+    {
+      "indicator_id": "HLHS",
+      "evidence_class": "UNVALIDATED",
+      "basis": "composite of composites; shdi caller-supplied and never computed; no entropy computed despite Shannon/Nagendra citation",
+      "reference": "engine/hydroma/models/hlhs.py; hlhs.yaml",
+      "gap": "G-H1"
+    },
+    {
+      "indicator_id": "HYRUE",
+      "evidence_class": "PARTIAL",
+      "basis": "Beer-Lambert term verified; 'days' is a multiplier not an integration; module's own validation range would fail (13.20 vs 3.5-5.5 t/ha)",
+      "reference": "Monteith 1977; Steduto et al. 2009; engine/hydroma/models/hyrue.py",
+      "gap": "G-H1, G-H7"
+    },
+    {
+      "indicator_id": "HDVI_COMPOSITE",
+      "evidence_class": "UNVALIDATED",
+      "basis": "VHI (Kogan) verified in form; the composite, rescalings and z-score are the project's own (self-declared in hdvi.yaml)",
+      "reference": "Kogan 1995; engine/hydroma/models/hdvi.py",
+      "gap": "hdvi.spi false pretext (G-H5 family); bypasses spi_calculator"
+    },
+    {
+      "indicator_id": "SOIL_CEC_PH_BUFFER_HEALTH",
+      "evidence_class": "UNVALIDATED",
+      "basis": "no published values; the pH term is self-labelled 'not defensible'; buffer capacity accepted and unused; weights sum 0.85",
+      "reference": "engine/hydroma/soil/chemistry.py, health.py (citation withdrawn 2026-10-01)",
+      "gap": "G-H1"
+    },
+    {
+      "indicator_id": "SOIL_PEDOTRANSFER_SAXTON_RAWLS",
+      "evidence_class": "PARTIAL",
+      "basis": "theta regressions reproduced by hand but never asserted; ks_cm_per_day unattributed and untested",
+      "reference": "Saxton & Rawls 2006 SSSAJ 70:975-987; engine/hydroma/soil/pedotransfer.py:115-174",
+      "gap": "G-H4 (4.1e38 cm/day served live)"
+    },
+    {
+      "indicator_id": "TEXTURE_CLASSIFICATION",
+      "evidence_class": "PARTIAL",
+      "basis": "four known points verified; 782/5151 compositions fall through to an undocumented 'loam' guess; ranges overlap",
+      "reference": "USDA texture triangle; engine/hydroma/soil/taxonomy.py",
+      "gap": "full published triangle table pending"
+    },
+    {
+      "indicator_id": "CARBON_SEQ_RATES_PRICES",
+      "evidence_class": "UNVALIDATED",
+      "basis": "no citation for any rate; prices contradicted by the module's own World Bank note (6.34 vs 10-18 shipped)",
+      "reference": "engine/hydroma/carbon/calculator.py:93-167",
+      "gap": "G-H1"
+    },
+    {
+      "indicator_id": "BIOFERTILIZER_DOSAGE",
+      "evidence_class": "UNVALIDATED",
+      "basis": "AST guard reports 178/178 coefficients unsourced; label attached to every result (honest)",
+      "reference": "engine/hydroma/biofertilizer/calculator.py",
+      "gap": "G-H1"
+    },
+    {
+      "indicator_id": "ECONOMICS_FAMILY",
+      "evidence_class": "VALIDATED_METHOD_CONFORMANCE",
+      "basis": "textbook identities; two inconsistent NPV/payback conventions in one package",
+      "reference": "engine/hydroma/economics/*.py",
+      "gap": "convention conflict (G-H6)"
+    },
+    {
+      "indicator_id": "TERRAIN_METRICS",
+      "evidence_class": "PARTIAL",
+      "basis": "Horn slope and TWI verified in form; curvature adds profile (1/m) and plan (1/m^2) in quadrature; TPI bands unsourced",
+      "reference": "Horn 1981; Beven & Kirkby; engine/land/terrain_analysis.py",
+      "gap": "G-H12 (card dimension claims)"
+    },
+    {
+      "indicator_id": "WATERSHED_STRUCTURES",
+      "evidence_class": "PARTIAL",
+      "basis": "closed-form spillway/rational re-derivations; volumes and spacings rest on labelled design assumptions; trapezoid efficiency 0.8 uncited",
+      "reference": "FAO Watershed Management Field Manual; engine/hydroma/watershed/calculator.py",
+      "gap": "check_dam stored anchors contradict the implementation by 4-38x (G-H1)"
+    },
+    {
+      "indicator_id": "THEIS_DRAWDOWN_USGS",
+      "evidence_class": "VALIDATED_EXTERNAL",
+      "basis": "published worked example reproduced by the engine to 3.5e-9 m (well within 1e-6 m tolerance): USGS Python for Hydrology Part 0 notebook 07a, s = 1.40636669 m for T=1000 m2/day, S=3e-4, Q=4088 m3/day, r=1000 m, t=10 d",
+      "reference": "USGS Python for Hydrology, notebook 07a Theis example (https://doi-usgs.github.io/python-for-hydrology/latest/notebooks/part0_python_intro/solutions/07a_Theis-exercise-solution.html); tests/reference_data/theis_usgs_worked_example.csv; tests/test_theis_usgs_external.py",
+      "gap": null
+    }
+  ]
+}

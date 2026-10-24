@@ -1,0 +1,134 @@
+{
+  "report_version": "ECO-04.1-corrected",
+  "generated": "2026-10-08T17:00:00Z",
+  "status": "FAIL",
+  "files_scanned": 950,
+  "production_files": 831,
+  "test_files": 119,
+  "service_directories": 74,
+  "rules": [
+    {
+      "id": "ENGINE_NO_SERVICES",
+      "name": "Engine must not import from services",
+      "description": "Scientific engine must not depend on services layer.",
+      "source_module": "engine",
+      "forbidden_prefixes": ["services"],
+      "mode": "FORBIDDEN_PRODUCTION",
+      "rationale": "INV-016: Engine may not import from services.",
+      "violations": 0
+    },
+    {
+      "id": "ENGINE_NO_DATABASE",
+      "name": "Engine must not import from database",
+      "description": "Engine must not depend directly on database layer.",
+      "source_module": "engine",
+      "forbidden_prefixes": ["database"],
+      "mode": "FORBIDDEN_PRODUCTION",
+      "rationale": "INV-002: Engine never depends on database.",
+      "violations": 0,
+      "note": "FIXED in ECO-04 — PersistencePort abstraction at engine/ports/persistence.py isolates engine from database"
+    },
+    {
+      "id": "ENGINE_NO_FRONTEND",
+      "name": "Engine must not import from frontend",
+      "description": "Engine is backend-only.",
+      "source_module": "engine",
+      "forbidden_prefixes": ["frontend", "ui", "dashboard", "web"],
+      "mode": "FORBIDDEN_ALL",
+      "rationale": "INV-003: Engine never depends on frontend.",
+      "violations": 0
+    },
+    {
+      "id": "ENGINE_NO_AUTH",
+      "name": "Engine must not import from auth",
+      "description": "Auth concerns belong in services layer.",
+      "source_module": "engine",
+      "forbidden_prefixes": ["auth", "authentication"],
+      "mode": "FORBIDDEN_ALL",
+      "rationale": "Security boundaries enforced at gateway.",
+      "violations": 0
+    },
+    {
+      "id": "ENGINE_NO_PAYMENT",
+      "name": "Engine must not import from payment",
+      "description": "Payment must not leak into engine.",
+      "source_module": "engine",
+      "forbidden_prefixes": ["payment", "stripe", "paypal"],
+      "mode": "FORBIDDEN_ALL",
+      "rationale": "Financial concerns belong in services.",
+      "violations": 0
+    },
+    {
+      "id": "ENGINE_NO_BLOCKCHAIN",
+      "name": "Engine must not import from blockchain",
+      "description": "Blockchain must not be in engine.",
+      "source_module": "engine",
+      "forbidden_prefixes": ["blockchain", "smart_contract", "web3", "ethereum"],
+      "mode": "FORBIDDEN_ALL",
+      "rationale": "Blockchain is a services-layer concern.",
+      "violations": 0
+    },
+    {
+      "id": "AI_NO_ENGINE_INTERNALS",
+      "name": "AI services must not import engine internals",
+      "description": "AI layer must not import deep engine implementation internals.",
+      "source_module": "services.ai",
+      "forbidden_prefixes": ["engine.hydroma", "engine.cpp_core", "engine.ports"],
+      "mode": "FORBIDDEN_ALL",
+      "rationale": "AI isolation: AI interprets results but must not influence computation.",
+      "violations": 0
+    },
+    {
+      "id": "SERVICES_NO_ENGINE_INTERNALS",
+      "name": "Services must not import engine internals",
+      "description": "Services must route through EngineGateway, not import engine.hydroma, engine.cpp_core, or engine.ports directly.",
+      "source_module": "services",
+      "forbidden_prefixes": ["engine.hydroma", "engine.cpp_core", "engine.ports"],
+      "mode": "FORBIDDEN_PRODUCTION",
+      "rationale": "INV-003: Services must use Gateway — no direct engine internals import.",
+      "violations": 125,
+      "note": "ADDED in ECO-04.1 — this rule was MISSING from original 7-rule scan, causing Report 19 to incorrectly claim 0 violations"
+    }
+  ],
+  "summary": {
+    "total_violations": 125,
+    "rules_passed": 7,
+    "rules_failed": 1,
+    "failed_rule": "SERVICES_NO_ENGINE_INTERNALS (INV-003)",
+    "gate_status": "FAIL"
+  },
+  "violations_by_rule": {
+    "SERVICES_NO_ENGINE_INTERNALS": {
+      "count": 125,
+      "sample": [
+        {
+          "file": "services/daneshyar/knowledge_builder.py",
+          "line": 14,
+          "import": "from engine.hydroma.quantity import Quantity"
+        },
+        {
+          "file": "services/daneshyar/knowledge_builder.py",
+          "line": 15,
+          "import": "from engine.hydroma.constants import STEFAN_BOLTZMANN"
+        },
+        {
+          "file": "services/daneshyar/knowledge_builder.py",
+          "line": 22,
+          "import": "from engine.hydroma import water_density"
+        },
+        {
+          "file": "services/water/hydrology_model.py",
+          "line": 8,
+          "import": "from engine.hydroma.constants import WATER_DENSITY"
+        },
+        {
+          "file": "services/energy/demand.py",
+          "line": 5,
+          "import": "from engine.hydroma.constants import CALORIFIC_VALUE_WOOD"
+        }
+      ],
+      "full_output": "tools/detect_imports_output_v2.json (125 entries)"
+    }
+  },
+  "note": "This report was corrected during ECO-04.1. The original Report 03 showed 7 violations and 7 rules. The SERVICES_NO_ENGINE_INTERNALS rule was added to catch the 125 Services→Engine direct imports that were missed. Full re-scan: python tools/detect_imports.py --format=json --output tools/detect_imports_output_v2.json"
+}

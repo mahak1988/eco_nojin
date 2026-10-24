@@ -1,0 +1,313 @@
+{
+  "artifact_id": "PTF-REFERENCE-ROSETTA-3",
+  "version": "1.0.0",
+  "generated_at": "2026-10-10T06:35:17Z",
+  "generator": "tools/regenerate_ptf_reference.py",
+  "provenance": {
+    "package": "rosetta-soil",
+    "version": "0.3.2",
+    "license": "CC0-1.0 (USDA-ARS)",
+    "model": "Rosetta 3",
+    "model_code": 5,
+    "citation": "Zhang & Schaap 2017, Journal of Hydrology 547:39-53 (Rosetta 3); Schaap et al. 2001, JH 251:163-176 (Rosetta 1)",
+    "inputs_derivation": "Sand/silt/clay percentages are the engine's own reference compositions for its twelve texture classes (see engine/tests/test_rosetta_ptf_reference.py _REFERENCE_COMPOSITIONS); bulk density = 2.65*(1-theta_s) from the engine table; theta_33/theta_1500 evaluated from the engine's own VG curve at 330/15000 cm. The artifact therefore records Rosetta's prediction AT THE ENGINE'S OWN INPUTS, which is what the divergence audit measures -- it is not an independent USDA canonical table.",
+    "columns": [
+      "sand_pct",
+      "silt_pct",
+      "clay_pct",
+      "bulk_density",
+      "theta_33",
+      "theta_1500"
+    ]
+  },
+  "textures": {
+    "sand": {
+      "inputs": {
+        "sand_pct": 85.0,
+        "silt_pct": 10.0,
+        "clay_pct": 5.0,
+        "bulk_density": 1.5105,
+        "theta_33": 0.045579763,
+        "theta_1500": 0.0450009518
+      },
+      "mean": {
+        "theta_r": 0.0612368012,
+        "theta_s": 0.3599495704,
+        "alpha": 0.0381904655,
+        "n": 3.6032170088,
+        "ks_cm_per_day": 781.2596499745
+      },
+      "sd": {
+        "theta_r": 0.0077809787,
+        "theta_s": 0.0059178722,
+        "alpha": 0.0042819553,
+        "n": 0.2415890355,
+        "ks_cm_per_day": 150.6153539612
+      }
+    },
+    "loamy_sand": {
+      "inputs": {
+        "sand_pct": 75.0,
+        "silt_pct": 15.0,
+        "clay_pct": 10.0,
+        "bulk_density": 1.5635,
+        "theta_33": 0.0600510239,
+        "theta_1500": 0.0570230568
+      },
+      "mean": {
+        "theta_r": 0.0662637642,
+        "theta_s": 0.3481839048,
+        "alpha": 0.0371504845,
+        "n": 3.2116238273,
+        "ks_cm_per_day": 471.4852053531
+      },
+      "sd": {
+        "theta_r": 0.0077092611,
+        "theta_s": 0.0073755962,
+        "alpha": 0.0046939357,
+        "n": 0.2389589568,
+        "ks_cm_per_day": 131.5413759794
+      }
+    },
+    "sandy_loam": {
+      "inputs": {
+        "sand_pct": 60.0,
+        "silt_pct": 25.0,
+        "clay_pct": 15.0,
+        "bulk_density": 1.5635,
+        "theta_33": 0.0848181239,
+        "theta_1500": 0.065664191
+      },
+      "mean": {
+        "theta_r": 0.0630755234,
+        "theta_s": 0.3448236384,
+        "alpha": 0.0350712339,
+        "n": 2.247644392,
+        "ks_cm_per_day": 200.973969663
+      },
+      "sd": {
+        "theta_r": 0.0087533883,
+        "theta_s": 0.0100081989,
+        "alpha": 0.0052417496,
+        "n": 0.1508996952,
+        "ks_cm_per_day": 81.1324537677
+      }
+    },
+    "loam": {
+      "inputs": {
+        "sand_pct": 40.0,
+        "silt_pct": 40.0,
+        "clay_pct": 20.0,
+        "bulk_density": 1.5105,
+        "theta_33": 0.1653770863,
+        "theta_1500": 0.0883846925
+      },
+      "mean": {
+        "theta_r": 0.0554961437,
+        "theta_s": 0.3599752091,
+        "alpha": 0.0223706764,
+        "n": 1.4196173013,
+        "ks_cm_per_day": 39.9768683725
+      },
+      "sd": {
+        "theta_r": 0.0088170983,
+        "theta_s": 0.0098668426,
+        "alpha": 0.0037033481,
+        "n": 0.0463063924,
+        "ks_cm_per_day": 11.8067419554
+      }
+    },
+    "silt_loam": {
+      "inputs": {
+        "sand_pct": 20.0,
+        "silt_pct": 65.0,
+        "clay_pct": 15.0,
+        "bulk_density": 1.4575,
+        "theta_33": 0.2402423206,
+        "theta_1500": 0.1039435358
+      },
+      "mean": {
+        "theta_r": 0.0567773944,
+        "theta_s": 0.3829613503,
+        "alpha": 0.0101303808,
+        "n": 1.3800990094,
+        "ks_cm_per_day": 25.6473835087
+      },
+      "sd": {
+        "theta_r": 0.0102476863,
+        "theta_s": 0.0092592496,
+        "alpha": 0.0019240307,
+        "n": 0.0493955941,
+        "ks_cm_per_day": 9.4391400294
+      }
+    },
+    "silt": {
+      "inputs": {
+        "sand_pct": 5.0,
+        "silt_pct": 90.0,
+        "clay_pct": 5.0,
+        "bulk_density": 1.431,
+        "theta_33": 0.2581858032,
+        "theta_1500": 0.0900618123
+      },
+      "mean": {
+        "theta_r": 0.0520268145,
+        "theta_s": 0.3959653577,
+        "alpha": 0.0079462795,
+        "n": 1.4773103053,
+        "ks_cm_per_day": 83.174824058
+      },
+      "sd": {
+        "theta_r": 0.0165689574,
+        "theta_s": 0.023541741,
+        "alpha": 0.0039996975,
+        "n": 0.1249499805,
+        "ks_cm_per_day": 357.9177264603
+      }
+    },
+    "sandy_clay_loam": {
+      "inputs": {
+        "sand_pct": 60.0,
+        "silt_pct": 15.0,
+        "clay_pct": 25.0,
+        "bulk_density": 1.6165,
+        "theta_33": 0.1694661432,
+        "theta_1500": 0.1111650096
+      },
+      "mean": {
+        "theta_r": 0.0656451255,
+        "theta_s": 0.358976865,
+        "alpha": 0.0283132484,
+        "n": 1.4850562101,
+        "ks_cm_per_day": 65.0761012906
+      },
+      "sd": {
+        "theta_r": 0.0101357423,
+        "theta_s": 0.0107972006,
+        "alpha": 0.005233343,
+        "n": 0.0715298498,
+        "ks_cm_per_day": 19.1059460043
+      }
+    },
+    "clay_loam": {
+      "inputs": {
+        "sand_pct": 35.0,
+        "silt_pct": 35.0,
+        "clay_pct": 30.0,
+        "bulk_density": 1.5635,
+        "theta_33": 0.2696927184,
+        "theta_1500": 0.1496067268
+      },
+      "mean": {
+        "theta_r": 0.0775657575,
+        "theta_s": 0.3766762973,
+        "alpha": 0.0105795243,
+        "n": 1.3005905724,
+        "ks_cm_per_day": 9.8833830386
+      },
+      "sd": {
+        "theta_r": 0.0089119858,
+        "theta_s": 0.0072360487,
+        "alpha": 0.001486646,
+        "n": 0.0237096634,
+        "ks_cm_per_day": 2.3717622654
+      }
+    },
+    "silty_clay_loam": {
+      "inputs": {
+        "sand_pct": 15.0,
+        "silt_pct": 55.0,
+        "clay_pct": 30.0,
+        "bulk_density": 1.5105,
+        "theta_33": 0.3382683599,
+        "theta_1500": 0.1966669875
+      },
+      "mean": {
+        "theta_r": 0.1009493628,
+        "theta_s": 0.4121161508,
+        "alpha": 0.0068761299,
+        "n": 1.2862511375,
+        "ks_cm_per_day": 6.6019996092
+      },
+      "sd": {
+        "theta_r": 0.0121534458,
+        "theta_s": 0.0098163028,
+        "alpha": 0.0010784379,
+        "n": 0.0355777599,
+        "ks_cm_per_day": 1.6469221381
+      }
+    },
+    "sandy_clay": {
+      "inputs": {
+        "sand_pct": 50.0,
+        "silt_pct": 10.0,
+        "clay_pct": 40.0,
+        "bulk_density": 1.643,
+        "theta_33": 0.267245245,
+        "theta_1500": 0.1703708814
+      },
+      "mean": {
+        "theta_r": 0.0823957279,
+        "theta_s": 0.3777150896,
+        "alpha": 0.0161794475,
+        "n": 1.2692643041,
+        "ks_cm_per_day": 16.8386311534
+      },
+      "sd": {
+        "theta_r": 0.0142687799,
+        "theta_s": 0.0154802723,
+        "alpha": 0.0036497988,
+        "n": 0.0457708083,
+        "ks_cm_per_day": 8.065904215
+      }
+    },
+    "silty_clay": {
+      "inputs": {
+        "sand_pct": 10.0,
+        "silt_pct": 45.0,
+        "clay_pct": 45.0,
+        "bulk_density": 1.696,
+        "theta_33": 0.3369539027,
+        "theta_1500": 0.2664806394
+      },
+      "mean": {
+        "theta_r": 0.1432242732,
+        "theta_s": 0.3657961857,
+        "alpha": 0.0144164399,
+        "n": 1.1795880111,
+        "ks_cm_per_day": 1.5393810513
+      },
+      "sd": {
+        "theta_r": 0.0273866215,
+        "theta_s": 0.0178945766,
+        "alpha": 0.00565995,
+        "n": 0.0589337781,
+        "ks_cm_per_day": 0.978792609
+      }
+    },
+    "clay": {
+      "inputs": {
+        "sand_pct": 20.0,
+        "silt_pct": 30.0,
+        "clay_pct": 50.0,
+        "bulk_density": 1.643,
+        "theta_33": 0.3469497086,
+        "theta_1500": 0.2706910565
+      },
+      "mean": {
+        "theta_r": 0.1397945268,
+        "theta_s": 0.3868480499,
+        "alpha": 0.0153456568,
+        "n": 1.1784413543,
+        "ks_cm_per_day": 2.7288640119
+      },
+      "sd": {
+        "theta_r": 0.0235796338,
+        "theta_s": 0.0150633749,
+        "alpha": 0.0050452773,
+        "n": 0.0520277808,
+        "ks_cm_per_day": 1.2368276684
+      }
+    }
+  }
+}

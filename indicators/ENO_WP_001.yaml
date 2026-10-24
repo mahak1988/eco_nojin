@@ -1,0 +1,22 @@
+indicator_id: "ENO_WP_001"
+name:
+  en: "Water Productivity"
+  fa: "بهره‌وری آب"
+domain: "agriculture"
+formula: "WP = Y / ET"
+unit: "kg m-3"
+input_variables:
+  - name: "yield_kg_ha"
+    unit: "kg ha-1"
+    required: true
+  - name: "et_mm"
+    unit: "mm"
+    required: true
+reference:
+  source: "FAO WaPOR (Water Productivity database)"
+  url: "https://www.fao.org/land-water/databases-and-software/wapor/en"
+validation_status: "VALIDATED_UNIT_DEFINITION"
+version: "1.1.0"
+zed_compliant: true
+maturity_target: "S3"
+implementation_note: "Implemented in engine/hydroma/water_productivity.py using the FAO WaPOR definition WP = Y/ET in kg/m3 with the derived unit bridge M3_PER_MM_PER_HA = 10.0 (1 mm over 1 ha = 0.001 m x 10000 m2 = 10 m3), i.e. WP = Y [kg/ha] / (ET [mm] x 10.0); water_productivity_from_m3 variant takes ET in m3/ha. Verified 2026-10-10 in engine/tests/test_water_productivity.py: the worked example 5000 kg/ha with 500 mm ET gives exactly 1.0 kg/m3, unit consistency between the two entry points holds, and invalid inputs raise. The indicator is a definitional ratio, so verification is by exact unit arithmetic; published WaPOR benchmark values remain a separate, tracked gap."

@@ -1,0 +1,113 @@
+model: EWSI
+class: EWSI
+reference: Gao 1996 (Remote Sensing of Environment 58:257-266); Monteith 1993
+language: python
+status: validated
+recorded: 2026-09-29
+tolerances:
+  rtol: 0.01
+  atol: 0.01
+cases:
+- name: mild_stress_four_pixels
+  description: VPD 1.4 kPa and soil moisture at 84% of field capacity.
+  inputs:
+    nir:
+    - 0.28
+    - 0.34
+    - 0.41
+    - 0.46
+    swir:
+    - 0.22
+    - 0.2
+    - 0.18
+    - 0.16
+    vpd: 1.4
+    soil_moisture: 0.32
+    soil_field_capacity: 0.38
+  expected: 0.3992
+  expected_key: mean
+- name: vpd_at_minimum
+  description: vpd pinned at its minimum (0.0) as declared by validate_inputs.
+  inputs:
+    nir:
+    - 0.28
+    - 0.34
+    - 0.41
+    - 0.46
+    swir:
+    - 0.22
+    - 0.2
+    - 0.18
+    - 0.16
+    vpd: 0.0
+    soil_moisture: 0.32
+    soil_field_capacity: 0.38
+  expected: 0.32207235
+  reduce: mean
+  expected_key: mean
+  recorded_note: recorded from the model on 2026-10-10 through the validation runner at this boundary
+    input; a regression anchor, not an external reference
+- name: vpd_at_maximum
+  description: vpd pinned at its maximum (10.0) as declared by validate_inputs.
+  inputs:
+    nir:
+    - 0.28
+    - 0.34
+    - 0.41
+    - 0.46
+    swir:
+    - 0.22
+    - 0.2
+    - 0.18
+    - 0.16
+    vpd: 10.0
+    soil_moisture: 0.32
+    soil_field_capacity: 0.38
+  expected: 0.62207235
+  reduce: mean
+  expected_key: mean
+  recorded_note: recorded from the model on 2026-10-10 through the validation runner at this boundary
+    input; a regression anchor, not an external reference
+- name: soil_moisture_at_minimum
+  description: soil_moisture pinned at its minimum (0.0) as declared by validate_inputs.
+  inputs:
+    nir:
+    - 0.28
+    - 0.34
+    - 0.41
+    - 0.46
+    swir:
+    - 0.22
+    - 0.2
+    - 0.18
+    - 0.16
+    vpd: 1.4
+    soil_moisture: 0.0
+    soil_field_capacity: 0.38
+  expected: 0.65184678
+  reduce: mean
+  expected_key: mean
+  recorded_note: recorded from the model on 2026-10-10 through the validation runner at this boundary
+    input; a regression anchor, not an external reference
+- name: soil_moisture_at_maximum
+  expect: rejected_by_validate_inputs
+  expected: 0.35184678
+  description: soil_moisture pinned at its maximum (0.6) as declared by validate_inputs.
+  inputs:
+    nir:
+    - 0.28
+    - 0.34
+    - 0.41
+    - 0.46
+    swir:
+    - 0.22
+    - 0.2
+    - 0.18
+    - 0.16
+    vpd: 1.4
+    soil_moisture: 0.6
+    soil_field_capacity: 0.38
+  reduce: mean
+  expected_key: mean
+  recorded_note: recorded from the model on 2026-10-10 through the validation runner at this boundary
+    input; a regression anchor, not an external reference

@@ -1,0 +1,142 @@
+{
+  "courses": [
+    {
+      "id": "course-001",
+      "slug": "intro-to-regenerative-agriculture",
+      "title": "Introduction to Regenerative Agriculture",
+      "level": "beginner",
+      "duration_min": 120,
+      "description": "Fundamentals of regenerative agriculture principles and practices for soil health restoration.",
+      "lessons": [
+        {
+          "id": "lesson-001",
+          "title": "What is Regenerative Agriculture?",
+          "minutes": 30,
+          "content": "Regenerative agriculture goes beyond sustainable farming by actively restoring soil health...",
+          "position": 1
+        },
+        {
+          "id": "lesson-002",
+          "title": "Soil Health Principles",
+          "minutes": 45,
+          "content": "Understanding the five principles of soil health: minimize disturbance, maximize diversity...",
+          "position": 2
+        },
+        {
+          "id": "lesson-003",
+          "title": "Getting Started on Your Farm",
+          "minutes": 45,
+          "content": "Practical steps to begin transitioning to regenerative practices...",
+          "position": 3
+        }
+      ]
+    },
+    {
+      "id": "course-002",
+      "slug": "biofertilizer-formulation-basics",
+      "title": "Biofertilizer Formulation Basics",
+      "level": "intermediate",
+      "duration_min": 180,
+      "description": "Learn to formulate biofertilizers for different soil types and crop needs using the Nojin framework.",
+      "lessons": [
+        {
+          "id": "lesson-004",
+          "title": "Understanding Soil Types",
+          "minutes": 40,
+          "content": "Classifying soils and matching biofertilizer recipes...",
+          "position": 1
+        },
+        {
+          "id": "lesson-005",
+          "title": "Material Selection and Ratios",
+          "minutes": 50,
+          "content": "Choosing materials and calculating optimal ratios for your soil type...",
+          "position": 2
+        },
+        {
+          "id": "lesson-006",
+          "title": "Cost-Benefit Analysis",
+          "minutes": 50,
+          "content": "Evaluating economic viability of biofertilizer applications...",
+          "position": 3
+        },
+        {
+          "id": "lesson-007",
+          "title": "Field Application Best Practices",
+          "minutes": 40,
+          "content": "Timing, equipment, and monitoring for successful application...",
+          "position": 4
+        }
+      ]
+    },
+    {
+      "id": "course-003",
+      "slug": "village-governance-fundamentals",
+      "title": "Village Governance Fundamentals",
+      "level": "beginner",
+      "duration_min": 90,
+      "description": "Introduction to village governance structures, charters, and participatory decision-making.",
+      "lessons": [
+        {
+          "id": "lesson-008",
+          "title": "Village Governance Structure",
+          "minutes": 30,
+          "content": "Understanding the roles of working groups, coordinators, and community spaces...",
+          "position": 1
+        },
+        {
+          "id": "lesson-009",
+          "title": "Charter Development and Adoption",
+          "minutes": 30,
+          "content": "Drafting, reviewing, and adopting a village charter...",
+          "position": 2
+        },
+        {
+          "id": "lesson-010",
+          "title": "Decision Making and Conflict Resolution",
+          "minutes": 30,
+          "content": "Participatory decision-making processes and dispute resolution...",
+          "position": 3
+        }
+      ]
+    },
+    {
+      "id": "course-004",
+      "slug": "ecotourism-guide-training",
+      "title": "Ecotourism Guide Training",
+      "level": "intermediate",
+      "duration_min": 240,
+      "description": "Certification program for ecotourism guides covering safety, interpretation, and regenerative tourism principles.",
+      "lessons": [
+        {
+          "id": "lesson-011",
+          "title": "Ecotourism Principles",
+          "minutes": 60,
+          "content": "Regenerative tourism principles and their application...",
+          "position": 1
+        },
+        {
+          "id": "lesson-012",
+          "title": "Safety and Risk Management",
+          "minutes": 60,
+          "content": "Risk assessment, emergency protocols, and group management...",
+          "position": 2
+        },
+        {
+          "id": "lesson-013",
+          "title": "Interpretive Guiding",
+          "minutes": 60,
+          "content": "Interpretation techniques for ecological and cultural heritage...",
+          "position": 3
+        },
+        {
+          "id": "lesson-014",
+          "title": "Cultural Sensitivity and Community Engagement",
+          "minutes": 60,
+          "content": "Working with local communities and respecting cultural protocols...",
+          "position": 4
+        }
+      ]
+    }
+  ]
+}

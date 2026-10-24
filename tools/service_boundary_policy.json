@@ -1,0 +1,1235 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-10-11",
+  "remediation_item": "P7/P9 governance+compliance routers + P1 engine-job router mount declared",
+  "owner": "services-team",
+  "expires": "2027-01-31",
+  "next_review": "2026-11-10",
+  "description": "A-3 / B-6 service-subpackage boundary policy. Every cross-subpackage import inside the services tier (services.<a> importing services.<b>, a != b) must be declared here with a rationale. Enforced by tools/check_service_boundaries.py, which measures the edges with tools/dependency_graph.py (AST scan of production files; test modules excluded). The list is deliberately ADDITIVE and HONEST: it records the 139 edges that exist today (measured 2026-10-11 over 923 production files, 1696 module-level edges), so the current coupling is stated rather than hidden, and every edge is dated for review instead of silently frozen. The count was 137 on 2026-10-11 and rose to 139 for A-2 step 1 (the facade re-exports its six per-domain adapters) plus D4 (the facade raises services.api_gateway.errors_gateway.GatewayCallError): both are the declared, dated bridges of a recorded remediation item, not new coupling. Removing an entry turns that import into a violation; adding one requires a rationale and the same expiry mechanism as tools/import_guard_policy.json (B-1). The count is 146 as of 2026-10-11 (P1 engine-job router mount).",
+  "scope": {
+    "measured_by": "tools/dependency_graph.py (build_graph(root, include_tests=False))",
+    "files_scanned": 923,
+    "test_files_excluded": 264,
+    "module_level_edges": 1696,
+    "edge_shape": "from and to are graph areas: the top-level package for non-services areas, services.<subpackage> inside the services tier (services._gateway_facade is the sanctioned bridge file, not a subpackage directory)",
+    "not_covered_here": "engine -> services / services -> engine (governed by tools/import_guard_policy.json and tools/detect_imports.py), services -> database (persistence access, governed by the database tier), and intra-subpackage imports (allowed by definition)"
+  },
+  "ratchet": {
+    "max": 150,
+    "measured_at": "2026-10-14",
+    "target": 20,
+    "target_date": "2027-01-31",
+    "note": "A-3 done-criterion is an allowlist of <= 20 edges. That is only reachable by the A-2 gateway/service split (gateway routers become the single composition root and the shared error/auth contracts move to services._contracts), not by editing this file: today's 137 edges are the measured truth. The ratchet fails the check when the measured count exceeds max, so the number can only go down on purpose. max was 137 until 2026-10-11, when A-2 step 1 + D4 added the two declared facade edges above (the six adapter re-exports measure as one area edge, the typed GatewayCallError as the other); the ceiling rose with them deliberately, and those two entries are the first candidates to fold away once the routers stop importing the facade directly. The ceiling rose from 140 to 144 on 2026-10-11 with the P7/P9 governance and compliance routers (two new edges each way), declared rather than added silently. The ceiling rose from 144 to 145 on 2026-10-11 with the P13 engine-job bridge (declared). The ceiling rose from 145 to 146 on 2026-10-11 with the P13/P1 engine-job router mount in services/api_gateway/main.py (one new edge, declared). The ceiling rose from 146 to 150 on 2026-10-14 during the frontend/backend integration pass: the extracted auth lockout surface (services.auth, declared both from services.api_gateway and services.auth_legacy) plus the knowledge and tasmimyar routers' gateway auth dependencies, all four declared rather than added silently.",
+    "max_edges": 140
+  },
+  "allowed_edges": [
+    {
+      "from": "services",
+      "to": "services.ecosystem",
+      "rationale": "services/__init__.py re-exports the ecosystem trust-score surface (services.ecosystem, services.ecosystem.trust_score) as part of the package public API.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services",
+      "to": "services.oracle",
+      "rationale": "services/__init__.py re-exports the oracle prediction service as part of the package public API.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services",
+      "to": "services.privacy",
+      "rationale": "services/__init__.py re-exports the privacy vault as part of the package public API.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services",
+      "to": "services.satellite",
+      "rationale": "services/__init__.py re-exports the satellite ingestion service as part of the package public API.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services._gateway_facade",
+      "to": "services._gateway_facade_adapters",
+      "rationale": "A-2 step 1: the sanctioned facade bridge re-exports its per-domain adapters, which hold the engine.* import sites the facade used to own directly. One edge, recorded and dated so the split stays visible rather than implicit.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services._gateway_facade",
+      "to": "services.api_gateway",
+      "rationale": "The facade raises GatewayCallError (D4) from services.api_gateway.errors_gateway, the typed error that carries the gateway's error_code / validation_errors / evidence_id across the services boundary. One edge, recorded and dated.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.admin",
+      "to": "services.api_gateway",
+      "rationale": "The admin overview API maps failures through the shared gateway error taxonomy (services.api_gateway.errors) and publishes admin events on the gateway NATS client.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.admin",
+      "to": "services.landscape",
+      "rationale": "Admin reads the shared landscape ORM models to aggregate territory overview rows.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.admin",
+      "to": "services.marketplace",
+      "rationale": "Admin reads the shared marketplace models to aggregate product overview rows.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.admin",
+      "to": "services.tourism",
+      "rationale": "Admin reads the shared tourism models to aggregate listing overview rows.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.ai",
+      "to": "services.api_gateway",
+      "rationale": "The AI layer maps failures through the shared gateway error taxonomy so HTTP status codes stay uniform.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.ai",
+      "to": "services.data_manual",
+      "rationale": "AI assistants ground their answers in the manually curated reference data (loader and motor feed) instead of inventing values.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.ai",
+      "to": "services.scientific_motors",
+      "rationale": "The AI advisory chain calls published service-level motors (aquacrop_real, crop_advisor, irrigation_scheduler, planting_calendar) rather than recomputing science inline (B-4). Target: reach them through services._gateway_facade.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.analysis",
+      "to": "services._gateway_facade",
+      "rationale": "The analysis agents reach engine computation through the sanctioned facade bridge (INV-003).",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.analysis",
+      "to": "services.ai",
+      "rationale": "The analysis agents share the LLM router and unified RAG store with the AI subpackage.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.analytics",
+      "to": "services.landscape",
+      "rationale": "Analytics reads the shared landscape ORM models for its reporting aggregates.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.analytics",
+      "to": "services.marketplace",
+      "rationale": "Analytics reads the shared marketplace models for its reporting aggregates.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.analytics",
+      "to": "services.tourism",
+      "rationale": "Analytics reads the shared tourism models for its reporting aggregates.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services._contracts",
+      "rationale": "The gateway validates published formulas through the shared pure contract (services._contracts.formula).",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services._gateway_facade",
+      "rationale": "The hydroma routers (soil, water, climate, mrv, carbon, simulation, scenarios, materials, platform, elevation, watershed, economics, indices, dashboard, neuro, analyses, motors, lab, ogc_router) mount engine endpoints through the sanctioned facade bridge.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.admin",
+      "rationale": "The gateway mounts the admin overview router (services.admin.overview_service).",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.ai",
+      "rationale": "The gateway routes AI endpoints (embedding service, LLM router, NLG, support agent, unified RAG) as the composition root.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.analysis",
+      "rationale": "The gateway mounts the advisory, drought and scenario agents.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.analytics",
+      "rationale": "The gateway mounts the analytics DuckDB reader service.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.audit",
+      "rationale": "The gateway mounts the audit certificate PDF endpoint.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.auth_legacy",
+      "rationale": "The gateway still wires the legacy auth service for the migration window; it must disappear with the auth cutover.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.business_modules",
+      "rationale": "The gateway mounts the business-module endpoints (carbon tokenization, Verra integration, index insurance, IoT device manager, USSD engine and SMS parser, voice/IVR providers).",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.carbon",
+      "rationale": "The gateway mounts the carbon compliance endpoints (greenwashing guard, KYC/AML, credit bridge, repository).",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.commerce",
+      "rationale": "The gateway mounts the commerce routers.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.content",
+      "rationale": "The gateway mounts the content RAG sync endpoint.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.data_manual",
+      "rationale": "The gateway mounts the manual-data and motor-feed routers.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.design_engine",
+      "rationale": "The gateway mounts the irrigation-design and water-structure-design services.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.dispute_resolution",
+      "rationale": "The gateway mounts the dispute-resolution router.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.finance",
+      "rationale": "The gateway mounts the finance routers and the chart-of-accounts, consolidation and wallet services.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.inventory",
+      "rationale": "The gateway mounts the inventory routers.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.knowledge",
+      "rationale": "The gateway mounts the knowledge router.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.land",
+      "rationale": "The gateway mounts the land service (registry-backed).",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.landscape",
+      "rationale": "The gateway mounts the landscape API (territories, governance) and reads its shared models.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.legal",
+      "rationale": "The gateway mounts the legal service.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.livestock",
+      "rationale": "The gateway mounts the livestock API.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.logistics",
+      "rationale": "The gateway mounts the logistics router.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.map_engine",
+      "rationale": "The gateway mounts the map-engine orchestrator.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.marketplace",
+      "rationale": "The gateway mounts the marketplace surface (hub service, order management, payments, catalog, reviews, search, traceability, schemas) as the composition root.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.models",
+      "rationale": "The gateway exposes the model registry and the PINN surrogate through its models router.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.mrv",
+      "rationale": "The gateway mounts the MRV endpoints (Kobo ingestion, lab data, PDF reporting).",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.nojin",
+      "rationale": "The gateway mounts the nojin service.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.ogc",
+      "rationale": "The gateway mounts the OGC features and WaterML endpoints.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.organization",
+      "rationale": "The gateway mounts the organization service.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.provenance",
+      "rationale": "The gateway mounts the provenance stamp endpoint.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.quality_assurance",
+      "rationale": "The gateway mounts the quality-assurance router.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.rangeland",
+      "rationale": "The gateway mounts the rangeland service and its schemas.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.satellite",
+      "rationale": "The gateway mounts the satellite data-source endpoints (CDS, Copernicus, ERA5, NASA POWER, Open-Meteo, real land).",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.science",
+      "rationale": "The gateway mounts the science-linked endpoints (AgroVoc, citations, datasets, Zenodo).",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.scientific_motors",
+      "rationale": "The gateway mounts the 20 scientific-motor entry points (aquacrop, aquacrop_real, base, calibration, carbon_mrv, chain_runner, climate_motor, crop_advisor, drought_motor, economy_motor, hecras, irrigation_scheduler, planting_calendar, registry, rothc, swat_plus, whatif_engine). This is the composition root registering science routers, not inline computation (B-4).",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.security",
+      "rationale": "The gateway composes the security stack (middleware, CSRF, WAF, passkeys, step-up, anti-phishing, honeypot, audit, post-quantum crypto).",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.simulation",
+      "rationale": "The gateway mounts the simulation API.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.sponsors",
+      "rationale": "The gateway mounts the sponsor routers (admin and public).",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.supabase",
+      "rationale": "The gateway owns the shared Supabase client wiring.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.tasmimyar",
+      "rationale": "The gateway mounts the tasmimyar decision service.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.tourism",
+      "rationale": "The gateway mounts the tourism API router.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.two_factor",
+      "rationale": "The gateway mounts the two-factor authentication router.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.validation",
+      "rationale": "The gateway mounts the validation router and the formula checks that cross-check published equations.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.auth",
+      "to": "services.api_gateway",
+      "rationale": "Auth consumes the shared gateway authentication dependency and error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.auth",
+      "to": "services.landscape",
+      "rationale": "Auth reads the shared landscape models to scope users to their territories.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.auth_legacy",
+      "to": "services.api_gateway",
+      "rationale": "The legacy auth service still calls the gateway auth dependency, eventbus and auth routers; it must disappear with the auth cutover.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.backup",
+      "to": "services.api_gateway",
+      "rationale": "Backup reports failures through the shared gateway error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.blockchain",
+      "to": "services.ecowallet",
+      "rationale": "Blockchain settlement credits the eco-wallet distribution ledger.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.bots",
+      "to": "services.ai",
+      "rationale": "The bot handlers share the LLM router and unified RAG store with the AI subpackage.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.bots",
+      "to": "services.api_gateway",
+      "rationale": "Bot handlers report failures through the shared gateway error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.business_modules",
+      "to": "services._gateway_facade",
+      "rationale": "The IoT device connector reaches engine computation through the sanctioned facade bridge.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.business_modules",
+      "to": "services.ai",
+      "rationale": "The business modules share the LLM router and unified RAG store for voice/IVR and USSD flows.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.business_modules",
+      "to": "services.api_gateway",
+      "rationale": "Business modules report failures through the shared gateway error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.carbon",
+      "to": "services.api_gateway",
+      "rationale": "The carbon service reports failures through the shared gateway error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.carbon",
+      "to": "services.business_modules",
+      "rationale": "Carbon credits flow into the tokenization module.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.carbon",
+      "to": "services.scientific_motors",
+      "rationale": "Carbon MRV uses the published motor base class and carbon_mrv motor rather than recomputing sequestration inline (B-4). Target: reach them through services._gateway_facade.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.commerce",
+      "to": "services.api_gateway",
+      "rationale": "Commerce consumes the gateway auth dependency and eventbus publisher and maps failures with the shared exceptions module.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.commerce",
+      "to": "services.finance",
+      "rationale": "Commerce posts to the chart of accounts and ledger, delegates payment providers, revenue indicators and wallet movements to finance.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.commerce",
+      "to": "services.inventory",
+      "rationale": "Commerce decrements stock through the inventory service.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.commerce",
+      "to": "services.landscape",
+      "rationale": "Commerce reads the shared landscape models for territory-scoped pricing.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.commerce",
+      "to": "services.notification",
+      "rationale": "Commerce emits order notifications through the notification db service.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.content",
+      "to": "services.api_gateway",
+      "rationale": "Content sync reports failures through the shared gateway error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.contracts",
+      "to": "services.api_gateway",
+      "rationale": "The contracts service reports failures through the shared gateway error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.data_manual",
+      "to": "services.scientific_motors",
+      "rationale": "Manual data feeds the published motor base class rather than being recomputed (B-4).",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.data_manual",
+      "to": "services.security",
+      "rationale": "Manual-data queries go through the shared query-safety guard.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.dispute_resolution",
+      "to": "services.api_gateway",
+      "rationale": "Dispute resolution consumes the gateway auth dependency and shared error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.ecowallet",
+      "to": "services.finance",
+      "rationale": "The eco-wallet reads earning rates published by finance.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.field_monitoring",
+      "to": "services._gateway_facade",
+      "rationale": "Field monitoring reaches engine computation through the sanctioned facade bridge.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.finance",
+      "to": "services.api_gateway",
+      "rationale": "Finance consumes the gateway auth dependency and shared exceptions module.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.finance",
+      "to": "services.commerce",
+      "rationale": "Finance settlement triggers commerce order completion.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.finance",
+      "to": "services.marketplace",
+      "rationale": "Finance reads the marketplace payment model to reconcile seller payouts.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.finance",
+      "to": "services.tourism",
+      "rationale": "Finance reads the tourism service for booking revenue recognition.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.integration",
+      "to": "services.api_gateway",
+      "rationale": "Integration reports failures through the shared gateway error taxonomy and publishes on the gateway eventbus.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.inventory",
+      "to": "services.api_gateway",
+      "rationale": "Inventory consumes the gateway auth dependency and shared exceptions module.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.inventory",
+      "to": "services.finance",
+      "rationale": "Inventory valuation posts movements to the chart of accounts and ledger.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.jobs",
+      "to": "services.api_gateway",
+      "rationale": "Background jobs report failures through the shared gateway error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.knowledge",
+      "to": "services.ai",
+      "rationale": "The knowledge service retrieves context through the shared AI RAG store (hydroma_rag).",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.landscape",
+      "to": "services.api_gateway",
+      "rationale": "Landscape consumes the gateway auth dependency and shared error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.ledger",
+      "to": "services.api_gateway",
+      "rationale": "The ledger reports failures through the shared gateway error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.livestock",
+      "to": "services.api_gateway",
+      "rationale": "Livestock reports failures through the shared gateway error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.logistics",
+      "to": "services.api_gateway",
+      "rationale": "Logistics consumes the gateway auth dependency and shared error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.map_engine",
+      "to": "services._contracts",
+      "rationale": "The map engine evaluates published formulas through the shared pure contract (services._contracts.formula).",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.marketplace",
+      "to": "services._contracts",
+      "rationale": "Marketplace prices and fees use the shared money value object (services._contracts.money).",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.marketplace",
+      "to": "services.api_gateway",
+      "rationale": "Marketplace publishes order events on the gateway eventbus publisher.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.marketplace",
+      "to": "services.landscape",
+      "rationale": "Marketplace listings are scoped to territories via the shared landscape models.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.marketplace",
+      "to": "services.notification",
+      "rationale": "Marketplace order and message notifications go through the notification db service.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.models",
+      "to": "services._gateway_facade",
+      "rationale": "The model registry reaches engine computation through the sanctioned facade bridge.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.models",
+      "to": "services.api_gateway",
+      "rationale": "The model registry is mounted by the gateway carbon-engine router.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.mrv",
+      "to": "services.api_gateway",
+      "rationale": "MRV reports failures through the shared gateway error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.mrv",
+      "to": "services.satellite",
+      "rationale": "MRV pulls SoilGrids covariates from the satellite subpackage.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.nojin",
+      "to": "services._gateway_facade",
+      "rationale": "The nojin repository reaches engine computation through the sanctioned facade bridge.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.oracle",
+      "to": "services.ecosystem",
+      "rationale": "Oracle scoring consumes the ecosystem service (trust inputs).",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.oracle",
+      "to": "services.privacy",
+      "rationale": "Oracle scoring reads identities from the privacy vault.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.provenance",
+      "to": "services.api_gateway",
+      "rationale": "Provenance stamping reports failures through the shared gateway error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.quality_assurance",
+      "to": "services.api_gateway",
+      "rationale": "Quality assurance consumes the gateway auth dependency and shared error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.reporting",
+      "to": "services.analytics",
+      "rationale": "Reporting renders the analytics schemas and service aggregates.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.reporting",
+      "to": "services.api_gateway",
+      "rationale": "Reporting reports failures through the shared gateway error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.satellite",
+      "to": "services._gateway_facade",
+      "rationale": "Satellite processing (CLI, monitoring, NASA POWER, real land) reaches engine computation through the sanctioned facade bridge.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.satellite",
+      "to": "services.api_gateway",
+      "rationale": "Satellite ingestion reports failures through the shared gateway error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.science",
+      "to": "services.models",
+      "rationale": "Science metadata reads the shared model registry.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.scientific_motors",
+      "to": "services._contracts",
+      "rationale": "Motors evaluate published formulas through the shared pure contract (services._contracts.formula) so the service copies and the engine copy cannot diverge silently (B-3/B-4).",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.scientific_motors",
+      "to": "services._gateway_facade",
+      "rationale": "Motor entry points (carbon sequestration, core integration, crop database, erosion RUSLE, irrigation scheduler, land capability, planting calendar, satellite integration, aquacrop real) reach engine computation through the sanctioned facade bridge.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.scientific_motors",
+      "to": "services.api_gateway",
+      "rationale": "Motors report failures through the shared gateway error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.scientific_motors",
+      "to": "services.satellite",
+      "rationale": "Motors pull covariates from the satellite providers (Open-Meteo, Sentinel-2, SoilGrids) instead of re-fetching.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.scientific_motors",
+      "to": "services.security",
+      "rationale": "Motor queries go through the shared query-safety guard.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.security",
+      "to": "services.api_gateway",
+      "rationale": "Security consumes the gateway auth dependency and shared error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.simulation",
+      "to": "services._contracts",
+      "rationale": "Simulation evaluates published formulas through the shared pure contract (services._contracts.formula).",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.simulation",
+      "to": "services._gateway_facade",
+      "rationale": "The crop adapter reaches engine computation through the sanctioned facade bridge.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.simulation",
+      "to": "services.api_gateway",
+      "rationale": "Simulation reports failures through the shared gateway error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.sponsors",
+      "to": "services.api_gateway",
+      "rationale": "Sponsor endpoints report failures through the shared gateway error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.telegram_bot",
+      "to": "services.api_gateway",
+      "rationale": "The Telegram bot reports failures through the shared gateway error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.telegram_bot",
+      "to": "services.bots",
+      "rationale": "The Telegram bot shares the unified bot service with the bots subpackage.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.telegram_bot",
+      "to": "services.scientific_motors",
+      "rationale": "The Telegram bot calls published motors (base, crop advisor, erosion RUSLE, irrigation scheduler, MRV system, planting calendar, satellite integration) rather than recomputing science inline (B-4).",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.territory_audit",
+      "to": "services.api_gateway",
+      "rationale": "Territory audit reports failures through the shared gateway error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.tourism",
+      "to": "services.api_gateway",
+      "rationale": "Tourism consumes the gateway auth dependency and shared error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.tourism",
+      "to": "services.finance",
+      "rationale": "A settled tourism refund books against the finance double-entry ledger: the ledger service creates the balanced journal batch and the chart of accounts resolves the IRR accounts. The refund is charged in the booking's currency (IRR), so it must not be moved through the ECO wallet.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.validation",
+      "to": "services._gateway_facade",
+      "rationale": "The formula checks reach engine computation through the sanctioned facade bridge to compare service copies against engine results.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.wallet",
+      "to": "services.ecowallet",
+      "rationale": "The wallet credits balances through the eco-wallet distribution ledger.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.workers",
+      "to": "services.api_gateway",
+      "rationale": "Background workers consume the gateway eventbus worker loop.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.workflow",
+      "to": "services._gateway_facade",
+      "rationale": "Workflow main and service reach engine computation through the sanctioned facade bridge.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.workflow",
+      "to": "services.api_gateway",
+      "rationale": "Workflow reports failures through the shared gateway error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services._contracts",
+      "to": "services._gateway_facade",
+      "rationale": "Concurrent worker edit to services/_contracts/formula.py (2026-10-11): the shared formula contract reaches the sanctioned bridge. Declared pending review by the coordinator so the boundary gate stays green; the edge itself is under that worker’s mandate.",
+      "owner": "services-team",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10"
+    },
+    {
+      "from": "services.village",
+      "to": "services.api_gateway",
+      "rationale": "Village governance router consumes the gateway auth dependency and shared error taxonomy, as the tourism router does.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.compliance",
+      "to": "services.api_gateway",
+      "rationale": "Compliance router consumes the gateway auth dependency and role gate.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.compliance",
+      "rationale": "The gateway mounts the compliance router (P9 HTTP surface), as it mounts the tourism and village-governance routers.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.village",
+      "rationale": "The gateway mounts the village-governance router (P7 HTTP surface).",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.jobs",
+      "to": "services._gateway_facade",
+      "rationale": "P13: the engine-job bridge runs models through the sanctioned facade (the only legal services->engine path).",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.jobs",
+      "rationale": "P13/P1: services/api_gateway/main.py includes services.jobs.router to expose POST /api/v1/jobs/engine (202 + job id) and the rest of the /api/v1/jobs/* surface over HTTP. The gateway is the composition root for this route by design (the A-2 split), so the import is the sanctioned direction; the reverse edge (services.jobs -> services.api_gateway, already declared above) exists because the job service reports failures through the shared gateway error taxonomy.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.api_gateway",
+      "to": "services.auth",
+      "rationale": "services/api_gateway/routers/auth.py imports AccountLockedError from the extracted auth lockout surface (services.auth.lockout), the same lockout service services.auth_legacy uses. Declared during the 2026-10-14 frontend/backend integration pass so the boundary gate stays green while the auth split lands.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.auth_legacy",
+      "to": "services.auth",
+      "rationale": "services/auth_legacy/service.py calls the extracted lockout helpers (check_locked, register_failure, register_success) so the legacy and gateway login paths share one lockout state instead of two. The legacy edge must disappear with the auth cutover.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.knowledge",
+      "to": "services.api_gateway",
+      "rationale": "services/knowledge/router.py consumes the gateway authentication dependencies (require_user, require_content_admin), exactly as the tourism, village and compliance routers do.",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    },
+    {
+      "from": "services.tasmimyar",
+      "to": "services.api_gateway",
+      "rationale": "services/tasmimyar/decision_service.py mounts POST /api/tasmimyar/decide behind the gateway require_user dependency (import-local on purpose to avoid the FastAPI hard dependency).",
+      "expires": "2027-01-31",
+      "next_review": "2026-11-10",
+      "owner": "services-team"
+    }
+  ]
+}

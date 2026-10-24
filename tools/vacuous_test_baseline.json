@@ -1,0 +1,355 @@
+{
+  "version": "1.1.0",
+  "updated": "2026-10-20",
+  "note": "Known source-text / unpersisted-field assertions. They are not behaviour tests; each needs either a behavioural replacement or a recorded reason to stay. Keyed on the source text of the line, not the line number. New findings must not be added here.",
+  "findings": [
+    {
+      "file": "engine\\strict_tests\\test_s00_baseline.py",
+      "line": 181,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"    \" in raw, \"expected indented output\""
+    },
+    {
+      "file": "engine\\strict_tests\\test_s07_carbon.py",
+      "line": 75,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"illustrative\" in source"
+    },
+    {
+      "file": "engine\\strict_tests\\test_s07_carbon.py",
+      "line": 76,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"EU\" in source, \"the directive citation that constrains use was removed\""
+    },
+    {
+      "file": "engine\\strict_tests\\test_s07_carbon.py",
+      "line": 328,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"LIMITATIONS\" in source"
+    },
+    {
+      "file": "engine\\strict_tests\\test_s11_parity_tripwires.py",
+      "line": 619,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"watershed.calculator import\" in source, ("
+    },
+    {
+      "file": "engine\\strict_tests\\test_s11_parity_tripwires.py",
+      "line": 660,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"1.7\" in a, \"the canonical version lost its Cd = 1.7\""
+    },
+    {
+      "file": "engine\\strict_tests\\test_s11_parity_tripwires.py",
+      "line": 798,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"_ARRAY_CPP_THRESHOLD\" in source"
+    },
+    {
+      "file": "engine\\strict_tests\\test_s13_soil_table.py",
+      "line": 126,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"Carsel & Parrish\" in source, ("
+    },
+    {
+      "file": "engine\\strict_tests\\test_s13_soil_table.py",
+      "line": 490,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"clay\" in text.lower()"
+    },
+    {
+      "file": "engine\\strict_tests\\test_s13_soil_table.py",
+      "line": 491,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"Carsel\" in text, \"the document must say which attribution was withdrawn\""
+    },
+    {
+      "file": "engine\\strict_tests\\test_s13_soil_table.py",
+      "line": 489,
+      "reason": "positive containment assert on source text",
+      "source": "assert texture in text, f\"{texture} is disputed but undocumented\""
+    },
+    {
+      "file": "engine\\strict_tests\\test_s17_gateway_route_repair.py",
+      "line": 603,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"** 0.5\" in core_src, \"core must carry the published exponent 0.5\""
+    },
+    {
+      "file": "engine\\strict_tests\\test_s17_gateway_route_repair.py",
+      "line": 610,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"calc_et0_hargreaves\" in src, ("
+    },
+    {
+      "file": "engine\\tests\\test_architecture_rules.py",
+      "line": 467,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"detect_imports.py\" in ci_text, \"architecture import guard must run in CI\""
+    },
+    {
+      "file": "engine\\tests\\test_architecture_rules.py",
+      "line": 468,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"pytest engine\" in ci_text, \"engine tests (including this file) must run in CI\""
+    },
+    {
+      "file": "engine\\tests\\test_coverage_gate.py",
+      "line": 313,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"+5 % per month\" in docstring"
+    },
+    {
+      "file": "engine\\tests\\test_coverage_gate.py",
+      "line": 314,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"80 %\" in docstring"
+    },
+    {
+      "file": "engine\\tests\\test_coverage_gate.py",
+      "line": 315,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"SB-08\" in docstring"
+    },
+    {
+      "file": "engine\\tests\\test_coverage_gate.py",
+      "line": 316,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"A-1\" in docstring"
+    },
+    {
+      "file": "engine\\tests\\test_coverage_gate.py",
+      "line": 317,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"separately\" in docstring"
+    },
+    {
+      "file": "engine\\tests\\test_coverage_gate.py",
+      "line": 367,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"READY\" in text"
+    },
+    {
+      "file": "engine\\tests\\test_coverage_gate.py",
+      "line": 368,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"NOT-READY\" in text"
+    },
+    {
+      "file": "engine\\tests\\test_coverage_gate.py",
+      "line": 369,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"PYTHONPATH\" in text"
+    },
+    {
+      "file": "engine\\tests\\test_coverage_gate.py",
+      "line": 370,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"SECRET_KEY\" in text"
+    },
+    {
+      "file": "engine\\tests\\test_coverage_gate.py",
+      "line": 363,
+      "reason": "positive containment assert on source text",
+      "source": "assert marker in text, f\"{path} does not run the {marker!r} check\""
+    },
+    {
+      "file": "engine\\tests\\test_coverage_gate.py",
+      "line": 442,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"services/\" in text, path"
+    },
+    {
+      "file": "engine\\tests\\test_coverage_gate.py",
+      "line": 443,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"no:cacheprovider\" in text, path"
+    },
+    {
+      "file": "engine\\tests\\test_coverage_gate.py",
+      "line": 469,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"git add -p\" in text"
+    },
+    {
+      "file": "engine\\tests\\test_coverage_gate.py",
+      "line": 471,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"data/\" in text"
+    },
+    {
+      "file": "engine\\tests\\test_coverage_gate.py",
+      "line": 472,
+      "reason": "positive containment assert on source text",
+      "source": "assert \".mypy_cache\" in text"
+    },
+    {
+      "file": "engine\\tests\\test_coverage_gate.py",
+      "line": 473,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"git status --short\" in text"
+    },
+    {
+      "file": "engine\\tests\\test_stage33_benchmark.py",
+      "line": 403,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"STRICT\" in content"
+    },
+    {
+      "file": "engine\\tests\\test_stage33_benchmark.py",
+      "line": 404,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"ALLOW_ESTIMATED\" in content"
+    },
+    {
+      "file": "engine\\tests\\test_stage33_benchmark.py",
+      "line": 411,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"BLOCKED\" in content"
+    },
+    {
+      "file": "engine\\tests\\test_stage33_benchmark.py",
+      "line": 418,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"EWSI\" in content"
+    },
+    {
+      "file": "engine\\tests\\test_texture_classifier_audit.py",
+      "line": 117,
+      "reason": "positive containment assert on source text",
+      "source": "assert str(PINNED_FALLBACK_COUNT) in report"
+    },
+    {
+      "file": "engine\\tests\\test_texture_classifier_audit.py",
+      "line": 118,
+      "reason": "positive containment assert on source text",
+      "source": "assert tool.FALLBACK_SITE in report"
+    },
+    {
+      "file": "engine\\tests\\test_texture_classifier_audit.py",
+      "line": 122,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"does **not** touch the classifier\" in report"
+    },
+    {
+      "file": "engine\\tests\\test_texture_classifier_audit.py",
+      "line": 120,
+      "reason": "positive containment assert on source text",
+      "source": "assert phrase in report, f\"audit report is missing the {phrase!r} closing section\""
+    },
+    {
+      "file": "engine\\tests\\test_usda_texture_reference.py",
+      "line": 285,
+      "reason": "positive containment assert on source text",
+      "source": "assert str(AUDIT_FALLBACK) in report"
+    },
+    {
+      "file": "engine\\tests\\test_usda_texture_reference.py",
+      "line": 286,
+      "reason": "positive containment assert on source text",
+      "source": "assert str(AUDIT_TOTAL) in report"
+    },
+    {
+      "file": "engine\\tests\\test_usda_texture_reference.py",
+      "line": 287,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"USDA public-domain\" in report, ("
+    },
+    {
+      "file": "services\\api_gateway\\tests\\test_p6_golden_path.py",
+      "line": 298,
+      "reason": "assert on a field the database does not have: plain.certification",
+      "source": "assert plain.certification == \"PGS-2026-001\""
+    },
+    {
+      "file": "services\\api_gateway\\tests\\test_p6_golden_path.py",
+      "line": 299,
+      "reason": "assert on a field the database does not have: plain.legal_trademark_registered",
+      "source": "assert plain.legal_trademark_registered is True"
+    },
+    {
+      "file": "services\\marketplace\\tests\\test_cross_tenant_matrix.py",
+      "line": 183,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"_require_admin_of\" in source"
+    },
+    {
+      "file": "services\\marketplace\\tests\\test_cross_tenant_matrix.py",
+      "line": 186,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"_require_admin_of\" in read"
+    },
+    {
+      "file": "services\\marketplace\\tests\\test_cross_tenant_matrix.py",
+      "line": 205,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"seller_id=seller_id\" in source"
+    },
+    {
+      "file": "services\\marketplace\\tests\\test_cross_tenant_matrix.py",
+      "line": 206,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"MarketplaceSeller\" in source"
+    },
+    {
+      "file": "services\\marketplace\\tests\\test_cross_tenant_matrix.py",
+      "line": 207,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"verified\" in source"
+    },
+    {
+      "file": "services\\observability\\tests\\test_setup.py",
+      "line": 78,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"127.0.0.1\" in source"
+    },
+    {
+      "file": "services\\quality\\tests\\test_quality_package.py",
+      "line": 23,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"namespace package\" in text"
+    },
+    {
+      "file": "services\\security\\tests\\test_antibot_integration.py",
+      "line": 310,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"await self._antibot_step(\" in source, \"the ladder step must be awaited in __call__\""
+    },
+    {
+      "file": "services\\security\\tests\\test_security_remediation.py",
+      "line": 666,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"HYDROMA_METRICS_API_KEY\" in text"
+    },
+    {
+      "file": "services\\workers\\tests\\test_event_worker.py",
+      "line": 23,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"services.api_gateway.eventbus\" in source"
+    },
+    {
+      "file": "tests\\test_lint_ratchet.py",
+      "line": 163,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"check_lint_ratchet.py\" in text"
+    },
+    {
+      "file": "tests\\test_lint_ratchet.py",
+      "line": 167,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"check_lint_ratchet.py\" in text"
+    },
+    {
+      "file": "tests\\test_lint_ratchet.py",
+      "line": 173,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"check_lint_ratchet.py\" in text"
+    },
+    {
+      "file": "tests\\test_money_detox.py",
+      "line": 164,
+      "reason": "positive containment assert on source text",
+      "source": "assert \"already retired\" in source"
+    }
+  ]
+}

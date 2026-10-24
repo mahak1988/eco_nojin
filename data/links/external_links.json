@@ -1,0 +1,153 @@
+{
+  "_meta": {
+    "title": "HyDroMA external connection catalog",
+    "description": "Every external endpoint the project connects to, plus the key-issuing pages, with live verification status recorded honestly (http_200 = verified from this environment on 2026-10-10; anti_bot = the page blocks automated requests but is the correct canonical URL opened from a browser; unverified = could not be reached from this environment).",
+    "verified_at": "2026-10-10T01:05:00Z",
+    "verification_method": "HTTP GET with a browser User-Agent from the project workspace; anti-bot/403 statuses are recorded as such and are NOT claimed broken.",
+    "counts": { "data_endpoints": 22, "ai_providers": 9, "key_pages": 16 },
+    "consumers": [
+      "engine/hydroma/data_pipeline/pipeline.py",
+      "engine/hydroma/data_pipeline/connectors/{cds,era5,wapor}_connector.py",
+      "services/ai/llm_router.py",
+      "services/ai/embedding_service.py",
+      "services/ai/{support_agent,admin_assistant,hydroma_rag,unified_rag}.py"
+    ]
+  },
+
+  "data_endpoints": [
+    { "id": "nasa_power", "name": "NASA POWER agroclimatology", "url": "https://power.larc.nasa.gov/api/temporal/daily/point", "category": "climate", "auth": "none", "free": true, "env_vars": [], "used_in": "engine/hydroma/data_pipeline/pipeline.py", "verification": "http_200" },
+    { "id": "open_meteo", "name": "Open-Meteo archive", "url": "https://api.open-meteo.com/v1/era5", "category": "climate", "auth": "none", "free": true, "env_vars": [], "used_in": "engine/hydroma/data_pipeline/pipeline.py", "verification": "http_200" },
+    { "id": "open_meteo_climate", "name": "Open-Meteo climate projections", "url": "https://climate-api.open-meteo.com/v1/climate", "category": "climate", "auth": "none", "free": true, "env_vars": [], "used_in": "engine/hydroma/data_pipeline/pipeline.py", "verification": "http_200" },
+    { "id": "chirps", "name": "CHIRPS rainfall (UCSB)", "url": "https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_daily/netcdf", "category": "climate", "auth": "none", "free": true, "env_vars": [], "used_in": "engine/hydroma/data_pipeline/pipeline.py", "verification": "http_200" },
+    { "id": "era5_cds", "name": "ERA5 reanalysis (Copernicus CDS)", "url": "https://cds.climate.copernicus.eu/api", "category": "climate", "auth": "api_key", "free": true, "env_vars": ["CDS_API_KEY", "COPERNICUS_CDS_API_KEY"], "key_page": "https://cds.climate.copernicus.eu/how-to-api", "used_in": "engine/hydroma/data_pipeline/connectors/era5_connector.py", "verification": "http_200" },
+    { "id": "chelsa", "name": "CHELSA climatologies (envicloud)", "url": "https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V2/GLOBAL", "category": "climate", "auth": "none", "free": true, "env_vars": [], "used_in": "engine/hydroma/data_pipeline/pipeline.py", "verification": "unverified_from_cli" },
+    { "id": "ncep", "name": "NCEP/NCAR reanalysis (NOAA THREDDS)", "url": "https://psl.noaa.gov/thredds/dodsC/Datasets/ncep.reanalysis.derived", "category": "climate", "auth": "none", "free": true, "env_vars": [], "used_in": "engine/hydroma/data_pipeline/pipeline.py", "verification": "unverified_from_cli" },
+    { "id": "worldclim", "name": "WorldClim 30s", "url": "https://worldclim.org/data/worldclim21_30s.zip", "category": "climate", "auth": "none", "free": true, "env_vars": [], "used_in": "engine/hydroma/data_pipeline/pipeline.py", "verification": "http_200" },
+    { "id": "soilgrids", "name": "SoilGrids (ISRIC)", "url": "https://rest.isric.org/soilgrids/v2.0/properties/query", "category": "soil", "auth": "none", "free": true, "env_vars": [], "used_in": "engine/hydroma/data_pipeline/pipeline.py", "verification": "http_200" },
+    { "id": "hydrosheds", "name": "HydroSHEDS (HydroBASINS/RIVERS/LAKES/GLORIC)", "url": "https://data.hydrosheds.org/", "category": "water", "auth": "none", "free": true, "env_vars": [], "used_in": "engine/hydroma/data_pipeline/pipeline.py", "verification": "anti_bot" },
+    { "id": "cdse_stac", "name": "Copernicus Data Space STAC (Sentinel search)", "url": "https://stac.dataspace.copernicus.eu/v1", "category": "satellite", "auth": "none_for_search", "free": true, "env_vars": [], "used_in": "engine/hydroma/data_pipeline/connectors/cds_connector.py", "verification": "http_200" },
+    { "id": "cdse_odata", "name": "Copernicus Data Space OData (Sentinel download)", "url": "https://catalogue.dataspace.copernicus.eu/odata/v1", "category": "satellite", "auth": "oauth", "free": true, "env_vars": ["CDSE_CLIENT_ID", "CDSE_CLIENT_SECRET"], "key_page": "https://dataspace.copernicus.eu/", "used_in": "engine/hydroma/data_pipeline/connectors/cds_connector.py", "verification": "http_200" },
+    { "id": "cdse_identity", "name": "CDS identity/token endpoint", "url": "https://identity.dataspace.copernicus.eu/auth/realms/cdse/protocol/openid-connect/token", "category": "satellite", "auth": "oauth", "free": true, "env_vars": ["CDSE_CLIENT_ID", "CDSE_CLIENT_SECRET"], "used_in": "engine/hydroma/data_pipeline/connectors/cds_connector.py", "verification": "http_200" },
+    { "id": "esa_worldcover", "name": "ESA WorldCover (S3)", "url": "https://esa-worldcover.s3.amazonaws.com", "category": "land", "auth": "none", "free": true, "env_vars": [], "used_in": "engine/hydroma/data_pipeline/pipeline.py", "verification": "unverified_from_cli" },
+    { "id": "chelsa_deafrica", "name": "Digital Earth Africa S3 inputs", "url": "https://deafrica-input-datasets.s3.af-south-1.amazonaws.com", "category": "land", "auth": "none", "free": true, "env_vars": [], "used_in": "engine/hydroma/data_pipeline/pipeline.py", "verification": "unverified_from_cli" },
+    { "id": "earth_search", "name": "AWS Earth Search STAC", "url": "https://earth-search.aws.element84.com/v1", "category": "satellite", "auth": "none", "free": true, "env_vars": [], "used_in": "engine/hydroma/data_pipeline/pipeline.py", "verification": "http_200" },
+    { "id": "planetary_computer_stac", "name": "Microsoft Planetary Computer STAC", "url": "https://planetarycomputer.microsoft.com/api/stac/v1", "category": "satellite", "auth": "none", "free": true, "env_vars": [], "key_page": "https://planetarycomputer.microsoft.com/account/request", "used_in": "engine/hydroma/data_pipeline/pipeline.py", "verification": "http_200" },
+    { "id": "gbif", "name": "GBIF species occurrence", "url": "https://api.gbif.org/v1", "category": "biodiversity", "auth": "none", "free": true, "env_vars": [], "used_in": "engine/hydroma/data_pipeline/pipeline.py", "verification": "anti_bot" },
+    { "id": "wapor", "name": "FAO WaPOR v3 (water productivity)", "url": "https://data.apps.fao.org/gismgr/api/v2", "category": "water", "auth": "none_since_v3", "free": true, "env_vars": [], "used_in": "engine/hydroma/data_pipeline/connectors/wapor_connector.py", "verification": "http_200" },
+    { "id": "wapor_docs", "name": "WaPOR API reference", "url": "https://data.apps.fao.org/gismgr/shared/docs/api-reference/", "category": "water", "auth": "none", "free": true, "env_vars": [], "used_in": "engine/hydroma/data_pipeline/connectors/wapor_connector.py", "verification": "unverified_from_cli" },
+    { "id": "gldas", "name": "GLDAS/NLDAS hydrology (NASA GES DISC)", "url": "https://hydro1.gesdisc.eosdis.nasa.gov/", "category": "water", "auth": "none", "free": true, "env_vars": [], "used_in": "reference only (not yet a connector)", "verification": "http_200" },
+    { "id": "open_data_registry", "name": "AWS Registry of Open Data", "url": "https://registry.opendata.aws/", "category": "catalog", "auth": "none", "free": true, "env_vars": [], "used_in": "reference only", "verification": "http_200" }
+  ],
+
+  "ai_providers": [
+    { "id": "ollama_local", "name": "Ollama (local server)", "url": "http://127.0.0.1:11434", "auth": "none", "free": true, "env_vars": ["OLLAMA_BASE_URL", "OLLAMA_MODEL"], "default_model": "qwen3:4b", "models": ["qwen3:4b", "llama3.2", "mistral", "gemma2", "phi4"], "used_in": "services/ai/support_agent.py, services/ai/admin_assistant.py", "key_page": "https://ollama.com/download", "verification": "anti_bot" },
+    { "id": "groq", "name": "Groq", "url": "https://api.groq.com/openai/v1", "auth": "api_key", "free": true, "env_vars": ["GROQ_API_KEY"], "models": ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "qwen/qwen3-32b", "openai/gpt-oss-120b"], "rpm_limit": 6000, "used_in": "services/ai/llm_router.py", "key_page": "https://console.groq.com/keys", "verification": "anti_bot" },
+    { "id": "openrouter", "name": "OpenRouter", "url": "https://openrouter.ai/api/v1", "auth": "api_key", "free": true, "env_vars": ["OPENROUTER_API_KEY"], "models": ["meta-llama/llama-3.3-70b-instruct:free", "meta-llama/llama-3.1-8b-instruct:free", "qwen/qwen-2.5-72b-instruct:free"], "rpm_limit": 60, "used_in": "services/ai/llm_router.py", "key_page": "https://openrouter.ai/keys", "verification": "anti_bot" },
+    { "id": "google_gemini", "name": "Google Gemini (AI Studio)", "url": "https://generativelanguage.googleapis.com/v1beta/openai", "auth": "api_key", "free": true, "env_vars": ["GOOGLE_API_KEY"], "models": ["gemini-1.5-flash", "gemini-1.5-flash-8b"], "rpm_limit": 1500, "used_in": "services/ai/llm_router.py", "key_page": "https://aistudio.google.com/apikey", "verification": "anti_bot" },
+    { "id": "mistral", "name": "Mistral", "url": "https://api.mistral.ai/v1", "auth": "api_key", "free": true, "env_vars": ["MISTRAL_API_KEY"], "models": ["mistral-large-latest", "mistral-small-latest"], "rpm_limit": 60, "used_in": "services/ai/llm_router.py", "key_page": "https://console.mistral.ai/api-keys", "verification": "anti_bot" },
+    { "id": "deepseek", "name": "DeepSeek", "url": "https://api.deepseek.com/v1", "auth": "api_key", "free": false, "env_vars": ["DEEPSEEK_API_KEY"], "models": ["deepseek-chat", "deepseek-reasoner"], "supports_tools": false, "used_in": "services/ai/llm_router.py", "key_page": "https://platform.deepseek.com/api_keys", "verification": "anti_bot" },
+    { "id": "anthropic", "name": "Anthropic", "url": "https://api.anthropic.com", "auth": "api_key", "free": false, "env_vars": ["ANTHROPIC_API_KEY"], "used_in": "engine/hydroma/config/settings.py + services/ai/*", "key_page": "https://console.anthropic.com/settings/keys", "verification": "http_200" },
+    { "id": "openai", "name": "OpenAI (also Whisper STT)", "url": "https://api.openai.com/v1", "auth": "api_key", "free": false, "env_vars": ["OPENAI_API_KEY", "WHISPER_API_KEY"], "used_in": "services/ai/*, services/voice/whisper_stt.py", "key_page": "https://platform.openai.com/api-keys", "verification": "anti_bot" },
+    { "id": "jina_embeddings", "name": "Jina embeddings", "url": "https://api.jina.ai/v1", "auth": "api_key", "free": true, "env_vars": ["JINA_API_KEY"], "model": "jina-embeddings-v3", "free_quota": "10M tokens/month", "used_in": "services/ai/embedding_service.py", "key_page": "https://jina.ai/embeddings", "verification": "anti_bot" },
+    { "id": "cloudflare_workers_ai", "name": "Cloudflare Workers AI embeddings", "url": "https://api.cloudflare.com/client/v4/accounts", "auth": "api_token", "free": true, "env_vars": ["CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID"], "model": "@cf/baai/bge-m3", "free_quota": "10k neurons/day", "used_in": "services/ai/embedding_service.py", "key_page": "https://dash.cloudflare.com/", "verification": "anti_bot" },
+    { "id": "cohere_embeddings", "name": "Cohere embeddings", "url": "https://api.cohere.ai/v1", "auth": "api_key", "free": true, "env_vars": ["COHERE_API_KEY"], "model": "embed-multilingual-v3", "free_quota": "free tier", "used_in": "services/ai/embedding_service.py", "key_page": "https://dashboard.cohere.com/api-keys", "verification": "http_200" },
+    { "id": "sentence_transformers_local", "name": "sentence-transformers (local)", "url": null, "auth": "none", "free": true, "env_vars": [], "installed": "sentence-transformers 6.0.0 + torch 2.13.0+cpu", "models": ["BAAI/bge-m3", "paraphrase-multilingual-MiniLM-L12-v2"], "used_in": "local embedding fallback (offline)", "verification": "installed_in_venv" }
+  ],
+
+  "key_pages": [
+    { "env_vars": ["CDSE_CLIENT_ID", "CDSE_CLIENT_SECRET"], "service": "Copernicus Data Space (Sentinel download)", "url": "https://dataspace.copernicus.eu/", "docs": "https://documentation.dataspace.copernicus.eu/", "cost": "free", "verification": "http_200" },
+    { "env_vars": ["CDS_API_KEY", "COPERNICUS_CDS_API_KEY"], "service": "Copernicus CDS (ERA5)", "url": "https://cds.climate.copernicus.eu/how-to-api", "cost": "free", "verification": "http_200" },
+    { "env_vars": ["SUPABASE_URL", "SUPABASE_ANON_KEY", "SUPABASE_SERVICE_ROLE_KEY"], "service": "Supabase", "url": "https://supabase.com/dashboard", "cost": "free tier (500MB)", "verification": "http_200" },
+    { "env_vars": ["TELEGRAM_BOT_TOKEN"], "service": "Telegram BotFather", "url": "https://t.me/BotFather", "cost": "free", "verification": "anti_bot" },
+    { "env_vars": ["WHATSAPP_TOKEN", "WHATSAPP_VERIFY_TOKEN"], "service": "WhatsApp Cloud API (Meta)", "url": "https://developers.facebook.com/apps/", "cost": "free sandbox", "verification": "anti_bot" },
+    { "env_vars": ["TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN"], "service": "Twilio", "url": "https://console.twilio.com/", "cost": "free trial credit", "verification": "http_200" },
+    { "env_vars": ["GROQ_API_KEY"], "service": "Groq", "url": "https://console.groq.com/keys", "cost": "free tier", "verification": "anti_bot" },
+    { "env_vars": ["OPENROUTER_API_KEY"], "service": "OpenRouter", "url": "https://openrouter.ai/keys", "cost": "free :free models", "verification": "anti_bot" },
+    { "env_vars": ["GOOGLE_API_KEY"], "service": "Google AI Studio (Gemini)", "url": "https://aistudio.google.com/apikey", "cost": "free tier", "verification": "anti_bot" },
+    { "env_vars": ["MISTRAL_API_KEY"], "service": "Mistral", "url": "https://console.mistral.ai/api-keys", "cost": "free experimentation", "verification": "anti_bot" },
+    { "env_vars": ["DEEPSEEK_API_KEY"], "service": "DeepSeek", "url": "https://platform.deepseek.com/api_keys", "cost": "paid (signup credit)", "verification": "anti_bot" },
+    { "env_vars": ["OPENAI_API_KEY", "WHISPER_API_KEY"], "service": "OpenAI", "url": "https://platform.openai.com/api-keys", "cost": "paid", "verification": "anti_bot" },
+    { "env_vars": ["ANTHROPIC_API_KEY"], "service": "Anthropic", "url": "https://console.anthropic.com/settings/keys", "cost": "paid", "verification": "http_200" },
+    { "env_vars": ["JINA_API_KEY"], "service": "Jina AI", "url": "https://jina.ai/embeddings", "cost": "free 10M tokens/mo", "verification": "anti_bot" },
+    { "env_vars": ["CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID"], "service": "Cloudflare Workers AI", "url": "https://dash.cloudflare.com/", "cost": "free daily neurons", "verification": "anti_bot" },
+    { "env_vars": ["COHERE_API_KEY"], "service": "Cohere", "url": "https://dashboard.cohere.com/api-keys", "cost": "free tier", "verification": "http_200" },
+    { "env_vars": ["KOBO_TOKEN"], "service": "KoboToolbox", "url": "https://kf.kobotoolbox.org/", "cost": "free", "verification": "http_200" },
+    { "env_vars": ["ZENODO_TOKEN"], "service": "Zenodo", "url": "https://zenodo.org/account/settings/applications/tokens/new/", "cost": "free DOI", "verification": "anti_bot" },
+    { "env_vars": ["VERRA_API_KEY", "VERRA_API_SECRET"], "service": "Verra registry", "url": "https://verra.org/", "cost": "approval required", "verification": "http_200" },
+    { "env_vars": ["OPENWEATHERMAP_API_KEY"], "service": "OpenWeatherMap", "url": "https://home.openweathermap.org/api_keys", "cost": "free tier", "verification": "http_200" },
+    { "env_vars": ["SATELLITE_API_KEY"], "service": "Sentinel Hub", "url": "https://apps.sentinel-hub.com/dashboard/", "cost": "free tier", "verification": "http_200" },
+    { "env_vars": ["ALCHEMY_API_KEY"], "service": "Alchemy (RPC)", "url": "https://dashboard.alchemy.com/", "cost": "free tier", "verification": "http_200" },
+    { "env_vars": ["POLYGONSCAN_API_KEY"], "service": "Polygonscan", "url": "https://polygonscan.com/myapikey", "cost": "free", "verification": "http_200" },
+    { "env_vars": ["ZARINPAL_MERCHANT_ID"], "service": "Zarinpal (payments)", "url": "https://next.zarinpal.com/", "cost": "business verification", "verification": "http_200" }
+  ],
+
+  "local_defaults": [
+    { "id": "ollama", "url": "http://127.0.0.1:11434", "note": "local LLM server, no key", "install": "https://ollama.com/download" },
+    { "id": "duckdb_master", "path": "data/master/eco_nojin_master.duckdb", "note": "5 real tables with SHA-256 provenance, built by tools/build_master_duckdb.py", "env_var": "ECO_MASTER_DUCKDB" },
+    { "id": "qdrant_local", "note": "in-process Qdrant client; QDRANT_URL empty means no server needed", "fallback": "JSON vector store under data/rag/" },
+    { "id": "redis_optional", "note": "REDIS_URL empty = in-memory rate limiting", "env_var": "REDIS_URL" },
+    { "id": "network_note", "note": "Everything in data_endpoints is reachable without payment; ERA5 and Sentinel download are the only data sources that require a free credential." }
+  ],
+
+  "recommended_free_services": {
+    "_comment": "Researched 2026-10-10 for the project's roadmap. Not yet wired into code; each row records what need it serves. verification: http_200 = live-checked, anti_bot = canonical URL, blocked from CLI, unverified = not reachable from this environment.",
+    "scientific_literature_for_daneshyar": [
+      { "service": "OpenAlex", "url": "https://api.openalex.org/", "need": "250M+ works with DOI/citation graph for the Daneshyar knowledge engine", "cost": "free", "verification": "http_200" },
+      { "service": "Semantic Scholar", "url": "https://api.semanticscholar.org/", "need": "semantic search + TLDR + embeddings API", "cost": "free", "verification": "http_200" },
+      { "service": "CORE.ac.uk", "url": "https://core.ac.uk/", "need": "300M+ open-access full texts for RAG corpus", "cost": "free (key)", "verification": "http_200" },
+      { "service": "Unpaywall", "url": "https://api.unpaywall.org/", "need": "legal OA copy lookup for any DOI", "cost": "free", "verification": "http_200" },
+      { "service": "HydroShare", "url": "https://www.hydroshare.org/", "need": "hydrology model/data sharing with citation", "cost": "free", "verification": "anti_bot" }
+    ],
+    "observational_hydrology": [
+      { "service": "GRDC (Global Runoff Data Centre)", "url": "https://www.bafg.de/GRDC", "need": "10k+ river discharge stations for model calibration", "cost": "free", "verification": "http_200" },
+      { "service": "IGRAC", "url": "https://igrac.org/", "need": "global groundwater level records", "cost": "free", "verification": "http_200" },
+      { "service": "WMO WHOS", "url": "https://whos.geohydro.info/", "need": "global hydrological observing system portal", "cost": "free", "verification": "unverified" },
+      { "service": "USGS NWIS", "url": "https://waterservices.usgs.gov/", "need": "instantaneous/daily streamflow (US), no key", "cost": "free", "verification": "http_200" },
+      { "service": "ASF DAAC", "url": "https://asf.alaska.edu/", "need": "raw Sentinel-1 SAR archive", "cost": "free", "verification": "http_200" }
+    ],
+    "hosting_and_compute": [
+      { "service": "Oracle Cloud Always Free", "url": "https://www.oracle.com/cloud/free/", "need": "2 free VMs incl. 4 ARM cores + 24GB RAM for the gateway/services", "cost": "free forever", "verification": "anti_bot" },
+      { "service": "Fly.io", "url": "https://fly.io/", "need": "container hosting for the API gateway", "cost": "free allowance", "verification": "http_200" },
+      { "service": "Render", "url": "https://render.com/", "need": "web services + cron workers", "cost": "750h/month", "verification": "http_200" },
+      { "service": "GitHub Codespaces", "url": "https://github.com/features/codespaces", "need": "cloud dev environment", "cost": "60h/month", "verification": "http_200" },
+      { "service": "Kaggle Notebooks", "url": "https://www.kaggle.com/code", "need": "free GPU for ML experiments", "cost": "30h/week GPU", "verification": "http_200" },
+      { "service": "Hugging Face Spaces", "url": "https://huggingface.co/spaces", "need": "free CPU hosting for demos/RAG apps", "cost": "free", "verification": "http_200" },
+      { "service": "Lightning AI", "url": "https://lightning.ai/", "need": "studio + monthly free GPU hours", "cost": "free credits", "verification": "http_200" },
+      { "service": "2i2c / CryoCloud", "url": "https://2i2c.org/", "need": "research JupyterHubs for geoscience", "cost": "free for research", "verification": "http_200" }
+    ],
+    "ci_cd_and_quality": [
+      { "service": "GitHub Actions", "url": "https://github.com/features/actions", "need": "CI for import-guard + ruff + mypy + pytest (old blocker B-005)", "cost": "2000 min/month public repos", "verification": "http_200" },
+      { "service": "SonarCloud", "url": "https://sonarcloud.io/", "need": "static analysis dashboard", "cost": "free for OSS", "verification": "http_200" },
+      { "service": "Renovate", "url": "https://renovatebot.com/", "need": "automated dependency updates", "cost": "free for OSS", "verification": "http_200" }
+    ],
+    "monitoring": [
+      { "service": "Grafana OSS / Cloud", "url": "https://www.grafana.com/oss/", "need": "dashboards for the 123 custom metrics", "cost": "free", "verification": "http_200" },
+      { "service": "UptimeRobot", "url": "https://uptimerobot.com/", "need": "external uptime monitoring", "cost": "50 monitors", "verification": "http_200" },
+      { "service": "Healthchecks.io", "url": "https://healthchecks.io/", "need": "dead-man switch for job workers", "cost": "20 checks", "verification": "http_200" },
+      { "service": "GlitchTip", "url": "https://glitchtip.com/", "need": "Sentry-compatible error tracking, self-hosted", "cost": "free", "verification": "http_200" },
+      { "service": "Netdata", "url": "https://netdata.cloud/", "need": "real-time server monitoring", "cost": "free", "verification": "http_200" }
+    ],
+    "maps_and_routing": [
+      { "service": "OpenFreeMap", "url": "https://openfreemap.org/", "need": "OSM map tiles with NO key and NO limits for map_engine", "cost": "free", "verification": "http_200" },
+      { "service": "Maptiler", "url": "https://www.maptiler.com/", "need": "styled tiles", "cost": "100k tiles/month", "verification": "http_200" },
+      { "service": "OpenRouteService", "url": "https://openrouteservice.org/", "need": "routing/isochrones", "cost": "2000 requests/day", "verification": "http_200" },
+      { "service": "Natural Earth", "url": "https://www.naturalearthdata.com/", "need": "public-domain global reference data", "cost": "public domain", "verification": "http_200" }
+    ],
+    "databases_storage_messaging": [
+      { "service": "MongoDB Atlas", "url": "https://www.mongodb.com/atlas", "need": "document store + vector search", "cost": "512MB free", "verification": "anti_bot" },
+      { "service": "Upstash", "url": "https://upstash.com/", "need": "serverless Redis/Kafka", "cost": "10k commands/day", "verification": "anti_bot" },
+      { "service": "InfluxDB", "url": "https://www.influxdata.com/", "need": "IoT sensor time-series", "cost": "free cloud tier", "verification": "http_200" },
+      { "service": "Cloudflare R2", "url": "https://www.cloudflare.com/developer-platform/r2/", "need": "object storage with no egress fees", "cost": "10GB free", "verification": "http_200" },
+      { "service": "Backblaze B2", "url": "https://www.backblaze.com/cloud-backup.html", "need": "S3-compatible storage for rasters/backups", "cost": "10GB free", "verification": "http_200" },
+      { "service": "Mosquitto / Node-RED", "url": "https://www.mosquitto.org/", "need": "MQTT broker + IoT flow orchestration for the TTN/IoT path", "cost": "free/OSS", "verification": "http_200" },
+      { "service": "Brevo / Resend / Mailpit", "url": "https://www.brevo.com/", "need": "transactional email (Brevo 300/day, Resend 3k/month) and local test SMTP", "cost": "free tiers", "verification": "http_200" },
+      { "service": "Keycloak", "url": "https://www.keycloak.org/", "need": "self-hosted SSO/OIDC if JWT needs federation", "cost": "free/OSS", "verification": "http_200" },
+      { "service": "Supabase Auth", "url": "https://supabase.com/docs/guides/auth", "need": "managed JWT/OAuth", "cost": "50k MAU free", "verification": "http_200" }
+    ],
+    "open_data_iran_global": [
+      { "service": "data.gov.ir", "url": "https://data.gov.ir/", "need": "Iranian open datasets", "cost": "free", "verification": "http_200" },
+      { "service": "World Bank Open Data", "url": "https://data.worldbank.org/", "need": "socio-economic indicators", "cost": "free", "verification": "http_200" },
+      { "service": "Internet Archive", "url": "https://archive.org/", "need": "long-term dataset preservation", "cost": "free", "verification": "http_200" }
+    ]
+  }
+}

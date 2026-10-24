@@ -1,0 +1,318 @@
+# ---------------------------------------------------------------------------
+# ENO_SCENARIO_DRIER_2025 -- scenario version 1.0.0
+#
+# ECO-12 phase 1 artifact: definition, versioning and comparison only.
+# This file runs nothing. Executing a scenario against the models is phase 2
+# and is not implemented (no engine call, no simulation -- see
+# scenario/engine/baseline_manager.py).
+#
+# ZED: no live data. Read this file as a documented ASSUMPTION, not as a
+# projection. No forcing dataset is local yet, so every climate entry below
+# carries evidence_basis "HYPOTHESIS -- no forcing dataset local yet". The
+# numbers are analyst-chosen perturbations of the baseline definition, not
+# downscaled or bias-corrected output from any climate model.
+#
+# Honesty conventions (see baseline.yaml for the full list):
+#   UNPROMOTED_TO_REGISTRY  the artifact exists in no registry yet
+#   NOT_ESTIMATED           the quantity has never been computed here
+#   null                    deliberately unset rather than guessed
+# ---------------------------------------------------------------------------
+
+scenario_id: "ENO_SCENARIO_DRIER_2025"
+scenario_version: "1.0.0"
+
+# This scenario is derived from the baseline and is only meaningful as a
+# difference from it; scenario_diff(baseline, this) is the machine-checkable
+# form of that difference.
+baseline_id: "ENO_SCENARIO_BASELELINE_2025"
+
+# The drier scenario is a pure climate perturbation over the same pilot
+# area and the same (unset) horizon as the baseline. Everything except the
+# climate assumptions is copied verbatim, so the diff shows exactly which
+# sections this scenario actually moves.
+spatial_scope:
+  name: "Eco Nojin pilot area (unnamed in the registry)"
+  boundary_status: "UNPROMOTED_TO_REGISTRY"
+  boundary_geometry: null
+  area_ha: null
+  datum_crs: null
+  dem_resolution_m: null
+  note: >-
+    No boundary geometry, DEM or CRS has been promoted to the dataset
+    registry, so every geometry-bearing field is null. The scope names
+    where the scenario is meant to apply; it is a label, not a mapped
+    extent.
+
+time_horizon:
+  baseline_period: "NOT_ESTIMATED"
+  start_year: null
+  end_year: null
+  horizon_years: null
+  note: >-
+    No reference period has been established because no observed climate
+    record is promoted to the dataset registry. The "2025" in the
+    scenario_id is a label from this gap-closing work, not a climate normal,
+    and must not be read as one.
+
+# One documented assumption per key, same shape as the baseline:
+#   value / unit / rationale / source / evidence_basis.
+# The two keys the baseline also carries are moved away from their zero;
+# a third key exists only here and is reported as "added" by scenario_diff.
+climate_assumptions:
+  precipitation_change_pct:
+    value: -20.0
+    unit: "percent relative to the baseline climate"
+    rationale: >-
+      A one-in-five reduction in annual precipitation is a deliberately
+      coarse dryness perturbation. It is large enough that a phase-2 water
+      balance response would be unambiguous, and small enough to stay
+      interpretable as a sensitivity. It is chosen by the analyst, not
+      derived from any dataset.
+    source: >-
+      analyst hypothesis (ECO-12 W2-7); no forcing dataset local yet
+    evidence_basis: "HYPOTHESIS — no forcing dataset local yet"
+  temperature_change_c:
+    value: 2.0
+    unit: "degC relative to the baseline climate"
+    rationale: >-
+      Two degrees of warming makes the perturbation recognisably hotter
+      and therefore separable from the precipitation effect in a phase-2
+      sensitivity study. It is not an SSP scenario value and must not be
+      quoted as one.
+    source: >-
+      analyst hypothesis (ECO-12 W2-7); no forcing dataset local yet
+    evidence_basis: "HYPOTHESIS — no forcing dataset local yet"
+  dry_spell_frequency_change_pct:
+    value: 25.0
+    unit: "percent relative to the baseline climate"
+    rationale: >-
+      Annual totals hide the timing that a bucket-model water balance
+      actually responds to, so the scenario also states a frequency change
+      for dry spells. This is the least constrained of the three
+      perturbations and is reported first whenever the diff is audited.
+    source: >-
+      analyst hypothesis (ECO-12 W2-7); no forcing dataset local yet
+    evidence_basis: "HYPOTHESIS — no forcing dataset local yet"
+
+# Copied verbatim from the baseline: this scenario asserts no change to
+# management, crops, water allocation, soil interventions, economics or
+# social constraints. Adaptation responses are out of scope for phase 1,
+# so the diff reports every one of these sections as unchanged.
+land_management:
+  status: "NOT_ESTIMATED"
+  practice_inventory: []
+  tillage: null
+  note: >-
+    No management practice inventory has been established for the pilot
+    area. The list is empty by design: populating it is a data task, not a
+    modelling task, and an invented practice list would be indistinguishable
+    from a real one once it is written into YAML.
+
+crop_plan:
+  status: "NOT_ESTIMATED"
+  cropping_pattern: null
+  crops: []
+  note: >-
+    No cropping pattern has been promoted, so the baseline makes no
+    crop-level claim. Crop response belongs to phase 2 execution, where the
+    crop_plan is an input to a run rather than a documented assumption.
+
+water_allocation:
+  status: "NOT_ESTIMATED"
+  total_quota_mcm: null
+  allocation_basis: null
+  sector_shares:
+    agriculture: null
+    domestic: null
+    industry: null
+    environment: null
+  note: >-
+    No water right, quota or allocation plan has been promoted to any
+    registry, so the baseline allocates nothing. Each sector share is null
+    rather than a plausible-looking number.
+
+soil_interventions:
+  status: "NOT_ESTIMATED"
+  interventions: []
+  note: >-
+    No soil intervention programme (amendment, conservation works,
+    mulching, ...) has been defined for the pilot area. The empty list is
+    the honest state of the project.
+
+economic_assumptions:
+  status: "NOT_ESTIMATED"
+  currency: null
+  price_basis_year: null
+  discount_rate: null
+  note: >-
+    No price set, currency basis or discount rate has been promoted. The
+    carbon prices recorded in engine/baseline/R18.json belong to the
+    execution baseline, not to this scenario definition, and are not
+    borrowed here.
+
+social_constraints:
+  status: "NOT_ESTIMATED"
+  constraints: []
+  note: >-
+    No social constraint (labour availability, land tenure, water-user
+    acceptance, ...) has been documented for the pilot area.
+
+# model_versions: identical to the baseline -- the same engine code is
+# being assumed against, so the diff must report no change here. Read
+# (read-only) from engine/models/registry.py, where every registered model
+# declares model_version "1.0.0".
+model_versions:
+  CANON-001: "1.0.0"
+  CANON-002: "1.0.0"
+  CANON-003: "1.0.0"
+  CANON-004: "1.0.0"
+  CANON-005: "1.0.0"
+  CANON-006: "1.0.0"
+  CANON-007: "1.0.0"
+  CANON-008: "1.0.0"
+  CANON-009: "1.0.0"
+  CANON-010: "1.0.0"
+  CANON-011: "1.0.0"
+  CANON-012: "1.0.0"
+  CANON-013: "1.0.0"
+  CANON-014: "1.0.0"
+  CANON-015: "1.0.0"
+  CANON-016: "1.0.0"
+  CANON-017: "1.0.0"
+  CANON-018: "1.0.0"
+  CANON-019: "1.0.0"
+  CANON-020: "1.0.0"
+  CANON-021: "1.0.0"
+  CANON-022: "1.0.0"
+
+# Same honest token as the baseline: no dataset has been promoted anywhere.
+dataset_versions:
+  - "UNPROMOTED_TO_REGISTRY"
+
+parameter_set_versions:
+  soil_hydraulic_parameters: "UNPROMOTED_TO_REGISTRY"
+  curve_number_table: "UNPROMOTED_TO_REGISTRY"
+  crop_coefficients: "UNPROMOTED_TO_REGISTRY"
+  economic_price_set: "UNPROMOTED_TO_REGISTRY"
+
+# Unchanged from the baseline: nothing has been fitted, sampled or assumed.
+uncertainty_settings: "NOT_ESTIMATED"
+
+# ECO-12 DoD: فرض‌ها مستند می‌شوند -- the assumptions are documented, one
+# entry each, so that a reader can audit every claim the scenario makes.
+#
+# The ids are one project-wide namespace shared with baseline.yaml, so a
+# diff between the two files is additive: A-001..A-005 and A-007 are
+# carried over verbatim, A-006 (the baseline-only assumption) is
+# deliberately not restated here, and A-008..A-013 are this scenario's own.
+# A-008..A-010 are the climate perturbations: hypotheses, not projections.
+assumptions:
+  - id: "A-001"
+    statement: >-
+      No climate forcing dataset is pinned by this definition.
+    rationale: >-
+      No gauge, reanalysis or satellite precipitation/temperature record
+      has been promoted to the dataset registry, so the scenario cannot
+      name one without inventing provenance.
+    source: "UNPROMOTED_TO_REGISTRY"
+    evidence_basis: "NOT_ESTIMATED"
+  - id: "A-002"
+    statement: >-
+      The spatial scope is a label, not geometry.
+    rationale: >-
+      The pilot boundary, its CRS and a DEM resolution are all unset, so no
+      spatially distributed statement is made anywhere in this definition.
+    source: "UNPROMOTED_TO_REGISTRY"
+    evidence_basis: "NOT_ESTIMATED"
+  - id: "A-003"
+    statement: >-
+      The pinned model versions are the registry's own declarations.
+    rationale: >-
+      model_versions copies model_version from engine/models/registry.py.
+      Every registered model there reads "1.0.0"; pinning it records which
+      code the definition was written against, not that the model is fit
+      for the pilot area.
+    source: "engine/models/registry.py (read-only)"
+    evidence_basis: "NOT_ESTIMATED"
+  - id: "A-004"
+    statement: >-
+      Management, crop, water, soil, economic and social sections are
+      deliberately unset.
+    rationale: >-
+      None of those inventories exists yet. An empty section is auditable
+      at a glance; a filled one could not be told apart from a measured one.
+    source: "UNPROMOTED_TO_REGISTRY"
+    evidence_basis: "NOT_ESTIMATED"
+  - id: "A-005"
+    statement: >-
+      Uncertainty is not estimated.
+    rationale: >-
+      With no parameter sets promoted and no run performed, there is no
+      distribution to describe; a fabricated interval would be worse than
+      an honest absence.
+    source: "NOT_ESTIMATED"
+    evidence_basis: "NOT_ESTIMATED"
+  - id: "A-007"
+    statement: >-
+      This definition executes nothing.
+    rationale: >-
+      Phase 1 of ECO-12 covers definition, versioning and comparison.
+      Running a scenario against the engine is phase 2 and is not
+      implemented in this repository path.
+    source: "ECO-12 scope statement (scenario/engine/baseline_manager.py)"
+    evidence_basis: "NOT_ESTIMATED"
+  - id: "A-008"
+    statement: >-
+      Precipitation falls by 20 percent relative to the baseline climate.
+    rationale: >-
+      An analyst-chosen sensitivity perturbation, sized to be unambiguous
+      in a phase-2 water balance but not downscaled from anything.
+    source: >-
+      analyst hypothesis (ECO-12 W2-7); no forcing dataset local yet
+    evidence_basis: "HYPOTHESIS — no forcing dataset local yet"
+  - id: "A-009"
+    statement: >-
+      Temperature rises by 2 degC relative to the baseline climate.
+    rationale: >-
+      Chosen to be separable from the precipitation effect; it is not an
+      SSP scenario value and must not be quoted as one.
+    source: >-
+      analyst hypothesis (ECO-12 W2-7); no forcing dataset local yet
+    evidence_basis: "HYPOTHESIS — no forcing dataset local yet"
+  - id: "A-010"
+    statement: >-
+      Dry-spell frequency rises by 25 percent relative to the baseline
+      climate.
+    rationale: >-
+      Annual totals hide the timing a bucket-model water balance responds
+      to. This is the least constrained of the three perturbations.
+    source: >-
+      analyst hypothesis (ECO-12 W2-7); no forcing dataset local yet
+    evidence_basis: "HYPOTHESIS — no forcing dataset local yet"
+  - id: "A-011"
+    statement: >-
+      No management, crop, water, soil or economic response is modelled.
+    rationale: >-
+      This is a pure climate perturbation. Adaptation and reallocation are
+      separate scenarios, and inventing a response here would make the
+      climate signal uninterpretable.
+    source: "ECO-12 scope statement (this file)"
+    evidence_basis: "NOT_ESTIMATED"
+  - id: "A-012"
+    statement: >-
+      Reference evapotranspiration is not separately perturbed.
+    rationale: >-
+      ET0 is a model output that already responds to the temperature and
+      radiation assumptions; adjusting it again would double-count.
+    source: "ECO-12 scope statement (this file)"
+    evidence_basis: "NOT_ESTIMATED"
+  - id: "A-013"
+    statement: >-
+      This scenario is only meaningful as a difference from the baseline
+      it names.
+    rationale: >-
+      baseline_id points at ENO_SCENARIO_BASELELINE_2025 and every section
+      except climate_assumptions is copied from it. Read alone, without
+      that diff, the file asserts less than it appears to.
+    source: "ECO-12 definition (this file)"
+    evidence_basis: "NOT_ESTIMATED"

@@ -1,0 +1,13 @@
+texture,theta_r,theta_s,alpha,n,ks_cm_per_day,ks_admissible_min,ks_admissible_max,provenance,status
+sand,0.045,0.430,0.145,2.68,712.8,350.2000,,unverified; formerly attributed to Carsel & Parrish 1988,design_assumption
+loamy_sand,0.057,0.410,0.124,2.28,350.2,106.1000,712.8000,unverified; formerly attributed to Carsel & Parrish 1988,design_assumption
+sandy_loam,0.065,0.410,0.075,1.89,106.1,25.0000,350.2000,unverified; formerly attributed to Carsel & Parrish 1988,design_assumption
+loam,0.078,0.430,0.036,1.56,25.0,10.8000,106.1000,unverified; formerly attributed to Carsel & Parrish 1988,design_assumption
+silt_loam,0.067,0.450,0.020,1.41,10.8,6.0000,25.0000,unverified; formerly attributed to Carsel & Parrish 1988,design_assumption
+silt,0.034,0.460,0.016,1.37,6.0,31.4000,10.8000,unverified; formerly attributed to Carsel & Parrish 1988,design_assumption
+sandy_clay_loam,0.100,0.390,0.059,1.48,31.4,6.2000,6.0000,DISPUTED: Ks and n both break fineness monotonicity; no other copy carries this row,design_assumption_disputed
+clay_loam,0.095,0.410,0.019,1.31,6.2,2.9000,31.4000,unverified; formerly attributed to Carsel & Parrish 1988,design_assumption
+silty_clay_loam,0.089,0.430,0.010,1.23,2.9,2.9000,6.2000,unverified; formerly attributed to Carsel & Parrish 1988,design_assumption
+sandy_clay,0.100,0.380,0.027,1.23,2.9,1.9200,2.9000,unverified; formerly attributed to Carsel & Parrish 1988,design_assumption
+silty_clay,0.070,0.360,0.005,1.09,1.92,4.8000,2.9000,unverified; formerly attributed to Carsel & Parrish 1988,design_assumption
+clay,0.068,0.380,0.008,1.09,4.8,0.0000,1.9200,DISPUTED: the other two copies carry 2.88 and 2.9 cm/day for this row; this value also breaks fineness monotonicity against silty_clay,design_assumption_disputed

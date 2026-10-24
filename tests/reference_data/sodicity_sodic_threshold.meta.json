@@ -1,0 +1,9 @@
+{
+  "source": "USDA Agriculture Handbook 60 (1954) Ch.5, sodic at ESP >= 15; FAO-29 Rev.1 (1985)",
+  "kind": "class_edges",
+  "checksum_sha256": "7ec95364c467fa2d1048455461e1cd93808387e7875bc4af1bdb4557de69058f",
+  "vendored_at": "2026-10-15T16:34:29.885763+00:00",
+  "offline": true,
+  "promoted_model": "SOIL_ESP",
+  "register_family": "SOIL_SODIC_ESP_CLASS_EDGE"
+}

@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اکو نوژین + هیدروما — سند مادر یکپارچه نسخه ۳.۰</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f6f4f0;
+  --surface: #ffffff;
+  --ink: #1a1816;
+  --muted: #5c5650;
+  --accent: #2d6a4f;
+  --accent-weak: color-mix(in oklab, var(--accent) 10%, var(--surface));
+  --accent-strong: #1b4332;
+  --warning: #b23a2e;
+  --warning-weak: color-mix(in oklab, var(--warning) 10%, var(--surface));
+  --line: color-mix(in oklab, var(--ink) 10%, transparent);
+  --line-strong: color-mix(in oklab, var(--ink) 18%, transparent);
+  --step-0: clamp(0.95rem, 0.92rem + 0.2vw, 1.05rem);
+  --step-1: clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
+  --step-2: clamp(1.35rem, 1.15rem + 1vw, 1.8rem);
+  --step-3: clamp(1.7rem, 1.3rem + 2vw, 2.6rem);
+  --step-4: clamp(2.2rem, 1.5rem + 3.5vw, 4rem);
+  --space: clamp(1rem, 0.8rem + 1vw, 1.5rem);
+  --radius: 10px;
+  --shadow: 0 1px 2px rgba(0,0,0,0.04), 0 6px 20px -8px rgba(0,0,0,0.14);
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: "Vazirmatn", "Tahoma", "IranSans", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.85;
+  font-size: var(--step-0);
+  margin: 0;
+  padding: 0;
+}
+
+/* Typography */
+h1, h2, h3, h4 {
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--ink);
+  margin-top: calc(var(--space) * 2);
+  margin-bottom: var(--space);
+}
+
+h1 { font-size: var(--step-4); letter-spacing: -0.02em; }
+h2 { font-size: var(--step-3); color: var(--accent-strong); border-bottom: 2px solid var(--line-strong); padding-bottom: 0.4rem; }
+h3 { font-size: var(--step-2); color: var(--accent); }
+h4 { font-size: var(--step-1); color: var(--muted); }
+
+p { margin-bottom: calc(var(--space) * 0.8); max-width: 72ch; }
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+a:hover { border-bottom-color: var(--accent); }
+
+/* Layout */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: calc(var(--space) * 1.5);
+}
+
+header {
+  background: linear-gradient(160deg, var(--accent-strong) 0%, var(--accent) 100%);
+  color: #fff;
+  padding: calc(var(--space) * 3) calc(var(--space) * 1.5);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.4;
+}
+
+header h1 {
+  color: #fff;
+  margin: 0 0 0.5rem;
+  position: relative;
+}
+
+header .subtitle {
+  font-size: var(--step-1);
+  opacity: 0.92;
+  font-weight: 400;
+  position: relative;
+}
+
+header .meta {
+  font-size: 0.85rem;
+  opacity: 0.75;
+  margin-top: 1rem;
+  position: relative;
+}
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: calc(var(--space) * 1.2);
+  margin-bottom: calc(var(--space) * 1.2);
+  border: 1px solid var(--line);
+}
+
+.card-warning {
+  background: var(--warning-weak);
+  border-color: color-mix(in oklab, var(--warning) 25%, transparent);
+}
+
+.card-accent {
+  background: var(--accent-weak);
+  border-color: color-mix(in oklab, var(--accent) 25%, transparent);
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: calc(var(--space) * 1.2) 0;
+  font-size: 0.95em;
+  background: var(--surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+th, td {
+  padding: 0.7rem 1rem;
+  text-align: right;
+  border-bottom: 1px solid var(--line);
+}
+
+th {
+  background: var(--accent-weak);
+  font-weight: 700;
+  color: var(--accent-strong);
+  white-space: nowrap;
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--accent-weak); }
+
+/* Lists */
+ul, ol {
+  padding-right: 1.5rem;
+  margin-bottom: calc(var(--space) * 0.8);
+}
+
+li { margin-bottom: 0.4rem; }
+
+/* Code / Inline labels */
+code {
+  background: var(--accent-weak);
+  color: var(--accent-strong);
+  padding: 0.15rem 0.45rem;
+  border-radius: 5px;
+  font-family: "SF Mono", "Consolas", monospace;
+  font-size: 0.88em;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 4px;
+  font-size: 0.78em;
+  font-weight: 700;
+  margin-left: 0.4rem;
+}
+
+.badge-green { background: #d4edda; color: #155724; }
+.badge-red { background: #f8d7da; color: #721c24; }
+.badge-yellow { background: #fff3cd; color: #856404; }
+.badge-blue { background: #cce5ff; color: #004085; }
+
+/* Section numbering */
+.section-num {
+  display: inline-block;
+  width: 2.2em;
+  height: 2.2em;
+  line-height: 2.2em;
+  text-align: center;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 50%;
+  font-weight: 800;
+  font-size: 0.85em;
+  margin-left: 0.6rem;
+  vertical-align: middle;
+}
+
+/* Blockquote / Note */
+.note {
+  border-right: 4px solid var(--accent);
+  padding: 1rem 1.2rem;
+  margin: calc(var(--space) * 1) 0;
+  background: var(--accent-weak);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.note-warning {
+  border-right-color: var(--warning);
+  background: var(--warning-weak);
+}
+
+/* Print */
+@media print {
+  body { background: #fff; }
+  header { background: var(--accent-strong) !important; -webkit-print-color-adjust: exact; }
+  .no-print { display: none; }
+  .card { break-inside: avoid; }
+  h2 { break-after: avoid; }
+}
+
+@page { size: A4; margin: 15mm; }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+/* Focus */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Utility */
+.text-center { text-align: center; }
+.mt-2 { margin-top: calc(var(--space) * 2); }
+.mb-1 { margin-bottom: var(--space); }
+
+/* Two column grid for capability map */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space);
+}
+@media (min-width: 700px) {
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+}
+
+/* Timeline */
+.timeline {
+  position: relative;
+  padding-right: 1.5rem;
+}
+.timeline::before {
+  content: "";
+  position: absolute;
+  right: 0.4rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--line-strong);
+}
+.timeline-item {
+  position: relative;
+  padding-bottom: calc(var(--space) * 1.5);
+}
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  right: -1.25rem;
+  top: 0.5rem;
+  width: 10px;
+  height: 10px;
+  background: var(--accent);
+  border-radius: 50%;
+  border: 2px solid var(--surface);
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>اکو نوژین + هیدروما</h1>
+  <p class="subtitle">سند مادر یکپارچه نسخه ۳.۰ — معماری، علم، کسب‌وکار و حکمرانی AI</p>
+  <p class="meta">تاریخ: ۲۰۲۶-۱۰-۱۰ | وضعیت: نهایی‌شده برای اجرا | Commit مرجع: d6fac05+</p>
+</header>
+
+<div class="container">
+
+<!-- ====== مقدمه ====== -->
+<section>
+<h2><span class="section-num">۰</span>مقدمه و بیانیه یکپارچگی</h2>
+
+<div class="card card-accent">
+<p><strong>اکو نوژین (Eco Nojin)</strong> هسته علمی و موتور حکمرانی AI است.
+<strong>هیدروما (HYDROMA)</strong> پلتفرم کسب‌وکار و بازارگاه چندطرفه است.
+این سند، مرزها، اتصالات و برنامه ۹۰ روزه یکپارچه را تعریف می‌کند.</p>
+</div>
+
+<div class="note note-warning">
+<strong>اصل طلایی یکپارچگی:</strong> هیچ‌گاه لایه کسب‌وکار (هیدروما) مستقیماً معادلات علمی (اکو نوژین) را تغییر نمی‌دهد.
+تمام تمیمات علمی از طریق <code>EngineGateway</code> و <code>Tasmimyar</code> با شواهد و provenance عبور می‌کنند.
+</div>
+
+<h3>ساختار سه‌لایه یکپارچه</h3>
+
+<table>
+<tr>
+<th>لایه</th>
+<th>نام</th>
+<th>فناوری</th>
+<th>نقش</th>
+</tr>
+<tr>
+<td>۳</td>
+<td>هیدروما کسب‌وکار (H1-H7)</td>
+<td>FastAPI، PostgreSQL، Docker (اختیاری)</td>
+<td>بازارگاه، رهگیری، خدمات، اشتغال</td>
+</tr>
+<tr>
+<td>۲</td>
+<td>Gateway + Tasmimyar + Daneshyar</td>
+<td>Python، REST Adapter، SQLite (cache)</td>
+<td>ترجمه درخواست تجاری به زبان علمی، تصمیم‌گیری مبتنی بر شواهد</td>
+</tr>
+<tr>
+<td>۱</td>
+<td>اکو نوژین هسته علمی (ZED)</td>
+<td>Python FOSS، SQLite/GeoPackage، pint</td>
+<td>محاسبات علمی آفلاین، مدل‌های اعتبارسنجی‌شده</td>
+</tr>
+</table>
+
+</section>
+
+<!-- ====== بخش ۱ ====== -->
+<section>
+<h2><span class="section-num">۱</span>پیمان ZED و قواعد غیرقابل‌مذاکره</h2>
+
+<div class="card card-warning">
+<h4>پیمان صفر وابستگی خارجی (ZED Covenant)</h4>
+<ul>
+<li>هیچ pip install خارج از Approved FOSS Stack <span class="badge badge-red">ممنوع</span></li>
+<li>هیچ API ابری (AWS/Azure/GCP/GEE) <span class="badge badge-red">ممنوع</span></li>
+<li>هیچ داده مصنوعی (synthetic) بدون برچسب <code># FIXTURE</code> <span class="badge badge-red">ممنوع</span></li>
+<li>هیچ تغییر واحد (unit) بدون pint/UnitRegistry <span class="badge badge-red">ممنوع</span></li>
+<li>هیچ تغییر وزن Tasmimyar بدون آزمون حساسیت <span class="badge badge-red">ممنوع</span></li>
+</ul>
+</div>
+
+<h3>۱۰ ترمز ایمنی (Safety Brakes)</h3>
+<table>
+<tr><th>ردیف</th><th>شرط توقف</th><th>وضعیت</th></tr>
+<tr><td>SB-01</td><td>تغییر بیش از ۵ فایل اصلی</td><td><span class="badge badge-green">فعال</span></td></tr>
+<tr><td>SB-02</td><td>حذف بیش از ۱۰۰ خط کد</td><td><span class="badge badge-green">فعال</span></td></tr>
+<tr><td>SB-03</td><td>تغییر API عمومی (نام/ورودی/خروجی/استثنا)</td><td><span class="badge badge-green">فعال</span></td></tr>
+<tr><td>SB-04</td><td>افزودن pip install خارج پشته مجاز</td><td><span class="badge badge-green">فعال</span></td></tr>
+<tr><td>SB-05</td><td>تغییر واحدها یا وزن‌های تصمیم</td><td><span class="badge badge-green">فعال</span></td></tr>
+<tr><td>SB-06</td><td>استفاده از داده مصنوعی به‌جای مرجع علمی</td><td><span class="badge badge-green">فعال</span></td></tr>
+<tr><td>SB-07</td><td>تغییر معادله علمی (FAO/USDA/WMO) بدون مرجع</td><td><span class="badge badge-green">فعال</span></td></tr>
+<tr><td>SB-08</td><td>کاهش coverage تست زیر ۸۰٪</td><td><span class="badge badge-green">فعال</span></td></tr>
+<tr><td>SB-09</td><td>عدم تطابق detect_imports.py (تخلف وابستگی)</td><td><span class="badge badge-green">فعال</span></td></tr>
+<tr><td>SB-10</td><td>عدم ارائه Fix Log یا Evidence برای تغییر > ۵۰ خط</td><td><span class="badge badge-green">فعال</span></td></tr>
+</table>
+
+<h3>قواعد معماری (AR-01 تا AR-10)</h3>
+<ol>
+<li><strong>AR-01 Separation of Concerns:</strong> هیچ ماژول علمی مستیماً به اینترنت متصل نمی‌شود.</li>
+<li><strong>AR-02 Dependency Inversion:</strong> هسته علمی به abstraction (Port) وابسته است، نه implementation.</li>
+<li><strong>AR-03 Model Immutability:</strong> معادلات علمی ثبت‌شده در Model Card تغییرناپذیرند.</li>
+<li><strong>AR-04 API Stability:</strong> تغییر API عمومی = STOP (SB-03).</li>
+<li><strong>AR-05 Evidence-Based Decision:</strong> هر تصمیم Tasmimyar باید شاهد (Evidence) داشته باشد.</li>
+<li><strong>AR-06 Unit Safety:</strong> تمام محاسبات با pint/UnitRegistry.</li>
+<li><strong>AR-07 AI Guardrails:</strong> AI حق تغییر معادله یا پارامتر علمی را ندارد.</li>
+<li><strong>AR-08 Fail Closed:</strong> در عدم قطعیت، سیستم متوقف می‌شود.</li>
+<li><strong>AR-09 Provenance Traceability:</strong> هر خروجی باید منشأ خود را تا داده خام بازگو کند.</li>
+<li><strong>AR-10 Testable Architecture:</strong> هر قاعده معماری باید آزمون مثبت/منفی داشته باشد.</li>
+</ol>
+
+</section>
+
+<!-- ====== بخش ۲ ====== -->
+<section>
+<h2><span class="section-num">۲</span>معماری یکپارچه اکو نوژین + هیدروما</h2>
+
+<h3>۲.۱ نقشه قابلیت‌ها (Capability Map)</h3>
+
+<div class="grid-2">
+<div class="card">
+<h4>هیدروما H0 — هسته مرکزی</h4>
+<ul>
+<li>مدیریت کاربران و سازمان‌ها (۱۰ گروه کاربری)</li>
+<li>مدیریت دسترسی مبتنی بر نقش (RBAC)</li>
+<li>داده‌های پایه: محصول، واحد، منطقه، خدمت</li>
+<li>موتور قواعد و گردش کار (Workflow Engine)</li>
+<li>Audit Log کامل (چه کسی، چه زمانی، چه تغییری)</li>
+</ul>
+</div>
+<div class="card card-accent">
+<h4>اکو نوژین — هسته علمی</h4>
+<ul>
+<li>۱۸ مدل علمی تأییدشده (سطح ۳)</li>
+<li>Model Registry با ۷۰ مدل</li>
+<li>Scientific Validation Register (S18)</li>
+<li>Unit Registry (pint)</li>
+<li>Local Data Mirror (CHIRPS, ERA5, SoilGrids)</li>
+</ul>
+</div>
+<div class="card">
+<h4>هیدروما H1 — بازار هوشمند</h4>
+<ul>
+<li>ثبت عرضه و تقاضا</li>
+<li>موتور تطبیق (Matching Engine)</li>
+<li>مدیریت سفارش و قرارداد</li>
+<li>محاسبه کارمزد و تسویه</li>
+</ul>
+</div>
+<div class="card card-accent">
+<h4>اکو نوژین — Tasmimyar</h4>
+<ul>
+<li>وزن‌دهی چندمعیاره (MCDM)</li>
+<li>آستانه RECOMMEND ≥ ۰.۷</li>
+<li>آستانه CAUTION ≥ ۰.۴</li>
+<li>Sensitivity Analysis (Pareto Consistency)</li>
+</ul>
+</div>
+<div class="card">
+<h4>هیدروما H2 — رادار بازار</h4>
+<ul>
+<li>تحلیل تغییرات قیمت</li>
+<li>شناسایی روندهای فصلی</li>
+<li>هشدار ریسک تأمین</li>
+<li>پیش‌بینی تقاضا</li>
+</ul>
+</div>
+<div class="card card-accent">
+<h4>اکو نوژین — Daneshyar</h4>
+<ul>
+<li>Epistemic Status Management</li>
+<li>Conflict Resolver</li>
+<li>Claim-Evidence Linking</li>
+<li>Knowledge Graph</li>
+</ul>
+</div>
+<div class="card">
+<h4>هیدروما H5 — هماهنگ‌کننده منابع</h4>
+<ul>
+<li>ماشین‌آلات، حمل، انبار، سردخانه</li>
+<li>تطبیق سفارش با ظرفیت</li>
+<li>رتبه‌بندی بر اساس هزینه و فاصله</li>
+<li>رزرو و پیگیری</li>
+</ul>
+</div>
+<div class="card card-accent">
+<h4>اکو نوژین — شاخص‌های نوین</h4>
+<ul>
+<li>FDII (Flash Drought Intensity Index)</li>
+<li>CDHE (Compound Drought-Heat Index)</li>
+<li>CMSI (Crop Multi-Stress Index)</li>
+<li>WSNI, RRI, IWEq</li>
+</ul>
+</div>
+</div>
+
+<h3>۲.۲ قرارداد مرز (Boundary Contract)</h3>
+
+<table>
+<tr><th>موضوع</th><th>لایه ۳ (هیدروما)</th><th>لایه ۲ (Gateway)</th><th>لایه ۱ (اکو نوژین)</th></tr>
+<tr><td>دیتابیس</td><td>PostgreSQL</td><td>SQLite (cache)</td><td>SQLite/GeoPackage</td></tr>
+<tr><td>شبکه</td><td>FastAPI REST</td><td>Python Adapter</td><td>آفلاین</td></tr>
+<tr><td>واحد</td><td>رشته آزاد</td><td>اعتبارسنجی pint</td><td>UnitRegistry اجباری</td></tr>
+<tr><td>مدل علمی</td><td>درخواست تجاری</td><td>ترجمه به CANON-ID</td><td>اجرای مدل + S18</td></tr>
+<tr><td>تصمیم</td><td>سفارش/رزرو</td><td>Tasmimyar scoring</td><td>Evidence-based</td></tr>
+<tr><td>داده خارجی</td><td>Webhook/API</td><td>Ingestion flag</td><td>Local Mirror + checksum</td></tr>
+</table>
+
+<div class="note">
+<strong>تصمیم DP-1:</strong> ZED فقط برای لایه ۱ الزامی است. لایه ۳ هیدروما می‌تواند PostgreSQL و Docker داشته باشد به شرطی که هیچ‌گاه مستقیماً هسته علمی را از طریق وابستگی خارجی تغییر ندهد.
+</div>
+
+</section>
+
+<!-- ====== بخش ۳ ====== -->
+<section>
+<h2><span class="section-num">۳</span>کاتالوگ شاخص‌ها و مدل‌های علمی</h2>
+
+<h3>۳.۱ مدل‌های تأییدشده علمی (سطح ۳ — S18)</h3>
+<table>
+<tr><th>CANON-ID</th><th>مدل</th><th>مرجع</th><th>آستانه خطا</th></tr>
+<tr><td>CANON-001</td><td>ET₀ Penman-Monteith</td><td>FAO-56 eq.6/21/23/24/25/37/38/39</td><td>۰.۰۰۰٪</td></tr>
+<tr><td>CANON-002</td><td>ET₀ Hargreaves</td><td>FAO-56 eq.52 (exponent ۰.۵)</td><td>۰.۰۰۰٪</td></tr>
+<tr><td>CANON-004</td><td>SCS-CN Runoff</td><td>NRCS-TR55</td><td>دقیق</td></tr>
+<tr><td>CANON-005</td><td>Theis groundwater</td><td>scipy.special.expi</td><td>دقیق</td></tr>
+<tr><td>CANON-006</td><td>van Genuchten soil</td><td>Carsel & Parrish 1988</td><td>rel=1e-12</td></tr>
+<tr><td>SOIL_SAR</td><td>Sodium Adsorption Ratio</td><td>USDA Handbook 60</td><td>دقیق</td></tr>
+<tr><td>SOIL_ESP</td><td>Exchangeable Sodium %</td><td>USDA Handbook 60</td><td>دقیق</td></tr>
+<tr><td>SOIL_LEACHING</td><td>Leaching Requirement</td><td>FAO-29</td><td>دقیق</td></tr>
+<tr><td>ECON_NPV</td><td>Net Present Value</td><td>Σ CFₜ/(1+r)ᵗ</td><td>دقیق</td></tr>
+<tr><td>ECON_PAYBACK</td><td>Payback Period</td><td>cumulative-cash convention</td><td>مستند</td></tr>
+<tr><td>COMPOST_CN</td><td>Compost C:N Ratio</td><td>mass balance</td><td>rel=1e-12</td></tr>
+<tr><td>MRV_METRICS</td><td>SOC Stock</td><td>SOC%×BD×depth×100</td><td>دقیق</td></tr>
+<tr><td>WATERSHED_*</td><td>Rational Method + Geometry</td><td>Q=CiA/360</td><td>دقیق</td></tr>
+</table>
+
+<h3>۳.۲ شاخص‌های نوین اکو نوژین</h3>
+<table>
+<tr><th>شاخص</th><th>نام کامل</th><th>کاربرد در هیدروما</th></tr>
+<tr><td>FDII</td><td>Flash Drought Intensity Index</td><td>هشدار زودهنگام خشکسالی سریع برای برنامه‌ریزی منابع آبی</td></tr>
+<tr><td>CDHE</td><td>Compound Drought-Heat Index</td><td>ریسک‌سنجی محصولات و تنظیم بیمه محصول</td></tr>
+<tr><td>CMSI</td><td>Crop Multi-Stress Index</td><td>رتبه‌بندی عرضه‌کنندگان بر اساس کیفیت تولید</td></tr>
+<tr><td>WSNI</td><td>Water-Soil Nexus Index</td><td>ارزیابی پایداری مزارع تأمین‌کننده</td></tr>
+<tr><td>RRI</td><td>Restoration Readiness Index</td><td>اولویت‌بندی پروژه‌های احیا در بازار خدمات</td></tr>
+<tr><td>IWEq</td><td>Intergenerational Water Equity</td><td>گزارش‌دهی ESG و اعتباربخشی به محصولات پایدار</td></tr>
+<tr><td>WAI</td><td>Water Access Index</td><td>تعیین مناطق اولویت‌دار برای خدمات آبیاری</td></tr>
+<tr><td>WVI</td><td>Water Vulnerability Index</td><td>ریسک‌سنجی زنجیره تأمین آب در رادار بازار</td></tr>
+<tr><td>PSI</td><td>Production Stability Index</td><td>رتبه‌بندی عرضه‌کنندگان بر اساس پایداری تولید</td></tr>
+<tr><td>CW</td><td>Cost of Water</td><td>محاسبه هزینه واقعی آب در قیمت‌گذاری محصول</td></tr>
+</table>
+
+<h3>۳.۳ کاتالوگ داده‌های باز (ZED-Compliant)</h3>
+<table>
+<tr><th>منبع</th><th>لایسنس</th><th>وضوح</th><th>نقش در هیدروما</th></tr>
+<tr><td>CHIRPS v3</td><td>Public Domain</td><td>۰.۰۵°</td><td>بارش روزانه برای FDII و SPI</td></tr>
+<tr><td>ERA5-Land</td><td>Copernicus</td><td>۰.۱°</td><td>دما، باد، تابش برای ET₀</td></tr>
+<tr><td>SoilGrids 2.0</td><td>CC BY 4.0</td><td>۲۵۰m</td><td>بافت خاک، SOC، CEC</td></tr>
+<tr><td>WaPOR</td><td>FAO Open Access</td><td>۱۰۰m</td><td>بهره‌وری آب برای WSNI</td></tr>
+<tr><td>SRTM / FABDEM</td><td>Public Domain</td><td>۳۰m</td><td>شیب برای RUSLE-LS</td></tr>
+<tr><td>WorldClim 2.1</td><td>CC BY 4.0</td><td>۱km</td><td>اقلیم پایه برای سناریوها</td></tr>
+</table>
+
+</section>
+
+<!-- ====== بخش ۴ ====== -->
+<section>
+<h2><span class="section-num">۴</span>برنامه ۹۰ روزه یکپارچه (ECO-HYDROMA Roadmap)</h2>
+
+<div class="timeline">
+
+<div class="timeline-item">
+<h4>فاز صفر: ارزیابی و Quick Scan — روزهای ۱ تا ۱۵ (ECO-00)</h4>
+<p><strong>اهداف:</strong> تثبیت وضعیت پایه، اجرای ۵ دستور الزامی، تعیین Boundary Contract.</p>
+<ul>
+<li>ECO-00.1: Quick Scan — pytest engine/ + services/ + detect_imports.py + ruff + mypy</li>
+<li>ECO-00.2: تعریف Boundary Contract بین لایه ۱ و ۳</li>
+<li>ECO-00.3: شناسایی ماژول‌های هیدروما که به اکو نوژین متصل می‌شوند (H2, H5, H6)</li>
+<li>ECO-00.4: مستندسازی Decision Points (DP-1 تا DP-4)</li>
+<li>ECO-00.5: تهیه Reference Data Registry (FAO-56 Example 18, WMO SPI, USDA RUSLE)</li>
+</ul>
+<p><strong>خروجی:</strong> گزارش Baseline + Boundary Contract + DP Register</p>
+</div>
+
+<div class="timeline-item">
+<h4>فاز اول: Gateway Adapter + هسته علمی — روزهای ۱۶ تا ۳۰ (ECO-01 تا ECO-04)</h4>
+<p><strong>اهداف:</strong> اتصال لایه ۱ به لایه ۲، اصلاح ۱۷ مسیر شکسته Gateway.</p>
+<ul>
+<li>ECO-01: REST Adapter برای EngineGateway (FastAPI endpoints برای CANON-001 تا CANON-006)</li>
+<li>ECO-02: اصلاح ۱۷ مسیر شکسته Gateway (D-01 تا D-17) + آزمون S17</li>
+<li>ECO-03: اصلاح Hargreaves exponent (D-18) + S11/S02/S16/S17 به‌روزرسانی</li>
+<li>ECO-04: اعتبارسنجی ورودی Gateway (D-20) + INVALID_REQUEST صادقانه</li>
+</ul>
+<p><strong>خروجی:</strong> Gateway پایدار + ۱۸ مدل علمی قال فراخوانی از REST</p>
+</div>
+
+<div class="timeline-item">
+<h4>فاز دوم: Tasmimyar + Daneshyar — روزهای ۳۱ تا ۴۵ (ECO-05 تا ECO-08)</h4>
+<p><strong>اهداف:</strong> تصمیم‌گیری مبتنی بر شواهد، Provenance Engine.</p>
+<ul>
+<li>ECO-05: پیاده‌سازی Tasmimyar scoring برای H1 (تطبیق عرضه و تقاضا)</li>
+<li>ECO-06: اتصال Daneshyar به H2 (رادار بازار) — Epistemic Status + Conflict Resolver</li>
+<li>ECO-07: Provenance Engine — ردیابی کامل داده خام → شاخص → تصمیم</li>
+<li>ECO-08: Local Data Mirror — ingestion CHIRPS + ERA5 + SoilGrids با checksum</li>
+</ul>
+<p><strong>خروجی:</strong> Decision Engine + Provenance + Data Mirror</p>
+</div>
+
+<div class="timeline-item">
+<h4>فاز سوم: اتصال هیدروما H2 و H5 — روزهای ۴۶ تا ۶۰ (ECO-09 تا ECO-11)</h4>
+<p><strong>اهداف:</strong> شاخص‌های اقلیمی در رادار بازار، تخصیص منابع مبتنی بر علم.</p>
+<ul>
+<li>ECO-09: اتصال FDII/CDHE/CMSI به H2 (رادار بازار) — داشبورد ریسک اقلیمی</li>
+<li>ECO-10: اتصال WAI/WSNI به H5 (هماهنگ‌کننده منابع) — تخصیص بهینه آب/ماشین‌آلات</li>
+<li>ECO-11: پیاده‌سازی Canary Dispatch (۵٪) برای مقایسه نسخه‌های مدل</li>
+</ul>
+<p><strong>خروجی:</strong> داشبورد ریسک + تخصیص هوشمند منابع</p>
+</div>
+
+<div class="timeline-item">
+<h4>فاز چهارم: H6 + H7 + اشتغال — روزهای ۶۱ تا ۷۵ (ECO-12 تا ECO-14)</h4>
+<p><strong>اهداف:</strong> سنجش اقتصادی یکپارچه، بازار خدمات مبتنی بر شواهد.</p>
+<ul>
+<li>ECO-12: اتصال H6 (سنجش اقتصادی) به NPV/Payback/PSI/Cost of Water</li>
+<li>ECO-13: اتصال H7 (بازار خدمات) به Daneshyar — توصیه‌گر خدمات مبتنی بر شواهد</li>
+<li>ECO-14: پیاده‌سازی شاخص‌های اشتغال (تعداد ارائه‌دهندگان فعال، درآمد خالص، ساعات کاری)</li>
+</ul>
+<p><strong>خروجی:</strong> گزارش سودآوری + بازار خدمات علمی</p>
+</div>
+
+<div class="timeline-item">
+<h4>فاز پنجم: H4 + H3 + پایلوت — روزهای ۷۶ تا ۹۰ (ECO-15 تا ECO-17)</h4>
+<p><strong>اهداف:</strong> رهگیری محصول، اقتصاد محلی، پایلوت واقعی.</p>
+<ul>
+<li>ECO-15: اتصال H4 (رهگیری محصول) به Provenance Engine — هر محموله یک provenance_chain</li>
+<li>ECO-16: آماه‌سازی H3 (اقتصاد محلی) — گردشگری کشاورزی با RRI/WSNI</li>
+<li>ECO-17: پایلوت واقعی — ۱۰ سفارش، ۵ ارائه‌دهنده خدمت، ۳ منطقه</li>
+</ul>
+<p><strong>خروجی:</strong> نسخه آزمایشی یکپارچه + گزارش پایلوت</p>
+</div>
+
+</div>
+
+</section>
+
+<!-- ====== بخش ۵ ====== -->
+<section>
+<h2><span class="section-num">۵</span>معماری داده و پایگاه داده</h2>
+
+<h3>۵.۱ اسکیمای SQLite (لایه ۱ — اکو نوژین)</h3>
+<table>
+<tr><th>جدول</th><th>وظیفه</th></tr>
+<tr><td>datasets</td><td>قرارداد داده (dataset_id, version, source, license, checksum, uncertainty)</td></tr>
+<tr><td>model_runs</td><td>اجرای مدل (run_id, model_id, inputs_hash, outputs, timestamp, git_commit)</td></tr>
+<tr><td>models</td><td>Model Cards (model_id, formula, reference, maturity_level, assumptions)</td></tr>
+<tr><td>evidence</td><td>شواهد (evidence_id, source, type, value, confidence, timestamp, provenance)</td></tr>
+<tr><td>claims</td><td>ادعاها (claim_id, statement, epistemic_status, confidence)</td></tr>
+<tr><td>claim_evidence</td><td>ارتباط claim-evidence (weight: SUPPORTS/CONTRADICTS/NEUTRAL)</td></tr>
+<tr><td>scenarios</td><td>سناریوها (scenario_id, parameters, model_run_ids, decision_context)</td></tr>
+<tr><td>decisions</td><td>تصمیمات (decision_id, scenario_id, recommendation, scores, trace_id)</td></tr>
+</table>
+
+<h3>۵.۲ اسکیمای PostgreSQL (لای ۳ — هیدروما)</h3>
+<table>
+<tr><th>ماژول</th><th>موجودیت‌های اصلی</th></tr>
+<tr><td>H0</td><td>users, organizations, roles, permissions, audit_logs</td></tr>
+<tr><td>H1</td><td>products, supply, demand, orders, contracts, pricing</td></tr>
+<tr><td>H2</td><td>market_signals, price_history, risk_alerts, forecasts</td></tr>
+<tr><td>H3</td><td>local_services, tourism_offers, bookings, experiences</td></tr>
+<tr><td>H4</td><td>shipments, batches, quality_checks, tracking_events</td></tr>
+<tr><td>H5</td><td>resources, reservations, capacity, schedules</td></tr>
+<tr><td>H6</td><td>financial_reports, kpi_values, cost_allocations</td></tr>
+<tr><td>H7</td><td>service_providers, skills, service_orders, ratings</td></tr>
+</table>
+
+<div class="note">
+<strong>قرارداد DP-1:</strong> PostgreSQL هیدروما هرگز مستقیماً به جداول SQLite اکو نوژین دسترسی ندارد. تمام ارتباط از طریق REST Adapter (لایه ۲) و با provenance صریح انجام می‌شود.
+</div>
+
+</section>
+
+<!-- ====== بخش ۶ ====== -->
+<section>
+<h2><span class="section-num">۶</span>شاخص‌های کلیدی عملکرد یکپارچه (KPI)</h2>
+
+<h3>۶.۱ KPIهای علمی (اکو نوژین)</h3>
+<table>
+<tr><th>شاخص</th><th>معیار</th><th>هدف</th></tr>
+<tr><td>Scientific Validation Coverage</td><td>تعداد مدل‌های سطح ۳ / کل مدل‌ها</td><td>≥ ۸۰٪</td></tr>
+<tr><td>Reference Data Availability</td><td>فایل‌های مرجع در tests/reference_data/</td><td>۱۰۰٪ برای CANON-001 تا CANON-006</td></tr>
+<tr><td>Test Coverage</td><td>line + contract + science path</td><td>≥ ۸۰٪</td></tr>
+<tr><td>Import Guard Pass Rate</td><td>تخلف ZED در detect_imports.py</td><td>۰</td></tr>
+<tr><td>Provenance Completeness</td><td>خروجی‌ها با trace_id کامل</td><td>۱۰۰٪</td></tr>
+</table>
+
+<h3>۶.۲ KPIهای کسب‌وکار (هیدروما)</h3>
+<table>
+<tr><th>شاخص</th><th>معیار</th><th>هدف ۹۰ وز</th></tr>
+<tr><td>نرخ تبدیل پیشنهاد به سفارش</td><td>سفارش موفق / پیشنهاد</td><td>≥ ۱۵٪</td></tr>
+<tr><td>نرخ تکمیل سفارش</td><td>سفارش تکمیل‌شده / کل</td><td>≥ ۹۰٪</td></tr>
+<tr><td>زمان متوسط تأمین</td><td>ساعت از ثبت تا تحویل</td><td>≤ ۴۸ ساعت</td></tr>
+<tr><td>درآمد پلتفرم</td><td>کارمزد + اشتراک (میلیون تومان)</td><td>≥ ۵</td></tr>
+<tr><td>تعداد ارائه‌دهندگان فعال</td><td>با حداقل ۱ سفارش تکمیل‌شده</td><td>≥ ۵۰</td></tr>
+<tr><td>درآمد خالص ارائه‌دهندگان</td><td>میانگن ماهانه (تومان)</td><td>≥ ۲ میلیون</td></tr>
+<tr><td>نرخ خودکارسازی</td><td>عملیات بدون دخالت انسانی</td><td>≥ ۶۰٪</td></tr>
+<tr><td>شکایت/اختلاف</td><td>درصد سفارش‌ها</td><td>≤ ۲٪</td></tr>
+</table>
+
+<h3>۶.۳ KPIهای یکپارچه (Eco-Hydroma Nexus)</h3>
+<table>
+<tr><th>شاخص</th><th>منبع</th><th>کاربرد</th></tr>
+<tr><td>Water Cost per Order (CW)</td><td>اکو نوژین + H6</td><td>قیمت‌گذاری واقع‌بینانه محصولات آبی</td></tr>
+<tr><td>Supply Risk Score (FDII+CDHE)</td><td>اکو نوژین + H2</td><td>رتبه‌بندی عرضه‌کنندگان بر اساس ریسک اقلیمی</td></tr>
+<tr><td>Resource Utilization Index (WAI+WSNI)</td><td>اکو نوژین + H5</td><td>تخصیص بهینه آب و ماشین‌آلات</td></tr>
+<tr><td>Sustainability Score (RRI+IWEq)</td><td>اکو نوژین + H4/H7</td><td>برچسب پایداری برای محصولات</td></tr>
+<tr><td>Employment Quality Index</td><td>هیدروما H7 + H6</td><td>سنجش واقعی اشتغال (درآمد + ساعت + تکرار)</td></tr>
+</table>
+
+</section>
+
+<!-- ====== بخش ۷ ====== -->
+<section>
+<h2><span class="section-num">۷</span>حکمرانی AI و چهار سطح اختیار</h2>
+
+<h3>۷.۱ تلفیق چهار سطح هیدروما با Safety Brakes اکو نوژین</h3>
+<table>
+<tr><th>سطح</th><th>نوع اقدام</th><th>نمونه</th><th>کنترل اکو نوژین</th></tr>
+<tr><td>۱</td><td>اطلاعاتی</td><td>تحلیل بازار، گزارش FDII</td><td>Daneshyar — Epistemic Status + Evidence</td></tr>
+<tr><td>۲</td><td>عملیاتی کم‌ریسک</td><td>اعلان، دسته‌بندی درخواست</td><td>Tasmimyar — CAUTION ≥ ۰.۴</td></tr>
+<tr><td>۳</td><td>اجرایی محدود</td><td>رزرو در سقف تأییدشده</td><td>Tasmimyar — RECOMMEND ≥ ۰.۷ + Safety Brake SB-05</td></tr>
+<tr><td>۴</td><td>حساس</td><td>پرداخت بزرگ، تعهد قراردادی</td><td>STOP + تأیید انسانی + Audit Log</td></tr>
+</table>
+
+<h3>۷.۲ پروتکل Quick Scan (ECO-00)</h3>
+<p>قبل از هر تسک بزرگ، ۵ دستور الزامی:</p>
+<ol>
+<li><code>pytest engine/ -q</code> — باید ۱۷۰۰+ passed، ۰ failed باشد</li>
+<li><code>pytest services/ -q</code> — باید ۵۲۸+ passed، ۰ failed باشد</li>
+<li><code>tools/detect_imports.py --root .</code> — باید PASS (۰ تخلف) باشد</li>
+<li><code>ruff check .</code> — F821 باید ۰ باشد</li>
+<li><code>mypy engine --ignore-missing-imports</code> — خطاهای جدید نباید اضافه شود</li>
+</ol>
+
+<div class="note note-warning">
+<strong>قاعده ۵:</strong> اگر Quick Scan قبل از شروع تسک FAIL داشته باشد، ابدا باید رفع شود. هیچ تسک جدیدی روی وضعیت شکسته شروع نمی‌شود.
+</div>
+
+</section>
+
+<!-- ====== بخش ۸ ====== -->
+<section>
+<h2><span class="section-num">۸</span>ریسک‌ها و راهکارهای کنترل یکپارچه</h2>
+
+<table>
+<tr><th>ریسک</th><th>سطح</th><th>راهکار کنترل</th><th>مسئول</th></tr>
+<tr><td>توسعه بیش از حد (H1-H7 همزمان)</td><td>بالا</td><td>اولویت H1→H5→H6→H7، پایلوت ۹۰ روزه</td><td>معمار پروژه</td></tr>
+<tr><td>کمبود تقاضای واقعی</td><td>بالا</td><td>شروع از نیاز شرکت مالک، اعتبارسنجی قبل از گسترش</td><td>مدیر محصول</td></tr>
+<tr><td>داده نامعتبر در بازار</td><td>بالا</td><td>اعتبارسنجی علمی S18 + Epistemic Status + uncertainty</td><td>Daneshyar</td></tr>
+<tr><td>خطای خودکارسازی (رزرو/پرداخت)</td><td>بالا</td><td>۴ سطح اختیار + Safety Brakes + Audit Log</td><td>Tasmimyar + Gateway</td></tr>
+<tr><td>هالوسینیشن AI در معادلات</td><td>بحرانی</td><td>AR-07 + SB-07 + Model Card immutability + S18</td><td>Master Directive</td></tr>
+<tr><td>وابستگی به پیمانکار</td><td>متوسط</td><td>ZED + مستندات + مالکیت کد + Backup</td><td>معمار پروژه</td></tr>
+<tr><td>تداخل JSONB/SQLite در اجرای مشترک</td><td>توسط</td><td>@compiles(JSONB, "sqlite") + جداسازی state</td><td>EngineGateway</td></tr>
+<tr><td>تست flaky (nonce تصادفی)</td><td>پایین</td><td>تثبیت nonce در آزمون‌های antibot</td><td>QA Engineer</td></tr>
+</table>
+
+</section>
+
+<!-- ====== بخش ۹ ====== -->
+<section>
+<h2><span class="section-num">۹</span>دستور نهایی به Kilo Code Agent</h2>
+
+<div class="card card-accent">
+<p><strong>این سند، قانون اساسی پروژه اکو نوژین + هیدروما است.</strong>
+هر تسک باید با Quick Scan (ECO-00) آغاز شود، با Evidence و Fix Log خاتمه یابد، و در چارچوب ۳ لایه یکپارچه اجرا شود.</p>
+</div>
+
+<h3>۹.۱ چک‌لیست قبل از هر Pull Request</h3>
+<ul>
+<li>Quick Scan ۵ دستوری سبز است</li>
+<li>تغییرات در حداکثر ۵ فایل اصلی (SB-01)</li>
+<li>Fix Log با شناسه D-XX یا R-XX تکمیل شده</li>
+<li>Evidence (مرجع مستقل) برای هر ادعای عددی ارائه شده</li>
+<li>detect_imports.py PASS است (۰ تخلف ZED)</li>
+<li>آزمون‌های red→green مستند شده‌اند</li>
+<li>Baseline بازتولید شده (در صورت تغییر مقدار مرجع)</li>
+<li>Provenance trace_id در خروجی Decision موجود است</li>
+</ul>
+
+<h3>۹.۲ اولویت‌های اجرایی فوری</h3>
+<ol>
+<li><strong>P0:</strong> ECO-00 (Quick Scan) → ECO-01 (REST Adapter) → ECO-02 (۱۷ مسیر Gateway)</li>
+<li><strong>P1:</strong> ECO-05 (Tasmimyar for H1) → ECO-09 (FDII/CDHE in H2)</li>
+<li><strong>P2:</strong> ECO-10 (WAI/WSNI in H5) → ECO-12 (NPV/PSI in H6)</li>
+<li><strong>P3:</strong> ECO-15 (Provenance in H4) → ECO-17 (پایلوت واقعی)</li>
+</ol>
+
+<h3>۹.۳ تعریف Done برای هر فاز</h3>
+<table>
+<tr><th>فاز</th><th>Definition of Done</th></tr>
+<tr><td>ECO-00</td><td>۵ دستور Quick Scan سبز + Boundary Contract ثبت شده</td></tr>
+<tr><td>ECO-01</td><td>FastAPI endpoints برای CANON-001 تا CANON-006 با swagger</td></tr>
+<tr><td>ECO-02</td><td>۱۷ مسیر Gateway سبز + S17 passed</td></tr>
+<tr><td>ECO-05</td><td>Tasmimyar scoring برای ۳ معیار تطبیق H1</td></tr>
+<tr><td>ECO-09</td><td>داشبورد FDII/CDHE در H2 با ۳ منطقه نمونه</td></tr>
+<tr><td>ECO-10</td><td>تخصیص آب/ماشین‌آلات با WAI/WSNI</td></tr>
+<tr><td>ECO-17</td><td>۱۰ سفارش واقعی + ۵ ارائه‌دهنده + گزارش KPI</td></tr>
+</table>
+
+<div class="note">
+<strong>یادآوری:</strong> هیچ سطحی از درآمد یا اشتغال بدون داده واقعی تضمین نمی‌شود.
+معیار اصلی موفقیت، ارزش اقتصادی قابل‌اندازه‌گیری و پایدار است — نه تعداد امکانات نرم‌افزاری.
+</div>
+
+</section>
+
+<!-- ====== پیوست ====== -->
+<section>
+<h2><span class="section-num">۱۰</span>پیوست: ساختار فایل‌های کلیدی</h2>
+
+<table>
+<tr><th>مسیر</th><th>نقش</th></tr>
+<tr><td><code>ECO-NOJIN_MASTER_v3.0_UNIFIED.md</code></td><td>سند مادر یکپارچه (این سند)</td></tr>
+<tr><td><code>ECO-NOJIN_ZED_Scientific_Appendix_v2.md</code></td><td>پیوست فرمول، داده و شاخص‌های نوین</td></tr>
+<tr><td><code>engine/gateway/__init__.py</code></td><td>EngineGateway — دروازه ۷۰ مدل</td></tr>
+<tr><td><code>engine/tasmimyar/__init__.py</code></td><td>Decision Engine — تصمیم‌یار</td></tr>
+<tr><td><code>engine/evidence/__init__.py</code></td><td>Evidence Engine — شواهد</td></tr>
+<tr><td><code>engine/knowledge/__init__.py</code></td><td>Knowledge Engine — دان‌یار</td></tr>
+<tr><td><code>engine/strict_tests/test_s18_scientific_validation.py</code></td><td>اعتبارسنجی علمی مستقل</td></tr>
+<tr><td><code>engine/strict_tests/test_s17_gateway_fixes.py</code></td><td>آزمون ۱۷ مسیر Gateway</td></tr>
+<tr><td><code>tools/detect_imports.py</code></td><td>Architecture Enforcement — Import Guard</td></tr>
+<tr><td><code>database/base.py</code></td><td>SQLite Schema + JSONB compile for SQLite</td></tr>
+<tr><td><code>services/api_gateway/main.py</code></td><td>FastAPI — لایه ۳ REST</td></tr>
+<tr><td><code>data/reference_data/</code></td><td>FAO-56, WMO, USDA reference files</td></tr>
+<tr><td><code>data/mirror/</code></td><td>Local Data Mirror (CHIRPS, ERA5, SoilGrids)</td></tr>
+</table>
+
+</section>
+
+<footer class="text-center mt-2" style="padding: 2rem 0; color: var(--muted); font-size: 0.85em; border-top: 1px solid var(--line);">
+<p>اکو نوژین + هیدروما — سند مادر یکپارچه نسخه ۳.۰</p>
+<p>تاریخ: ۲۰۲۶-۱۰-۱۰ | وضعیت: نهایی‌شده برای اجرا | Commit مرجع: d6fac05+</p>
+<p style="margin-top: 0.5rem;">این سند تحت حکمرانی AI با ۱۰ Safety Brake و Architecture Enforcement as Code قرار دارد.</p>
+</footer>
+
+</div>
+</body>
+</html>
